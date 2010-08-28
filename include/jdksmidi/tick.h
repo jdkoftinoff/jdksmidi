@@ -26,17 +26,17 @@
 
 namespace jdksmidi
 {
-  class MIDITick
-  {
-    public:
-      MIDITick()
-      {
-      }
-      
-      virtual ~MIDITick();
-      
-      virtual void TimeTick ( unsigned long sys_time ) = 0;
-  };
+    class MIDITick
+    {
+        public:
+            MIDITick()
+            {
+            }
+            
+            virtual ~MIDITick();
+            
+            virtual void TimeTick ( unsigned long sys_time ) = 0;
+    };
 }
 
 #endif

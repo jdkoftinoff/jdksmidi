@@ -30,43 +30,43 @@
 
 namespace jdksmidi
 {
-  class MIDISong
-  {
-    public:
-      MIDISong ( int max_tracks );
-      virtual ~MIDISong();
-      
-      bool Load ( const char *fname );
-      
+    class MIDISong
+    {
+        public:
+            MIDISong ( int max_tracks );
+            virtual ~MIDISong();
+            
+            bool Load ( const char *fname );
+            
 // bool Save( const char *fname );
 
-      MIDIMultiTrack *GetMultiTrack()
-      {
-        return multitrack;
-      }
-      
-      const MIDIMultiTrack *GetMultiTrack() const
-      {
-        return multitrack;
-      }
-      
-      MIDISequencer *GetSeq()
-      {
-        return sequencer;
-      }
-      
-      const MIDISequencer *GetSeq() const
-      {
-        return sequencer;
-      }
-      
-    protected:
-    
-      MIDIMultiTrack track;
-      MIDISequencer seq;
-      
-      char title;
-  };
+            MIDIMultiTrack *GetMultiTrack()
+            {
+                return multitrack;
+            }
+            
+            const MIDIMultiTrack *GetMultiTrack() const
+            {
+                return multitrack;
+            }
+            
+            MIDISequencer *GetSeq()
+            {
+                return sequencer;
+            }
+            
+            const MIDISequencer *GetSeq() const
+            {
+                return sequencer;
+            }
+            
+        protected:
+        
+            MIDIMultiTrack track;
+            MIDISequencer seq;
+            
+            char title;
+    };
 }
 
 #endif

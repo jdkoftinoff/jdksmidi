@@ -28,14 +28,13 @@
 
 int main ( int argc, char **argv )
 {
-  if ( argc>1 )
-  {
-    jdksmidi::MIDIFileReadStreamFile rs ( argv[1] );
-    jdksmidi::MIDIFileShow shower ( stdout );
-    jdksmidi::MIDIFileRead reader ( &rs, &shower );
+    if ( argc > 1 )
+    {
+        jdksmidi::MIDIFileReadStreamFile rs ( argv[1] );
+        jdksmidi::MIDIFileShow shower ( stdout );
+        jdksmidi::MIDIFileRead reader ( &rs, &shower );
+        reader.Parse();
+    }
     
-    reader.Parse();
-  }
-  
-  return 0;
+    return 0;
 }
