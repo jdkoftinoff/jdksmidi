@@ -1,0 +1,176 @@
+#! /bin/bash -e
+
+##############################################################################################
+#
+# The magic.makefile configure script, Copyright 2004-2010 by Jeff Koftinoff <jeffk@jdkoftinoff.com>
+# version 8.
+#
+# Simplifies the building of a c/c++ library, it's tests, tools, examples, and documentation.
+#
+# http://wiki.github.com/jdkoftinoff/magicmake/
+#
+# for more information, including license information (GPL). Note that this tool being GPL does
+# NOT mean that it can only be used to build GPL projects.
+#
+
+
+# set relative_dir to the directory part of arg 0. Usually this is ../.. or somesuch.
+
+relative_dir="$(dirname "$0")"
+magic_PROJECT_TOP_DIR="$(cd ${relative_dir} && pwd)"
+
+# if we are called with --help
+
+if [ x"$1" = x"--help" ]; then
+    echo "configure script based on J.D. Koftinoff Software Ltd.'s MagicMake system."
+    echo "See http://wiki.github.com/jdkoftinoff/magicmake/ "
+    echo ""
+    echo "example usage:"
+    echo "Step 1: make a directory to put build results in:"
+    echo "  mkdir b"
+    echo ""
+    echo "Step 2: cd into this directory:"
+    echo "  cd b"
+    echo ""
+    echo "Step 3: run this configure script:"
+    echo ""
+    echo "  ../configure"
+    echo ""
+    echo "Some example typical command line arguments for configure:"
+    echo ""
+    echo "Build native binaries on a generic posix machine:"
+    echo "  ../configure --target-platform-posix=1"
+    echo ""
+    echo "Build native binaries on a linux machine:"
+    echo "  ../configure --target-platform-linux=1"
+    echo ""
+    echo "Build native binaries on a mac os x machine:"
+    echo "  ../configure --target-platform-macosx=1"
+    echo ""
+    echo "Build universal binaries on a mac os x machine:"
+    echo "  ../configure --target-platform-macosx-universal=1"
+    echo ""
+    echo "Build on a mac os x machine and cross compile for windows via mingw32 cross compiler"
+    echo "  ../configure --native-platform-macosx-universal=1 --cross-compiling=1 --compiler-prefix=i386-mingw32- --target-platform-mingw32=1"
+    echo ""
+    echo "Build on a linux machine and cross compile for windows via mingw32 cross compiler"
+    echo "  ../configure --native-platform-linux=1 --cross-compiling=1 --compiler-prefix=i386-mingw32-  --target-platform-mingw32=1"
+    echo ""
+    echo "Further options for installation path of 'make install' and 'make install-dev' destinations:"
+    echo "  ../configure --prefix=/opt/local"
+    echo "without the --prefix option, the system defaults to /opt/local/PACKAGE_NAME-PACKAGE_VERSION - not /usr/local like gnu autoconf would"
+    echo ""
+    echo "After running the configure stage, a Makefile will be created for you to run with gnu make"
+    exit 1
+fi
+
+
+
+# parse all long options and set them as variables, allowing command line to override everything
+# options are in the form of:
+#   --abcd-efghi-jklmn=some_value
+#
+# and they get transformed via awk into environment vars in the form:
+#   magic_ABCD_EFGHI_JKLMN="some_value"
+#
+# The script file './reconfigure' is created with the current command line parameters
+#
+# This looks tricky but is really not so bad: The for loop prints each parameter, one per line 
+# into a single instance of awk so it is quick.
+#
+# The awk script extracts the variable name as var, and the part after the first '=' as val
+# It changes - to _, -- to nothing, converts the string to uppercase, prefixes the
+# variable name with magic_, and prints val inside quotes.
+#
+
+for i in "$@"; do 
+    p=`echo $i | awk '{  line=$0; i = index($0,"="); var = substr(line,0,i); gsub("=","",var); val = substr(line,i+1); gsub("-","_",var); sub("__","",var); print "magic_" toupper(var) "=\"" val "\"\n"; }' `
+    eval $p
+done
+
+# we have our command line args. If the project.mk file does not exist then
+# create it if the --init arg was set
+
+function print_var()
+{
+  name="$1"
+  mk_file="$2"
+  eval value=\$magic_${name}
+  echo "${name}=${value}" >>"$mk_file"
+  echo "${name} is: ${value}"
+}
+
+if [ ! -f "${relative_dir}/project.mk" ]; then
+   # defaults for init mode if project.mk does not exist
+
+   magic_PROJECT=${magic_PROJECT:-$(basename $magic_PROJECT_TOP_DIR)}
+   magic_PROJECT_NAME=${magic_PROJECT_NAME:-$magic_PROJECT}
+   magic_PROJECT_VERSION=${magic_PROJECT_VERSION:-$(date +%Y%m%d)}
+   magic_PROJECT_EMAIL=${magic_PROJECT_EMAIL:-"${USER}@${HOSTNAME}"}
+   magic_PROJECT_LICENSE=${magic_PROJECT_LICENSE:-"private"}
+   magic_PROJECT_MAINTAINER=${magic_PROJECT_MAINTAINER:-"${magic_PROJECT_EMAIL}"}
+   magic_PROJECT_COPYRIGHT=${magic_PROJECT_COPYRIGHT:-"Copyright $(date +%Y)"}
+   magic_PROJECT_DESCRIPTION=${magic_PROJECT_DESCRIPTION:-"${magic_PROJECT_NAME}"}
+   magic_PROJECT_WEBSITE=${magic_PROJECT_WEBSITE:-"http://${HOSTNAME}/${magic_PROJECT}"}
+   magic_PROJECT_IDENTIFIER=${magic_PROJECT_IDENTIFIER:-"${HOSTNAME}.${magic_PROJECT}"}
+   if [ "$1" != "--init" ]; then
+      echo "magicmake configure: no project.mk file found in $magic_PROJECT_TOP_DIR" 1>&2
+      echo "re-run configure with the following command line to create initial project.mk file:" 1>&2
+      echo 1>&2
+      echo "\"$0\" --init \"--project=$magic_PROJECT\" \"--project-name=$magic_PROJECT_NAME\" \"--project-version=$magic_PROJECT_VERSION\" \"--project-email=$magic_PROJECT_EMAIL\" \"--project-license=$magic_PROJECT_LICENSE\" \"--project-maintainer=$magic_PROJECT_MAINTAINER\" \"--project-copyright=$magic_PROJECT_COPYRIGHT\" \"--project-description=$magic_PROJECT_DESCRIPTION\" \"--project-website=$magic_PROJECT_WEBSITE\" \"--project-identifier=$magic_PROJECT_IDENTIFIER\" "
+      exit 1
+   else
+      proj_mk="${relative_dir}/project.mk"
+
+      for v in PROJECT PROJECT_NAME PROJECT_VERSION PROJECT_EMAIL PROJECT_LICENSE PROJECT_MAINTAINER PROJECT_COPYRIGHT PROJECT_DESCRIPTION PROJECT_WEBSITE PROJECT_IDENTIFIER; do
+      	print_var $v "$proj_mk"
+      done
+      echo "TOP_LIB_DIRS+=." >>"$proj_mk"
+      echo "CONFIG_TOOLS+=$magic_CONFIG_TOOLS" >>"$proj_mk"
+      echo "PKGCONFIG_PACKAGES+=$magic_PKGCONFIG_PACKAGES" >>"$proj_mk"
+      mkdir -p "$magic_PROJECT_TOP_DIR"/include "$magic_PROJECT_TOP_DIR"/src "$magic_PROJECT_TOP_DIR"/tools "$magic_PROJECT_TOP_DIR"/docs-dev "$magic_PROJECT_TOP_DIR"/docs "$magic_PROJECT_TOP_DIR"/docs-dev "$magic_PROJECT_TOP_DIR"/tests "$magic_PROJECT_TOP_DIR"/examples "$magic_PROJECT_TOP_DIR"/etc/common "$magic_PROJECT_TOP_DIR"/share/common "$magic_PROJECT_TOP_DIR"/man/common
+      echo "project.mk file created, ready for use."
+      exit 0
+   fi
+fi
+
+
+
+# setup all defaults:
+
+# The PROJECT_TOP_DIR variable, if not set already, is then set to the full relative path needed to get to the configure script from the PWD.
+magic_PROJECT_TOP_DIR="${magic_PROJECT_TOP_DIR:-${PWD}/${relative_dir}}"
+
+# Then we get the real path name of this directory by cd'ing into it and running 'pwd' in it.
+magic_PROJECT_TOP_DIR=$(cd "${magic_PROJECT_TOP_DIR}" && pwd)
+
+magic_CONFIGURE_DIR=$(cd "${relative_dir}" && pwd)
+magic_BUILD_DIR="$PWD/tmp-target"
+magic_NATIVE_BUILD_DIR="$PWD/tmp-native"
+
+
+M=Makefile
+unset magic_
+# extract all environment vars with the "magic_" prefix and save them in ${M} in the appropriate form:
+rm -f ${M}
+set | grep '^magic_' | sort | sed -n "s/magic_\(.*\)=\('*\)\([^']*\)\(.*\)/\1=\3/p"  >${M}
+
+echo '.PHONY : first_target' >>${M}
+echo 'first_target : everything' >>${M}
+echo >>${M}
+echo 'include $(PROJECT_TOP_DIR)/project.mk' >>${M}
+echo 'include $(PROJECT_TOP_DIR)/magic.mk' >>${M}
+if [ -n "$magic_MAKEFILES_DIR" ]; then
+    echo '-include $(MAKEFILES_DIR)/*.mk' >>${M}
+fi
+
+if [ -f ./reconfigure ]; then
+ mv ./reconfigure ./reconfigure-old
+fi
+echo "$0 \\"  >>./reconfigure
+for i in "$@";
+do
+  echo " \"$i\" \\" >> ./reconfigure
+done
+echo \"\$@\" >>./reconfigure
+chmod +x ./reconfigure
