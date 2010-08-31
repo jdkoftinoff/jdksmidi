@@ -29,21 +29,21 @@
 namespace jdksmidi
 {
 
-    class MIDIDriverDump : public MIDIDriver
-    {
-        public:
-            MIDIDriverDump ( int queue_size, FILE *outfile );
-            virtual ~MIDIDriverDump();
-            
-            virtual bool HardwareMsgOut ( const MIDITimedBigMessage &msg );
-            
-            virtual void TimeTick ( unsigned long sys_time );
-            
-        protected:
-        
-            FILE *f;
-    };
-    
+class MIDIDriverDump : public MIDIDriver
+{
+public:
+    MIDIDriverDump ( int queue_size, FILE *outfile );
+    virtual ~MIDIDriverDump();
+
+    virtual bool HardwareMsgOut ( const MIDITimedBigMessage &msg );
+
+    virtual void TimeTick ( unsigned long sys_time );
+
+protected:
+
+    FILE *f;
+};
+
 }
 
 #endif

@@ -27,8 +27,8 @@
 namespace jdksmidi
 {
 
-    MIDITick::~MIDITick()
-    {
-    }
-    
+MIDITick::~MIDITick()
+{
+}
+
 }

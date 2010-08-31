@@ -41,7 +41,7 @@ void DumpMIDITimedBigMessage ( MIDITimedBigMessage *msg )
     {
         char msgbuf[1024];
         fprintf ( stdout, "%8ld : %s\n", msg->GetTime(), msg->MsgToText ( msgbuf ) );
-        
+
         if ( msg->IsSysEx() )
         {
             fprintf ( stdout, "\tSYSEX length: %d\n", msg->GetSysEx()->GetLength() );
@@ -52,7 +52,7 @@ void DumpMIDITimedBigMessage ( MIDITimedBigMessage *msg )
 void DumpMIDITrack ( MIDITrack *t )
 {
     MIDITimedBigMessage *msg;
-    
+
     for ( int i = 0; i < t->GetNumEvents(); ++i )
     {
         msg = t->GetEventAddress ( i );
@@ -63,7 +63,7 @@ void DumpMIDITrack ( MIDITrack *t )
 void DumpAllTracks ( MIDIMultiTrack *mlt )
 {
     fprintf ( stdout , "Clocks per beat: %d\n\n", mlt->GetClksPerBeat() );
-    
+
     for ( int i = 0; i < mlt->GetNumTracks(); ++i )
     {
         if ( mlt->GetTrack ( i )->GetNumEvents() > 0 )
@@ -82,11 +82,11 @@ void DumpMIDIMultiTrack ( MIDIMultiTrack *mlt )
     MIDITimedBigMessage *msg;
     fprintf ( stdout , "Clocks per beat: %d\n\n", mlt->GetClksPerBeat() );
     i.GoToTime ( 0 );
-    
+
     do
     {
         int trk_num;
-        
+
         if ( i.GetCurEvent ( &trk_num, &msg ) )
         {
             fprintf ( stdout, "#%2d - ", trk_num );
@@ -109,6 +109,6 @@ int main ( int argc, char **argv )
         reader.Parse();
         DumpMIDIMultiTrack ( &tracks );
     }
-    
+
     return 0;
 }

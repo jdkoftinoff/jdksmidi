@@ -43,7 +43,7 @@ void DumpMIDIBigMessage ( MIDITimedBigMessage *msg )
     {
         char msgbuf[1024];
         fprintf ( stdout, "%s\n", msg->MsgToText ( msgbuf ) );
-        
+
         if ( msg->IsSysEx() )
         {
             fprintf ( stdout, "\tSYSEX length: %d\n", msg->GetSysEx()->GetLength() );
@@ -57,7 +57,7 @@ void DumpMIDITimedBigMessage ( MIDITimedBigMessage *msg )
     {
         char msgbuf[1024];
         fprintf ( stdout, "%8ld : %s\n", msg->GetTime(), msg->MsgToText ( msgbuf ) );
-        
+
         if ( msg->IsSysEx() )
         {
             fprintf ( stdout, "\tSYSEX length: %d\n", msg->GetSysEx()->GetLength() );
@@ -68,7 +68,7 @@ void DumpMIDITimedBigMessage ( MIDITimedBigMessage *msg )
 void DumpMIDITrack ( MIDITrack *t )
 {
     MIDITimedBigMessage *msg;
-    
+
     for ( int i = 0; i < t->GetNumEvents(); ++i )
     {
         msg = t->GetEventAddress ( i );
@@ -79,7 +79,7 @@ void DumpMIDITrack ( MIDITrack *t )
 void DumpAllTracks ( MIDIMultiTrack *mlt )
 {
     fprintf ( stdout , "Clocks per beat: %d\n\n", mlt->GetClksPerBeat() );
-    
+
     for ( int i = 0; i < mlt->GetNumTracks(); ++i )
     {
         if ( mlt->GetTrack ( i )->GetNumEvents() > 0 )
@@ -97,11 +97,11 @@ void DumpMIDIMultiTrack ( MIDIMultiTrack *mlt )
     MIDITimedBigMessage *msg;
     fprintf ( stdout , "Clocks per beat: %d\n\n", mlt->GetClksPerBeat() );
     i.GoToTime ( 0 );
-    
+
     do
     {
         int trk_num;
-        
+
         if ( i.GetCurEvent ( &trk_num, &msg ) )
         {
             fprintf ( stdout, "#%2d - ", trk_num );
@@ -118,14 +118,14 @@ void PlayDumpSequencer ( MIDISequencer *seq )
     MIDITimedBigMessage ev;
     int ev_track;
     seq->GoToTimeMs ( pretend_clock_time );
-    
+
     if ( !seq->GetNextEventTimeMs ( &next_event_time ) )
     {
         return;
     }
-    
+
     // simulate a clock going forward with 10ms resolution for 1 minute
-    
+
     for ( ; pretend_clock_time < 60.0 * 1000.0; pretend_clock_time += 10.0 )
     {
         // find all events that came before or a the current time
@@ -139,7 +139,7 @@ void PlayDumpSequencer ( MIDISequencer *seq )
                           pretend_clock_time, next_event_time, ev_track );
                 DumpMIDITimedBigMessage ( &ev );
                 // now find the next message
-                
+
                 if ( !seq->GetNextEventTimeMs ( &next_event_time ) )
                 {
                     // no events left so end
@@ -167,6 +167,6 @@ int main ( int argc, char **argv )
         //DumpMIDIMultiTrack( &tracks );
         PlayDumpSequencer ( &seq );
     }
-    
+
     return 0;
 }

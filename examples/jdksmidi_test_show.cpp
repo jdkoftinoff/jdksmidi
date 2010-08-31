@@ -35,6 +35,6 @@ int main ( int argc, char **argv )
         jdksmidi::MIDIFileRead reader ( &rs, &shower );
         reader.Parse();
     }
-    
+
     return 0;
 }

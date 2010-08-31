@@ -37,7 +37,7 @@
 int main ( int argc, char **argv )
 {
     int return_code = -1;
-    
+
     if ( argc > 2 )
     {
         const char *infile_name = argv[1];
@@ -54,7 +54,7 @@ int main ( int argc, char **argv )
         reader.Parse();
         // create the output stream
         jdksmidi::MIDIFileWriteStreamFileName out_stream ( outfile_name );
-        
+
         if ( out_stream.IsValid() )
         {
             // the object which takes the midi tracks and writes the midifile to the output stream
@@ -65,29 +65,29 @@ int main ( int argc, char **argv )
             // extract the original multitrack division and number of tracks
             int num_tracks = reader.GetNumberTracks();
             int division = reader.GetDivision();
-            
+
             // write the output file
             if ( writer.Write ( num_tracks, division ) )
             {
                 return_code = 0;
             }
-            
+
             else
             {
                 fprintf ( stderr, "Error writing file '%s'\n", outfile_name );
             }
         }
-        
+
         else
         {
             fprintf ( stderr, "Error opening file '%s'\n", outfile_name );
         }
     }
-    
+
     else
     {
         fprintf ( stderr, "usage:\n\tjdksmidi_rewrite_midifile INFILE.mid OUTFILE.mid\n" );
     }
-    
+
     return return_code;
 }

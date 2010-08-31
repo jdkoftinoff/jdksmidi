@@ -49,141 +49,141 @@ namespace jdksmidi
 {
 
 
-    MIDIEditTrackEventMatcher::MIDIEditTrackEventMatcher()
-    {
-    }
-    
-    MIDIEditTrackEventMatcher::~MIDIEditTrackEventMatcher()
-    {
-    }
-    
-    
-    MIDIEditTrack::MIDIEditTrack ( MIDITrack *track_ )
+MIDIEditTrackEventMatcher::MIDIEditTrackEventMatcher()
+{
+}
+
+MIDIEditTrackEventMatcher::~MIDIEditTrackEventMatcher()
+{
+}
+
+
+MIDIEditTrack::MIDIEditTrack ( MIDITrack *track_ )
         :
         track ( track_ )
-    {
-        ENTER ( "MIDIEditTrack::MIDIEditTrack()" );
-    }
-    
-    MIDIEditTrack::~MIDIEditTrack()
-    {
-        ENTER ( "MIDIEditTrack::~MIDIEditTrack()" );
-    }
-    
-    
-    void  MIDIEditTrack::Process (
-        MIDIClockTime start_time,
-        MIDIClockTime end_time,
-        MIDIProcessor *process,
-        MIDIEditTrackEventMatcher *match
-    )
-    {
-        // TODO: Process
-    }
-    
-    
-    
+{
+    ENTER ( "MIDIEditTrack::MIDIEditTrack()" );
+}
+
+MIDIEditTrack::~MIDIEditTrack()
+{
+    ENTER ( "MIDIEditTrack::~MIDIEditTrack()" );
+}
+
+
+void  MIDIEditTrack::Process (
+    MIDIClockTime start_time,
+    MIDIClockTime end_time,
+    MIDIProcessor *process,
+    MIDIEditTrackEventMatcher *match
+)
+{
+    // TODO: Process
+}
+
+
+
 //
 // Truncate erases all events after a certain time. then
 // adds appropriate note off's
 //
-    void MIDIEditTrack::Truncate ( MIDIClockTime start_time )
-    {
-        ENTER ( "TO DO: MIDIEditTrack::Truncate()" );
-        // TO DO:
-    }
-    
-    
-    
-    
-    
+void MIDIEditTrack::Truncate ( MIDIClockTime start_time )
+{
+    ENTER ( "TO DO: MIDIEditTrack::Truncate()" );
+    // TO DO:
+}
+
+
+
+
+
 //
 // this merge function merges two other tracks into this track.
 // this is the faster form of merge
 //
-    void MIDIEditTrack::Merge (
-        MIDITrack *trk1,
-        MIDITrack *trk2,
-        MIDIEditTrackEventMatcher *match1,
-        MIDIEditTrackEventMatcher *match2
-    )
-    {
-        ENTER ( "TO DO: MIDIEditTrack::Merge()" );
-        // TO DO:
-    }
-    
-    
-    
-    
-    
-    
+void MIDIEditTrack::Merge (
+    MIDITrack *trk1,
+    MIDITrack *trk2,
+    MIDIEditTrackEventMatcher *match1,
+    MIDIEditTrackEventMatcher *match2
+)
+{
+    ENTER ( "TO DO: MIDIEditTrack::Merge()" );
+    // TO DO:
+}
+
+
+
+
+
+
 //
 // this erase function will erase all events from start to end time
 // and can be jagged or not.
 //
-    void MIDIEditTrack::Erase (
-        MIDIClockTime start,
-        MIDIClockTime end,
-        bool jagged,
-        MIDIEditTrackEventMatcher *match
-    )
-    {
-        ENTER ( "TO DO: MIDIEditTrack::Erase()" );
-        // TO DO:
-    }
-    
-    
-    
-    
-    
+void MIDIEditTrack::Erase (
+    MIDIClockTime start,
+    MIDIClockTime end,
+    bool jagged,
+    MIDIEditTrackEventMatcher *match
+)
+{
+    ENTER ( "TO DO: MIDIEditTrack::Erase()" );
+    // TO DO:
+}
+
+
+
+
+
 //
 // this delete function will delete all events like erase and then
 // shift the events over
 //
-    void MIDIEditTrack::Delete (
-        MIDIClockTime start,
-        MIDIClockTime end,
-        bool jagged,
-        MIDIEditTrackEventMatcher *match
-    )
-    {
-        ENTER ( "TO DO: MIDIEditTrack::Delete()" );
-        // TO DO:
-    }
-    
-    
-    
-    
+void MIDIEditTrack::Delete (
+    MIDIClockTime start,
+    MIDIClockTime end,
+    bool jagged,
+    MIDIEditTrackEventMatcher *match
+)
+{
+    ENTER ( "TO DO: MIDIEditTrack::Delete()" );
+    // TO DO:
+}
+
+
+
+
 //
 // this insert function will insert 'length' clicks starting at
 // the events at start time.
 //
-    void MIDIEditTrack::Insert (
-        MIDIClockTime start,
-        MIDIClockTime length
-    )
-    {
-        ENTER ( "TO DO: MIDIEditTrack::Insert()" );
-        // TO DO:
-    }
-    
-    
-    
-    
+void MIDIEditTrack::Insert (
+    MIDIClockTime start,
+    MIDIClockTime length
+)
+{
+    ENTER ( "TO DO: MIDIEditTrack::Insert()" );
+    // TO DO:
+}
+
+
+
+
 //
 // this shift function will shift all event times by an offset.
 //
-    void MIDIEditTrack::Shift (
-        signed long offset,
-        MIDIEditTrackEventMatcher *match
-    )
-    {
-        ENTER ( "TO DO: MIDIEditTrack::Shift()" );
-        // TO DO:
-    }
-    
-    
-    
+void MIDIEditTrack::Shift (
+    signed long offset,
+    MIDIEditTrackEventMatcher *match
+)
+{
+    ENTER ( "TO DO: MIDIEditTrack::Shift()" );
+    // TO DO:
+}
+
+
+
 }
 
 #if 0
@@ -213,37 +213,37 @@ static int cmpmsgtime ( const void *a, const void *b )
     //
     Boolean n1 = m1->IsNOP();
     Boolean n2 = m2->IsNOP();
-    
+
     if ( n1 && n2 )
         return 0;
-        
+
     if ( n1 )
         return 1;
-        
+
     if ( n2 )
         return -1;
-        
+
     //
     // Compare the event times
     //
     ulong t1, t2;
     t1 = m1->GetTime();
     t2 = m2->GetTime();
-    
+
     if ( t1 < t2 )
         return -1;
-        
+
     if ( t1 > t2 )
         return 1;
-        
+
     // the times are the same. put note ons first.
-    
+
     if ( m1->GetStatus() == M_NOTE_ON && m1->byte2 != 0 )
         return -1;
-        
+
     if ( m2->GetStatus() == M_NOTE_ON && m2->byte2 != 0 )
         return 1;
-        
+
     return 0;
 }
 
@@ -265,7 +265,7 @@ void EMIDITrack::Sort()
     //
     ulong t1 = buffer[last_event-1].GetTime();
     ulong t2 = buffer[last_event].GetTime();
-    
+
     if ( t1 > t2 )
         buffer[last_event].SetTime ( t1 );
 }
@@ -281,7 +281,7 @@ void EMIDITrack::CopyEvent ( MIDITrack *t, unsigned int ev )
     //
     // is it a mark?
     //
-    
+
     if ( m.IsMark() )
     {
         //
@@ -322,12 +322,12 @@ void EMIDITrack::CopyEvent ( MIDITrack *t, unsigned int ev )
             //
             return;
         }
-        
+
         //
         // All other marks are just copied over
         //
     }
-    
+
     Put ( m );
 }
 
@@ -340,24 +340,24 @@ void EMIDITrack::Compress()
     //
     // find the first NOP
     //
-    
+
     for ( to_ev = 0; to_ev < last_event; to_ev++ )
     {
         if ( buffer[to_ev].IsNOP() )
             break;
     }
-    
+
     //
     // if there is no NOP, then there is no way to compress
     //
-    
+
     if ( to_ev == last_event )
         return;
-        
+
     //
     // go through the buffer and compress, including the last DATA END event
     //
-    
+
     for ( from_ev = to_ev + 1; from_ev <= last_event; from_ev++ )
     {
         //
@@ -380,23 +380,23 @@ void EMIDITrack::Compress()
             //
             // find the next NOP event.
             //
-            
+
             for ( to_ev++; to_ev < last_event; to_ev++ )
             {
                 if ( buffer[to_ev].IsNOP() )
                     break;
             }
-            
+
             //
             // if there is no more NOP's left,
             // then we are done.
             //
-            
+
             if ( to_ev >= last_event )
                 break;
         }
     }
-    
+
     //
     // Ok, everything is compacted; we gotta now change the
     // last_event to the new value
@@ -410,16 +410,16 @@ void EMIDITrack::Truncate ( ulong start_time )
     // find the first event at start_time or greater
     // or the data end event
     unsigned int ev;
-    
+
     for ( ev = 0; ev < last_event; ev++ )
     {
         if ( buffer[ev].IsDataEnd() )
             break;
-            
+
         if ( buffer[ev].GetTime() >= start_time )
             break;
     }
-    
+
     //
     // now ev contains the event number that we truncate at
     //
@@ -441,7 +441,7 @@ void EMIDITrack::FixNotes()
     //
     // Go through the MIDIEvents, keeping track of all note on events.
     //
-    
+
     for ( unsigned int ev = 0; ev <= last_event; ev++ )
     {
         if ( buffer[ev].IsDataEnd() )
@@ -449,15 +449,15 @@ void EMIDITrack::FixNotes()
             m.SetTime ( buffer[ev].GetTime() );
             break;
         }
-        
+
         matrix->Process ( buffer[ev] );
     }
-    
+
     //
     // now put a note off message for each note that was left on
     // at the end of the track. Do this for each channel.
     //
-    
+
     for ( uchar channel = 0; channel < 16; channel++ )
     {
         if ( matrix->GetChannelCount ( channel ) > 0 )
@@ -465,7 +465,7 @@ void EMIDITrack::FixNotes()
             for ( uchar note = 0; note < 128; note++ )
             {
                 uchar num = matrix->GetNoteCount ( channel, note );
-                
+
                 for ( uchar c = 0; c < num; c++ )
                 {
                     m.NoteOff ( channel, note, 64 );
@@ -474,7 +474,7 @@ void EMIDITrack::FixNotes()
             }
         }
     }
-    
+
     delete matrix;
 }
 
@@ -492,7 +492,7 @@ void EMIDITrack::Merge ( MIDITrack *trk1, MIDITrack *trk2 )
     //
     // loop until all events of both tracks are transferred
     //
-    
+
     while ( ( trk1_ev < trk1_max ) || ( trk2_ev < trk2_max ) )
     {
         //
@@ -510,11 +510,11 @@ void EMIDITrack::Merge ( MIDITrack *trk1, MIDITrack *trk2 )
             //
             continue;
         }
-        
+
         //
         // is track 2 completed and track 1 not complete?
         //
-        
+
         if ( ( trk2_ev >= trk2_max ) && ( trk1_ev < trk1_max ) )
         {
             //
@@ -526,7 +526,7 @@ void EMIDITrack::Merge ( MIDITrack *trk1, MIDITrack *trk2 )
             //
             continue;
         }
-        
+
         //
         // ok since we got here, both tracks are not completed yet.
         // we gotta compare times to see which event we copy over
@@ -535,7 +535,7 @@ void EMIDITrack::Merge ( MIDITrack *trk1, MIDITrack *trk2 )
         TimedMIDIMessage m1, m2;
         trk1->GetEvent ( trk1_ev, m1 );
         trk2->GetEvent ( trk2_ev, m2 );
-        
+
         if ( m1.GetTime() < m2.GetTime() )
         {
             //
@@ -543,7 +543,7 @@ void EMIDITrack::Merge ( MIDITrack *trk1, MIDITrack *trk2 )
             //
             CopyEvent ( trk1, trk1_ev++ );
         }
-        
+
         else
         {
             //
@@ -561,7 +561,7 @@ void EMIDITrack::Merge ( MIDITrack *trk )
     {
         CopyEvent ( trk, ev );
     }
-    
+
     Sort();
     FixNotes();
 }
@@ -596,7 +596,7 @@ void EMIDITrack::Erase ( ulong start, ulong end, Boolean jagged )
     //
     if ( end <= start )
         return;
-        
+
     Boolean changed = FALSE; // set to TRUE if anything is erased.
     //
     // start up the MIDIMatrix objects.
@@ -612,7 +612,7 @@ void EMIDITrack::Erase ( ulong start, ulong end, Boolean jagged )
     // go through all the events and 'NOP' just the ones
     // in that time period.
     //
-    
+
     for ( unsigned int ev = 0; ev < last_event; ev++ )
     {
         ulong time = buffer[ev].GetTime();
@@ -620,13 +620,13 @@ void EMIDITrack::Erase ( ulong start, ulong end, Boolean jagged )
         // if the event is before our erase region,
         // then give it to the before_matrix object
         //
-        
+
         if ( time < start )
         {
             before_matrix->Process ( buffer[ev] );
             continue;
         }
-        
+
         if ( time >= start && time < end )
         {
             //
@@ -634,16 +634,16 @@ void EMIDITrack::Erase ( ulong start, ulong end, Boolean jagged )
             // erased.
             //
             TimedMIDIMessage m = buffer[ev];
-            
+
             if ( ! FilterEvent ( m ) )
                 continue;
-                
+
             //
             // give this event to our during_matrix object
             // to keep track of note on's
             //
             during_matrix->Process ( buffer[ev] );
-            
+
             if ( buffer[ev].IsMark() )
             {
                 //
@@ -658,11 +658,11 @@ void EMIDITrack::Erase ( ulong start, ulong end, Boolean jagged )
                     unsigned int s = m.GetSysEx();
                     exclusives.Delete ( s );
                 }
-                
+
                 //
                 // is this event a MIDIText event?
                 //
-                
+
                 if ( m.IsText() )
                 {
                     //
@@ -672,14 +672,14 @@ void EMIDITrack::Erase ( ulong start, ulong end, Boolean jagged )
                     unsigned int t = m.GetText();
                     text.Delete ( t );
                 }
-                
+
                 //
                 // all other sequencer marks just get deleted.
                 //
                 changed = TRUE;
                 buffer[ev].SetNOP();
             }
-            
+
             else
             {
                 //
@@ -698,7 +698,7 @@ void EMIDITrack::Erase ( ulong start, ulong end, Boolean jagged )
                     //
                     uchar channel = buffer[ev].GetChannel();
                     uchar note = buffer[ev].GetNote();
-                    
+
                     if ( before_matrix->GetNoteCount ( channel, note ) != 0 )
                     {
                         //
@@ -712,20 +712,20 @@ void EMIDITrack::Erase ( ulong start, ulong end, Boolean jagged )
                         // then we shall move this note off to
                         // the 'start' time.
                         //
-                        
+
                         if ( !jagged )
                         {
                             buffer[ev].SetTime ( start );
                         }
                     }
-                    
+
                     else
                     {
                         changed = TRUE;
                         buffer[ev].SetNOP();
                     }
                 }
-                
+
                 else
                 {
                     //
@@ -741,14 +741,14 @@ void EMIDITrack::Erase ( ulong start, ulong end, Boolean jagged )
                 }
             }
         }
-        
+
         //
         // if the time of the event>end, and the event is
         // a note off event which was turned on in the
         // during_matrix object, then 'NOP' it. The note on
         // was deleted.
         //
-        
+
         if ( time >= end )
         {
             //
@@ -770,7 +770,7 @@ void EMIDITrack::Erase ( ulong start, ulong end, Boolean jagged )
                     //
                     uchar channel = buffer[ev].GetChannel();
                     uchar note = buffer[ev].GetNote();
-                    
+
                     if ( during_matrix->GetNoteCount ( channel, note ) )
                     {
                         //
@@ -785,15 +785,15 @@ void EMIDITrack::Erase ( ulong start, ulong end, Boolean jagged )
             }
         }
     }
-    
+
     //
     // If there were any events NOP'd
     // then we gotta compress them out of the way.
     //
-    
+
     if ( changed )
         Compress();
-        
+
     //
     // kill our helpful MIDIMatrix's
     //
@@ -812,7 +812,7 @@ void    EMIDITrack::Delete ( ulong start, ulong end, Boolean jagged )
     //
     if ( end <= start )
         return;
-        
+
     //
     // Erase the events
     //
@@ -825,7 +825,7 @@ void    EMIDITrack::Delete ( ulong start, ulong end, Boolean jagged )
     //
     // go through all events (including the last event, data end)
     //
-    
+
     for ( unsigned int ev = 0; ev <= last_event; ev++ )
     {
         //
@@ -835,7 +835,7 @@ void    EMIDITrack::Delete ( ulong start, ulong end, Boolean jagged )
         //
         // is it after the end time?
         //
-        
+
         if ( time >= end )
         {
             //
@@ -854,7 +854,7 @@ void EMIDITrack::Insert ( ulong start, ulong end )
     //
     if ( end < start )
         return;
-        
+
     //
     // calculate the amount of time we gotta add to the event times
     //
@@ -862,7 +862,7 @@ void EMIDITrack::Insert ( ulong start, ulong end )
     //
     // go through all the events, including the last DATA END event.
     //
-    
+
     for ( unsigned int ev = 0; ev <= last_event; ev++ )
     {
         //
@@ -872,7 +872,7 @@ void EMIDITrack::Insert ( ulong start, ulong end )
         //
         // is it after 'start' time?
         //
-        
+
         if ( time >= start )
         {
             //

@@ -30,37 +30,37 @@
 namespace jdksmidi
 {
 
-    class MIDIFileWriteMultiTrack
+class MIDIFileWriteMultiTrack
+{
+public:
+
+    MIDIFileWriteMultiTrack (
+        const MIDIMultiTrack *mlt_,
+        MIDIFileWriteStream *strm_
+    );
+
+    virtual ~MIDIFileWriteMultiTrack();
+
+    bool Write ( int num_tracks, int division );
+
+    bool Write ( int num_tracks )
     {
-        public:
-        
-            MIDIFileWriteMultiTrack (
-                const MIDIMultiTrack *mlt_,
-                MIDIFileWriteStream *strm_
-            );
-            
-            virtual ~MIDIFileWriteMultiTrack();
-            
-            bool Write ( int num_tracks, int division );
-            
-            bool Write ( int num_tracks )
-            {
-                return Write ( num_tracks, multitrack->GetClksPerBeat() );
-            }
-            bool Write()
-            {
-                return Write ( multitrack->GetNumTracks(), multitrack->GetClksPerBeat() );
-            }
-            
-        private:
-        
-            virtual bool PreWrite();
-            virtual bool PostWrite();
-            
-            const MIDIMultiTrack *multitrack;
-            MIDIFileWrite writer;
-    };
-    
+        return Write ( num_tracks, multitrack->GetClksPerBeat() );
+    }
+    bool Write()
+    {
+        return Write ( multitrack->GetNumTracks(), multitrack->GetClksPerBeat() );
+    }
+
+private:
+
+    virtual bool PreWrite();
+    virtual bool PostWrite();
+
+    const MIDIMultiTrack *multitrack;
+    MIDIFileWrite writer;
+};
+
 }
 
 

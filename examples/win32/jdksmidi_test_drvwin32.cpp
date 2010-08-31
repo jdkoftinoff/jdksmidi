@@ -60,7 +60,7 @@ int main ( int argc, char **argv )
         getchar();
         mgr.SeqStop();
     }
-    
+
     return 0;
 #endif
 }

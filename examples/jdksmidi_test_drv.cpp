@@ -39,7 +39,7 @@ void DumpTrackNames ( MIDISequencer *seq )
     fprintf ( stdout, "TEMPO = %f\n",
               seq->GetTrackState ( 0 )->tempobpm
             );
-            
+
     for ( int i = 0; i < seq->GetNumTracks(); ++i )
     {
         fprintf ( stdout, "TRK #%2d : NAME = '%s'\n",
@@ -57,12 +57,12 @@ void PlayDumpManager ( MIDIManager *mgr )
     seq->GoToTime ( ( unsigned long ) pretend_clock_time );
     mgr->SeqPlay();
     // simulate a clock going forward with 10ms resolution for 1 minute
-    
+
     for ( pretend_clock_time = 0.0; pretend_clock_time < 60.0 * 1000.0; pretend_clock_time += 100 )
     {
         mgr->GetDriver()->TimeTick ( ( unsigned long ) pretend_clock_time );
     }
-    
+
     mgr->SeqStop();
     mgr->GetDriver()->AllNotesOff();
 }
@@ -86,6 +86,6 @@ int main ( int argc, char **argv )
         DumpTrackNames ( &seq );
         PlayDumpManager ( &mgr );
     }
-    
+
     return 0;
 }
