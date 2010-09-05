@@ -9,12 +9,20 @@
 # Simplifies the building of a c/c++ library, tests, tools, examples, 
 # and documentation.
 #
+# Copyright (c) 2010, Jeff Koftinoff <jeff.koftinoff@ieee.org>
+# All rights reserved.
 #
-# for more information, including license information (GPL). 
-# Note that this tool being GPL does NOT mean that it can only 
-# be used to build GPL projects. You are free to use this software in 
-# any way but this software itself is GPL
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
 #
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 MAGICMAKE_DIR=$(PROJECT_TOP_DIR)
 
@@ -1210,7 +1218,7 @@ ifdef PREFIX
 TARGET_INSTALL_DIR?=$(PREFIX)
 TARGET_INSTALL_DEV_DIR?=$(PREFIX)
 else
-TARGET_INSTALL_PREFIX?=/opt/local
+TARGET_INSTALL_PREFIX?=/usr/local
 TARGET_INSTALL_DIR?=$(TARGET_INSTALL_PREFIX)/$(PROJECT)-$(PROJECT_VERSION)
 TARGET_INSTALL_DEV_DIR?=$(TARGET_INSTALL_PREFIX)/$(PROJECT)-$(PROJECT_VERSION)-dev
 endif
