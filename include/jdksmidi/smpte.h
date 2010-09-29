@@ -66,9 +66,10 @@ enum SAMPLE_RATE
 // MDGetSMPTERateFrequency() converts the SMPTE_RATE enum to a double frequency.
 //
 
+extern const double smpte_smpte_rates[];
+
 inline double GetSMPTERateFrequency ( SMPTE_RATE r )
 {
-    extern const double smpte_smpte_rates[];
     return smpte_smpte_rates[ ( int ) r];
 }
 
@@ -78,9 +79,10 @@ inline double GetSMPTERateFrequency ( SMPTE_RATE r )
 // frequency times 100
 //
 
+extern const double smpte_smpte_rates_long[];
+
 inline long GetSMPTERateFrequencyLong ( SMPTE_RATE r )
 {
-    extern const double smpte_smpte_rates_long[];
     return ( long ) smpte_smpte_rates_long[ ( int ) r];
 }
 
