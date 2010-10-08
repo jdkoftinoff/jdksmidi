@@ -4,7 +4,7 @@
 # by Jeff Koftinoff <jeffk@jdkoftinoff.com> 
 # and J.D. Koftinoff Software Ltd.
 #
-# Version 8: http://wiki.github.com/jdkoftinoff/magicmake/
+# Version 9: http://wiki.github.com/jdkoftinoff/magicmake/
 #
 # Simplifies the building of a c/c++ library, tests, tools, examples, 
 # and documentation.
@@ -88,6 +88,12 @@ PREPROCESS_FLAGS+=
 PRECOMPILE_H_FLAGS?=-x c-header
 PRECOMPILE_HH_FLAGS?=-x c++-header
 endif
+
+ETAGS_FLAGS?=
+ETAGS_LANGUAGE_FLAG?=--language-force=c++
+CTAGS_FLAGS?=
+CTAGS_LANGUAGE_FLAG?=--language-force=c++
+
 
 
 # We are not cross compiling by default
@@ -2316,11 +2322,11 @@ endif
 
 TAGS : $(LIB_CPP_FILES) $(LIB_CC_FILES) $(LIB_C_FILES) $(LIB_H_FILES)
 	@echo "TAGS:"
-	@etags --language c++ $(shell find $(LIB_INCLUDE_DIR) $(LIB_SRC_DIR) $(LIB_TESTS_DIR) $(LIB_EXAMPLES_DIR) $(LIB_TOOLS_DIR) \( -name "*.cpp" -or -name "*.cc" -or -name "*.c" -or -name "*.h" \) )
+	@etags $(ETAGS_FLAGS) $(ETAGS_LANGUAGE_FLAG) $(shell find $(LIB_INCLUDE_DIR) $(LIB_SRC_DIR) $(LIB_TESTS_DIR) $(LIB_EXAMPLES_DIR) $(LIB_TOOLS_DIR) \( -name "*.cpp" -or -name "*.cc" -or -name "*.c" -or -name "*.h" \) )
 
 tags : $(LIB_CPP_FILES) $(LIB_CC_FILES) $(LIB_C_FILES) $(LIB_H_FILES)
 	@echo "tags:"
-	@ctags --language c++ $(shell find $(LIB_INCLUDE_DIR) $(LIB_SRC_DIR) $(LIB_TESTS_DIR) $(LIB_EXAMPLES_DIR) $(LIB_TOOLS_DIR) \( -name "*.cpp" -or -name "*.cc" -or -name "*.c" -or -name "*.h" \) )
+	@ctags $(CTAGS_FLAGS) $(CTAGS_LANGUAGE_FLAG) $(shell find $(LIB_INCLUDE_DIR) $(LIB_SRC_DIR) $(LIB_TESTS_DIR) $(LIB_EXAMPLES_DIR) $(LIB_TOOLS_DIR) \( -name "*.cpp" -or -name "*.cc" -or -name "*.c" -or -name "*.h" \) )
 
 ifeq ($(CROSS_COMPILING),1)
 .PHONY : native-dirs
