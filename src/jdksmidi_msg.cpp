@@ -176,7 +176,7 @@ const char * MIDIMessage::MsgToText ( char *txt ) const
     // pad the rest with spaces
     //
     {
-        int len = strlen ( txt );
+        size_t len = strlen ( txt ); // VRM@
         char *p = txt + len;
 
         while ( len < 45 )
