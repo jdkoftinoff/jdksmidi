@@ -52,7 +52,7 @@ bool MIDIFileWriteMultiTrack::Write ( int num_tracks, int division )
     }
 
     // first, write the header.
-    writer.WriteFileHeader ( ( num_tracks > 0 ), num_tracks, division );
+    writer.WriteFileHeader ( ( num_tracks > 1 )? 1:0, num_tracks, division ); // VRM@
     // now write each track
 
     for ( int i = 0; i < num_tracks; ++i )
