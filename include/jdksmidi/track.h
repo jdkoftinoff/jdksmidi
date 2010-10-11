@@ -153,6 +153,9 @@ public:
     bool PutEvent ( const MIDITimedMessage &msg, MIDISystemExclusive *sysex );
     bool SetEvent ( int event_num, const MIDITimedBigMessage &msg );
 
+    // put text message with known length, or evaluate its length if zero
+    bool PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int text_length = 0 ); // VRM@
+
     bool MakeEventNoOp ( int event_num );
 
     bool FindEventNumber ( MIDIClockTime time, int *event_num ) const;
