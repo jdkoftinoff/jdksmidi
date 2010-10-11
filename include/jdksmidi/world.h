@@ -68,6 +68,10 @@ MIDI Files easily.
 
 */
 
+#ifdef WIN32
+#pragma warning(disable: 4996) // VRM@ to take away "function was declared deprecated" warnings
+#endif
+
 
 #endif
 
