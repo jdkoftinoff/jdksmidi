@@ -381,7 +381,7 @@ void MIDIFileWrite::WriteEvent ( unsigned long time, unsigned short text_type, c
     WriteCharacter ( ( unsigned char ) 0xff );  // META-Event
     WriteCharacter ( ( unsigned char ) text_type ); // Text event type
     IncrementCounters ( 2 );
-    long len = strlen ( text );
+    long len = ( long ) strlen ( text ); // VRM@
     IncrementCounters ( WriteVariableNum ( len ) );
 
     while ( *text )

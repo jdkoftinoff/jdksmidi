@@ -147,7 +147,7 @@ bool AdvancedSequencer::Load ( const char *fname )
 {
     char realname[1024];
     strcpy ( realname, fname );
-    int orignamelen = strlen ( fname );
+    int orignamelen = ( int ) strlen ( fname ); // VRM@
     chain_mode = false;
 
     if ( orignamelen > 0 )
