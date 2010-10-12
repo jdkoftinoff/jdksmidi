@@ -427,16 +427,15 @@ bool MIDITrack::PutEvent ( const MIDITimedMessage &msg, MIDISystemExclusive *sys
     return true;
 }
 
-bool MIDITrack::PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int text_length )
-// func by VRM@
+bool MIDITrack::PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length )
 {
   MIDITimedMessage msg;
   msg.SetTime( time );
   msg.SetMetaEvent( meta_event_type , 0 );
 
-  if ( 0 == text_length ) text_length = (int) strlen( text );
-  MIDISystemExclusive sysex( text_length );
-  for ( int i = 0; i < text_length; ++i ) sysex.PutSysByte ( text[i] );
+  if ( length < 0 ) length = (int) strlen( text );
+  MIDISystemExclusive sysex( length );
+  for ( int i = 0; i < length; ++i ) sysex.PutSysByte ( text[i] );
 
   return PutEvent( msg, &sysex );
 }
