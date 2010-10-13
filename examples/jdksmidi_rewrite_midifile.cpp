@@ -34,60 +34,70 @@
 #include "jdksmidi/fileshow.h"
 #include "jdksmidi/filewritemultitrack.h"
 
+using namespace jdksmidi;
+
 int main ( int argc, char **argv )
 {
-    int return_code = -1;
+  int return_code = -1;
 
-    if ( argc > 2 )
+  if ( argc > 2 )
+  {
+    const char *infile_name = argv[1];
+    const char *outfile_name = argv[2];
+
+    // the stream used to read the input file
+    MIDIFileReadStreamFile rs ( infile_name );
+
+    // the multitrack object which will hold all the tracks
+    MIDIMultiTrack tracks;
+
+    // the object which loads the tracks into the tracks object
+    MIDIFileReadMultiTrack track_loader ( &tracks );
+
+    // the object which parses the midifile and gives it to the multitrack loader
+    MIDIFileRead reader ( &rs, &track_loader );
+
+    // load the midifile into the multitrack object
+    reader.Parse();
+
+    // create the output stream
+    MIDIFileWriteStreamFileName out_stream ( outfile_name );
+
+    if ( out_stream.IsValid() )
     {
-        const char *infile_name = argv[1];
-        const char *outfile_name = argv[2];
-        // the stream used to read the input file
-        jdksmidi::MIDIFileReadStreamFile rs ( infile_name );
-        // the object which will hold all the tracks
-        jdksmidi::MIDIMultiTrack tracks;
-        // the object which loads the tracks into the tracks object
-        jdksmidi::MIDIFileReadMultiTrack track_loader ( &tracks );
-        // the object which parses the midifile and gives it to the multitrack loader
-        jdksmidi::MIDIFileRead reader ( &rs, &track_loader );
-        // load the midifile into the multitrack object
-        reader.Parse();
-        // create the output stream
-        jdksmidi::MIDIFileWriteStreamFileName out_stream ( outfile_name );
+        // the object which takes the midi tracks and writes the midifile to the output stream
+        MIDIFileWriteMultiTrack writer (
+            &tracks,
+            &out_stream
+        );
 
-        if ( out_stream.IsValid() )
-        {
-            // the object which takes the midi tracks and writes the midifile to the output stream
-            jdksmidi::MIDIFileWriteMultiTrack writer (
-                &tracks,
-                &out_stream
-            );
-            // extract the original multitrack division and number of tracks
-            int num_tracks = reader.GetNumberTracks();
-            int division = reader.GetDivision();
+      // extract the original multitrack division
+      int division = reader.GetDivision();
+      
+      // get really number of track, used in reader.Parse() process
+      int num_tracks = tracks.GetNumTracksWithEvents(); // VRM@
 
-            // write the output file
-            if ( writer.Write ( num_tracks, division ) )
-            {
-                return_code = 0;
-            }
-
-            else
-            {
-                fprintf ( stderr, "Error writing file '%s'\n", outfile_name );
-            }
-        }
-
-        else
-        {
-            fprintf ( stderr, "Error opening file '%s'\n", outfile_name );
-        }
+      // write the output midi file
+      if ( writer.Write ( num_tracks, division ) )
+      {
+        fprintf ( stdout, "Number of tracks with events %i\n", num_tracks ); // VRM@
+        return_code = 0;
+      }
+      else
+      {
+        fprintf ( stderr, "Error writing file '%s'\n", outfile_name );
+      }
     }
-
     else
     {
-        fprintf ( stderr, "usage:\n\tjdksmidi_rewrite_midifile INFILE.mid OUTFILE.mid\n" );
+      fprintf ( stderr, "Error opening file '%s'\n", outfile_name );
     }
-
-    return return_code;
+  }
+  else
+  {
+    fprintf ( stderr, "usage:\n\tjdkmidi_rewrite_midifile INFILE.mid OUTFILE.mid\n" );
+  }
+  
+  return return_code;
 }
+

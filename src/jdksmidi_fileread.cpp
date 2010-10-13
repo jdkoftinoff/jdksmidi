@@ -380,9 +380,9 @@ int MIDIFileRead::ReadMT ( unsigned long type, int skip )
 
 int MIDIFileRead::ReadHeader()
 {
-    int   the_format;
-    int  ntrks;
-    int   division;
+    int the_format;
+    int ntrks;
+    int division;
 
     if ( ReadMT ( _MThd, skip_init ) == 0xffff )
         return 0;
@@ -400,6 +400,9 @@ int MIDIFileRead::ReadHeader()
 
     header_format = the_format;
     header_ntrks = ntrks;
+    // fix error if midi file have header_format = 0 and header_ntrks > 1
+    if ( header_format == 0 && header_ntrks > 1 ) header_format = 1; // VRM@
+
     header_division = division;
     event_handler->mf_header ( the_format, ntrks, division );
     // printf( "\nto be read = %d\n", to_be_read );

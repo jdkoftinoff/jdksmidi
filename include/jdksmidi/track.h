@@ -160,8 +160,9 @@ public:
 
     bool FindEventNumber ( MIDIClockTime time, int *event_num ) const;
 
-    int GetBufferSize() const;
-    int GetNumEvents() const;
+    int GetBufferSize() const { return buf_size; }
+    int GetNumEvents() const { return num_events; }
+    bool IsTrackEmpty() const { return num_events == 0; } // VRM@
 
 private:
 

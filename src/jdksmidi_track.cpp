@@ -535,14 +535,4 @@ MIDITimedBigMessage *MIDITrack::GetEvent ( int event_num )
     }
 }
 
-int MIDITrack::GetBufferSize() const
-{
-    return buf_size;
-}
-
-int MIDITrack::GetNumEvents() const
-{
-    return num_events;
-}
-
 }

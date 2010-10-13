@@ -50,26 +50,19 @@ public:
     MIDIMultiTrack ( int max_num_tracks_ = 64, bool deletable_ = true );
     virtual ~MIDIMultiTrack();
 
-    void SetTrack ( int trk, MIDITrack *t );
-    MIDITrack *GetTrack ( int trk );
-    const MIDITrack *GetTrack ( int trk ) const;
-    int GetNumTracks() const
-    {
-        return num_tracks;
-    }
+    void SetTrack ( int trk, MIDITrack *t ) { tracks[trk] = t; }
 
+    MIDITrack *GetTrack ( int trk ) { return tracks[trk]; }
+    const MIDITrack *GetTrack ( int trk ) const  { return tracks[trk]; }
+
+    int GetNumTracks() const { return num_tracks; }
+    // return number of tracks with events, last tracks have no events
+    int GetNumTracksWithEvents() const; // func by VRM@
 
     void Clear();
 
-    int GetClksPerBeat() const
-    {
-        return clks_per_beat;
-    }
-
-    void SetClksPerBeat ( int c )
-    {
-        clks_per_beat = c;
-    }
+    int GetClksPerBeat() const { return clks_per_beat; }
+    void SetClksPerBeat ( int c ) { clks_per_beat = c; }
 
 protected:
 
