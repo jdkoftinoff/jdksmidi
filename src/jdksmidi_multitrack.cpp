@@ -96,22 +96,17 @@ void MIDIMultiTrack::Clear()
     }
 }
 
-void MIDIMultiTrack::SetTrack ( int trk, MIDITrack *t )
+int MIDIMultiTrack::GetNumTracksWithEvents() const
 {
-    tracks[trk] = t;
+  int i;
+
+  for ( i = num_tracks - 1; i >= 0; --i )
+  {
+    if ( !tracks[i]->IsTrackEmpty() ) break;
+  }
+
+  return i+1;
 }
-
-
-MIDITrack *MIDIMultiTrack::GetTrack ( int trk )
-{
-    return tracks[trk];
-}
-
-const MIDITrack *MIDIMultiTrack::GetTrack ( int trk ) const
-{
-    return tracks[trk];
-}
-
 
 
 
