@@ -69,6 +69,10 @@ public:
         f = fopen ( fname, "rb" );
     }
 
+#ifdef WIN32
+    explicit MIDIFileReadStreamFile ( const wchar_t *fname ) { f = _wfopen ( fname, L"rb" ); } // func by VRM@
+#endif
+
     explicit MIDIFileReadStreamFile ( FILE *f_ ) : f ( f_ )
     {
     }
@@ -81,6 +85,7 @@ public:
         }
     }
 
+    bool IsValid() { return f != 0; } // VRM@
 
     virtual int ReadChar()
     {
@@ -150,8 +155,8 @@ public:
 // Higher level dispatch functions
 //
     virtual void UpdateTime ( MIDIClockTime delta_time );
-    virtual void    MetaEvent ( MIDIClockTime time, int type, int len, unsigned char *buf );
-    virtual void    ChanMessage ( const MIDITimedMessage &msg );
+    virtual void MetaEvent ( MIDIClockTime time, int type, int len, unsigned char *buf );
+    virtual void ChanMessage ( const MIDITimedMessage &msg, bool optimize_tracks ); // VRM@
 
 };
 
@@ -168,18 +173,12 @@ public:
 
     virtual bool    Parse();
 
-    int  GetFormat()
-    {
-        return header_format;
-    }
-    int  GetNumberTracks()
-    {
-        return header_ntrks;
-    }
-    int  GetDivision()
-    {
-        return header_division;
-    }
+    int  GetFormat() { return header_format; }
+    int  GetNumberTracks() { return header_ntrks; }
+    int  GetDivision() { return header_division; }
+    bool GetOptimizeTracks() { return optimize_tracks; } // VRM@
+    // false argument to make internal tracks structure identical to file tracks structure 
+    void SetOptimizeTracks( bool optimize_tracks_ ) { optimize_tracks = optimize_tracks_; } // VRM@
 
 protected:
 
@@ -220,6 +219,7 @@ private:
     int  header_format;
     int  header_ntrks;
     int  header_division;
+    bool optimize_tracks; // true on default VRM@
 
     MIDIFileReadStream *input_stream;
     MIDIFileEvents *event_handler;

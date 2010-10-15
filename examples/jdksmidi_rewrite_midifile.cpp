@@ -36,6 +36,27 @@
 
 using namespace jdksmidi;
 
+
+// delete all text events from multitrack object
+void DeleteAllTracksText( MIDIMultiTrack &tracks ) // func by VRM@
+{
+  int num_tracks = tracks.GetNumTracksWithEvents();
+
+  for ( int nt = 0; nt < num_tracks; ++nt )
+  {
+    MIDITrack &trk = *tracks.GetTrack( nt );
+    int num_events = trk.GetNumEvents();
+
+    for ( int ne = 0; ne < num_events; ++ne )
+    {
+      MIDITimedBigMessage *msg = trk.GetEvent( ne );
+      // convert any text midi event to META_NO_OPERATION event
+      if ( msg->IsTextEvent() ) trk.MakeEventNoOp( ne );
+    }
+  }
+}
+
+
 int main ( int argc, char **argv )
 {
   int return_code = -1;
@@ -47,6 +68,11 @@ int main ( int argc, char **argv )
 
     // the stream used to read the input file
     MIDIFileReadStreamFile rs ( infile_name );
+    if ( !rs.IsValid() ) // VRM@
+    {
+      fprintf ( stderr, "Error opening file '%s'\n", infile_name );
+      return return_code;
+    }
 
     // the multitrack object which will hold all the tracks
     MIDIMultiTrack tracks;
@@ -57,19 +83,35 @@ int main ( int argc, char **argv )
     // the object which parses the midifile and gives it to the multitrack loader
     MIDIFileRead reader ( &rs, &track_loader );
 
+    // default value for optimize_tracks = true, see MIDIFileRead::MIDIFileRead()
+    bool optimize_tracks = true;
+    if ( argc > 3 )
+    {
+      optimize_tracks = atoi( argv[3] ) != 0;
+      // don't change all tracks structure if optimize_tracks = false
+      reader.SetOptimizeTracks( optimize_tracks ); // VRM@
+    }
+
     // load the midifile into the multitrack object
-    reader.Parse();
+    bool opt1 = reader.GetOptimizeTracks();
+    if ( !reader.Parse() )
+    {
+      fprintf ( stderr, "Error parse file '%s'\n", infile_name ); // VRM@
+      return return_code;
+    }
+    bool opt2 = reader.GetOptimizeTracks();
+    if ( opt1 != opt2 ) fprintf ( stdout, "\nWarning: optimize tracks fail during '%s' parse\n", infile_name); // VRM@
+
+    // delete all text events if exist any argv[4]
+    if ( argc > 4 ) DeleteAllTracksText( tracks ); // VRM@
 
     // create the output stream
     MIDIFileWriteStreamFileName out_stream ( outfile_name );
 
     if ( out_stream.IsValid() )
     {
-        // the object which takes the midi tracks and writes the midifile to the output stream
-        MIDIFileWriteMultiTrack writer (
-            &tracks,
-            &out_stream
-        );
+      // the object which takes the midi tracks and writes the midifile to the output stream
+      MIDIFileWriteMultiTrack writer ( &tracks, &out_stream );
 
       // extract the original multitrack division
       int division = reader.GetDivision();
@@ -80,23 +122,17 @@ int main ( int argc, char **argv )
       // write the output midi file
       if ( writer.Write ( num_tracks, division ) )
       {
-        fprintf ( stdout, "Number of tracks with events %i\n", num_tracks ); // VRM@
+        fprintf ( stdout, "\nNumber of tracks with events %i\n", num_tracks ); // VRM@
         return_code = 0;
       }
       else
-      {
         fprintf ( stderr, "Error writing file '%s'\n", outfile_name );
-      }
     }
     else
-    {
       fprintf ( stderr, "Error opening file '%s'\n", outfile_name );
-    }
   }
   else
-  {
-    fprintf ( stderr, "usage:\n\tjdkmidi_rewrite_midifile INFILE.mid OUTFILE.mid\n" );
-  }
+    fprintf ( stderr, "usage:\n\tjdkmidi_rewrite_midifile IN.mid OUT.mid [optimize_tracks(0,1) [any arg for delete text]]\n" );
   
   return return_code;
 }

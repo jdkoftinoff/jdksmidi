@@ -124,9 +124,9 @@ void PlayDumpSequencer ( MIDISequencer *seq )
         return;
     }
 
-    // simulate a clock going forward with 10ms resolution for 1 minute
-
-    for ( ; pretend_clock_time < 60.0 * 1000.0; pretend_clock_time += 10.0 )
+    // simulate a clock going forward with 10 ms resolution for 1 hour
+    float max_time = 3600. * 1000.; // VRM@
+    for ( ; pretend_clock_time < max_time; pretend_clock_time += 10. )
     {
         // find all events that came before or a the current time
         while ( next_event_time <= pretend_clock_time )
@@ -151,6 +151,42 @@ void PlayDumpSequencer ( MIDISequencer *seq )
     }
 }
 
+// TO DO: fix problems (see below) and add this function to class MIDISequencer
+// recommended values for  time_precision_sec >= 0.001  and for  max_duration_hours = 1 ... 24
+double GetMisicDurationInSeconds(MIDISequencer &seq, float time_precision_sec = 0.1f, int max_duration_hours = 2) // func by VRM@
+{
+  double dur = 0.;
+  double clock_time;
+  float  next_event_time; // in milliseconds
+  const double tp_msec = 1000. * time_precision_sec;
+
+  MIDITimedBigMessage ev;
+  int ev_track;
+
+  seq.GoToTimeMs ( 0.f );
+  if ( !seq.GetNextEventTimeMs ( &next_event_time ) ) return dur;
+
+  // simulate a clock going forward with tp_msec resolution for hours
+  const double hours = max_duration_hours * 3600. * 1000.;
+  for ( clock_time = next_event_time = 0.f; clock_time < hours; clock_time += tp_msec )
+  {
+    // find all events that came before or a the current time
+    while ( double(next_event_time) <= clock_time )
+    {
+      if ( seq.GetNextEvent( &ev_track, &ev ) )
+      {
+        if ( !seq.GetNextEventTimeMs( &next_event_time ) ) // no events left so end
+        {
+          dur = 0.001f * clock_time;
+          return dur;
+        }
+      }
+    }
+  }
+  dur = 0.001f * clock_time;
+  return dur;
+}
+
 
 int main ( int argc, char **argv )
 {
@@ -163,10 +199,30 @@ int main ( int argc, char **argv )
 //    MIDISequencerGUIEventNotifierText notifier( stdout );
 //    MIDISequencer seq( &tracks, &notifier );
         MIDISequencer seq ( &tracks );
+
+/*
+  TO DO:
+  some midi files (for ex. bwv599.mid and bwv604.mid) with parameter (optimize_tracks = 1)
+  generate bad PlayDumpSequencer() and GetMisicDurationInSeconds() results!
+  may be bug contain in *.mid or in MIDISequencer::GetNextEvent() and GetNextEventTimeMs()
+*/
+        int optimize_tracks = 0;
+        if ( argc > 2 ) optimize_tracks = atoi ( argv[2] );
+        reader.SetOptimizeTracks( optimize_tracks != 0 ); // VRM@
         reader.Parse();
-        //DumpMIDIMultiTrack( &tracks );
-        PlayDumpSequencer ( &seq );
+
+        // DumpMIDIMultiTrack( &tracks );
+        // note that Sequencer generate "META-EVENT 7e,00" (META_BEAT_MARKER) in files dump,
+        // but files themselves not contain this meta event!
+        if ( argc > 3 ) PlayDumpSequencer ( &seq );
+
+        float time_precision_sec = 0.01f;
+        double dt = GetMisicDurationInSeconds( seq, time_precision_sec );
+        fprintf ( stdout, "\nMisic duration = %f seconds +- %f\n", dt, time_precision_sec );
     }
+    else
+      fprintf ( stderr, "usage:\n\tjdkmidi_test_sequencer FILE.mid [optimize_tracks(0,1) [any arg for Dump]]\n" );
 
     return 0;
 }
+

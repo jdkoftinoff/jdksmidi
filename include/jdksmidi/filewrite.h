@@ -75,6 +75,12 @@ public:
     {
     }
 
+#ifdef WIN32
+    MIDIFileWriteStreamFileName ( const wchar_t *fname ) : MIDIFileWriteStreamFile ( _wfopen ( fname, L"wb" ) ) // func by VRM@
+    {
+    }
+#endif
+
     bool IsValid()
     {
         return f != 0;
