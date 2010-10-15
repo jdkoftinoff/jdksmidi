@@ -97,15 +97,14 @@ void    MIDIFileReadMultiTrack::mf_header (
 }
 
 
-void    MIDIFileReadMultiTrack::ChanMessage ( const MIDITimedMessage &msg )
+void    MIDIFileReadMultiTrack::ChanMessage ( const MIDITimedMessage &msg, bool optimize_tracks )
 {
-    if ( the_format == 0 || cur_track == 0 )
+    if ( optimize_tracks && ( the_format == 0 || cur_track == 0 ) ) // VRM@
     {
         // split format 0 files into separate tracks, one for each channel,
         // keep track 0 for tempo and meta-events
         AddEventToMultiTrack ( msg, 0, msg.GetChannel() + 1 );
     }
-
     else
     {
         AddEventToMultiTrack ( msg, 0, cur_track );

@@ -47,7 +47,7 @@ void MIDIFileEvents::UpdateTime ( MIDIClockTime delta_time )
 {
 }
 
-void  MIDIFileEvents::ChanMessage ( const MIDITimedMessage &msg )
+void  MIDIFileEvents::ChanMessage ( const MIDITimedMessage &msg, bool optimize_tracks )
 {
     switch ( msg.GetStatus() & 0xf0 )
     {
@@ -297,6 +297,7 @@ MIDIFileRead::MIDIFileRead (
         input_stream ( input_stream_ ),
         event_handler ( event_handler_ )
 {
+    optimize_tracks = true; // VRM@
     no_merge = 0;
     cur_time = 0;
     skip_init = 1;
@@ -398,10 +399,17 @@ int MIDIFileRead::ReadHeader()
     if ( abort_parse )
         return 0;
 
+    // silently fix error if midi file have format = 0 and ntrks > 1
+    if ( the_format == 0 && ntrks > 1 )
+    {
+      the_format = 1; // VRM@
+      // make internal tracks structure identical to file tracks structure 
+      // to avoid from possible errors in parser
+      optimize_tracks = false; // VRM@
+    }
+
     header_format = the_format;
     header_ntrks = ntrks;
-    // fix error if midi file have header_format = 0 and header_ntrks > 1
-    if ( header_format == 0 && header_ntrks > 1 ) header_format = 1; // VRM@
 
     header_division = division;
     event_handler->mf_header ( the_format, ntrks, division );
@@ -667,7 +675,7 @@ void MIDIFileRead::FormChanMessage ( unsigned char st, unsigned char b1, unsigne
 
     if ( st >= 0x80 && st < 0xf0 )
     {
-        event_handler->ChanMessage ( m );
+        event_handler->ChanMessage ( m, optimize_tracks );
     }
 }
 

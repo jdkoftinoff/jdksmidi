@@ -82,7 +82,7 @@ public:
 // Higher level dispatch functions
 //
 
-    virtual void    ChanMessage ( const MIDITimedMessage &msg );
+    virtual void    ChanMessage ( const MIDITimedMessage &msg, bool optimize_tracks ); // VRM@
 
 protected:
 
