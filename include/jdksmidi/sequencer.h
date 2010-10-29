@@ -21,6 +21,11 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
+
 #ifndef JDKSMIDI_SEQUENCER_H
 #define JDKSMIDI_SEQUENCER_H
 
@@ -322,6 +327,9 @@ public:
     bool GetNextEvent ( int *tracknum, MIDITimedBigMessage *msg );
 
     void ScanEventsAtThisTime();
+
+   // recommended values for  time_precision_sec >= 0.001  and for  max_duration_hours = 1 ... 24
+   double GetMisicDurationInSeconds( float time_precision_sec = 0.1f, int max_duration_hours = 2 ); // func by VRM
 
 protected:
 

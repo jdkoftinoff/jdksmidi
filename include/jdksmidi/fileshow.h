@@ -30,6 +30,10 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #ifndef JDKSMIDI_FILESHOW_H
 #define JDKSMIDI_FILESHOW_H
@@ -49,37 +53,37 @@ protected:
 
     virtual void show_time ( MIDIClockTime time );
 
-    virtual void    mf_error ( const char * );
+    virtual void mf_error ( const char * );
 
-    virtual void    mf_starttrack ( int trk );
-    virtual void    mf_endtrack ( int trk );
-    virtual void    mf_header ( int, int, int );
+    virtual void mf_starttrack ( int trk );
+    virtual void mf_endtrack ( int trk );
+    virtual void mf_header ( int, int, int );
 
 
 //
 // The possible events in a MIDI Files
 //
 
-    virtual void    mf_system_mode ( const MIDITimedMessage &msg );
-    virtual void    mf_note_on ( const MIDITimedMessage &msg );
-    virtual void    mf_note_off ( const MIDITimedMessage &msg );
-    virtual void    mf_poly_after ( const MIDITimedMessage &msg );
-    virtual void    mf_bender ( const MIDITimedMessage &msg );
-    virtual void    mf_program ( const MIDITimedMessage &msg );
-    virtual void    mf_chan_after ( const MIDITimedMessage &msg );
-    virtual void    mf_control ( const MIDITimedMessage &msg );
-    virtual void    mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex );
+    virtual void mf_system_mode ( const MIDITimedMessage &msg );
+    virtual void mf_note_on ( const MIDITimedMessage &msg );
+    virtual void mf_note_off ( const MIDITimedMessage &msg );
+    virtual void mf_poly_after ( const MIDITimedMessage &msg );
+    virtual void mf_bender ( const MIDITimedMessage &msg );
+    virtual void mf_program ( const MIDITimedMessage &msg );
+    virtual void mf_chan_after ( const MIDITimedMessage &msg );
+    virtual void mf_control ( const MIDITimedMessage &msg );
+    virtual bool mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex ); // VRM@
 
-    virtual void    mf_arbitrary ( MIDIClockTime time, int len, unsigned char *data );
-    virtual void    mf_metamisc ( MIDIClockTime time, int, int, unsigned char * );
-    virtual void    mf_seqnum ( MIDIClockTime time, int );
-    virtual void    mf_smpte ( MIDIClockTime time, int, int, int, int, int );
-    virtual void    mf_timesig ( MIDIClockTime time, int, int, int, int );
-    virtual void    mf_tempo ( MIDIClockTime time, unsigned long tempo );
-    virtual void    mf_keysig ( MIDIClockTime time, int, int );
-    virtual void    mf_sqspecific ( MIDIClockTime time, int, unsigned char * );
-    virtual void    mf_text ( MIDIClockTime time, int, int, unsigned char * );
-    virtual void    mf_eot ( MIDIClockTime time );
+    virtual void mf_arbitrary ( MIDIClockTime time, int len, unsigned char *data );
+    virtual void mf_metamisc ( MIDIClockTime time, int, int, unsigned char * );
+    virtual void mf_seqnum ( MIDIClockTime time, int );
+    virtual void mf_smpte ( MIDIClockTime time, int, int, int, int, int );
+    virtual bool mf_timesig ( MIDIClockTime time, int, int, int, int ); // VRM@
+    virtual bool mf_tempo ( MIDIClockTime time, unsigned long tempo ); // VRM@
+    virtual bool mf_keysig ( MIDIClockTime time, int, int ); // VRM@
+    virtual void mf_sqspecific ( MIDIClockTime time, int, unsigned char * );
+    virtual bool mf_text ( MIDIClockTime time, int, int, unsigned char * ); // VRM@
+    virtual bool mf_eot ( MIDIClockTime time ); // VRM@
 
     FILE *out;
     int division;

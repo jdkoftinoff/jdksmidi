@@ -30,6 +30,10 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #ifndef JDKSMIDI_SMPTE_H
 #define JDKSMIDI_SMPTE_H
@@ -66,7 +70,7 @@ enum SAMPLE_RATE
 // MDGetSMPTERateFrequency() converts the SMPTE_RATE enum to a double frequency.
 //
 
-extern const double smpte_smpte_rates[]; // VRM@
+extern const double smpte_smpte_rates[]; // VRM
 
 inline double GetSMPTERateFrequency ( SMPTE_RATE r )
 {
@@ -79,7 +83,7 @@ inline double GetSMPTERateFrequency ( SMPTE_RATE r )
 // frequency times 100
 //
 
-extern const double smpte_smpte_rates_long[]; // VRM@
+extern const double smpte_smpte_rates_long[]; // VRM
 
 inline long GetSMPTERateFrequencyLong ( SMPTE_RATE r )
 {
@@ -91,7 +95,7 @@ inline long GetSMPTERateFrequencyLong ( SMPTE_RATE r )
 // GetSampleRateFrequency() convert the SAMPLE_RATE enum to a double frequency
 //
 
-extern const double smpte_sample_rates[]; // VRM@
+extern const double smpte_sample_rates[]; // VRM
 
 inline  double  GetSampleRateFrequency ( SAMPLE_RATE r )
 {
@@ -104,7 +108,7 @@ inline  double  GetSampleRateFrequency ( SAMPLE_RATE r )
 // frequency times 10
 //
 
-extern const long smpte_sample_rates_long[]; // VRM@
+extern const long smpte_sample_rates_long[]; // VRM
 
 inline long GetSampleRateFrequencyLong ( SAMPLE_RATE r )
 {

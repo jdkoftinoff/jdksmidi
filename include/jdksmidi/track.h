@@ -30,6 +30,10 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #ifndef JDKSMIDI_TRACK_H
 #define JDKSMIDI_TRACK_H
@@ -139,6 +143,8 @@ public:
 //    bool  Delete( int start_event, int num_events);
 //    void  Sort();
 
+    const MIDITrack & operator = ( const MIDITrack & src ); // func by VRM
+
     bool Expand ( int increase_amount = ( MIDITrackChunkSize ) );
 
     MIDITimedBigMessage * GetEventAddress ( int event_num );
@@ -150,11 +156,13 @@ public:
     bool GetEvent ( int event_num, MIDITimedBigMessage *msg ) const;
 
     bool PutEvent ( const MIDITimedBigMessage &msg );
-    bool PutEvent ( const MIDITimedMessage &msg, MIDISystemExclusive *sysex );
+    // put event and clear msg, exclude its time, keep time unchanged!
+    bool PutEvent2 ( MIDITimedBigMessage &msg ); // func by VRM
+    bool PutEvent ( const MIDITimedMessage &msg, const MIDISystemExclusive *sysex ); // VRM
     bool SetEvent ( int event_num, const MIDITimedBigMessage &msg );
 
     // put text message with known length, or evaluate its length if negative
-    bool PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length = -1 ); // func by VRM@
+    bool PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length = -1 ); // func by VRM
 
     bool MakeEventNoOp ( int event_num );
 
@@ -162,7 +170,14 @@ public:
 
     int GetBufferSize() const { return buf_size; }
     int GetNumEvents() const { return num_events; }
-    bool IsTrackEmpty() const { return num_events == 0; } // VRM@
+    bool IsTrackEmpty() const { return num_events == 0; } // VRM
+
+    // test events temporal order, return false if events out of order
+    bool EventsOrderOK() const; // func by VRM
+    // sort events temporal order
+    void SortEventsOrder(); // func by VRM
+    // remove events with identical time and all other data, return numbers of such events
+    int RemoveIdenticalEvents( int max_distance_between_identical_events = 32 ); // func by VRM
 
 private:
 
@@ -172,6 +187,14 @@ private:
 
     int buf_size;
     int num_events;
+
+    struct Event_time // VRM
+    {
+      int event_number;
+      MIDIClockTime time;
+      static bool less( Event_time t1, Event_time t2 ) { return ( t1.time < t2.time ); }
+    };
+
 };
 
 }

@@ -49,7 +49,6 @@
 namespace jdksmidi
 {
 
-
 MIDIMatrix::MIDIMatrix()
 {
     ENTER ( "MIDIMatrix::MIDIMatrix()" );

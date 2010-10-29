@@ -21,6 +21,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
 #ifndef JDKSMIDI_SHOWCONTROL_H
 #define JDKSMIDI_SHOWCONTROL_H
 
@@ -30,6 +31,7 @@
 
 namespace jdksmidi
 {
+
 //
 // Hacked defines that really should just go away:
 //

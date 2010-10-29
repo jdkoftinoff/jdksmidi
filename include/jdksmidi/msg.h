@@ -225,29 +225,25 @@ public:
 
     bool IsSongSelect() const;
 
-    bool  IsTuneRequest() const;
+    bool IsTuneRequest() const;
 
     bool IsMetaEvent() const;
 
-    bool  IsTextEvent() const;
+    bool IsTextEvent() const;
 
     bool IsAllNotesOff() const;
 
-
     bool IsNoOp() const;
-
 
     bool IsTempo() const;
 
-
     bool IsDataEnd() const;
 
+    bool IsTimeSig() const;
 
-    bool  IsTimeSig() const;
+    bool IsKeySig() const;
 
-    bool      IsKeySig() const;
-
-    bool  IsBeatMarker() const;
+    bool IsBeatMarker() const;
 
     ///
     /// GetTempo() returns the tempo value in 1/32 bpm
@@ -378,9 +374,11 @@ public:
 
     void SetTimeSig ( unsigned char numerator, unsigned char denominator );
 
-    void      SetKeySig ( signed char sharp_flats, unsigned char major_minor );
+    void SetKeySig ( signed char sharp_flats, unsigned char major_minor );
 
     void SetBeatMarker();
+
+    friend bool operator == ( const MIDIMessage &m1, const MIDIMessage &m2 ); // func by VRM
 
     //@}
 
@@ -417,6 +415,8 @@ public:
 
     MIDIBigMessage ( const MIDIMessage &m );
 
+    MIDIBigMessage ( const MIDIMessage &m, const MIDISystemExclusive *e ); // func by VRM
+
     const MIDIBigMessage &operator = ( const MIDIBigMessage &m );
 
     const MIDIBigMessage &operator = ( const MIDIMessage &m );
@@ -426,14 +426,14 @@ public:
 
     void Copy ( const MIDIMessage &m );
 
-    void  CopySysEx ( const MIDISystemExclusive *e );
+    void CopySysEx ( const MIDISystemExclusive *e );
 
     //@}
 
 
     void Clear();
 
-    void  ClearSysEx();
+    void ClearSysEx();
 
 
     ///
@@ -447,6 +447,9 @@ public:
 
     const MIDISystemExclusive *GetSysEx() const;
 
+    friend bool operator == ( const MIDIBigMessage &m1, const MIDIBigMessage &m2 ); // func by VRM
+
+protected: // VRM
 
     MIDISystemExclusive *sysex;
 };
@@ -501,6 +504,8 @@ public:
         const MIDITimedMessage &b
     );
 
+    friend bool operator == ( const MIDITimedMessage &m1, const MIDITimedMessage &m2 ); // func by VRM
+
 protected:
 
 
@@ -509,7 +514,7 @@ protected:
 
 
 
-class  MIDIDeltaTimedMessage : public MIDIMessage
+class  MIDIDeltaTimedMessage : public MIDIMessage // VRM this class don't need because don't used ?
 {
 public:
 
@@ -572,6 +577,8 @@ public:
 
     MIDITimedBigMessage ( const MIDIMessage &m );
 
+    MIDITimedBigMessage ( const MIDITimedMessage &m, const MIDISystemExclusive *e ); // func by VRM
+
     void Clear();
 
     void Copy ( const MIDITimedBigMessage &m );
@@ -604,10 +611,12 @@ public:
     // Compare method, for sorting. Not just comparing time.
     //
 
-    static int  CompareEvents (
+    static int CompareEvents (
         const MIDITimedBigMessage &a,
         const MIDITimedBigMessage &b
     );
+
+    friend bool operator == ( const MIDITimedBigMessage &m1, const MIDITimedBigMessage &m2 ); // func by VRM
 
 protected:
     MIDIClockTime time;
@@ -615,7 +624,7 @@ protected:
 
 
 
-class  MIDIDeltaTimedBigMessage : public MIDIBigMessage
+class  MIDIDeltaTimedBigMessage : public MIDIBigMessage // VRM this class don't need because don't used ?
 {
 public:
     //

@@ -30,13 +30,13 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
-
-
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #include "jdksmidi/world.h"
-
 #include "jdksmidi/multitrack.h"
-
 
 #ifndef DEBUG_MDMLTTRK
 # define DEBUG_MDMLTTRK 0
@@ -49,7 +49,6 @@
 
 namespace jdksmidi
 {
-
 
 MIDIMultiTrack::MIDIMultiTrack ( int num_tracks_, bool deletable_ )
         :
@@ -75,6 +74,31 @@ MIDIMultiTrack::MIDIMultiTrack ( int num_tracks_, bool deletable_ )
     }
 }
 
+bool MIDIMultiTrack::ExpandIfLess ( int min_num_tracks ) // func by VRM
+{
+  if ( !tracks ) return false;
+
+  if ( num_tracks >= min_num_tracks ) return true;
+
+  if ( deletable )
+  {
+    for ( int i = num_tracks; i < min_num_tracks; ++i )
+    {
+      tracks[i] = new MIDITrack;
+      if ( !tracks[i] ) return false;
+    }
+  }
+  else
+  {
+    for ( int i = num_tracks; i < min_num_tracks; ++i )
+      tracks[i] = 0;
+  }
+
+  num_tracks = min_num_tracks;
+  return true;
+}
+
+
 MIDIMultiTrack::~MIDIMultiTrack()
 {
     ENTER ( "MIDIMultiTrack::~MIDIMultiTrack()" );
@@ -82,10 +106,12 @@ MIDIMultiTrack::~MIDIMultiTrack()
     if ( deletable )
     {
         for ( int i = 0; i < num_tracks; ++i )
-            delete tracks[i];
+        {
+            safe_delete_object( tracks[i] ); // VRM
+        }
     }
 
-    delete [] tracks;
+    safe_delete_array( tracks ); // VRM
 }
 
 void MIDIMultiTrack::Clear()
@@ -96,7 +122,7 @@ void MIDIMultiTrack::Clear()
     }
 }
 
-int MIDIMultiTrack::GetNumTracksWithEvents() const
+int MIDIMultiTrack::GetNumTracksWithEvents() const  // func by VRM
 {
   int i;
 
@@ -108,8 +134,16 @@ int MIDIMultiTrack::GetNumTracksWithEvents() const
   return i+1;
 }
 
-
-
+void MIDIMultiTrack::SortEventsOrder() // func by VRM
+{
+  for ( int i = 0; i < num_tracks; ++i )
+  {
+    if ( !tracks[i]->EventsOrderOK() )
+    {
+      tracks[i]->SortEventsOrder();
+    }
+  }
+}
 
 
 MIDIMultiTrackIteratorState::MIDIMultiTrackIteratorState ( int num_tracks_ )
@@ -138,8 +172,8 @@ MIDIMultiTrackIteratorState::MIDIMultiTrackIteratorState ( const MIDIMultiTrackI
 
 MIDIMultiTrackIteratorState::~MIDIMultiTrackIteratorState()
 {
-    delete [] next_event_number;
-    delete [] next_event_time;
+    safe_delete_array( next_event_number ); // VRM
+    safe_delete_array( next_event_time ); // VRM
 }
 
 const MIDIMultiTrackIteratorState & MIDIMultiTrackIteratorState::operator = ( const MIDIMultiTrackIteratorState &m )

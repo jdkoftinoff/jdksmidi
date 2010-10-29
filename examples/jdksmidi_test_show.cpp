@@ -21,20 +21,41 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #include "jdksmidi/world.h"
 #include "jdksmidi/fileread.h"
 #include "jdksmidi/fileshow.h"
+using namespace jdksmidi;
+
+#include <iostream>
+using namespace std;
 
 int main ( int argc, char **argv )
 {
-    if ( argc > 1 )
+  if ( argc > 1 )
+  {
+    const char *infile_name = argv[1];
+
+    MIDIFileReadStreamFile rs ( infile_name );
+    if ( !rs.IsValid() )
     {
-        jdksmidi::MIDIFileReadStreamFile rs ( argv[1] );
-        jdksmidi::MIDIFileShow shower ( stdout );
-        jdksmidi::MIDIFileRead reader ( &rs, &shower );
-        reader.Parse();
+      cerr << "\nError opening file " << infile_name << endl;
+      return -1;
     }
 
-    return 0;
+    MIDIFileShow shower ( stdout );
+    MIDIFileRead reader ( &rs, &shower );
+
+    if ( !reader.Parse() )
+    {
+      cerr << "\nError parse file " << infile_name << endl;
+      return -1;
+    }
+  }
+
+  return 0;
 }

@@ -21,6 +21,11 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
+
 #include "jdksmidi/world.h"
 #include "jdksmidi/sequencer.h"
 
@@ -512,7 +517,7 @@ MIDISequencerState::~MIDISequencerState()
 {
     for ( int i = 0; i < num_tracks; ++i )
     {
-        delete track_state[i];
+        safe_delete_object( track_state[i] ); // VRM
     }
 }
 
@@ -523,7 +528,7 @@ const MIDISequencerState & MIDISequencerState::operator = ( const MIDISequencerS
         {
             for ( int i = 0; i < num_tracks; ++i )
             {
-                delete track_state[i];
+                safe_delete_object( track_state[i] ); // VRM
             }
         }
         num_tracks = s.num_tracks;
@@ -556,7 +561,7 @@ MIDISequencer::MIDISequencer (
         solo_mode ( false ),
         tempo_scale ( 100 ),
         num_tracks ( m->GetNumTracks() ),
-        state ( this, m, n ) // TODO: fix this hack
+        state ( this, m, n ) // TO DO: fix this hack
 {
     for ( int i = 0; i < num_tracks; ++i )
     {
@@ -569,7 +574,7 @@ MIDISequencer::~MIDISequencer()
 {
     for ( int i = 0; i < num_tracks; ++i )
     {
-        delete track_processors[i];
+        safe_delete_object( track_processors[i] ); // VRM
     }
 }
 
@@ -1096,7 +1101,40 @@ void MIDISequencer::ScanEventsAtThisTime()
     state.cur_beat = prev_beat;
 }
 
+double MIDISequencer::GetMisicDurationInSeconds( float time_precision_sec, int max_duration_hours ) // func by VRM
+{
+  double dur = 0.;
+  double clock_time;
+  float  next_event_time; // in milliseconds
+  const double tp_msec = 1000. * time_precision_sec;
 
+  MIDITimedBigMessage ev;
+  int ev_track;
+
+  GoToTimeMs ( 0.f );
+  if ( !GetNextEventTimeMs ( &next_event_time ) ) return dur;
+
+  // simulate a clock going forward with tp_msec resolution for hours
+  const double hours = max_duration_hours * 3600. * 1000.;
+  for ( clock_time = next_event_time = 0.f; clock_time < hours; clock_time += tp_msec )
+  {
+    // find all events that came before or a the current time
+    while ( double(next_event_time) <= clock_time )
+    {
+      if ( GetNextEvent( &ev_track, &ev ) )
+      {
+        if ( !GetNextEventTimeMs( &next_event_time ) ) // no events left so end
+        {
+          dur = 0.001f * clock_time;
+          return dur;
+        }
+      }
+    }
+  }
+
+  dur = 0.001f * clock_time;
+  return dur;
+}
 
 
 }

@@ -21,6 +21,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
 #ifndef JDKSMIDI_DRIVERWIN32_H
 #define JDKSMIDI_DRIVERWIN32_H
 
@@ -37,7 +38,9 @@ namespace jdksmidi
 class MIDISequencerGUIEventNotifierWin32 :
         public MIDISequencerGUIEventNotifier
 {
+
 public:
+
     MIDISequencerGUIEventNotifierWin32 (
         HWND w,
         DWORD wmmsg,
@@ -62,7 +65,9 @@ private:
 
 class MIDIDriverWin32 : public MIDIDriver
 {
+
 public:
+
     MIDIDriverWin32 ( int queue_size );
     virtual ~MIDIDriverWin32();
 

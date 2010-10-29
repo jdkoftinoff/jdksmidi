@@ -30,6 +30,10 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #ifndef JDKSMIDI_MULTITRACK_H
 #define JDKSMIDI_MULTITRACK_H
@@ -57,7 +61,11 @@ public:
 
     int GetNumTracks() const { return num_tracks; }
     // return number of tracks with events, last tracks have no events
-    int GetNumTracksWithEvents() const; // func by VRM@
+    int GetNumTracksWithEvents() const; // func by VRM
+    // test and sort events temporal order in all tracks
+    void SortEventsOrder(); // func by VRM
+    // increase amount of tracks if num_tracks < min_num_tracks
+    bool ExpandIfLess ( int min_num_tracks ); // func by VRM@
 
     void Clear();
 
@@ -67,13 +75,10 @@ public:
 protected:
 
     MIDITrack **tracks;
-    const int num_tracks;
+    int num_tracks; // VRM@
     bool deletable;
 
-    int  clks_per_beat;
-
-private:
-
+    int clks_per_beat;
 };
 
 class MIDIMultiTrackIteratorState
