@@ -30,7 +30,6 @@
 namespace jdksmidi
 {
 
-
 MIDISequencerGUIEventNotifierWin32::MIDISequencerGUIEventNotifierWin32 (
     HWND w,
     DWORD msg,

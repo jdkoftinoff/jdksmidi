@@ -30,10 +30,12 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
-
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #include "jdksmidi/world.h"
-
 #include "jdksmidi/filewrite.h"
 
 #ifndef DEBUG_MDFWR
@@ -47,7 +49,6 @@
 
 namespace jdksmidi
 {
-
 
 MIDIFileWriteStream::MIDIFileWriteStream()
 {
@@ -203,7 +204,7 @@ void MIDIFileWrite::WriteDeltaTime ( unsigned long abs_time )
 
     if ( dtime < 0 )
     {
-//  Error( "Events out of order" );
+        Error( "Events out of order" ); // VRM
         dtime = 0;
     }
 
@@ -381,7 +382,7 @@ void MIDIFileWrite::WriteEvent ( unsigned long time, unsigned short text_type, c
     WriteCharacter ( ( unsigned char ) 0xff );  // META-Event
     WriteCharacter ( ( unsigned char ) text_type ); // Text event type
     IncrementCounters ( 2 );
-    long len = ( long ) strlen ( text ); // VRM@
+    long len = ( long ) strlen ( text ); // VRM
     IncrementCounters ( WriteVariableNum ( len ) );
 
     while ( *text )

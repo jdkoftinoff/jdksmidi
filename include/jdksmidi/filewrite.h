@@ -30,6 +30,10 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #ifndef JDKSMIDI_FILEWRITE_H
 #define JDKSMIDI_FILEWRITE_H
@@ -76,7 +80,7 @@ public:
     }
 
 #ifdef WIN32
-    MIDIFileWriteStreamFileName ( const wchar_t *fname ) : MIDIFileWriteStreamFile ( _wfopen ( fname, L"wb" ) ) // func by VRM@
+    MIDIFileWriteStreamFileName ( const wchar_t *fname ) : MIDIFileWriteStreamFile ( _wfopen ( fname, L"wb" ) ) // func by VRM
     {
     }
 #endif
@@ -133,9 +137,9 @@ public:
     void    WriteTrackHeader ( unsigned long length );
 
     void    WriteEvent ( const MIDITimedMessage &m );
+    void    WriteEvent ( const MIDITimedBigMessage &m );
     void    WriteEvent ( unsigned long time, const MIDISystemExclusive *e );
     void    WriteEvent ( unsigned long time, unsigned short text_type, const char *text );
-    void WriteEvent ( const MIDITimedBigMessage &m );
 
     void    WriteMetaEvent ( unsigned long time, unsigned char type, const unsigned char *data, long length );
     void    WriteTempo ( unsigned long time, long tempo );

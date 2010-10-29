@@ -1,33 +1,27 @@
 /*
- *  libjdksmidi-2004 C++ Class Library for MIDI
- *
- *  Copyright (C) 2004  J.D. Koftinoff Software, Ltd.
- *  www.jdkoftinoff.com
- *  jeffk@jdkoftinoff.com
- *
- *  *** RELEASED UNDER THE GNU GENERAL PUBLIC LICENSE (GPL) April 27, 2004 ***
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+  
+  Create Midifile  example for  libJDKSmidi C++ MIDI Library
+  
+  Copyright (C) 2010 V.R.Madgazin
+  www.vmgames.com
+  vrm@vmgames.com
+  
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with this program;
+  if not, write to the Free Software Foundation, Inc.,
+  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-//
-// create_midifile.cpp example
-//
-// Copyright (C) 2010 V.R.Madgazin
-// www.vmgames.com vrm@vmgames.com
-//
+*/
 
 #ifdef WIN32
 #include <windows.h>
@@ -40,9 +34,10 @@
 #include "jdksmidi/fileread.h"
 #include "jdksmidi/fileshow.h"
 #include "jdksmidi/filewritemultitrack.h"
-
-
 using namespace jdksmidi;
+
+#include <iostream>
+using namespace std;
 
 int main ( int argc, char **argv )
 {
@@ -55,8 +50,9 @@ int main ( int argc, char **argv )
   MIDIClockTime dt = 100; // time interval (1 second)
   int clks_per_beat = 100; // number of ticks in crotchet (1...32767)
 
-  MIDIMultiTrack tracks;  // the object which will hold all the tracks
-  int trk; // track number
+  int num_tracks = 2; // tracks 0 and 1
+  MIDIMultiTrack tracks( num_tracks );  // the object which will hold all the tracks
+  int trk; // track number, 0 or 1
 
   t = 0;
   m.SetTime( t );
@@ -191,6 +187,9 @@ int main ( int argc, char **argv )
   m.SetNoteOn( chan = 0, note = 0, velocity = 0 );
   tracks.GetTrack( trk )->PutEvent( m );
 
+  // if events in any track recorded not in order of the growth of time, 
+  // tracks.SortEventsOrder(); // it is necessary to do this before write step
+
   // to write the multi track object out, you need to create an output stream for the output filename
 
   const char *outfile_name = "create_midifile.mid";
@@ -198,16 +197,19 @@ int main ( int argc, char **argv )
 
   // then output the stream like my example does, except setting num_tracks to match your data
 
-  int num_tracks = 2; // tracks 0 and 1
-
   if( out_stream.IsValid() )
   {
     // the object which takes the midi tracks and writes the midifile to the output stream
     jdksmidi::MIDIFileWriteMultiTrack writer( &tracks, &out_stream );
 
     // write the output file
-    if( writer.Write( num_tracks, clks_per_beat ) ) return_code = 0;
-    else fprintf( stderr, "Error writing file '%s'\n", outfile_name );
+    if ( writer.Write( num_tracks, clks_per_beat ) )
+    {
+      cout << "\nOK writing file " << outfile_name << endl;
+      return_code = 0;
+    }
+    else
+      cerr << "\nError writing file " << outfile_name << endl;
   }
 
   return return_code;

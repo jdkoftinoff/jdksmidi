@@ -30,16 +30,17 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #include "jdksmidi/world.h"
-
 #include "jdksmidi/sysex.h"
 #include "jdksmidi/msg.h"
 
 namespace jdksmidi
 {
-
-
 
 const char *  MIDIMessage::chan_msg_name[16] =
 {
@@ -176,7 +177,7 @@ const char * MIDIMessage::MsgToText ( char *txt ) const
     // pad the rest with spaces
     //
     {
-        size_t len = strlen ( txt ); // VRM@
+        size_t len = strlen ( txt ); // VRM
         char *p = txt + len;
 
         while ( len < 45 )
@@ -220,10 +221,7 @@ void MIDIMessage::Clear()
 
 void MIDIMessage::Copy ( const MIDIMessage & m )
 {
-    status = m.status;
-    byte1 = m.byte1;
-    byte2 = m.byte2;
-    byte3 = m.byte3;
+   *this = m; // VRM
 }
 
 
@@ -702,39 +700,23 @@ MIDIBigMessage::MIDIBigMessage ( const MIDIMessage &m )
 {
 }
 
+MIDIBigMessage::MIDIBigMessage ( const MIDIMessage &m, const MIDISystemExclusive *e ) // func by VRM
+        :
+        MIDIMessage ( m ),
+        sysex ( 0 )
+{
+  CopySysEx( e );
+}
+
 void MIDIBigMessage::Clear()
 {
     if ( sysex )
     {
         delete sysex;
     }
-
     sysex = 0;
+
     MIDIMessage::Clear();
-}
-
-void MIDIBigMessage::Copy ( const MIDIBigMessage &m )
-{
-    delete sysex;
-
-    if ( m.sysex )
-    {
-        sysex = new MIDISystemExclusive ( *m.sysex );
-    }
-
-    else
-    {
-        sysex = 0;
-    }
-
-    MIDIMessage::Copy ( m );
-}
-
-void MIDIBigMessage::Copy ( const MIDIMessage &m )
-{
-    delete sysex;
-    sysex = 0;
-    MIDIMessage::Copy ( m );
 }
 
 //
@@ -743,11 +725,7 @@ void MIDIBigMessage::Copy ( const MIDIMessage &m )
 
 MIDIBigMessage::~MIDIBigMessage()
 {
-    if ( sysex )
-    {
-        delete sysex;
-        sysex = 0;
-    }
+    safe_delete_object( sysex ); // VRM
 }
 
 //
@@ -762,7 +740,6 @@ const MIDIBigMessage &MIDIBigMessage::operator = ( const MIDIBigMessage &m )
     {
         sysex = new MIDISystemExclusive ( *m.sysex );
     }
-
     else
     {
         sysex = 0;
@@ -774,10 +751,19 @@ const MIDIBigMessage &MIDIBigMessage::operator = ( const MIDIBigMessage &m )
 
 const MIDIBigMessage &MIDIBigMessage::operator = ( const MIDIMessage &m )
 {
-    delete sysex;
-    sysex = 0;
+    safe_delete_object( sysex ); // VRM
     MIDIMessage::operator = ( m );
     return *this;
+}
+
+void MIDIBigMessage::Copy ( const MIDIMessage &m )
+{
+    *this = m; // VRM
+}
+
+void MIDIBigMessage::Copy ( const MIDIBigMessage &m )
+{
+    *this = m; // VRM
 }
 
 //
@@ -800,9 +786,7 @@ const MIDISystemExclusive *MIDIBigMessage::GetSysEx() const
 
 void MIDIBigMessage::CopySysEx ( const MIDISystemExclusive *e )
 {
-    delete sysex;
-    sysex = 0;
-
+    safe_delete_object( sysex ); // VRM
     if ( e )
     {
         sysex = new MIDISystemExclusive ( *e );
@@ -820,8 +804,7 @@ void MIDIBigMessage::SetSysEx ( MIDISystemExclusive *e )
 
 void MIDIBigMessage::ClearSysEx()
 {
-    delete sysex;
-    sysex = 0;
+    safe_delete_object( sysex ); // VRM
 }
 
 
@@ -856,8 +839,7 @@ void MIDITimedMessage::Clear()
 
 void MIDITimedMessage::Copy ( const MIDITimedMessage &m )
 {
-    time = m.GetTime();
-    MIDIMessage::Copy ( m );
+    *this = m; // VRM
 }
 
 //
@@ -895,8 +877,6 @@ void MIDITimedMessage::SetTime ( MIDIClockTime t )
 {
     time = t;
 }
-
-
 
 int  MIDITimedMessage::CompareEvents (
     const MIDITimedMessage &m1,
@@ -1044,6 +1024,12 @@ MIDITimedBigMessage::MIDITimedBigMessage ( const MIDIMessage &m )
 {
 }
 
+MIDITimedBigMessage::MIDITimedBigMessage ( const MIDITimedMessage &m, const MIDISystemExclusive *e ) // func by VRM
+        : MIDIBigMessage ( m, e ),
+        time ( m.GetTime() )
+{
+}
+
 void MIDITimedBigMessage::Clear()
 {
     time = 0;
@@ -1052,14 +1038,12 @@ void MIDITimedBigMessage::Clear()
 
 void MIDITimedBigMessage::Copy ( const MIDITimedBigMessage &m )
 {
-    time = m.GetTime();
-    MIDIBigMessage::Copy ( m );
+    *this = m; // VRM
 }
 
 void MIDITimedBigMessage::Copy ( const MIDITimedMessage &m )
 {
-    time = m.GetTime();
-    MIDIBigMessage::Copy ( m );
+    *this = m; // VRM
 }
 
 //
@@ -1241,17 +1225,51 @@ void MIDIDeltaTimedBigMessage::SetDeltaTime ( MIDIClockTime t )
 }
 
 
+// friend operators
 
+bool operator == ( const MIDIMessage &m1, const MIDIMessage &m2 ) // func by VRM
+{
+  return (  m1.GetStatus() == m2.GetStatus() &&
+            m1.GetByte1() == m2.GetByte1() &&
+            m1.GetByte2() == m2.GetByte2() &&
+            m1.GetByte3() == m2.GetByte3()  );
+}
 
+bool operator == ( const MIDITimedMessage &m1, const MIDITimedMessage &m2 ) // func by VRM
+{
+  if ( m1.GetTime() != m2.GetTime() ) return false;
 
+  return ( (MIDIMessage) m1 ) == ( (MIDIMessage) m2 );
+}
 
+bool operator == ( const MIDIBigMessage &m1, const MIDIBigMessage &m2 ) // func by VRM
+{
+  const MIDISystemExclusive *e1 = m1.GetSysEx();
+  const MIDISystemExclusive *e2 = m2.GetSysEx();
 
+  if ( e1 != 0 )
+  {
+    if ( e2 == 0 ) return false;
+  }
+  else // e1 == 0
+  {
+    if ( e2 != 0 ) return false;
+  }
 
+  if ( e1 != 0 && e2 != 0 )
+  {
+    if ( !( *e1 == *e2 ) ) return false;
+  }
 
+  return ( (MIDIMessage) m1 ) == ( (MIDIMessage) m2 );
+}
 
+bool operator == ( const MIDITimedBigMessage &m1, const MIDITimedBigMessage &m2 ) // func by VRM
+{
+  if ( m1.GetTime() != m2.GetTime() ) return false;
 
-
-
+  return ( (MIDIBigMessage) m1 ) == ( (MIDIBigMessage) m2 );
+}
 
 
 }

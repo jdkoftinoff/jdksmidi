@@ -30,7 +30,10 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
-
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #ifndef JDKSMIDI_WORLD_H
 #define JDKSMIDI_WORLD_H
@@ -68,11 +71,18 @@ MIDI Files easily.
 
 */
 
+// VRM
+
 #ifdef WIN32
-#pragma warning(disable: 4996) // VRM@ to take away "function was declared deprecated" warnings
+#pragma warning(disable: 4996) // to take away "function was declared deprecated" warnings
+#pragma warning(disable: 4355) // 'this' used in base member initializer list
 #endif
 
+#include <vector>
+#include <algorithm>
+
+template <class I> inline void safe_delete_object(I *&obj) { delete obj; obj = 0; }
+template <class I> inline void safe_delete_array(I *&arr)  { delete [] arr; arr = 0; }
 
 #endif
-
 

@@ -21,17 +21,21 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
+
 #include "jdksmidi/world.h"
 #include "jdksmidi/filewritemultitrack.h"
 
 namespace jdksmidi
 {
 
-
 MIDIFileWriteMultiTrack::MIDIFileWriteMultiTrack (
     const MIDIMultiTrack *mlt_,
     MIDIFileWriteStream *strm_
-)
+    )
         :
         multitrack ( mlt_ ),
         writer ( strm_ )
@@ -52,7 +56,7 @@ bool MIDIFileWriteMultiTrack::Write ( int num_tracks, int division )
     }
 
     // first, write the header.
-    writer.WriteFileHeader ( ( num_tracks > 1 )? 1:0, num_tracks, division ); // VRM@
+    writer.WriteFileHeader ( ( num_tracks > 1 )? 1:0, num_tracks, division ); // VRM
     // now write each track
 
     for ( int i = 0; i < num_tracks; ++i )
@@ -65,7 +69,11 @@ bool MIDIFileWriteMultiTrack::Write ( int num_tracks, int division )
 
         const MIDITrack *t = multitrack->GetTrack ( i );
 
-        MIDIClockTime last_event_time = 0;
+        if ( !t->EventsOrderOK() ) // VRM time of events out of order: t->SortEventsOrder() must be done externally
+        {
+            f = false;
+            break;
+        }
 
         writer.WriteTrackHeader ( 0 ); // will be rewritten later
 
@@ -77,8 +85,6 @@ bool MIDIFileWriteMultiTrack::Write ( int num_tracks, int division )
 
                 if ( ev && !ev->IsNoOp() )
                 {
-                    last_event_time = ev->GetTime();
-
                     if ( !ev->IsDataEnd() )
                     {
                         writer.WriteEvent ( *ev );

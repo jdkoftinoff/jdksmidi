@@ -39,7 +39,6 @@
 namespace jdksmidi
 {
 
-
 const signed char lut_msglen[16] =
 {
     0, 0, 0, 0, 0, 0, 0, 0,

@@ -55,6 +55,7 @@
 
 namespace jdksmidi
 {
+
 class AdvancedSequencer
 {
 public:

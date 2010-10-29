@@ -30,9 +30,12 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #include "jdksmidi/world.h"
-
 #include "jdksmidi/fileread.h"
 
 // TO DO: decide which way is right for this flag and fix it - The standard midi file format specs are (were?) unclear
@@ -42,66 +45,68 @@
 namespace jdksmidi
 {
 
-
 void MIDIFileEvents::UpdateTime ( MIDIClockTime delta_time )
 {
 }
 
-void  MIDIFileEvents::ChanMessage ( const MIDITimedMessage &msg, bool optimize_tracks )
+bool MIDIFileEvents::ChanMessage ( const MIDITimedMessage &msg ) // VRM@
 {
     switch ( msg.GetStatus() & 0xf0 )
     {
     case NOTE_OFF:
         mf_note_off ( msg );
         break;
-    case NOTE_ON:
 
+    case NOTE_ON:
         if ( msg.GetVelocity() == 0 )
         {
             mf_note_off ( msg );
         }
-
         else
         {
             mf_note_on ( msg );
         }
-
         break;
+
     case POLY_PRESSURE:
         mf_poly_after ( msg );
         break;
-    case CONTROL_CHANGE:
 
+    case CONTROL_CHANGE:
         if ( msg.GetByte2() > C_ALL_NOTES_OFF )
         {
             mf_system_mode ( msg );
         }
-
         else
         {
             mf_control ( msg );
         }
-
         break;
+
     case PROGRAM_CHANGE:
         mf_program ( msg );
         break;
+
     case CHANNEL_PRESSURE:
         mf_chan_after ( msg );
         break;
+
     case PITCH_BEND:
         mf_bender ( msg );
         break;
     }
+
+    return true; // VRM
 }
 
-void  MIDIFileEvents::MetaEvent ( MIDIClockTime time, int type, int leng, unsigned char *m )
+bool MIDIFileEvents::MetaEvent ( MIDIClockTime time, int type, int leng, unsigned char *m ) // VRM@
 {
     switch ( type )
     {
     case MF_SEQUENCE_NUMBER:
         mf_seqnum ( time, To16Bit ( m[0], m[1] ) );
         break;
+
     case MF_TEXT_EVENT:
     case MF_COPYRIGHT:
     case MF_TRACK_NAME:
@@ -119,169 +124,147 @@ void  MIDIFileEvents::MetaEvent ( MIDIClockTime time, int type, int leng, unsign
     case MF_GENERIC_TEXT_F:
         // These are all text events
         m[leng] = 0;    // make sure string ends in NULL
-        mf_text ( time, type, leng, m );
+        return mf_text ( time, type, leng, m ); // VRM@
         break;
+
     case MF_OUTPUT_CABLE:
         // TO DO:
         break;
+
     case MF_TRACK_LOOP:
         // TO DO:
         break;
-    case MF_END_OF_TRACK:      // End of Track
-        mf_eot ( time );
+
+    case MF_END_OF_TRACK: // End of Track
+        return mf_eot ( time ); // VRM@
         break;
+
     case MF_TEMPO:      // Set Tempo
-        mf_tempo ( time, To32Bit ( 0, m[0], m[1], m[2] ) );
+        return mf_tempo ( time, To32Bit ( 0, m[0], m[1], m[2] ) ); // VRM@
         break;
+
     case MF_SMPTE:
         mf_smpte ( time, m[0], m[1], m[2], m[3], m[4] );
         break;
+
     case MF_TIMESIG:
-        mf_timesig ( time, m[0], m[1], m[2], m[3] );
+        return mf_timesig ( time, m[0], m[1], m[2], m[3] ); // VRM@
         break;
+
     case MF_KEYSIG:
     {
         char c = m[0];
-        mf_keysig ( time, c, m[1] );
+        return mf_keysig ( time, c, m[1] ); // VRM@
     }
     break;
+
     case MF_SEQUENCER_SPECIFIC:
         mf_sqspecific ( time, leng, m );
         break;
+
     default:
         mf_metamisc ( time, type, leng, m );
         break;
     }
+    return true;
 }
 
-void    MIDIFileEvents::mf_starttrack ( int trk )
+void MIDIFileEvents::mf_starttrack ( int trk )
 {
 }
 
-void    MIDIFileEvents::mf_endtrack ( int trk )
+void MIDIFileEvents::mf_endtrack ( int trk )
 {
 }
 
-void    MIDIFileEvents::mf_eot ( MIDIClockTime time )
+bool MIDIFileEvents::mf_eot ( MIDIClockTime time )
+{
+  return true; // VRM
+}
+
+void MIDIFileEvents::mf_error ( const char *s )
 {
 }
 
-void    MIDIFileEvents::mf_error ( const char *s )
+void MIDIFileEvents::mf_header ( int a, int b, int c )
 {
 }
 
-void    MIDIFileEvents::mf_header (
-    int a,
-    int b,
-    int c )
+void MIDIFileEvents::mf_arbitrary ( MIDIClockTime time, int a, unsigned char *s )
 {
 }
 
-void    MIDIFileEvents::mf_arbitrary (
-    MIDIClockTime time,
-    int a,
-    unsigned char *s )
+void MIDIFileEvents::mf_metamisc ( MIDIClockTime time, int a, int b, unsigned char *s )
 {
 }
 
-void    MIDIFileEvents::mf_metamisc (
-    MIDIClockTime time,
-    int a,
-    int b,
-    unsigned char *s )
+void MIDIFileEvents::mf_seqnum ( MIDIClockTime time, int a )
 {
 }
 
-void    MIDIFileEvents::mf_seqnum (
-    MIDIClockTime time,
-    int a )
+void MIDIFileEvents::mf_smpte ( MIDIClockTime time, int a, int b, int c, int d, int e )
 {
 }
 
-void    MIDIFileEvents::mf_smpte (
-    MIDIClockTime time,
-    int a,
-    int b,
-    int c,
-    int d,
-    int e )
+bool MIDIFileEvents::mf_timesig ( MIDIClockTime time, int a, int b, int c, int d )
+{
+  return true; // VRM
+}
+
+bool MIDIFileEvents::mf_tempo ( MIDIClockTime time, unsigned long a )
+{
+  return true; // VRM
+}
+
+bool MIDIFileEvents::mf_keysig ( MIDIClockTime time, int a, int b )
+{
+  return true; // VRM
+}
+
+void MIDIFileEvents::mf_sqspecific ( MIDIClockTime time, int a, unsigned char *s )
 {
 }
 
-void    MIDIFileEvents::mf_timesig (
-    MIDIClockTime time,
-    int a,
-    int b,
-    int c,
-    int d )
+bool MIDIFileEvents::mf_text ( MIDIClockTime time, int a, int b, unsigned char *s )
+{
+  return true; // VRM
+}
+
+void MIDIFileEvents::mf_system_mode ( const MIDITimedMessage &msg )
 {
 }
 
-void    MIDIFileEvents::mf_tempo (
-    MIDIClockTime time,
-    unsigned long a )
+void MIDIFileEvents::mf_note_on ( const MIDITimedMessage &msg )
 {
 }
 
-void    MIDIFileEvents::mf_keysig (
-    MIDIClockTime time,
-    int a,
-    int b )
+void MIDIFileEvents::mf_note_off ( const MIDITimedMessage &msg )
 {
 }
 
-void    MIDIFileEvents::mf_sqspecific (
-    MIDIClockTime time,
-    int a,
-    unsigned char *s )
+void MIDIFileEvents::mf_poly_after ( const MIDITimedMessage &msg )
 {
 }
 
-void    MIDIFileEvents::mf_text (
-    MIDIClockTime time,
-    int a,
-    int b,
-    unsigned char *s )
+void MIDIFileEvents::mf_bender ( const MIDITimedMessage &msg )
 {
 }
 
-void    MIDIFileEvents::mf_system_mode ( const MIDITimedMessage &msg )
+void MIDIFileEvents::mf_program ( const MIDITimedMessage &msg )
 {
 }
 
-void    MIDIFileEvents::mf_note_on ( const MIDITimedMessage &msg )
+void MIDIFileEvents::mf_chan_after ( const MIDITimedMessage &msg )
 {
 }
 
-void    MIDIFileEvents::mf_note_off ( const MIDITimedMessage &msg )
+void MIDIFileEvents::mf_control ( const MIDITimedMessage &msg )
 {
 }
 
-void    MIDIFileEvents::mf_poly_after ( const MIDITimedMessage &msg )
+bool MIDIFileEvents::mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex )
 {
-}
-
-void    MIDIFileEvents::mf_bender ( const MIDITimedMessage &msg )
-{
-}
-
-void    MIDIFileEvents::mf_program ( const MIDITimedMessage &msg )
-{
-}
-
-void    MIDIFileEvents::mf_chan_after ( const MIDITimedMessage &msg )
-{
-}
-
-void    MIDIFileEvents::mf_control ( const MIDITimedMessage &msg )
-{
-}
-
-void    MIDIFileEvents::mf_sysex (
-    MIDIClockTime time,
-    const MIDISystemExclusive &ex
-)
-{
+  return true; // VRM
 }
 
 
@@ -292,12 +275,12 @@ MIDIFileRead::MIDIFileRead (
     MIDIFileReadStream *input_stream_,
     MIDIFileEvents *event_handler_,
     unsigned long max_msg_len_
-)
+    )
         :
         input_stream ( input_stream_ ),
         event_handler ( event_handler_ )
 {
-    optimize_tracks = true; // VRM@
+    // setup data
     no_merge = 0;
     cur_time = 0;
     skip_init = 1;
@@ -305,13 +288,14 @@ MIDIFileRead::MIDIFileRead (
     msg_index = 0;
     cur_track = 0;
     abort_parse = 0;
+
     max_msg_len = max_msg_len_;
     the_msg = new unsigned char[max_msg_len];
 }
 
 MIDIFileRead::~MIDIFileRead()
 {
-    delete [] the_msg;
+    safe_delete_array( the_msg ); // VRM
 }
 
 void MIDIFileRead::mf_error ( const char *e )
@@ -320,10 +304,32 @@ void MIDIFileRead::mf_error ( const char *e )
     abort_parse = true;
 }
 
+void MIDIFileRead::Reset() // func by VRM@
+{
+    // setup data
+    no_merge = 0;
+    cur_time = 0;
+    skip_init = 1;
+    to_be_read = 0;
+    msg_index = 0;
+    cur_track = 0;
+    abort_parse = 0;
+
+    // rewind input stream
+    input_stream->Rewind();
+}
+
+int MIDIFileRead::ReadNumTracks() // func by VRM@
+{
+  Reset();
+  return ReadHeader();
+}
+
 bool MIDIFileRead::Parse()
 {
-    int n;
-    n = ReadHeader();
+    Reset(); // VRM@
+
+    int n = ReadHeader();
 
     if ( n <= 0 )
     {
@@ -401,12 +407,7 @@ int MIDIFileRead::ReadHeader()
 
     // silently fix error if midi file have format = 0 and ntrks > 1
     if ( the_format == 0 && ntrks > 1 )
-    {
-      the_format = 1; // VRM@
-      // make internal tracks structure identical to file tracks structure 
-      // to avoid from possible errors in parser
-      optimize_tracks = false; // VRM@
-    }
+         the_format = 1; // VRM
 
     header_format = the_format;
     header_ntrks = ntrks;
@@ -499,13 +500,15 @@ void MIDIFileRead::ReadTrack()
             else
                 c1 = EGetC();
 
-            FormChanMessage ( ( unsigned char ) status, ( unsigned char ) c1, ( unsigned char ) ( ( needed > 1 ) ? EGetC() : 0 ) );
+            if ( !FormChanMessage ( status, c1, (needed > 1)? EGetC():0 ) )
+                abort_parse = true; // VRM@
             continue;
         }
 
         switch ( c )
         {
-        case 0xff:              // meta-event
+        case 0xff: // meta-event
+
             type = EGetC();
             lng = ReadVariableNum();
             lookfor = to_be_read - lng;
@@ -516,9 +519,13 @@ void MIDIFileRead::ReadTrack()
                 MsgAdd ( EGetC() );
             }
 
-            event_handler->MetaEvent ( cur_time, type, msg_index, the_msg );
+            if ( !event_handler->MetaEvent ( cur_time, type, msg_index, the_msg ) )
+              abort_parse = true; // VRM@
+
             break;
-        case 0xf0:              // start of sys-ex
+
+        case 0xf0: // start of sys-ex
+
             lng = ReadVariableNum();
             lookfor = to_be_read - lng;
             MsgInit();
@@ -538,15 +545,18 @@ void MIDIFileRead::ReadTrack()
                     false
                 );
                 // give the sysex object to our event handler
-                event_handler->mf_sysex ( cur_time, ex );
+                if ( !event_handler->mf_sysex ( cur_time, ex ) )
+                  abort_parse = true; // VRM@
             }
 
             else
                 sysexcontinue = 1; // merge into next msg
 
             break;
-        case 0xf7:              // sysex continuation or
+
+        case 0xf7: // sysex continuation or
             // arbitary stuff
+
             lng = ReadVariableNum();
             lookfor = to_be_read - lng;
 
@@ -571,12 +581,16 @@ void MIDIFileRead::ReadTrack()
                     msg_index,
                     false
                 );
-                event_handler->mf_sysex ( cur_time, ex );
+                if ( !event_handler->mf_sysex ( cur_time, ex ) )
+                  abort_parse = true; // VRM@
+
                 sysexcontinue = 0;
             }
 
             break;
+
         default:
+
             BadByte ( c );
             break;
         }
@@ -665,7 +679,7 @@ void MIDIFileRead::BadByte ( int c )
     abort_parse = true;
 }
 
-void MIDIFileRead::FormChanMessage ( unsigned char st, unsigned char b1, unsigned char b2 )
+bool MIDIFileRead::FormChanMessage ( unsigned char st, unsigned char b1, unsigned char b2 ) // VRM@
 {
     MIDITimedMessage m;
     m.SetStatus ( st );
@@ -675,8 +689,10 @@ void MIDIFileRead::FormChanMessage ( unsigned char st, unsigned char b1, unsigne
 
     if ( st >= 0x80 && st < 0xf0 )
     {
-        event_handler->ChanMessage ( m, optimize_tracks );
+       return event_handler->ChanMessage ( m ); // VRM
     }
+
+    return true; // VRM
 }
 
 

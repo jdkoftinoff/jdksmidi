@@ -21,6 +21,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #ifdef WIN32
 #include <windows.h>
@@ -33,12 +37,13 @@
 #include "jdksmidi/fileread.h"
 #include "jdksmidi/fileshow.h"
 #include "jdksmidi/filewritemultitrack.h"
-
 using namespace jdksmidi;
 
+#include <iostream>
+using namespace std;
 
 // delete all text events from multitrack object
-void DeleteAllTracksText( MIDIMultiTrack &tracks ) // func by VRM@
+void DeleteAllTracksText( MIDIMultiTrack &tracks )
 {
   int num_tracks = tracks.GetNumTracksWithEvents();
 
@@ -56,26 +61,37 @@ void DeleteAllTracksText( MIDIMultiTrack &tracks ) // func by VRM@
   }
 }
 
+void args_err()
+{
+   cerr << "usage:\n\tjdkmidi_rewrite_midifile INFILE.mid OUTFILE.mid [any arg for delete text]\n";
+}
 
 int main ( int argc, char **argv )
 {
   int return_code = -1;
 
-  if ( argc > 2 )
+  if ( argc > 1 )
   {
     const char *infile_name = argv[1];
-    const char *outfile_name = argv[2];
 
     // the stream used to read the input file
     MIDIFileReadStreamFile rs ( infile_name );
-    if ( !rs.IsValid() ) // VRM@
+    if ( !rs.IsValid() )
     {
-      fprintf ( stderr, "Error opening file '%s'\n", infile_name );
+      cerr << "\nError opening file " << infile_name << endl;
       return return_code;
     }
 
+    if ( argc <= 2 )
+    {
+      args_err();
+      return return_code;
+    }
+
+    const char *outfile_name = argv[2];
+
     // the multitrack object which will hold all the tracks
-    MIDIMultiTrack tracks;
+    MIDIMultiTrack tracks( 1 ); // only 1 track in multitrack object - not enough for midifile format 1
 
     // the object which loads the tracks into the tracks object
     MIDIFileReadMultiTrack track_loader ( &tracks );
@@ -83,27 +99,19 @@ int main ( int argc, char **argv )
     // the object which parses the midifile and gives it to the multitrack loader
     MIDIFileRead reader ( &rs, &track_loader );
 
-    // default value for optimize_tracks = true, see MIDIFileRead::MIDIFileRead()
-    bool optimize_tracks = true;
-    if ( argc > 3 )
-    {
-      optimize_tracks = atoi( argv[3] ) != 0;
-      // don't change all tracks structure if optimize_tracks = false
-      reader.SetOptimizeTracks( optimize_tracks ); // VRM@
-    }
+    // increase amount of of tracks if tracks.num_tracks < midifile_num_tracks
+    int midifile_num_tracks = reader.ReadNumTracks();
+    tracks.ExpandIfLess( midifile_num_tracks );
 
     // load the midifile into the multitrack object
-    bool opt1 = reader.GetOptimizeTracks();
     if ( !reader.Parse() )
     {
-      fprintf ( stderr, "Error parse file '%s'\n", infile_name ); // VRM@
+      cerr << "\nError Parse file " << infile_name << endl;
       return return_code;
     }
-    bool opt2 = reader.GetOptimizeTracks();
-    if ( opt1 != opt2 ) fprintf ( stdout, "\nWarning: optimize tracks fail during '%s' parse\n", infile_name); // VRM@
 
-    // delete all text events if exist any argv[4]
-    if ( argc > 4 ) DeleteAllTracksText( tracks ); // VRM@
+    // delete all text events if exist any argv[3]
+    if ( argc > 3 ) DeleteAllTracksText( tracks );
 
     // create the output stream
     MIDIFileWriteStreamFileName out_stream ( outfile_name );
@@ -117,22 +125,22 @@ int main ( int argc, char **argv )
       int division = reader.GetDivision();
       
       // get really number of track, used in reader.Parse() process
-      int num_tracks = tracks.GetNumTracksWithEvents(); // VRM@
+      int num_tracks = tracks.GetNumTracksWithEvents();
 
       // write the output midi file
       if ( writer.Write ( num_tracks, division ) )
       {
-        fprintf ( stdout, "\nNumber of tracks with events %i\n", num_tracks ); // VRM@
+        cout << "\nAll OK. Number of tracks with events " << num_tracks << endl;
         return_code = 0;
       }
       else
-        fprintf ( stderr, "Error writing file '%s'\n", outfile_name );
+        cerr << "\nError writing file " << outfile_name << endl;
     }
     else
-      fprintf ( stderr, "Error opening file '%s'\n", outfile_name );
+      cerr << "\nError opening file " << outfile_name << endl;
   }
   else
-    fprintf ( stderr, "usage:\n\tjdkmidi_rewrite_midifile IN.mid OUT.mid [optimize_tracks(0,1) [any arg for delete text]]\n" );
+    args_err();
   
   return return_code;
 }

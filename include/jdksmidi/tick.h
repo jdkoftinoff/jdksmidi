@@ -21,11 +21,13 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
 #ifndef JDKSMIDI_TICK_H
 #define JDKSMIDI_TICK_H
 
 namespace jdksmidi
 {
+
 class MIDITick
 {
 public:
@@ -37,6 +39,7 @@ public:
 
     virtual void TimeTick ( unsigned long sys_time ) = 0;
 };
+
 }
 
 #endif

@@ -43,7 +43,6 @@
 namespace jdksmidi
 {
 
-
 MIDIFile::MIDIFile()
 {
 }
