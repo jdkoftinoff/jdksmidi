@@ -21,12 +21,16 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
+
 #include "jdksmidi/world.h"
 #include "jdksmidi/queue.h"
 
 namespace jdksmidi
 {
-
 
 MIDIQueue::MIDIQueue ( int num_msgs )
         :
@@ -40,7 +44,7 @@ MIDIQueue::MIDIQueue ( int num_msgs )
 
 MIDIQueue::~MIDIQueue()
 {
-    delete [] buf;
+    jdks_safe_delete_array( buf ); // VRM
 }
 
 void MIDIQueue::Clear()

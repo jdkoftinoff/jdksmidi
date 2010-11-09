@@ -30,15 +30,16 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
-
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #include "jdksmidi/world.h"
-
 #include "jdksmidi/filereadmultitrack.h"
 
 namespace jdksmidi
 {
-
 
 MIDIFileReadMultiTrack::MIDIFileReadMultiTrack ( MIDIMultiTrack *mlttrk )
         : multitrack ( mlttrk ), cur_track ( -1 )
@@ -49,46 +50,42 @@ MIDIFileReadMultiTrack::~MIDIFileReadMultiTrack()
 {
 }
 
-void    MIDIFileReadMultiTrack::mf_error ( const char * )
+void MIDIFileReadMultiTrack::mf_error ( const char * )
 {
 }
 
-
-
-void    MIDIFileReadMultiTrack::mf_starttrack ( int trk )
+void MIDIFileReadMultiTrack::mf_starttrack ( int trk )
 {
     cur_track = trk;
 }
 
-
-void    MIDIFileReadMultiTrack::mf_endtrack ( int trk )
+void MIDIFileReadMultiTrack::mf_endtrack ( int trk )
 {
     cur_track = -1;
 }
 
-void  MIDIFileReadMultiTrack::AddEventToMultiTrack (
-    const MIDITimedMessage &msg,
-    MIDISystemExclusive *sysex,
-    int dest_track
-)
+bool MIDIFileReadMultiTrack::AddEventToMultiTrack ( const MIDITimedMessage &msg, MIDISystemExclusive *sysex, int dest_track )
 {
-    if ( dest_track != -1 && dest_track < multitrack->GetNumTracks() )
+  bool result = false;
+
+  if ( dest_track != -1 && dest_track < multitrack->GetNumTracks() )
+  {
+    MIDITrack *t = multitrack->GetTrack ( dest_track );
+
+    if ( t )
     {
-        MIDITrack *t = multitrack->GetTrack ( dest_track );
-
-        if ( t )
-        {
-            t->PutEvent ( msg, sysex );
-        }
+      result = t->PutEvent ( msg, sysex );
     }
-}
+  }
 
+  return result;
+}
 
 void    MIDIFileReadMultiTrack::mf_header (
     int the_format_,
     int ntrks_,
     int division_
-)
+    )
 {
     the_format = the_format_;
     num_tracks = ntrks_;
@@ -96,66 +93,65 @@ void    MIDIFileReadMultiTrack::mf_header (
     multitrack->SetClksPerBeat ( division );
 }
 
-
-void    MIDIFileReadMultiTrack::ChanMessage ( const MIDITimedMessage &msg, bool optimize_tracks )
+bool MIDIFileReadMultiTrack::ChanMessage ( const MIDITimedMessage &msg ) // VRM
 {
-    if ( optimize_tracks && ( the_format == 0 || cur_track == 0 ) ) // VRM@
+/*
+    // this original code deleted for separate functionality in MIDIMultiTrack::AssignEventsToTracks(0)
+    if ( the_format == 0 )
     {
-        // split format 0 files into separate tracks, one for each channel,
-        // keep track 0 for tempo and meta-events
-        AddEventToMultiTrack ( msg, 0, msg.GetChannel() + 1 );
+      // split format 0 files into separate tracks, one for each channel,
+      // keep track 0 for tempo and meta-events
+      AddEventToMultiTrack ( msg, 0, msg.GetChannel() + 1 );
     }
     else
     {
-        AddEventToMultiTrack ( msg, 0, cur_track );
+      AddEventToMultiTrack ( msg, 0, cur_track );
     }
+*/
+    return AddEventToMultiTrack ( msg, 0, cur_track ); // VRM
 }
 
+void MIDIFileReadMultiTrack::SortEventsOrder() // func by VRM
+{
+  multitrack->SortEventsOrder();
+}
 
-
-
-void    MIDIFileReadMultiTrack::mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex )
+bool MIDIFileReadMultiTrack::mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex ) // VRM
 {
     MIDITimedMessage msg;
     msg.SetSysEx();
     msg.SetTime ( time );
     MIDISystemExclusive *sysex = new MIDISystemExclusive ( ex );
-    AddEventToMultiTrack ( msg, sysex, cur_track );
+    return AddEventToMultiTrack ( msg, sysex, cur_track ); // VRM
 }
 
-
-
-void    MIDIFileReadMultiTrack::mf_arbitrary ( MIDIClockTime time, int len, unsigned char *data )
+void MIDIFileReadMultiTrack::mf_arbitrary ( MIDIClockTime time, int len, unsigned char *data )
 {
     // ignore arbitrary byte strings
 }
 
-
-void    MIDIFileReadMultiTrack::mf_metamisc ( MIDIClockTime time, int, int, unsigned char * )
+void MIDIFileReadMultiTrack::mf_metamisc ( MIDIClockTime time, int, int, unsigned char * )
 {
     // ignore miscellaneous meta events
 }
 
-
-void    MIDIFileReadMultiTrack::mf_seqnum ( MIDIClockTime time, int )
+void MIDIFileReadMultiTrack::mf_seqnum ( MIDIClockTime time, int )
 {
     // ignore sequence number events
 }
 
-
-void    MIDIFileReadMultiTrack::mf_smpte ( MIDIClockTime time, int, int, int, int, int )
+void MIDIFileReadMultiTrack::mf_smpte ( MIDIClockTime time, int, int, int, int, int )
 {
     // ignore smpte events
 }
 
-
-void    MIDIFileReadMultiTrack::mf_timesig (
+bool MIDIFileReadMultiTrack::mf_timesig ( // VRM
     MIDIClockTime time,
     int num,
     int denom_power,
     int clks_per_metro,
     int notated_32nd_per_quarter
-)
+    )
 {
     MIDITimedMessage msg;
     int denom = 1 << denom_power;
@@ -166,11 +162,10 @@ void    MIDIFileReadMultiTrack::mf_timesig (
     sysex->PutByte ( ( unsigned char ) denom_power );
     sysex->PutByte ( ( unsigned char ) clks_per_metro );
     sysex->PutByte ( ( unsigned char ) notated_32nd_per_quarter );
-    AddEventToMultiTrack ( msg, sysex, cur_track );
+    return AddEventToMultiTrack ( msg, sysex, cur_track ); // VRM
 }
 
-
-void    MIDIFileReadMultiTrack::mf_tempo ( MIDIClockTime time, unsigned long tempo )
+bool MIDIFileReadMultiTrack::mf_tempo ( MIDIClockTime time, unsigned long tempo ) // VRM
 {
     unsigned long tempo_bpm_times_32;
 
@@ -185,26 +180,24 @@ void    MIDIFileReadMultiTrack::mf_tempo ( MIDIClockTime time, unsigned long tem
     MIDITimedMessage msg;
     msg.SetTempo32 ( static_cast<unsigned short> ( tempo_bpm_times_32 ) );
     msg.SetTime ( time );
-    AddEventToMultiTrack ( msg, 0, cur_track );
+    return AddEventToMultiTrack ( msg, 0, cur_track ); // VRM
 }
 
-
-void    MIDIFileReadMultiTrack::mf_keysig ( MIDIClockTime time, int c, int v )
+bool MIDIFileReadMultiTrack::mf_keysig ( MIDIClockTime time, int c, int v ) // VRM
 {
     MIDITimedMessage msg;
     msg.SetKeySig ( ( unsigned char ) c, ( unsigned char ) v );
     msg.SetTime ( time );
-    AddEventToMultiTrack ( msg, 0, cur_track );
+    return AddEventToMultiTrack ( msg, 0, cur_track ); // VRM
 }
 
-
-void    MIDIFileReadMultiTrack::mf_sqspecific ( MIDIClockTime time, int, unsigned char * )
+bool MIDIFileReadMultiTrack::mf_sqspecific ( MIDIClockTime time, int len, unsigned char *s ) // VRM
 {
-    // ignore any sequencer specific messages
+    // read sequencer specific message as pseudo-text message
+    return mf_text ( time, MF_SEQUENCER_SPECIFIC, len, s ); // VRM
 }
 
-
-void    MIDIFileReadMultiTrack::mf_text ( MIDIClockTime time, int type, int len, unsigned char *s )
+bool MIDIFileReadMultiTrack::mf_text ( MIDIClockTime time, int type, int len, unsigned char *s ) // VRM
 {
     MIDITimedMessage msg;
     msg.SetStatus ( META_EVENT );
@@ -217,19 +210,16 @@ void    MIDIFileReadMultiTrack::mf_text ( MIDIClockTime time, int type, int len,
         sysex->PutSysByte ( s[i] );
     }
 
-    AddEventToMultiTrack ( msg, sysex, cur_track );
+    return AddEventToMultiTrack ( msg, sysex, cur_track ); // VRM
 }
 
-
-void    MIDIFileReadMultiTrack::mf_eot ( MIDIClockTime time )
+bool MIDIFileReadMultiTrack::mf_eot ( MIDIClockTime time ) // VRM
 {
     MIDITimedMessage msg;
     msg.SetStatus ( META_EVENT );
-    msg.SetMetaType ( META_END_OF_TRACK );
+    msg.SetMetaType ( META_DATA_END ); // VRM
     msg.SetTime ( time );
-    AddEventToMultiTrack ( msg, 0, cur_track );
+    return AddEventToMultiTrack ( msg, 0, cur_track ); // VRM
 }
-
-
 
 }

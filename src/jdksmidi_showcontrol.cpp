@@ -28,7 +28,6 @@
 namespace jdksmidi
 {
 
-
 MIDIShowControlPacket::MIDIShowControlPacket()
         :
         QNumber ( 0 ),

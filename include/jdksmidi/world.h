@@ -30,7 +30,10 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
-
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #ifndef JDKSMIDI_WORLD_H
 #define JDKSMIDI_WORLD_H
@@ -38,6 +41,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <string> // VRM
+#include <vector> // VRM
+#include <algorithm> // VRM
+
+namespace jdksmidi // VRM
+{
 
 #define ENTER(a)
 
@@ -68,11 +78,26 @@ MIDI Files easily.
 
 */
 
+// VRM
+
 #ifdef WIN32
-#pragma warning(disable: 4996) // VRM@ to take away "function was declared deprecated" warnings
+#pragma warning(disable: 4996) // to take away "function was declared deprecated" warnings
+#pragma warning(disable: 4355) // 'this' used in base member initializer list
 #endif
 
+template <class I> inline void jdks_safe_delete_object(I *&obj)
+{
+  delete obj;
+  obj = 0;
+}
+
+template <class I> inline void jdks_safe_delete_array(I *&arr)
+{
+  delete [] arr;
+  arr = 0;
+}
+
+}
 
 #endif
-
 

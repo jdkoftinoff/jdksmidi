@@ -30,6 +30,10 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #ifndef JDKSMIDI_FILEREADMULTITRACK_H
 #define JDKSMIDI_FILEREADMULTITRACK_H
@@ -43,6 +47,7 @@
 
 namespace jdksmidi
 {
+
 class MIDIFileReadMultiTrack : public MIDIFileEvents
 {
 public:
@@ -55,42 +60,40 @@ public:
 // The possible events in a MIDI Files
 //
 
-    virtual void    mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex );
+    virtual void mf_arbitrary ( MIDIClockTime time, int len, unsigned char *data );
+    virtual void mf_metamisc ( MIDIClockTime time, int, int, unsigned char * );
+    virtual void mf_seqnum ( MIDIClockTime time, int );
+    virtual void mf_smpte ( MIDIClockTime time, int, int, int, int, int );
 
-    virtual void    mf_arbitrary ( MIDIClockTime time, int len, unsigned char *data );
-    virtual void    mf_metamisc ( MIDIClockTime time, int, int, unsigned char * );
-    virtual void    mf_seqnum ( MIDIClockTime time, int );
-    virtual void    mf_smpte ( MIDIClockTime time, int, int, int, int, int );
-    virtual void    mf_timesig ( MIDIClockTime time, int, int, int, int );
-    virtual void    mf_tempo ( MIDIClockTime time, unsigned long tempo );
-    virtual void    mf_keysig ( MIDIClockTime time, int, int );
-    virtual void    mf_sqspecific ( MIDIClockTime time, int, unsigned char * );
-    virtual void    mf_text ( MIDIClockTime time, int, int, unsigned char * );
-    virtual void    mf_eot ( MIDIClockTime time );
+    virtual bool mf_timesig ( MIDIClockTime time, int, int, int, int ); // VRM
+    virtual bool mf_tempo ( MIDIClockTime time, unsigned long tempo ); // VRM
+    virtual bool mf_keysig ( MIDIClockTime time, int, int ); // VRM
+    virtual bool mf_sqspecific ( MIDIClockTime time, int, unsigned char * ); // VRM
+    virtual bool mf_text ( MIDIClockTime time, int, int, unsigned char * ); // VRM
+    virtual bool mf_eot ( MIDIClockTime time ); // VRM
+    virtual bool mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex );
 
 //
 // the following methods are to be overridden for your specific purpose
 //
 
-    virtual void    mf_error ( const char * );
-
-    virtual void    mf_starttrack ( int trk );
-    virtual void    mf_endtrack ( int trk );
-    virtual void    mf_header ( int, int, int );
+    virtual void mf_error ( const char * );
+    virtual void mf_starttrack ( int trk );
+    virtual void mf_endtrack ( int trk );
+    virtual void mf_header ( int, int, int );
 
 //
 // Higher level dispatch functions
 //
 
-    virtual void    ChanMessage ( const MIDITimedMessage &msg, bool optimize_tracks ); // VRM@
+    virtual bool ChanMessage ( const MIDITimedMessage &msg ); // VRM
+    // test and sort events temporal order in all tracks
+    virtual void SortEventsOrder(); // func by VRM
 
 protected:
 
-    void AddEventToMultiTrack (
-        const MIDITimedMessage &msg,
-        MIDISystemExclusive *sysex,
-        int dest_track
-    );
+    // return false if dest_track absent or no space for event
+    bool AddEventToMultiTrack ( const MIDITimedMessage &msg, MIDISystemExclusive *sysex, int dest_track ); // VRM
 
     MIDIMultiTrack *multitrack;
     int cur_track;

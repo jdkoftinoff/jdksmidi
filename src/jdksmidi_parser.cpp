@@ -30,12 +30,13 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
-
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #include "jdksmidi/world.h"
-
 #include "jdksmidi/parser.h"
-
 
 #ifndef DEBUG_MDPARSER
 # define DEBUG_MDPARSER 0
@@ -46,10 +47,8 @@
 # define DBG(a) a
 #endif
 
-
 namespace jdksmidi
 {
-
 
 MIDIParser::MIDIParser ( ushort max_sysex_size )
 {
@@ -61,7 +60,7 @@ MIDIParser::MIDIParser ( ushort max_sysex_size )
 MIDIParser::~MIDIParser()
 {
     ENTER ( "MIDIParser::~MIDIParser" );
-    delete sysex;
+    jdks_safe_delete_object( sysex ); // VRM
 }
 
 

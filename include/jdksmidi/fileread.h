@@ -30,6 +30,10 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #ifndef JDKSMIDI_FILEREAD_H
 #define JDKSMIDI_FILEREAD_H
@@ -41,6 +45,7 @@
 
 namespace jdksmidi
 {
+
 class MIDIFileReadStream;
 class MIDIFileReadStreamFile;
 class MIDIFileEvents;
@@ -58,6 +63,8 @@ public:
     {
     }
 
+    virtual void Rewind() = 0; // func by VRM
+
     virtual int ReadChar() = 0;
 };
 
@@ -70,7 +77,7 @@ public:
     }
 
 #ifdef WIN32
-    explicit MIDIFileReadStreamFile ( const wchar_t *fname ) { f = _wfopen ( fname, L"rb" ); } // func by VRM@
+    explicit MIDIFileReadStreamFile ( const wchar_t *fname ) { f = _wfopen ( fname, L"rb" ); } // func by VRM
 #endif
 
     explicit MIDIFileReadStreamFile ( FILE *f_ ) : f ( f_ )
@@ -79,13 +86,15 @@ public:
 
     virtual ~MIDIFileReadStreamFile()
     {
-        if ( f )
-        {
-            fclose ( f );
-        }
+        if ( f ) fclose ( f );
     }
 
-    bool IsValid() { return f != 0; } // VRM@
+    virtual void Rewind() // func by VRM
+    {
+        if ( f ) rewind ( f );
+    }
+
+    bool IsValid() { return f != 0; } // VRM
 
     virtual int ReadChar()
     {
@@ -120,106 +129,109 @@ public:
 // The possible events in a MIDI Files
 //
 
-    virtual void    mf_system_mode ( const MIDITimedMessage &msg );
-    virtual void    mf_note_on ( const MIDITimedMessage &msg );
-    virtual void    mf_note_off ( const  MIDITimedMessage &msg );
-    virtual void    mf_poly_after ( const MIDITimedMessage &msg );
-    virtual void    mf_bender ( const MIDITimedMessage &msg );
-    virtual void    mf_program ( const MIDITimedMessage &msg );
-    virtual void    mf_chan_after ( const MIDITimedMessage &msg );
-    virtual void    mf_control ( const MIDITimedMessage &msg );
-    virtual void    mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex );
+    virtual void mf_system_mode ( const MIDITimedMessage &msg );
+    virtual void mf_note_on ( const MIDITimedMessage &msg );
+    virtual void mf_note_off ( const  MIDITimedMessage &msg );
+    virtual void mf_poly_after ( const MIDITimedMessage &msg );
+    virtual void mf_bender ( const MIDITimedMessage &msg );
+    virtual void mf_program ( const MIDITimedMessage &msg );
+    virtual void mf_chan_after ( const MIDITimedMessage &msg );
+    virtual void mf_control ( const MIDITimedMessage &msg );
+    virtual void mf_arbitrary ( MIDIClockTime time, int len, unsigned char *data );
+    virtual void mf_metamisc ( MIDIClockTime time, int, int, unsigned char * );
+    virtual void mf_seqnum ( MIDIClockTime time, int );
+    virtual void mf_smpte ( MIDIClockTime time, int, int, int, int, int );
 
-    virtual void    mf_arbitrary ( MIDIClockTime time, int len, unsigned char *data );
-    virtual void    mf_metamisc ( MIDIClockTime time, int, int, unsigned char * );
-    virtual void    mf_seqnum ( MIDIClockTime time, int );
-    virtual void    mf_smpte ( MIDIClockTime time, int, int, int, int, int );
-    virtual void    mf_timesig ( MIDIClockTime time, int, int, int, int );
-    virtual void    mf_tempo ( MIDIClockTime time, unsigned long tempo );
-    virtual void    mf_keysig ( MIDIClockTime time, int, int );
-    virtual void    mf_sqspecific ( MIDIClockTime time, int, unsigned char * );
-    virtual void    mf_text ( MIDIClockTime time, int, int, unsigned char * );
-    virtual void    mf_eot ( MIDIClockTime time );
+    virtual bool mf_timesig ( MIDIClockTime time, int, int, int, int ); // VRM
+    virtual bool mf_tempo ( MIDIClockTime time, unsigned long tempo ); // VRM
+    virtual bool mf_keysig ( MIDIClockTime time, int, int ); // VRM
+    virtual bool mf_sqspecific ( MIDIClockTime time, int, unsigned char * ); // VRM
+    virtual bool mf_text ( MIDIClockTime time, int, int, unsigned char * ); // VRM
+    virtual bool mf_eot ( MIDIClockTime time ); // VRM
+    virtual bool mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex ); // VRM
 
 //
 // the following methods are to be overridden for your specific purpose
 //
 
-    virtual void    mf_error ( const char * );
+    virtual void mf_error ( const char * );
 
-    virtual void    mf_starttrack ( int trk );
-    virtual void    mf_endtrack ( int trk );
-    virtual void    mf_header ( int, int, int );
+    virtual void mf_starttrack ( int trk );
+    virtual void mf_endtrack ( int trk );
+    virtual void mf_header ( int, int, int );
 
 //
 // Higher level dispatch functions
 //
     virtual void UpdateTime ( MIDIClockTime delta_time );
-    virtual void MetaEvent ( MIDIClockTime time, int type, int len, unsigned char *buf );
-    virtual void ChanMessage ( const MIDITimedMessage &msg, bool optimize_tracks ); // VRM@
+    virtual bool MetaEvent ( MIDIClockTime time, int type, int len, unsigned char *buf ); // VRM
+    virtual bool ChanMessage ( const MIDITimedMessage &msg); // VRM
+    virtual void SortEventsOrder() {} // func by VRM
 
 };
 
 class MIDIFileRead : protected MIDIFile
 {
 public:
-
     MIDIFileRead (
         MIDIFileReadStream *input_stream_,
         MIDIFileEvents *event_handler_,
         unsigned long max_msg_len = 8192
     );
-    virtual         ~MIDIFileRead();
+    virtual ~MIDIFileRead();
 
-    virtual bool    Parse();
+    // VRM return false if not enough number of tracks or events in any track
+    virtual bool Parse();
 
-    int  GetFormat() { return header_format; }
-    int  GetNumberTracks() { return header_ntrks; }
-    int  GetDivision() { return header_division; }
-    bool GetOptimizeTracks() { return optimize_tracks; } // VRM@
-    // false argument to make internal tracks structure identical to file tracks structure 
-    void SetOptimizeTracks( bool optimize_tracks_ ) { optimize_tracks = optimize_tracks_; } // VRM@
+    // read midifile header, return number of tracks
+    int ReadNumTracks(); // func by VRM
 
-protected:
-
-    virtual int  ReadHeader();
-
-    virtual void    mf_error ( const char * );
+    int GetFormat() const { return header_format; }
+    int GetNumTracks() const { return header_ntrks; } // VRM
+    // call it after Parse(): return true if file contain event(s) with running status
+    bool UsedRunningStatus() const { return used_running_status; } // func by VRM
+    // return header_division = clock per beat value for range 1...32767
+    int GetDivision() const { return header_division; }
 
 protected:
-    int  no_merge;
-    MIDIClockTime   cur_time;
-    int  skip_init;
-    unsigned long   to_be_read;
-    int   cur_track;
-    int   abort_parse;
+    virtual int ReadHeader();
+    virtual void mf_error ( const char * );
 
-    unsigned char   *the_msg;
-    int  max_msg_len;
-    int    msg_index;
+    int no_merge;
+    MIDIClockTime cur_time;
+    int skip_init;
+    unsigned long to_be_read;
+    int cur_track;
+    int abort_parse;
+
+    unsigned char *the_msg;
+    int max_msg_len;
+    int msg_index;
 
 private:
-    unsigned long   ReadVariableNum();
-    unsigned long   Read32Bit();
-    int   Read16Bit();
+    unsigned long ReadVariableNum();
+    unsigned long Read32Bit();
+    int Read16Bit();
 
-    void    ReadTrack();
+    void ReadTrack();
 
-    void    MsgAdd ( int );
-    void    MsgInit();
+    void MsgAdd ( int );
+    void MsgInit();
 
-    int   EGetC();
+    int EGetC();
 
-    int   ReadMT ( unsigned long, int );
-    void    BadByte ( int );
+    int ReadMT ( unsigned long, int );
+    void BadByte ( int );
 
-    void FormChanMessage ( unsigned char st, unsigned char b1, unsigned char b2 );
+    bool FormChanMessage ( unsigned char st, unsigned char b1, unsigned char b2 ); // VRM
+    // reset data for multiple parse
+    void Reset(); // func by VRM
 
+    bool used_running_status; // VRM
 
-    int  header_format;
-    int  header_ntrks;
-    int  header_division;
-    bool optimize_tracks; // true on default VRM@
+    int header_format;
+    int header_ntrks;
+    int header_division;
 
     MIDIFileReadStream *input_stream;
     MIDIFileEvents *event_handler;

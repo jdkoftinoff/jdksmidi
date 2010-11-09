@@ -30,11 +30,13 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #include "jdksmidi/world.h"
-
 #include "jdksmidi/sysex.h"
-
 
 #ifndef DEBUG_MDSYSEX
 # define DEBUG_MDSYSEX 0
@@ -47,7 +49,6 @@
 
 namespace jdksmidi
 {
-
 
 MIDISystemExclusive::MIDISystemExclusive ( int size_ )
 {
@@ -84,8 +85,17 @@ MIDISystemExclusive::~MIDISystemExclusive()
     ENTER ( "MIDISystemExclusive::~MIDISystemExclusive" );
 
     if ( deletable )
-        delete [] buf;
+    {
+        jdks_safe_delete_array( buf ); // VRM
+    }
 }
 
+bool operator == ( const MIDISystemExclusive &e1, const MIDISystemExclusive &e2 ) // func by VRM
+{
+  if ( e1.cur_len != e2.cur_len ) return false;
+  if ( e1.cur_len == 0 ) return true;
+
+  return memcmp( e1.buf, e2.buf, e1.cur_len ) == 0 ;
+}
 
 }

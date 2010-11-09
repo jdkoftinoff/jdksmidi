@@ -1,9 +1,37 @@
+/*
+ *  libjdksmidi-2004 C++ Class Library for MIDI
+ *
+ *  Copyright (C) 2004  J.D. Koftinoff Software, Ltd.
+ *  www.jdkoftinoff.com
+ *  jeffk@jdkoftinoff.com
+ *
+ *  *** RELEASED UNDER THE GNU GENERAL PUBLIC LICENSE (GPL) April 27, 2004 ***
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
+
 #include "jdksmidi/world.h"
 #include "jdksmidi/advancedsequencer.h"
 
-
 namespace jdksmidi
 {
+
 static void FixQuotes ( char *s_ )
 {
     unsigned char *s = ( unsigned char * ) s_;
@@ -55,7 +83,7 @@ AdvancedSequencer::~AdvancedSequencer()
 
     for ( int i = 0; i < num_warp_positions; ++i )
     {
-        delete warp_positions[i];
+        jdks_safe_delete_object ( warp_positions[i] ); // VRM
     }
 }
 
@@ -147,7 +175,7 @@ bool AdvancedSequencer::Load ( const char *fname )
 {
     char realname[1024];
     strcpy ( realname, fname );
-    int orignamelen = ( int ) strlen ( fname ); // VRM@
+    int orignamelen = ( int ) strlen ( fname ); // VRM
     chain_mode = false;
 
     if ( orignamelen > 0 )
@@ -785,7 +813,7 @@ void AdvancedSequencer::ExtractWarpPositions()
     {
         for ( int i = 0; i < num_warp_positions; ++i )
         {
-            delete warp_positions[i];
+            jdks_safe_delete_object ( warp_positions[i] ); // VRM
         }
 
         num_warp_positions = 0;
@@ -797,7 +825,7 @@ void AdvancedSequencer::ExtractWarpPositions()
 
     for ( int i = 0; i < num_warp_positions; ++i )
     {
-        delete warp_positions[i];
+        jdks_safe_delete_object ( warp_positions[i] ); // VRM
     }
 
     num_warp_positions = 0;

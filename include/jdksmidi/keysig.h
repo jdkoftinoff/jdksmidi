@@ -38,6 +38,7 @@
 
 namespace jdksmidi
 {
+
 enum MIDIAccidentalType
 {
     ACCFlat = 0,

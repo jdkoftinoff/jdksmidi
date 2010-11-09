@@ -25,10 +25,7 @@
 #ifndef JDKSMIDI_SHOWCONTROLHANDLER_H
 #define JDKSMIDI_SHOWCONTROLHANDLER_H
 
-
-
 #include "jdksmidi/showcontrol.h"
-
 
 namespace jdksmidi
 {

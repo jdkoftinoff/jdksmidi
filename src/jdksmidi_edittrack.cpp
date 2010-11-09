@@ -30,7 +30,10 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
-
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #include "jdksmidi/world.h"
 
@@ -47,7 +50,6 @@
 
 namespace jdksmidi
 {
-
 
 MIDIEditTrackEventMatcher::MIDIEditTrackEventMatcher()
 {
@@ -78,7 +80,7 @@ void  MIDIEditTrack::Process (
     MIDIEditTrackEventMatcher *match
 )
 {
-    // TODO: Process
+    // TO DO: Process
 }
 
 
@@ -475,7 +477,7 @@ void EMIDITrack::FixNotes()
         }
     }
 
-    delete matrix;
+    jdks_safe_delete_object( matrix ); // VRM
 }
 
 
@@ -797,8 +799,8 @@ void EMIDITrack::Erase ( ulong start, ulong end, Boolean jagged )
     //
     // kill our helpful MIDIMatrix's
     //
-    delete before_matrix;
-    delete during_matrix;
+    jdks_safe_delete_object( before_matrix ); // VRM
+    jdks_safe_delete_object( during_matrix ); // VRM
 }
 
 void    EMIDITrack::Delete ( ulong start, ulong end, Boolean jagged )

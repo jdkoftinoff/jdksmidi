@@ -21,6 +21,11 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
+
 #ifndef JDKSMIDI_FILEWRITEMULTITRACK_H
 #define JDKSMIDI_FILEWRITEMULTITRACK_H
 
@@ -52,8 +57,10 @@ public:
         return Write ( multitrack->GetNumTracks(), multitrack->GetClksPerBeat() );
     }
 
-private:
+    // false argument disable use running status in midi file (true on default)
+    void UseRunningStatus( bool use ) { writer.UseRunningStatus( use ); } // func by VRM
 
+private:
     virtual bool PreWrite();
     virtual bool PostWrite();
 

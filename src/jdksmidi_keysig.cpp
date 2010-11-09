@@ -49,7 +49,6 @@
 namespace jdksmidi
 {
 
-
 int MIDIKeySignature::sharp_list[7] = { 3, 0, 4, 1, 5, 2, 6 };
 int MIDIKeySignature::flat_list[7] =  { 6, 2, 5, 1, 4, 0, 3 };
 

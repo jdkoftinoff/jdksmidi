@@ -21,12 +21,16 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
+
 #include "jdksmidi/world.h"
 #include "jdksmidi/process.h"
 
 namespace jdksmidi
 {
-
 
 MIDIProcessor::MIDIProcessor()
 {
@@ -35,7 +39,6 @@ MIDIProcessor::MIDIProcessor()
 MIDIProcessor::~MIDIProcessor()
 {
 }
-
 
 
 
@@ -52,7 +55,7 @@ MIDIMultiProcessor::MIDIMultiProcessor ( int num )
 
 MIDIMultiProcessor::~MIDIMultiProcessor()
 {
-    delete [] processors;
+    jdks_safe_delete_array( processors ); // VRM
 }
 
 

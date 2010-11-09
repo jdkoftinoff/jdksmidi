@@ -30,10 +30,12 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
-
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #include "jdksmidi/world.h"
-
 #include "jdksmidi/filewrite.h"
 
 #ifndef DEBUG_MDFWR
@@ -47,7 +49,6 @@
 
 namespace jdksmidi
 {
-
 
 MIDIFileWriteStream::MIDIFileWriteStream()
 {
@@ -95,6 +96,7 @@ MIDIFileWrite::MIDIFileWrite ( MIDIFileWriteStream *out_stream_ )
     track_time = 0;
     running_status = 0;
     track_position = 0;
+    use_running_status = true; // VRM
 }
 
 MIDIFileWrite::~MIDIFileWrite()
@@ -203,7 +205,7 @@ void MIDIFileWrite::WriteDeltaTime ( unsigned long abs_time )
 
     if ( dtime < 0 )
     {
-//  Error( "Events out of order" );
+        Error( "Events out of order" ); // VRM
         dtime = 0;
     }
 
@@ -255,6 +257,7 @@ void    MIDIFileWrite::WriteEvent ( const MIDITimedMessage &m )
             running_status = m.GetStatus();
             WriteCharacter ( ( unsigned char ) running_status );
             IncrementCounters ( 1 );
+            if ( !use_running_status ) running_status = 0; // VRM
         }
 
         if ( len > 1 )
@@ -337,6 +340,7 @@ void MIDIFileWrite::WriteEvent ( const MIDITimedBigMessage &m )
                 running_status = m.GetStatus();
                 WriteCharacter ( ( unsigned char ) running_status );
                 IncrementCounters ( 1 );
+                if ( !use_running_status ) running_status = 0; // VRM
             }
 
             if ( len > 1 )
@@ -381,7 +385,7 @@ void MIDIFileWrite::WriteEvent ( unsigned long time, unsigned short text_type, c
     WriteCharacter ( ( unsigned char ) 0xff );  // META-Event
     WriteCharacter ( ( unsigned char ) text_type ); // Text event type
     IncrementCounters ( 2 );
-    long len = ( long ) strlen ( text ); // VRM@
+    long len = ( long ) strlen ( text ); // VRM
     IncrementCounters ( WriteVariableNum ( len ) );
 
     while ( *text )

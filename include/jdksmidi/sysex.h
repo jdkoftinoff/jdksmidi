@@ -30,6 +30,10 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #ifndef JDKSMIDI_SYSEX_H
 #define JDKSMIDI_SYSEX_H
@@ -62,6 +66,8 @@ public:
     }
 
     virtual ~MIDISystemExclusive();
+
+    friend bool operator == ( const MIDISystemExclusive &e1, const MIDISystemExclusive &e2 ); // func by VRM
 
     void Clear()
     {

@@ -30,13 +30,13 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
-
-
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #include "jdksmidi/world.h"
-
 #include "jdksmidi/multitrack.h"
-
 
 #ifndef DEBUG_MDMLTTRK
 # define DEBUG_MDMLTTRK 0
@@ -50,29 +50,69 @@
 namespace jdksmidi
 {
 
-
 MIDIMultiTrack::MIDIMultiTrack ( int num_tracks_, bool deletable_ )
-        :
-        num_tracks ( num_tracks_ ),
-        deletable ( deletable_ )
 {
     ENTER ( "MIDIMultiTrack::MIDIMultiTrack()" );
-    tracks = new MIDITrack * [num_tracks];
+    // VRM
+    tracks = 0; // object still don't exist
+    CreateObject ( num_tracks_, deletable_ );
+}
 
-    if ( tracks )
+bool MIDIMultiTrack::CreateObject ( int num_tracks_, bool deletable_ ) // func by VRM
+{
+    // delete old multitrack object
+    if ( tracks ) this->~MIDIMultiTrack();
+
+    number_of_tracks = num_tracks_;
+    deletable = deletable_;
+
+    tracks = new MIDITrack * [number_of_tracks];
+    if ( !tracks ) return false;
+
+    if ( deletable )
     {
-        if ( deletable )
+        for ( int i = 0; i < number_of_tracks; ++i )
         {
-            for ( int i = 0; i < num_tracks; ++i )
-                tracks[i] = new MIDITrack;
-        }
-
-        else
-        {
-            for ( int i = 0; i < num_tracks; ++i )
-                tracks[i] = 0;
+            tracks[i] = new MIDITrack;
+            if ( !tracks[i] ) return false;
         }
     }
+    else
+    {
+        for ( int i = 0; i < number_of_tracks; ++i )
+            tracks[i] = 0;
+    }
+
+    return true;
+}
+
+bool MIDIMultiTrack::ClearAndResize ( int num_tracks ) // func by VRM
+{
+  return CreateObject ( num_tracks, this->deletable );
+}
+
+bool MIDIMultiTrack::AssignEventsToTracks ( const MIDITrack *src ) // func by VRM
+{
+  MIDITrack tmp( *src ); // make copy of src track
+
+  // renew multitrack object with 17 tracks:
+  // tracks 1-16 for channal events, and track 0 for other types of events
+  ClearAndResize( 17 );
+
+  // move events to tracks 0-16 according it's types/channals
+  for ( int i = 0; i < tmp.GetNumEvents(); ++i )
+  {
+    const MIDITimedBigMessage *msg;
+    msg = tmp.GetEventAddress ( i );
+
+    int track_num = 0;
+    if ( msg->IsChannelMsg() )
+      track_num = 1 + msg->GetChannel();
+
+    if ( !GetTrack ( track_num )->PutEvent( *msg ) ) return false;
+  }
+
+  return true;
 }
 
 MIDIMultiTrack::~MIDIMultiTrack()
@@ -81,26 +121,28 @@ MIDIMultiTrack::~MIDIMultiTrack()
 
     if ( deletable )
     {
-        for ( int i = 0; i < num_tracks; ++i )
-            delete tracks[i];
+        for ( int i = 0; i < number_of_tracks; ++i )
+        {
+            jdks_safe_delete_object( tracks[i] ); // VRM
+        }
     }
 
-    delete [] tracks;
+    jdks_safe_delete_array( tracks ); // VRM
 }
 
 void MIDIMultiTrack::Clear()
 {
-    for ( int i = 0; i < num_tracks; ++i )
+    for ( int i = 0; i < number_of_tracks; ++i )
     {
         tracks[i]->Clear();
     }
 }
 
-int MIDIMultiTrack::GetNumTracksWithEvents() const
+int MIDIMultiTrack::GetNumTracksWithEvents() const  // func by VRM
 {
   int i;
 
-  for ( i = num_tracks - 1; i >= 0; --i )
+  for ( i = number_of_tracks - 1; i >= 0; --i )
   {
     if ( !tracks[i]->IsTrackEmpty() ) break;
   }
@@ -108,8 +150,16 @@ int MIDIMultiTrack::GetNumTracksWithEvents() const
   return i+1;
 }
 
-
-
+void MIDIMultiTrack::SortEventsOrder() // func by VRM
+{
+  for ( int i = 0; i < number_of_tracks; ++i )
+  {
+    if ( !tracks[i]->EventsOrderOK() )
+    {
+      tracks[i]->SortEventsOrder();
+    }
+  }
+}
 
 
 MIDIMultiTrackIteratorState::MIDIMultiTrackIteratorState ( int num_tracks_ )
@@ -138,8 +188,8 @@ MIDIMultiTrackIteratorState::MIDIMultiTrackIteratorState ( const MIDIMultiTrackI
 
 MIDIMultiTrackIteratorState::~MIDIMultiTrackIteratorState()
 {
-    delete [] next_event_number;
-    delete [] next_event_time;
+    jdks_safe_delete_array( next_event_number ); // VRM
+    jdks_safe_delete_array( next_event_time ); // VRM
 }
 
 const MIDIMultiTrackIteratorState & MIDIMultiTrackIteratorState::operator = ( const MIDIMultiTrackIteratorState &m )
