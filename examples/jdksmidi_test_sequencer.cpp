@@ -168,8 +168,8 @@ int main( int argc, char **argv )
     MIDIFileReadMultiTrack track_loader( &tracks );
     MIDIFileRead reader( &rs, &track_loader );
 
-    // set amount of tracks equal to midifile
-    tracks.ClearAndResize( reader.ReadNumTracks() );
+    // increase amount of of tracks if tracks.num_tracks less than midifile tracks
+    tracks.ExpandIfLess( reader.ReadNumTracks() );
 
 //  MIDISequencerGUIEventNotifierText notifier( stdout );
 //  MIDISequencer seq( &tracks, &notifier );

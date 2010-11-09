@@ -517,7 +517,7 @@ MIDISequencerState::~MIDISequencerState()
 {
     for ( int i = 0; i < num_tracks; ++i )
     {
-        jdks_safe_delete_object( track_state[i] ); // VRM
+        safe_delete_object( track_state[i] ); // VRM
     }
 }
 
@@ -528,7 +528,7 @@ const MIDISequencerState & MIDISequencerState::operator = ( const MIDISequencerS
         {
             for ( int i = 0; i < num_tracks; ++i )
             {
-                jdks_safe_delete_object( track_state[i] ); // VRM
+                safe_delete_object( track_state[i] ); // VRM
             }
         }
         num_tracks = s.num_tracks;
@@ -574,7 +574,7 @@ MIDISequencer::~MIDISequencer()
 {
     for ( int i = 0; i < num_tracks; ++i )
     {
-        jdks_safe_delete_object( track_processors[i] ); // VRM
+        safe_delete_object( track_processors[i] ); // VRM
     }
 }
 

@@ -725,7 +725,7 @@ void MIDIBigMessage::Clear()
 
 MIDIBigMessage::~MIDIBigMessage()
 {
-    jdks_safe_delete_object( sysex ); // VRM
+    safe_delete_object( sysex ); // VRM
 }
 
 //
@@ -735,9 +735,15 @@ MIDIBigMessage::~MIDIBigMessage()
 const MIDIBigMessage &MIDIBigMessage::operator = ( const MIDIBigMessage &m )
 {
     delete sysex;
-    sysex = 0;
+
     if ( m.sysex )
+    {
         sysex = new MIDISystemExclusive ( *m.sysex );
+    }
+    else
+    {
+        sysex = 0;
+    }
 
     MIDIMessage::operator = ( m );
     return *this;
@@ -745,8 +751,7 @@ const MIDIBigMessage &MIDIBigMessage::operator = ( const MIDIBigMessage &m )
 
 const MIDIBigMessage &MIDIBigMessage::operator = ( const MIDIMessage &m )
 {
-    delete sysex;
-    sysex = 0;
+    safe_delete_object( sysex ); // VRM
     MIDIMessage::operator = ( m );
     return *this;
 }
@@ -781,7 +786,7 @@ const MIDISystemExclusive *MIDIBigMessage::GetSysEx() const
 
 void MIDIBigMessage::CopySysEx ( const MIDISystemExclusive *e )
 {
-    jdks_safe_delete_object( sysex ); // VRM
+    safe_delete_object( sysex ); // VRM
     if ( e )
     {
         sysex = new MIDISystemExclusive ( *e );
@@ -799,7 +804,7 @@ void MIDIBigMessage::SetSysEx ( MIDISystemExclusive *e )
 
 void MIDIBigMessage::ClearSysEx()
 {
-    jdks_safe_delete_object( sysex ); // VRM
+    safe_delete_object( sysex ); // VRM
 }
 
 

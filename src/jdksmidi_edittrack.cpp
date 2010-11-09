@@ -477,7 +477,7 @@ void EMIDITrack::FixNotes()
         }
     }
 
-    jdks_safe_delete_object( matrix ); // VRM
+    safe_delete_object( matrix ); // VRM
 }
 
 
@@ -799,8 +799,8 @@ void EMIDITrack::Erase ( ulong start, ulong end, Boolean jagged )
     //
     // kill our helpful MIDIMatrix's
     //
-    jdks_safe_delete_object( before_matrix ); // VRM
-    jdks_safe_delete_object( during_matrix ); // VRM
+    safe_delete_object( before_matrix ); // VRM
+    safe_delete_object( during_matrix ); // VRM
 }
 
 void    EMIDITrack::Delete ( ulong start, ulong end, Boolean jagged )

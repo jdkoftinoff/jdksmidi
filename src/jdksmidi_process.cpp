@@ -55,7 +55,7 @@ MIDIMultiProcessor::MIDIMultiProcessor ( int num )
 
 MIDIMultiProcessor::~MIDIMultiProcessor()
 {
-    jdks_safe_delete_array( processors ); // VRM
+    safe_delete_array( processors ); // VRM
 }
 
 

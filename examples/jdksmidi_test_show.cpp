@@ -47,9 +47,7 @@ int main ( int argc, char **argv )
       return -1;
     }
 
-    bool sqspecific_as_text = true; // if true print META_SEQUENCER_SPECIFIC events as text string
-
-    MIDIFileShow shower ( stdout, sqspecific_as_text );
+    MIDIFileShow shower ( stdout );
     MIDIFileRead reader ( &rs, &shower );
 
     if ( !reader.Parse() )

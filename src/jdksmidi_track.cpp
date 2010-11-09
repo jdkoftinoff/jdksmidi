@@ -95,7 +95,7 @@ MIDITrack::~MIDITrack()
 {
     for ( int i = 0; i < buf_size / MIDITrackChunkSize; ++i )
     {
-        jdks_safe_delete_object( chunk[i] ); // VRM
+        safe_delete_object( chunk[i] ); // VRM
     }
 }
 
@@ -450,7 +450,7 @@ void MIDITrack::Shrink()
     {
         for ( int i = num_chunks_used; i < num_chunks_alloced; ++i )
         {
-            jdks_safe_delete_object( chunk[i] );
+            safe_delete_object( chunk[i] );
         }
 
         buf_size = num_chunks_used * MIDITrackChunkSize;
@@ -526,19 +526,6 @@ bool MIDITrack::PutEvent ( const MIDITimedMessage &msg, const MIDISystemExclusiv
 }
 
 bool MIDITrack::PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length ) // func by VRM
-{
-  MIDITimedMessage msg;
-  msg.SetTime( time );
-  msg.SetMetaEvent( meta_event_type , 0 );
-
-  if ( length < 0 ) length = (int) strlen( text );
-  MIDISystemExclusive sysex( length );
-  for ( int i = 0; i < length; ++i ) sysex.PutSysByte ( text[i] );
-
-  return PutEvent( msg, &sysex );
-}
-
-bool MIDITrack::PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length )
 {
   MIDITimedMessage msg;
   msg.SetTime( time );

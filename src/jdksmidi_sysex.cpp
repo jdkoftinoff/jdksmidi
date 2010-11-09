@@ -86,7 +86,7 @@ MIDISystemExclusive::~MIDISystemExclusive()
 
     if ( deletable )
     {
-        jdks_safe_delete_array( buf ); // VRM
+        safe_delete_array( buf ); // VRM
     }
 }
 

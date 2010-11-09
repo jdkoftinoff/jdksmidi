@@ -51,10 +51,9 @@
 namespace jdksmidi
 {
 
-MIDIFileShow::MIDIFileShow ( FILE *out_, bool sqspecific_as_text_ )
+MIDIFileShow::MIDIFileShow ( FILE *out_ )
         :
-        out ( out_ ),
-        sqspecific_as_text ( sqspecific_as_text_ ) // VRM
+        out ( out_ )
 {
     ENTER ( "MIDIFileShow::MIDIFileShow()" );
 }
@@ -173,7 +172,7 @@ void MIDIFileShow::mf_control ( const MIDITimedMessage &msg )
     fprintf ( out, "%s\n", msg.MsgToText ( buf ) );
 }
 
-bool MIDIFileShow::mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex ) // VRM
+bool MIDIFileShow::mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex ) // VRM@
 {
     show_time ( time );
     fprintf ( out, "SysEx     Length=%d\n", ex.GetLength() );
@@ -234,7 +233,7 @@ void MIDIFileShow::mf_smpte ( MIDIClockTime time, int a, int b, int c, int d, in
     fprintf ( out, "SMPTE Event      %02x,%02x,%02x,%02x,%02x\n", a, b, c, d, e );
 }
 
-bool MIDIFileShow::mf_timesig ( // VRM
+bool MIDIFileShow::mf_timesig ( // VRM@
     MIDIClockTime time,
     int num,
     int denom_power,
@@ -278,30 +277,20 @@ bool MIDIFileShow::mf_keysig ( MIDIClockTime time, int sf, int mi )
     return true; // VRM
 }
 
-bool MIDIFileShow::mf_sqspecific ( MIDIClockTime time, int len, unsigned char *data )
+void MIDIFileShow::mf_sqspecific ( MIDIClockTime time, int len, unsigned char *data )
 {
     show_time ( time );
     fprintf ( out, "Sequencer Specific     Length=%d\n", len );
 
-    if ( sqspecific_as_text )
+    for ( int i = 0; i < len; ++i )
     {
-      std::string str( (const char *) data, len );
-      fprintf ( out, "%s\n", str.c_str() );
-    }
-    else
-    {
-      for ( int i = 0; i < len; ++i )
-      {
-          if ( i > 0 && (i %16) == 0 ) // VRM
-              fprintf ( out, "\n" );
+        if ( ( i & 0x1f ) == 0 )
+            fprintf ( out, "\n" );
 
-          fprintf ( out, "%02x ", ( int ) data[i] );
-      }
-
-      fprintf ( out, "\n" );
+        fprintf ( out, "%02x ", ( int ) data[i] );
     }
 
-    return true; // VRM
+    fprintf ( out, "\n" );
 }
 
 bool MIDIFileShow::mf_text ( MIDIClockTime time, int type, int len, unsigned char *txt )
@@ -311,13 +300,13 @@ bool MIDIFileShow::mf_text ( MIDIClockTime time, int type, int len, unsigned cha
         "SEQ. #    ",
         "GENERIC   ",
         "COPYRIGHT ",
-        "TRACK NAME", // VRM
-        "INST. NAME", // VRM
+        "INST. NAME",
+        "TRACK NAME",
         "LYRIC     ",
         "MARKER    ",
         "CUE       ",
-        "PROGRAM   ", // VRM
-        "DEVICE    ", // VRM
+        "UNKNOWN   ",
+        "UNKNOWN   ",
         "UNKNOWN   ",
         "UNKNOWN   ",
         "UNKNOWN   ",

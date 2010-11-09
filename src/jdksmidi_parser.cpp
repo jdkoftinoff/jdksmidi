@@ -60,7 +60,7 @@ MIDIParser::MIDIParser ( ushort max_sysex_size )
 MIDIParser::~MIDIParser()
 {
     ENTER ( "MIDIParser::~MIDIParser" );
-    jdks_safe_delete_object( sysex ); // VRM
+    safe_delete_object( sysex ); // VRM
 }
 
 

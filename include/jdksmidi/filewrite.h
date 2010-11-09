@@ -104,27 +104,47 @@ class MIDIFileWrite : protected MIDIFile
 {
 public:
     MIDIFileWrite ( MIDIFileWriteStream *out_stream_ );
-    virtual ~MIDIFileWrite();
+    virtual    ~MIDIFileWrite();
 
-    bool ErrorOccurred() { return error; }
-    unsigned long GetFileLength() { return file_length; }
-    unsigned long GetTrackLength() { return track_length; }
-    void ResetTrackLength() { track_length = 0; }
-    void ResetTrackTime() { track_time = 0; }
 
-    void WriteFileHeader ( int format, int ntrks, int division );
-    void WriteTrackHeader ( unsigned long length );
+    bool ErrorOccurred()
+    {
+        return error;
+    }
+    unsigned long   GetFileLength()
+    {
+        return file_length;
+    }
+    unsigned long   GetTrackLength()
+    {
+        return track_length;
+    }
+    void    ResetTrackLength()
+    {
+        track_length = 0;
+    }
+    void    ResetTrackTime()
+    {
+        track_time = 0;
+    }
 
-    void WriteEvent ( const MIDITimedMessage &m );
-    void WriteEvent ( const MIDITimedBigMessage &m );
+    void    WriteFileHeader (
+        int format,
+        int ntrks,
+        int division
+    );
 
-    void WriteEvent ( unsigned long time, const MIDISystemExclusive *e );
-    void WriteEvent ( unsigned long time, unsigned short text_type, const char *text );
-    void WriteMetaEvent ( unsigned long time, unsigned char type, const unsigned char *data, long length );
-    void WriteTempo ( unsigned long time, long tempo );
+    void    WriteTrackHeader ( unsigned long length );
 
-    void WriteKeySignature ( unsigned long time, char sharp_flat, char minor );
-    void WriteTimeSignature (
+    void    WriteEvent ( const MIDITimedMessage &m );
+    void    WriteEvent ( const MIDITimedBigMessage &m );
+    void    WriteEvent ( unsigned long time, const MIDISystemExclusive *e );
+    void    WriteEvent ( unsigned long time, unsigned short text_type, const char *text );
+
+    void    WriteMetaEvent ( unsigned long time, unsigned char type, const unsigned char *data, long length );
+    void    WriteTempo ( unsigned long time, long tempo );
+    void    WriteKeySignature ( unsigned long time, char sharp_flat, char minor );
+    void    WriteTimeSignature (
         unsigned long time,
         char numerator = 4,
         char denominator_power = 2,
@@ -132,49 +152,50 @@ public:
         char num_32nd_per_midi_quarter_note = 8
     );
 
-    void WriteEndOfTrack ( unsigned long time );
-    virtual void RewriteTrackLength();
-    // false argument disable use running status in midi file (true on default)
-    void UseRunningStatus( bool use ) { use_running_status = use; } // func by VRM
+    void    WriteEndOfTrack ( unsigned long time );
+
+    virtual void    RewriteTrackLength();
 
 protected:
-    virtual void Error ( char *s );
+    virtual void    Error ( char *s );
 
-    void WriteCharacter ( uchar c )
+    void    WriteCharacter ( uchar c )
     {
         if ( out_stream->WriteChar ( c ) < 0 )
             error = true;
     }
 
-    void Seek ( long pos )
+    void    Seek ( long pos )
     {
         if ( out_stream->Seek ( pos ) < 0 )
             error = true;
     }
 
-    void IncrementCounters ( int c )
+    void    IncrementCounters ( int c )
     {
         track_length += c;
         file_length += c;
     }
 
-    void WriteShort ( unsigned short c );
-    void Write3Char ( long c );
-    void WriteLong ( unsigned long c );
-    int WriteVariableNum ( unsigned long n );
-    void WriteDeltaTime ( unsigned long time );
+    void    WriteShort ( unsigned short c );
+    void    Write3Char ( long c );
+    void    WriteLong ( unsigned long c );
+
+    int    WriteVariableNum ( unsigned long n );
+
+    void    WriteDeltaTime ( unsigned long time );
 
 private:
-    bool use_running_status; // VRM true on default
     bool error;
     bool within_track;
-    unsigned long file_length;
-    unsigned long track_length;
-    unsigned long track_time;
-    unsigned long track_position;
-    uchar running_status;
+    unsigned long   file_length;
+    unsigned long   track_length;
+    unsigned long   track_time;
+    unsigned long   track_position;
+    uchar   running_status;
 
     MIDIFileWriteStream *out_stream;
+
 };
 }
 

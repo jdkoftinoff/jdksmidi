@@ -49,48 +49,33 @@ class MIDIMultiTrackIterator;
 
 class MIDIMultiTrack
 {
-private:
-
-    // delete old multitrack, construct new
-    bool MIDIMultiTrack::CreateObject ( int num_tracks_, bool deletable_ ); // func by VRM
-
 public:
 
     MIDIMultiTrack ( int max_num_tracks_ = 64, bool deletable_ = true );
     virtual ~MIDIMultiTrack();
 
-    void SetTrack ( int track_num, MIDITrack *track ) { tracks[track_num] = track; }
+    void SetTrack ( int trk, MIDITrack *t ) { tracks[trk] = t; }
 
-    MIDITrack *GetTrack ( int track_num ) { return tracks[track_num]; }
-    const MIDITrack *GetTrack ( int track_num ) const  { return tracks[track_num]; }
+    MIDITrack *GetTrack ( int trk ) { return tracks[trk]; }
+    const MIDITrack *GetTrack ( int trk ) const  { return tracks[trk]; }
 
-    int GetNumTracks() const { return number_of_tracks; }
-
+    int GetNumTracks() const { return num_tracks; }
     // return number of tracks with events, last tracks have no events
     int GetNumTracksWithEvents() const; // func by VRM
-
     // test and sort events temporal order in all tracks
     void SortEventsOrder(); // func by VRM
-
-    // delete all tracks and remake multitrack with new amount of empty tracks
-    bool ClearAndResize ( int num_tracks ); // func by VRM
-
-    // store src track and remake multitrack object with 17 tracks (src track can be a member of multitrack obiect),
-    // move src track channal events to tracks 1-16, and all other types of events to track 0 
-    bool AssignEventsToTracks ( const MIDITrack *src ); // func by VRM
-
-    // the same as previous, but argument is track number of multitrack object himself
-    bool AssignEventsToTracks ( int track_num = 0 ) { return AssignEventsToTracks( GetTrack( track_num ) ); } // func by VRM
+    // increase amount of tracks if num_tracks < min_num_tracks
+    bool ExpandIfLess ( int min_num_tracks ); // func by VRM@
 
     void Clear();
 
     int GetClksPerBeat() const { return clks_per_beat; }
-    void SetClksPerBeat ( int cpb ) { clks_per_beat = cpb; }
+    void SetClksPerBeat ( int c ) { clks_per_beat = c; }
 
 protected:
 
     MIDITrack **tracks;
-    int number_of_tracks; // VRM
+    int num_tracks; // VRM@
     bool deletable;
 
     int clks_per_beat;
