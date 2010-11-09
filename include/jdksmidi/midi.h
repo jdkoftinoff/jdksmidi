@@ -50,19 +50,19 @@ enum
 {
     NOTE_OFF = 0x80, ///< Note off message with velocity
     NOTE_ON  = 0x90, ///< Note on message with velocity or Note off if velocity is 0
-    POLY_PRESSURE = 0xa0, ///< Polyphonic key pressure/aftertouch with note and pressure
-    CONTROL_CHANGE = 0xb0, ///< Control change message with controller number and 7 bit value
-    PROGRAM_CHANGE = 0xc0, ///< Program change message with 7 bit program number
-    CHANNEL_PRESSURE = 0xd0, ///< Channel pressure/aftertouch with pressure
-    PITCH_BEND = 0xe0, ///< Channel bender with 14 bit bender value
-    SYSEX_START = 0xf0, ///< Start of a MIDI System-Exclusive message
-    MTC  = 0xf1, ///< Start of a two byte MIDI Time Code message
-    SONG_POSITION = 0xf2, ///< Start of a three byte MIDI Song Position message
-    SONG_SELECT = 0xf3, ///< Start of a two byte MIDI Song Select message
-    TUNE_REQUEST = 0xf6, ///< Single byte tune request message
-    SYSEX_END = 0xf7, ///< End of a MIDI System-Exclusive message
-    RESET  = 0xff, ///< 0xff is a reset byte on the serial line. We never used as reset in a MIDIMessage object,
-    META_EVENT = 0xff ///< 0xff means a meta event in our internal processing.
+    POLY_PRESSURE = 0xA0, ///< Polyphonic key pressure/aftertouch with note and pressure
+    CONTROL_CHANGE = 0xB0, ///< Control change message with controller number and 7 bit value
+    PROGRAM_CHANGE = 0xC0, ///< Program change message with 7 bit program number
+    CHANNEL_PRESSURE = 0xD0, ///< Channel pressure/aftertouch with pressure
+    PITCH_BEND = 0xE0, ///< Channel bender with 14 bit bender value
+    SYSEX_START = 0xF0, ///< Start of a MIDI System-Exclusive message
+    MTC  = 0xF1, ///< Start of a two byte MIDI Time Code message
+    SONG_POSITION = 0xF2, ///< Start of a three byte MIDI Song Position message
+    SONG_SELECT = 0xF3, ///< Start of a two byte MIDI Song Select message
+    TUNE_REQUEST = 0xF6, ///< Single byte tune request message
+    SYSEX_END = 0xF7, ///< End of a MIDI System-Exclusive message
+    RESET  = 0xFF, ///< 0xFF is a reset byte on the serial line. We never used as reset in a MIDIMessage object,
+    META_EVENT = 0xFF ///< 0xFF means a meta event in our internal processing.
 };
 
 
@@ -73,12 +73,12 @@ enum
 
 enum
 {
-    TIMING_CLOCK = 0xf8, ///< 24 timing clocks per beat
-    MEASURE_END = 0xf9, ///< Measure end byte
-    START  = 0xfa, ///< Sequence start message
-    CONTINUE = 0xfb, ///< Sequence continue message
-    STOP  = 0xfc, ///< Sequence stop message
-    ACTIVE_SENSE = 0xfe ///< Active sense message
+    TIMING_CLOCK = 0xF8, ///< 24 timing clocks per beat
+    MEASURE_END = 0xF9, ///< Measure end byte
+    START  = 0xFA, ///< Sequence start message
+    CONTINUE = 0xFB, ///< Sequence continue message
+    STOP  = 0xFC, ///< Sequence stop message
+    ACTIVE_SENSE = 0xFE ///< Active sense message
 };
 
 
@@ -98,8 +98,8 @@ enum
     C_DATA_ENTRY = 0x06, ///< data entry value
     C_MAIN_VOLUME = 0x07, ///< main volume control
     C_BALANCE = 0x08, ///< balance control
-    C_PAN  = 0x0a, ///< panpot stereo control
-    C_EXPRESSION = 0x0b, ///< expression control
+    C_PAN  = 0x0A, ///< panpot stereo control
+    C_EXPRESSION = 0x0B, ///< expression control
     C_GENERAL_1 = 0x10, ///< general purpose controller 1
     C_GENERAL_2 = 0x11, ///< general purpose controller 2
     C_GENERAL_3 = 0x12, ///< general purpose controller 3
@@ -116,11 +116,11 @@ enum
     C_GENERAL_7 = 0x52, ///< general purpose controller 7
     C_GENERAL_8 = 0x53, ///< general purpose controller 8
 
-    C_EFFECT_DEPTH = 0x5b, ///< external effects depth
-    C_TREMELO_DEPTH = 0x5c, ///< tremelo depth
-    C_CHORUS_DEPTH = 0x5d, ///< chorus depth
-    C_CELESTE_DEPTH = 0x5e, ///< celeste (detune) depth
-    C_PHASER_DEPTH = 0x5f, ///< phaser effect depth
+    C_EFFECT_DEPTH = 0x5B, ///< external effects depth
+    C_TREMELO_DEPTH = 0x5C, ///< tremelo depth
+    C_CHORUS_DEPTH = 0x5D, ///< chorus depth
+    C_CELESTE_DEPTH = 0x5E, ///< celeste (detune) depth
+    C_PHASER_DEPTH = 0x5F, ///< phaser effect depth
 
     C_DATA_INC = 0x60, ///< increment data value
     C_DATA_DEC = 0x61, ///< decrement data value
@@ -136,11 +136,11 @@ enum
     C_RESET  = 0x79, ///< reset all controllers
 
     C_LOCAL  = 0x79, ///< local control on/off
-    C_ALL_NOTES_OFF = 0x7a, ///< all notes off
-    C_OMNI_OFF = 0x7c, ///< omni off, all notes off
-    C_OMNI_ON = 0x7d, ///< omni on, all notes off
-    C_MONO  = 0x7e, ///< mono on, all notes off
-    C_POLY  = 0x7f ///< poly on, all notes off
+    C_ALL_NOTES_OFF = 0x7A, ///< all notes off
+    C_OMNI_OFF = 0x7C, ///< omni off, all notes off
+    C_OMNI_ON = 0x7D, ///< omni on, all notes off
+    C_MONO  = 0x7E, ///< mono on, all notes off
+    C_POLY  = 0x7F ///< poly on, all notes off
 };
 
 
@@ -171,25 +171,35 @@ enum
     META_SEQUENCE_NUMBER = 0x00, ///< value=16 bits. type 2 files
 
     META_GENERIC_TEXT = 0x01, ///< value=16 bits, text item #
-    META_COPYRIGHT  = 0x02, ///< value=17 bits, text item #
-    META_INSTRUMENT_NAME = 0x03,
-    META_TRACK_NAME  = 0x04,
+    META_COPYRIGHT    = 0x02, ///< value=17 bits, text item #
+    META_TRACK_NAME      = 0x03, // VRM  Sequence/Track Name
+    META_INSTRUMENT_NAME = 0x04, // VRM
     META_LYRIC_TEXT  = 0x05,
     META_MARKER_TEXT = 0x06,
-    META_CUE_TEXT  = 0x07,
+    META_CUE_TEXT    = 0x07, // Cue Point
 
-    META_OUTPUT_CABLE = 0x21,
+    META_PROGRAM_NAME   = 0x08, // VRM
+    META_DEVICE_NAME    = 0x09, // VRM
+    MIDI_CHANNEL_PREFIX = 0x20, // VRM This meta event associates a MIDI channel with following meta events.
+      // It's effect is terminated by another MIDI Channel Prefix event or any non-Meta event.
+      // It is often used before an Instrument Name Event to specify which channel an instrument name represents.
+
+    META_OUTPUT_CABLE = 0x21, // VRM Port Prefix
+
     META_TRACK_LOOP  = 0x2E,
-    META_DATA_END  = 0x2f,
-    META_END_OF_TRACK = 0x2F,
+    META_DATA_END  = 0x2F, // End Of Track
+
     META_TEMPO  = 0x51, ///< value=16 bits, tempo(bpm)*256
-    META_SMPTE  = 0x54, ///< what for?
+    META_SMPTE  = 0x54, ///< what for? (SMPTE Offset)
     META_TIMESIG  = 0x58, ///< value=num, denom
     META_KEYSIG  = 0x59, ///< value=# of sharps/flats, major/minor
-    META_BEAT_MARKER = 0x7e,
-    META_SEQUENCER_SPECIFIC = 0x7F,
-    META_NO_OPERATION = 0x7f
 
+    META_BEAT_MARKER        = 0x7D, // VRM old value 0x7E
+    META_NO_OPERATION       = 0x7E, // VRM old value 0x7F
+
+    META_SEQUENCER_SPECIFIC = 0x7F  // This meta event is used to specify information specific to a hardware or
+      // software sequencer. The first Data byte (or three bytes if the first byte is 0) specifies the manufacturer's
+      // ID and the following bytes contain information specified by the manufacturer.
 };
 
 extern const signed  char lut_msglen[16];

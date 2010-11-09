@@ -79,7 +79,7 @@ int main ( int argc, char **argv )
   (1, 3) => 1/8
 */
 
-  m.SetTimeSig( 4, 2 ); // measure 4/4
+  m.SetTimeSig( 4, 2 ); // measure 4/4 (default values)
   tracks.GetTrack( trk )->PutEvent( m );
 
   // tempo stored as bpm * 32, giving 1/32 bpm resolution
@@ -90,15 +90,15 @@ int main ( int argc, char **argv )
   m.SetTempo32( tempo_times_32 );
   tracks.GetTrack( trk )->PutEvent( m );
 
-  // META_INSTRUMENT_NAME text in track 0 music notation software like Sibelius uses as headline of the music
-  tracks.GetTrack( trk )->PutTextEvent(t, META_INSTRUMENT_NAME, "libjdksmidi create_midifile example");
+  // META_TRACK_NAME text in track 0 music notation software like Sibelius uses as headline of the music
+  tracks.GetTrack( trk )->PutTextEvent(t, META_TRACK_NAME, "libjdksmidi create_midifile example");
 
   // create cannal midi events and add them to a track 1
 
   trk = 1;
 
-  // META_INSTRUMENT_NAME text in tracks >= 1 Sibelius uses as instrument name (left of staves)
-  tracks.GetTrack( trk )->PutTextEvent(t, META_INSTRUMENT_NAME, "Church Organ");
+  // META_TRACK_NAME text in tracks >= 1 Sibelius uses as instrument name (left of staves)
+  tracks.GetTrack( trk )->PutTextEvent(t, META_TRACK_NAME, "Church Organ");
 
   // we change panorama in channels 0-2
 
@@ -126,7 +126,7 @@ int main ( int argc, char **argv )
 
   t = 0;
 
-  // we add note: press and release in (dt) ticks
+  // we add note 1: press and release in (dt) ticks
 
   tracks.GetTrack( trk )->PutTextEvent(t, META_LYRIC_TEXT, "Left"); // add words to music in the present situation
 
@@ -136,6 +136,8 @@ int main ( int argc, char **argv )
 
   m.SetTime( t += dt );
   m.SetNoteOff( chan, note, velocity );
+  // alternative form of note off event: useful to reduce midifile size if running status is used (on default so)
+  // m.SetNoteOn( chan, note, 0 );
   tracks.GetTrack( trk )->PutEvent( m );
 
   // note 2
@@ -200,7 +202,7 @@ int main ( int argc, char **argv )
   if( out_stream.IsValid() )
   {
     // the object which takes the midi tracks and writes the midifile to the output stream
-    jdksmidi::MIDIFileWriteMultiTrack writer( &tracks, &out_stream );
+    MIDIFileWriteMultiTrack writer( &tracks, &out_stream );
 
     // write the output file
     if ( writer.Write( num_tracks, clks_per_beat ) )

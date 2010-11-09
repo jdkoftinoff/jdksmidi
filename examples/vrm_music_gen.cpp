@@ -130,7 +130,7 @@ void main ( int argc, char **argv )
   int notes_max_index = 14; // [-n1] max index of notes array: add N*7 to min index for N octaves diapason
   int transposition = 48; // [-tr] notes transposition
   int discrete_time = 1; // [-di] switch for discretization of all time intervals in note duration unit
-  
+  int channel = 0; // [-ch] channel number (0...15), 0 for melodic instruments, 9 for percussion instruments
   double music_dur = 43; // [-md] total music duration in seconds (approximately)
   // делим всё время music_dur на отрезки section_dur, чтобы не было слишком больших и малых плотностей нот,
   // а также чтобы при увеличении только одного параметра music_dur не менялись предыдущие отрезки музыки!
@@ -154,6 +154,7 @@ void main ( int argc, char **argv )
       case 'i': instrument = ival; break;
       case 't': transposition = ival; break;
       case 'm': music_dur = dval; break;
+      case 'c': channel = ival; break;
       case 's': switch ( key[2] )
                 {
                   case 'e': seed = uint32( ival ); break;
@@ -193,14 +194,14 @@ void main ( int argc, char **argv )
 
   MIDIMultiTrack tracks(1);  // the object which will hold all the tracks
   const int trk = 0, // track number
-    chan = 0, velocity = 100;
+     velocity = 100;
 
   string text = Program;
   text += ".  ";
   text += Copyright;
   tracks.GetTrack( trk )->PutTextEvent( 0, META_GENERIC_TEXT, text.c_str() );
 
-  SetInstrument( tracks, trk, 0, chan, instrument );
+  SetInstrument( tracks, trk, 0, channel, instrument );
 
   // incorrect data protection
 
@@ -238,6 +239,7 @@ void main ( int argc, char **argv )
   cout << " [-n1] notes_max_index = " << notes_max_index << endl;
   cout << " [-tr] transposition = " << transposition << endl;
   cout << " [-di] discrete_time = " << discrete_time << endl;
+  cout << " [-ch] channel = " << channel << endl;
   cout << " [-md] .music_dur = " << music_dur << endl;
   cout << " [-sd] .section_dur = " << section_dur << endl;
   cout << " [-nd] .note_dur = " << note_dur << endl;
@@ -290,8 +292,8 @@ void main ( int argc, char **argv )
       MIDIClockTime sub = 1;
       if ( discrete_time == 0 || mc_note_dur <= 1 ) sub = 0;
 
-            AddNote(tracks, trk, (t+dt)                    , chan, note, velocity, ON);
-      if ( !AddNote(tracks, trk, (t+dt) + (mc_note_dur-sub), chan, note, velocity, OFF) )
+            AddNote(tracks, trk, (t+dt)                    , channel, note, velocity, ON);
+      if ( !AddNote(tracks, trk, (t+dt) + (mc_note_dur-sub), channel, note, velocity, OFF) )
       {
         stop = true; // track midi events overflow
         break;

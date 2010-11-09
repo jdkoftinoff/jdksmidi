@@ -22,6 +22,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 //
+// jdksmidi_rewrite_midifile.cpp
 // Copyright (C) 2010 V.R.Madgazin
 // www.vmgames.com vrm@vmgames.com
 //
@@ -63,7 +64,7 @@ void DeleteAllTracksText( MIDIMultiTrack &tracks )
 
 void args_err()
 {
-   cerr << "usage:\n\tjdkmidi_rewrite_midifile INFILE.mid OUTFILE.mid [any arg for delete text]\n";
+   cerr << "usage:\n\tjdkmidi_rewrite_midifile  INFILE.mid  OUTFILE.mid  ['1' for reduce outfile size]\n";
 }
 
 int main ( int argc, char **argv )
@@ -88,7 +89,7 @@ int main ( int argc, char **argv )
       return return_code;
     }
 
-    const char *outfile_name = argv[2];
+    const char *outfile_name = argv[2]; 
 
     // the multitrack object which will hold all the tracks
     MIDIMultiTrack tracks( 1 ); // only 1 track in multitrack object - not enough for midifile format 1
@@ -99,9 +100,9 @@ int main ( int argc, char **argv )
     // the object which parses the midifile and gives it to the multitrack loader
     MIDIFileRead reader ( &rs, &track_loader );
 
-    // increase amount of of tracks if tracks.num_tracks < midifile_num_tracks
+    // make amount of of tracks equal to midifile_num_tracks
     int midifile_num_tracks = reader.ReadNumTracks();
-    tracks.ExpandIfLess( midifile_num_tracks );
+    tracks.ClearAndResize( midifile_num_tracks );
 
     // load the midifile into the multitrack object
     if ( !reader.Parse() )
@@ -109,9 +110,23 @@ int main ( int argc, char **argv )
       cerr << "\nError Parse file " << infile_name << endl;
       return return_code;
     }
+    else
+    {
+      // ok Parse(), get UsedRunningStatus() low level midi info
+      // cout << "\nUsed Running Status: " << reader.UsedRunningStatus() << "  In file: " << infile_name << endl;
+    }
 
-    // delete all text events if exist any argv[3]
-    if ( argc > 3 ) DeleteAllTracksText( tracks );
+    // if exist any of argv[3]: delete all text events and optimize tracks if possible
+    if ( argc > 3 )
+    {
+      // delete all text events from all tracks
+      DeleteAllTracksText( tracks );
+
+      // remake multitrack object with 17 tracks and optimize new tracks content:
+      // move old track 0 channal events to new tracks 1-16, and all other types of events to new track 0 
+      if ( midifile_num_tracks == 1 ) tracks.AssignEventsToTracks( 0 );
+      // this function can reduce midifile size because of increase number of events with running status
+    }
 
     // create the output stream
     MIDIFileWriteStreamFileName out_stream ( outfile_name );
@@ -120,6 +135,9 @@ int main ( int argc, char **argv )
     {
       // the object which takes the midi tracks and writes the midifile to the output stream
       MIDIFileWriteMultiTrack writer ( &tracks, &out_stream );
+
+      // uncomment this string for output midifile without running status usage
+      // writer.UseRunningStatus( false );
 
       // extract the original multitrack division
       int division = reader.GetDivision();

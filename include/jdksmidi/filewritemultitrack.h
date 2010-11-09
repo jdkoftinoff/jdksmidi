@@ -57,8 +57,10 @@ public:
         return Write ( multitrack->GetNumTracks(), multitrack->GetClksPerBeat() );
     }
 
-private:
+    // false argument disable use running status in midi file (true on default)
+    void UseRunningStatus( bool use ) { writer.UseRunningStatus( use ); } // func by VRM
 
+private:
     virtual bool PreWrite();
     virtual bool PostWrite();
 

@@ -95,7 +95,7 @@ MIDITrack::~MIDITrack()
 {
     for ( int i = 0; i < buf_size / MIDITrackChunkSize; ++i )
     {
-        safe_delete_object( chunk[i] ); // VRM
+        jdks_safe_delete_object( chunk[i] ); // VRM
     }
 }
 
@@ -450,7 +450,7 @@ void MIDITrack::Shrink()
     {
         for ( int i = num_chunks_used; i < num_chunks_alloced; ++i )
         {
-            safe_delete_object( chunk[i] );
+            jdks_safe_delete_object( chunk[i] );
         }
 
         buf_size = num_chunks_used * MIDITrackChunkSize;

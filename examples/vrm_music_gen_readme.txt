@@ -2,7 +2,7 @@
 
   VRM Music Generator  based on  libJDKSmidi C++ MIDI Library
 
-  version 1.00  from October 2010
+  version 1.10  from November 2010
   
   Copyright (C) 2010 V.R.Madgazin
   www.vmgames.com
@@ -16,35 +16,38 @@
 
   or with equivalent default arguments
 
-  "vrm_music_gen -se 3 -in 25 -n0 0 -n1 14 -tr 48 -di 1 -md 43 -sd 1 -nd 0.5 -de 1.5"
+  "vrm_music_gen -se 3 -in 25 -n0 0 -n1 14 -tr 48 -di 1 -ch 0 -md 43 -sd 1 -nd 0.5 -de 1.5"
 
 
 2. Arguments.
 
 
-  "-key key_value", key_value "I" = Integer, "D" = Double number
+  "-key key_value", key_value "I" = Integer number, "F" = Float number
 
 
   "-se I" random seed value (default 3); any of 32 bit integer
 
-  "-in I" midi instrument number (25), see section 4; 0...127
+  "-in I" midi melodic instrument number (25), see section 4; 0...127
 
   "-n0 I" min index of notes array (0), see section 3; 0 for C-dur, 5 for A-moll; 0...28
 
   "-n1 I" max index of notes array (14); add N*7 to min index for N octaves diapason; 0...28
 
   "-tr I" notes transposition (48); 0...127
+          abs. note number is calculated on formula ( notes_table[index] + transposition )
 
   "-di I" switch for discretization of all time intervals in note duration unit (1); 0...1
 
+  "-ch I" channel number (0 for melodic instruments); 0...15
+          channel number 9 for percussion instruments, which correspond to abs. note number
   
-  "-md D" total music duration in seconds (43); 0.001...3600...
+  "-md F" total music duration in seconds (43); 0.001...3600...
 
-  "-sd D" temporal section of music in seconds (1); 0.001...3600...
+  "-sd F" temporal section of music in seconds (1); 0.001...3600...
 
-  "-nd D" note duration in seconds (0.5); 0.001...10...
+  "-nd F" note duration in seconds (0.5); 0.001...10...
 
-  "-de D" average notes number per note duration (1.5); 0.1...10...
+  "-de F" average notes number per note duration (1.5); 0.1...10...
 
 
 3. Notes array.
@@ -57,7 +60,7 @@ const int notes_table[MAX_INDEX+1] = // notes number array: all "white" notes in
 // C  D  E  F  G  A  B    C  D  E  F  G  A  B    C  D  E  F  G  A  B    C  D  E  F  G  A  B    C  notes
 
 
-4. General Midi Instruments numbers and names.
+4. General Midi melodic instruments numbers and names.
 
 
     0  Acoustic Grand Piano
@@ -190,7 +193,59 @@ const int notes_table[MAX_INDEX+1] = // notes number array: all "white" notes in
   127  Gunshot
 
 
-5. License.
+5. General Midi percussion instruments numbers and names.
+
+
+   35  Acoustic Bass Drum
+   36  Bass Drum 1       
+   37  Side Kick         
+   38  Acoustic Snare    
+   39  Hand Clap         
+   40  Electric Snare    
+   41  Low Floor Tom     
+   42  Closed High-Hat   
+   43  High Floor Tom    
+   44  Pedal High Hat    
+   45  Low Tom           
+   46  Open High Hat     
+   47  Low-Mid Tom       
+   48  High-Mid Tom      
+   49  Crash Cymbal 1    
+   50  High Tom          
+   51  Ride Cymbal 1     
+   52  Chinese Cymbal    
+   53  Ride Bell         
+   54  Tambourine        
+   55  Splash Cymbal     
+   56  Cowbell           
+   57  Crash Cymbal 2    
+   58  Vibraslap
+   59  Ride Cymbal 2   
+   60  High Bongo      
+   61  Low Bongo       
+   62  Mute High Conga 
+   63  Open High Conga 
+   64  Low Conga       
+   65  High Timbale    
+   66  Low Timbale     
+   67  High Agogo      
+   68  Low Agogo       
+   69  Cabasa          
+   70  Maracas         
+   71  Short Whistle   
+   72  Long Whistle    
+   73  Short Guiro     
+   74  Long Guiro      
+   75  Claves          
+   76  High Wood Block 
+   77  Low Wood Block  
+   78  Mute Cuica      
+   79  Open Cuica      
+   80  Mute Triangle   
+   81  Open Triangle   
+
+
+6. License.
 
 
   This program is free software; you can redistribute it and/or
@@ -209,7 +264,7 @@ const int notes_table[MAX_INDEX+1] = // notes number array: all "white" notes in
   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-6. Project pages.
+7. Project pages.
 
 
    http://www.vmgames.com

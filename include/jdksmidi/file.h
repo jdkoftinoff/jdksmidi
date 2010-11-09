@@ -82,7 +82,7 @@ public:
         MF_SEQUENCE_NUMBER = 0,
         MF_TEXT_EVENT  = 1,
         MF_COPYRIGHT  = 2,
-        MF_TRACK_NAME  = 3,
+        MF_TRACK_NAME  = 3, // Sequence/Track Name
         MF_INSTRUMENT_NAME = 4,
         MF_LYRIC  = 5,
         MF_MARKER  = 6,
@@ -99,6 +99,7 @@ public:
         MF_OUTPUT_CABLE  = 0x21,
         MF_TRACK_LOOP  = 0x2E,
         MF_END_OF_TRACK  = 0x2F,
+
         MF_TEMPO  = 0x51,
         MF_SMPTE  = 0x54,
         MF_TIMESIG  = 0x58,

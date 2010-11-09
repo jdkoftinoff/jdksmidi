@@ -38,9 +38,13 @@
 #include "jdksmidi/world.h"
 #include "jdksmidi/fileread.h"
 
-// TO DO: decide which way is right for this flag and fix it - The standard midi file format specs are (were?) unclear
+// VRM
+// Standard M IDI-File Form at Spec. 1.1, page 9 of 18:
+// "Sysex events and meta events cancel any running status which was in effect.
+//  Running status does not apply to and may not be used for these messages."
 
-#define MIDIFRD_ALLOW_STATUS_ACROSS_META_EVENT 0
+// TO DO: decide which way is right for this flag and fix it - The standard midi file format specs are (were?) unclear
+#define MIDIFRD_ALLOW_STATUS_ACROSS_META_EVENT 0 // correct value is 0 ! VRM
 
 namespace jdksmidi
 {
@@ -49,7 +53,7 @@ void MIDIFileEvents::UpdateTime ( MIDIClockTime delta_time )
 {
 }
 
-bool MIDIFileEvents::ChanMessage ( const MIDITimedMessage &msg ) // VRM@
+bool MIDIFileEvents::ChanMessage ( const MIDITimedMessage &msg ) // VRM
 {
     switch ( msg.GetStatus() & 0xf0 )
     {
@@ -99,7 +103,7 @@ bool MIDIFileEvents::ChanMessage ( const MIDITimedMessage &msg ) // VRM@
     return true; // VRM
 }
 
-bool MIDIFileEvents::MetaEvent ( MIDIClockTime time, int type, int leng, unsigned char *m ) // VRM@
+bool MIDIFileEvents::MetaEvent ( MIDIClockTime time, int type, int leng, unsigned char *m ) // VRM
 {
     switch ( type )
     {
@@ -124,8 +128,7 @@ bool MIDIFileEvents::MetaEvent ( MIDIClockTime time, int type, int leng, unsigne
     case MF_GENERIC_TEXT_F:
         // These are all text events
         m[leng] = 0;    // make sure string ends in NULL
-        return mf_text ( time, type, leng, m ); // VRM@
-        break;
+        return mf_text ( time, type, leng, m ); // VRM
 
     case MF_OUTPUT_CABLE:
         // TO DO:
@@ -136,31 +139,26 @@ bool MIDIFileEvents::MetaEvent ( MIDIClockTime time, int type, int leng, unsigne
         break;
 
     case MF_END_OF_TRACK: // End of Track
-        return mf_eot ( time ); // VRM@
-        break;
+        return mf_eot ( time ); // VRM
 
     case MF_TEMPO:      // Set Tempo
-        return mf_tempo ( time, To32Bit ( 0, m[0], m[1], m[2] ) ); // VRM@
-        break;
+        return mf_tempo ( time, To32Bit ( 0, m[0], m[1], m[2] ) ); // VRM
 
     case MF_SMPTE:
         mf_smpte ( time, m[0], m[1], m[2], m[3], m[4] );
         break;
 
     case MF_TIMESIG:
-        return mf_timesig ( time, m[0], m[1], m[2], m[3] ); // VRM@
-        break;
+        return mf_timesig ( time, m[0], m[1], m[2], m[3] ); // VRM
 
     case MF_KEYSIG:
     {
         char c = m[0];
-        return mf_keysig ( time, c, m[1] ); // VRM@
+        return mf_keysig ( time, c, m[1] ); // VRM
     }
-    break;
 
     case MF_SEQUENCER_SPECIFIC:
-        mf_sqspecific ( time, leng, m );
-        break;
+        return mf_sqspecific ( time, leng, m ); // VRM
 
     default:
         mf_metamisc ( time, type, leng, m );
@@ -221,8 +219,9 @@ bool MIDIFileEvents::mf_keysig ( MIDIClockTime time, int a, int b )
   return true; // VRM
 }
 
-void MIDIFileEvents::mf_sqspecific ( MIDIClockTime time, int a, unsigned char *s )
+bool MIDIFileEvents::mf_sqspecific ( MIDIClockTime time, int a, unsigned char *s )
 {
+  return true; // VRM
 }
 
 bool MIDIFileEvents::mf_text ( MIDIClockTime time, int a, int b, unsigned char *s )
@@ -288,6 +287,7 @@ MIDIFileRead::MIDIFileRead (
     msg_index = 0;
     cur_track = 0;
     abort_parse = 0;
+    used_running_status = false; // VRM
 
     max_msg_len = max_msg_len_;
     the_msg = new unsigned char[max_msg_len];
@@ -295,7 +295,7 @@ MIDIFileRead::MIDIFileRead (
 
 MIDIFileRead::~MIDIFileRead()
 {
-    safe_delete_array( the_msg ); // VRM
+    jdks_safe_delete_array( the_msg ); // VRM
 }
 
 void MIDIFileRead::mf_error ( const char *e )
@@ -304,7 +304,7 @@ void MIDIFileRead::mf_error ( const char *e )
     abort_parse = true;
 }
 
-void MIDIFileRead::Reset() // func by VRM@
+void MIDIFileRead::Reset() // func by VRM
 {
     // setup data
     no_merge = 0;
@@ -314,12 +314,13 @@ void MIDIFileRead::Reset() // func by VRM@
     msg_index = 0;
     cur_track = 0;
     abort_parse = 0;
+    used_running_status = false;
 
     // rewind input stream
     input_stream->Rewind();
 }
 
-int MIDIFileRead::ReadNumTracks() // func by VRM@
+int MIDIFileRead::ReadNumTracks() // func by VRM
 {
   Reset();
   return ReadHeader();
@@ -327,7 +328,7 @@ int MIDIFileRead::ReadNumTracks() // func by VRM@
 
 bool MIDIFileRead::Parse()
 {
-    Reset(); // VRM@
+    Reset(); // VRM
 
     int n = ReadHeader();
 
@@ -429,23 +430,23 @@ int MIDIFileRead::ReadHeader()
 void MIDIFileRead::ReadTrack()
 {
     //
-    // This array is indexed by the high half of a status byte.  Its
-    // value is either the number of bytes needed (1 or 2) for a channel
-    // message, or 0 (meaning it's not  a channel message).
+    // This array is indexed by the high half of a status byte.
+    // Its/ value is either the number of bytes needed (1 or 2) for a channel message,
+    // or 0 (meaning it's not a channel message).
     //
     static char chantype[] =
     {
-        0, 0, 0, 0, 0, 0, 0, 0,         // 0x00 through 0x70
-        2, 2, 2, 2, 1, 1, 2, 0          // 0x80 through 0xf0
+        0, 0, 0, 0, 0, 0, 0, 0,  // 0x00 through 0x70
+        2, 2, 2, 2, 1, 1, 2, 0   // 0x80 through 0xf0
     };
     unsigned long lookfor, lng;
     int c, c1, type;
     int sysexcontinue = 0; // 1 if last message was unfinished sysex
-    int running = 0;     // 1 when running status used
-    int status = 0;              // (possible running) status byte
-    int needed;
+    int running = 0; // 1 when running status used
+    int status = 0;  // (possible running) status byte
+    int needed;      // number of bytes needed (1 or 2) for a channel message, or 0 if not a channel message
 
-    if ( ReadMT ( _MTrk, 0 ) == 0xffff )
+    if ( ReadMT ( _MTrk, 0 ) == 0xFFFF )
         return;
 
     to_be_read = Read32Bit();
@@ -462,7 +463,7 @@ void MIDIFileRead::ReadTrack()
         if ( c == -1 )
             break;
 
-        if ( sysexcontinue && c != 0xf7 )
+        if ( sysexcontinue && c != 0xF7 )
             mf_error ( "Error after expected continuation of SysEx" );
 
         if ( ( c & 0x80 ) == 0 )
@@ -471,43 +472,39 @@ void MIDIFileRead::ReadTrack()
                 mf_error ( "Unexpected Running Status" );
 
             running = 1;
-            needed = chantype[ ( status>>4 ) & 0xf ];
+            used_running_status = true; // VRM
+            needed = chantype[ ( status>>4 ) & 0xF ];
         }
-
         else
         {
             // TO DO: is running status to be cleared or not when meta event happens?
-#if MIDIFRD_ALLOW_STATUS_ACROSS_META_EVENT
-            if ( c != 0xff )
+#if MIDIFRD_ALLOW_STATUS_ACROSS_META_EVENT // now not to do! VRM
+            if ( c != 0xFF )
             {
                 status = c;
                 running = 0;
                 needed = 0;
             }
-
 #else
             status = c;
             running = 0;
-            needed = chantype[ ( status>>4 ) & 0xf ];
+            needed = chantype[ ( status>>4 ) & 0xF ];
 #endif
         }
 
-        if ( needed )           // ie. is it a channel message?
+        if ( needed ) // ie. is it a channel message?
         {
-            if ( running )
-                c1 = c;
-
-            else
-                c1 = EGetC();
+            if ( running ) c1 = c;
+            else           c1 = EGetC();
 
             if ( !FormChanMessage ( status, c1, (needed > 1)? EGetC():0 ) )
-                abort_parse = true; // VRM@
+                abort_parse = true; // VRM
             continue;
         }
 
         switch ( c )
         {
-        case 0xff: // meta-event
+        case 0xFF: // meta-event
 
             type = EGetC();
             lng = ReadVariableNum();
@@ -520,21 +517,21 @@ void MIDIFileRead::ReadTrack()
             }
 
             if ( !event_handler->MetaEvent ( cur_time, type, msg_index, the_msg ) )
-              abort_parse = true; // VRM@
+              abort_parse = true; // VRM
 
             break;
 
-        case 0xf0: // start of sys-ex
+        case 0xF0: // start of sys-ex
 
             lng = ReadVariableNum();
             lookfor = to_be_read - lng;
             MsgInit();
-            MsgAdd ( 0xf0 );
+            MsgAdd ( 0xF0 );
 
             while ( to_be_read > lookfor )
                 MsgAdd ( c = EGetC() );
 
-            if ( c == 0xf7 || no_merge == 0 )
+            if ( c == 0xF7 || no_merge == 0 )
             {
                 // make a sysex object out of the raw sysex data
                 // the buffer is not to be deleted upon destruction of ex
@@ -546,7 +543,7 @@ void MIDIFileRead::ReadTrack()
                 );
                 // give the sysex object to our event handler
                 if ( !event_handler->mf_sysex ( cur_time, ex ) )
-                  abort_parse = true; // VRM@
+                  abort_parse = true; // VRM
             }
 
             else
@@ -554,8 +551,7 @@ void MIDIFileRead::ReadTrack()
 
             break;
 
-        case 0xf7: // sysex continuation or
-            // arbitary stuff
+        case 0xF7: // sysex continuation or arbitary stuff
 
             lng = ReadVariableNum();
             lookfor = to_be_read - lng;
@@ -571,7 +567,7 @@ void MIDIFileRead::ReadTrack()
                 event_handler->mf_arbitrary ( cur_time, msg_index, the_msg );
             }
 
-            else if ( c == 0xf7 )
+            else if ( c == 0xF7 )
             {
                 // make a sysex object out of the raw sysex data
                 // the buffer is not to be deleted upon destruction of ex
@@ -582,7 +578,7 @@ void MIDIFileRead::ReadTrack()
                     false
                 );
                 if ( !event_handler->mf_sysex ( cur_time, ex ) )
-                  abort_parse = true; // VRM@
+                  abort_parse = true; // VRM
 
                 sysexcontinue = 0;
             }
@@ -679,7 +675,7 @@ void MIDIFileRead::BadByte ( int c )
     abort_parse = true;
 }
 
-bool MIDIFileRead::FormChanMessage ( unsigned char st, unsigned char b1, unsigned char b2 ) // VRM@
+bool MIDIFileRead::FormChanMessage ( unsigned char st, unsigned char b1, unsigned char b2 ) // VRM
 {
     MIDITimedMessage m;
     m.SetStatus ( st );

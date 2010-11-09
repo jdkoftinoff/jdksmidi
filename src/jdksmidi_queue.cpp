@@ -44,7 +44,7 @@ MIDIQueue::MIDIQueue ( int num_msgs )
 
 MIDIQueue::~MIDIQueue()
 {
-    safe_delete_array( buf ); // VRM
+    jdks_safe_delete_array( buf ); // VRM
 }
 
 void MIDIQueue::Clear()

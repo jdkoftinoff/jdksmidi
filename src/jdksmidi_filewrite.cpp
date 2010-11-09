@@ -96,6 +96,7 @@ MIDIFileWrite::MIDIFileWrite ( MIDIFileWriteStream *out_stream_ )
     track_time = 0;
     running_status = 0;
     track_position = 0;
+    use_running_status = true; // VRM
 }
 
 MIDIFileWrite::~MIDIFileWrite()
@@ -256,6 +257,7 @@ void    MIDIFileWrite::WriteEvent ( const MIDITimedMessage &m )
             running_status = m.GetStatus();
             WriteCharacter ( ( unsigned char ) running_status );
             IncrementCounters ( 1 );
+            if ( !use_running_status ) running_status = 0; // VRM
         }
 
         if ( len > 1 )
@@ -338,6 +340,7 @@ void MIDIFileWrite::WriteEvent ( const MIDITimedBigMessage &m )
                 running_status = m.GetStatus();
                 WriteCharacter ( ( unsigned char ) running_status );
                 IncrementCounters ( 1 );
+                if ( !use_running_status ) running_status = 0; // VRM
             }
 
             if ( len > 1 )
