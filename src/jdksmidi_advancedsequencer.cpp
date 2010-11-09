@@ -58,21 +58,21 @@ static void FixQuotes ( char *s_ )
 }
 
 AdvancedSequencer::AdvancedSequencer()
-        :
-        thru_processor ( 2 ),
-        thru_transposer(),
-        thru_rechannelizer(),
-        driver ( 256, stdout ),
-        tracks ( 17 ),
-        notifier ( stdout ),
-        seq ( &tracks, &notifier ),
-        mgr ( &driver, &notifier, &seq ),
-        repeat_start_measure ( 0 ),
-        repeat_end_measure ( 0 ),
-        repeat_play_mode ( false ),
-        num_warp_positions ( 0 ),
-        file_loaded ( false ),
-        chain_mode ( false )
+    :
+    thru_processor ( 2 ),
+    thru_transposer(),
+    thru_rechannelizer(),
+    driver ( 256, stdout ),
+    tracks ( 17 ),
+    notifier ( stdout ),
+    seq ( &tracks, &notifier ),
+    mgr ( &driver, &notifier, &seq ),
+    repeat_start_measure ( 0 ),
+    repeat_end_measure ( 0 ),
+    repeat_play_mode ( false ),
+    num_warp_positions ( 0 ),
+    file_loaded ( false ),
+    chain_mode ( false )
 {
 }
 
@@ -83,7 +83,7 @@ AdvancedSequencer::~AdvancedSequencer()
 
     for ( int i = 0; i < num_warp_positions; ++i )
     {
-        safe_delete_object ( warp_positions[i] ); // VRM
+        jdks_safe_delete_object ( warp_positions[i] ); // VRM
     }
 }
 
@@ -813,7 +813,7 @@ void AdvancedSequencer::ExtractWarpPositions()
     {
         for ( int i = 0; i < num_warp_positions; ++i )
         {
-            safe_delete_object ( warp_positions[i] ); // VRM
+            jdks_safe_delete_object ( warp_positions[i] ); // VRM
         }
 
         num_warp_positions = 0;
@@ -825,7 +825,7 @@ void AdvancedSequencer::ExtractWarpPositions()
 
     for ( int i = 0; i < num_warp_positions; ++i )
     {
-        safe_delete_object ( warp_positions[i] ); // VRM
+        jdks_safe_delete_object ( warp_positions[i] ); // VRM
     }
 
     num_warp_positions = 0;

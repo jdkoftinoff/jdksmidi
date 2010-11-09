@@ -52,12 +52,12 @@ public:
     }
 
     MIDISequencerGUIEvent ( unsigned long bits_ )
-            : bits ( bits_ )
+        : bits ( bits_ )
     {
     }
 
     MIDISequencerGUIEvent ( const MIDISequencerGUIEvent &e )
-            : bits ( e.bits )
+        : bits ( e.bits )
     {
     }
 
@@ -151,7 +151,7 @@ public:
 
 
 class MIDISequencerGUIEventNotifierText :
-        public MIDISequencerGUIEventNotifier
+    public MIDISequencerGUIEventNotifier
 {
 public:
     MIDISequencerGUIEventNotifierText ( FILE *f );
@@ -328,8 +328,8 @@ public:
 
     void ScanEventsAtThisTime();
 
-   // recommended values for  time_precision_sec >= 0.001  and for  max_duration_hours = 1 ... 24
-   double GetMisicDurationInSeconds( float time_precision_sec = 0.1f, int max_duration_hours = 2 ); // func by VRM
+    // recommended values for  time_precision_sec >= 0.001  and for  max_duration_hours = 1 ... 24
+    double GetMisicDurationInSeconds( float time_precision_sec = 0.1f, int max_duration_hours = 2 ); // func by VRM
 
 protected:
 

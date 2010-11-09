@@ -35,11 +35,11 @@ MIDISequencerGUIEventNotifierWin32::MIDISequencerGUIEventNotifierWin32 (
     DWORD msg,
     WPARAM wparam_value_
 )
-        :
-        dest_window ( w ),
-        window_msg ( msg ),
-        wparam_value ( wparam_value_ ),
-        en ( true )
+    :
+    dest_window ( w ),
+    window_msg ( msg ),
+    wparam_value ( wparam_value_ ),
+    en ( true )
 {
 }
 
@@ -77,13 +77,13 @@ void MIDISequencerGUIEventNotifierWin32::SetEnable ( bool f )
 
 
 MIDIDriverWin32::MIDIDriverWin32 ( int queue_size )
-        :
-        MIDIDriver ( queue_size ),
-        in_handle ( 0 ),
-        out_handle ( 0 ),
-        in_open ( false ),
-        out_open ( false ),
-        timer_open ( false )
+    :
+    MIDIDriver ( queue_size ),
+    in_handle ( 0 ),
+    out_handle ( 0 ),
+    in_open ( false ),
+    out_open ( false ),
+    timer_open ( false )
 {
 }
 

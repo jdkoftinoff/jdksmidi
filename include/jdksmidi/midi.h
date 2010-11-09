@@ -181,8 +181,8 @@ enum
     META_PROGRAM_NAME   = 0x08, // VRM
     META_DEVICE_NAME    = 0x09, // VRM
     MIDI_CHANNEL_PREFIX = 0x20, // VRM This meta event associates a MIDI channel with following meta events.
-      // It's effect is terminated by another MIDI Channel Prefix event or any non-Meta event.
-      // It is often used before an Instrument Name Event to specify which channel an instrument name represents.
+    // It's effect is terminated by another MIDI Channel Prefix event or any non-Meta event.
+    // It is often used before an Instrument Name Event to specify which channel an instrument name represents.
 
     META_OUTPUT_CABLE = 0x21, // VRM Port Prefix
 
@@ -198,8 +198,8 @@ enum
     META_NO_OPERATION       = 0x7E, // VRM old value 0x7F
 
     META_SEQUENCER_SPECIFIC = 0x7F  // This meta event is used to specify information specific to a hardware or
-      // software sequencer. The first Data byte (or three bytes if the first byte is 0) specifies the manufacturer's
-      // ID and the following bytes contain information specified by the manufacturer.
+    // software sequencer. The first Data byte (or three bytes if the first byte is 0) specifies the manufacturer's
+    // ID and the following bytes contain information specified by the manufacturer.
 };
 
 extern const signed  char lut_msglen[16];

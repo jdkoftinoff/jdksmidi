@@ -95,7 +95,7 @@ MIDITrack::~MIDITrack()
 {
     for ( int i = 0; i < buf_size / MIDITrackChunkSize; ++i )
     {
-        safe_delete_object( chunk[i] ); // VRM
+        jdks_safe_delete_object( chunk[i] ); // VRM
     }
 }
 
@@ -106,96 +106,96 @@ void MIDITrack::Clear()
 
 bool MIDITrack::EventsOrderOK() const // func by VRM
 {
-  if ( num_events < 2 ) return true;
+    if ( num_events < 2 ) return true;
 
-  MIDIClockTime time0 = GetEventAddress(0)->GetTime();
+    MIDIClockTime time0 = GetEventAddress(0)->GetTime();
 
-  for ( int i = 1; i < num_events; ++i )
-  {
-    MIDIClockTime time1 = GetEventAddress(i)->GetTime();
-    if ( time0 > time1 ) return false;
-    time0 = time1;
-  }
+    for ( int i = 1; i < num_events; ++i )
+    {
+        MIDIClockTime time1 = GetEventAddress(i)->GetTime();
+        if ( time0 > time1 ) return false;
+        time0 = time1;
+    }
 
-  return true;
+    return true;
 }
 
 void MIDITrack::SortEventsOrder() // func by VRM
 {
-  std::vector< Event_time > et( num_events );
+    std::vector< Event_time > et( num_events );
 
-  int n;
-  for ( n = 0; n < num_events; ++n )
-  {
-    et[n].event_number = n;
-    et[n].time = GetEventAddress(n)->GetTime();
-  }
+    int n;
+    for ( n = 0; n < num_events; ++n )
+    {
+        et[n].event_number = n;
+        et[n].time = GetEventAddress(n)->GetTime();
+    }
 
-  std::stable_sort( et.begin(), et.end(), Event_time::less );
+    std::stable_sort( et.begin(), et.end(), Event_time::less );
 
-  MIDITrack trk( num_events );
+    MIDITrack trk( num_events );
 
-  for ( n = 0; n < num_events; ++n )
-  {
-    int event_num = et[n].event_number;
-    const MIDITimedBigMessage *src;
-    src = GetEventAddress( event_num );
-    trk.PutEvent( *src ); // add src event to trk
-  }
+    for ( n = 0; n < num_events; ++n )
+    {
+        int event_num = et[n].event_number;
+        const MIDITimedBigMessage *src;
+        src = GetEventAddress( event_num );
+        trk.PutEvent( *src ); // add src event to trk
+    }
 
-  *this = trk;
+    *this = trk;
 }
 
 int MIDITrack::RemoveIdenticalEvents( int max_distance_between_identical_events ) // func by VRM
 {
-  int removed = 0;
+    int removed = 0;
 
-  for ( int n = 0; n < num_events; ++n )
-  {
-    MIDITimedBigMessage *mn = GetEvent( n );
-
-    for (int i = 1; i < max_distance_between_identical_events; ++i)
+    for ( int n = 0; n < num_events; ++n )
     {
-      if ( (n+i) >= num_events ) break;
+        MIDITimedBigMessage *mn = GetEvent( n );
 
-      MIDITimedBigMessage *mni = GetEvent( n+i );
-      if ( *mn == *mni )
-      {
-        ++removed;
-        MakeEventNoOp( n );
-        break;
-      }
+        for (int i = 1; i < max_distance_between_identical_events; ++i)
+        {
+            if ( (n+i) >= num_events ) break;
+
+            MIDITimedBigMessage *mni = GetEvent( n+i );
+            if ( *mn == *mni )
+            {
+                ++removed;
+                MakeEventNoOp( n );
+                break;
+            }
+        }
     }
-  }
 
-  return removed;
+    return removed;
 }
 
 const MIDITrack & MIDITrack::operator=( const MIDITrack & src ) // func by VRM
 {
-  if ( num_events == src.num_events )
-  {
-    for ( int n = 0; n < num_events; ++n )
+    if ( num_events == src.num_events )
     {
-      const MIDITimedBigMessage * msg = src.GetEventAddress( n );
-      SetEvent( n, *msg );
+        for ( int n = 0; n < num_events; ++n )
+        {
+            const MIDITimedBigMessage * msg = src.GetEventAddress( n );
+            SetEvent( n, *msg );
+        }
     }
-  }
-  else
-  {
-    this->~MIDITrack();
-
-    buf_size = 0;
-    num_events = 0;
-
-    for ( int i = 0; i < src.GetNumEvents(); ++i )
+    else
     {
-      const MIDITimedBigMessage *msg = src.GetEventAddress ( i );
-      PutEvent ( *msg ); // it execute Expand()
-    }
-  }
+        this->~MIDITrack();
 
-  return *this;
+        buf_size = 0;
+        num_events = 0;
+
+        for ( int i = 0; i < src.GetNumEvents(); ++i )
+        {
+            const MIDITimedBigMessage *msg = src.GetEventAddress ( i );
+            PutEvent ( *msg ); // it execute Expand()
+        }
+    }
+
+    return *this;
 }
 
 void MIDITrack::ClearAndMerge (
@@ -450,7 +450,7 @@ void MIDITrack::Shrink()
     {
         for ( int i = num_chunks_used; i < num_chunks_alloced; ++i )
         {
-            safe_delete_object( chunk[i] );
+            jdks_safe_delete_object( chunk[i] );
         }
 
         buf_size = num_chunks_used * MIDITrackChunkSize;
@@ -509,33 +509,33 @@ bool MIDITrack::PutEvent ( const MIDITimedBigMessage &msg )
 
 bool MIDITrack::PutEvent2 ( MIDITimedBigMessage &msg ) // func by VRM
 {
-  if ( PutEvent ( msg ) )
-  {
-    MIDIClockTime t = msg.GetTime();
-    msg.Clear();
-    msg.SetTime( t );
-    return true;
-  }
-  return false;
+    if ( PutEvent ( msg ) )
+    {
+        MIDIClockTime t = msg.GetTime();
+        msg.Clear();
+        msg.SetTime( t );
+        return true;
+    }
+    return false;
 }
 
 bool MIDITrack::PutEvent ( const MIDITimedMessage &msg, const MIDISystemExclusive *sysex ) // VRM
 {
-  MIDITimedBigMessage m ( msg, sysex ); // VRM
-  return PutEvent ( m ); // VRM
+    MIDITimedBigMessage m ( msg, sysex ); // VRM
+    return PutEvent ( m ); // VRM
 }
 
 bool MIDITrack::PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length ) // func by VRM
 {
-  MIDITimedMessage msg;
-  msg.SetTime( time );
-  msg.SetMetaEvent( meta_event_type , 0 );
+    MIDITimedMessage msg;
+    msg.SetTime( time );
+    msg.SetMetaEvent( meta_event_type , 0 );
 
-  if ( length < 0 ) length = (int) strlen( text );
-  MIDISystemExclusive sysex( length );
-  for ( int i = 0; i < length; ++i ) sysex.PutSysByte ( text[i] );
+    if ( length < 0 ) length = (int) strlen( text );
+    MIDISystemExclusive sysex( length );
+    for ( int i = 0; i < length; ++i ) sysex.PutSysByte ( text[i] );
 
-  return PutEvent( msg, &sysex );
+    return PutEvent( msg, &sysex );
 }
 
 bool MIDITrack::GetEvent ( int event_num, MIDITimedBigMessage *msg ) const

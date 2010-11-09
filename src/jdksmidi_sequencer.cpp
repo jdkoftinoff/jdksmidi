@@ -75,9 +75,9 @@ MIDISequencerGUIEventNotifier::~MIDISequencerGUIEventNotifier()
 MIDISequencerGUIEventNotifierText::MIDISequencerGUIEventNotifierText (
     FILE *f_
 )
-        :
-        f ( f_ ),
-        en ( true )
+    :
+    f ( f_ ),
+    en ( true )
 {
 }
 
@@ -153,10 +153,10 @@ MIDISequencerTrackNotifier::MIDISequencerTrackNotifier (
     int trk,
     MIDISequencerGUIEventNotifier *n
 )
-        :
-        seq ( seq_ ),
-        track_num ( trk ),
-        notifier ( n )
+    :
+    seq ( seq_ ),
+    track_num ( trk ),
+    notifier ( n )
 {
 }
 
@@ -198,13 +198,13 @@ void MIDISequencerTrackNotifier::NotifyConductor ( int item )
 /////////////////
 
 MIDISequencerTrackProcessor::MIDISequencerTrackProcessor()
-        :
-        mute ( false ),
-        solo ( false ),
-        velocity_scale ( 100 ),
-        rechannel ( -1 ),
-        transpose ( 0 ),
-        extra_proc ( 0 )
+    :
+    mute ( false ),
+    solo ( false ),
+    velocity_scale ( 100 ),
+    rechannel ( -1 ),
+    transpose ( 0 ),
+    extra_proc ( 0 )
 {
 }
 
@@ -306,16 +306,16 @@ MIDISequencerTrackState::MIDISequencerTrackState (
     int trk,
     MIDISequencerGUIEventNotifier *n
 )
-        :
-        MIDISequencerTrackNotifier ( seq_, trk, n ),
-        tempobpm ( 120.0 ),
-        volume ( 100 ),
-        timesig_numerator ( 4 ),
-        timesig_denominator ( 4 ),
-        bender_value ( 0 ),
-        got_good_track_name ( false ),
-        notes_are_on ( false ),
-        note_matrix()
+    :
+    MIDISequencerTrackNotifier ( seq_, trk, n ),
+    tempobpm ( 120.0 ),
+    volume ( 100 ),
+    timesig_numerator ( 4 ),
+    timesig_denominator ( 4 ),
+    bender_value ( 0 ),
+    got_good_track_name ( false ),
+    notes_are_on ( false ),
+    note_matrix()
 {
     *track_name = 0;
 }
@@ -477,16 +477,16 @@ MIDISequencerState::MIDISequencerState (
     MIDIMultiTrack * m,
     MIDISequencerGUIEventNotifier *n
 )
-        :
-        notifier ( n ),
-        multitrack ( m ),
-        num_tracks ( m->GetNumTracks() ),
-        iterator ( m ),
-        cur_clock ( 0 ),
-        cur_time_ms ( 0 ),
-        cur_beat ( 0 ),
-        cur_measure ( 0 ),
-        next_beat_time ( 0 )
+    :
+    notifier ( n ),
+    multitrack ( m ),
+    num_tracks ( m->GetNumTracks() ),
+    iterator ( m ),
+    cur_clock ( 0 ),
+    cur_time_ms ( 0 ),
+    cur_beat ( 0 ),
+    cur_measure ( 0 ),
+    next_beat_time ( 0 )
 {
     for ( int i = 0; i < num_tracks; ++i )
     {
@@ -495,16 +495,16 @@ MIDISequencerState::MIDISequencerState (
 }
 
 MIDISequencerState::MIDISequencerState ( const MIDISequencerState &s )
-        :
-        notifier ( s.notifier ),
-        multitrack ( s.multitrack ),
-        num_tracks ( s.num_tracks ),
-        iterator ( s.iterator ),
-        cur_clock ( s.cur_clock ),
-        cur_time_ms ( s.cur_time_ms ),
-        cur_beat ( s.cur_beat ),
-        cur_measure ( s.cur_measure ),
-        next_beat_time ( s.next_beat_time )
+    :
+    notifier ( s.notifier ),
+    multitrack ( s.multitrack ),
+    num_tracks ( s.num_tracks ),
+    iterator ( s.iterator ),
+    cur_clock ( s.cur_clock ),
+    cur_time_ms ( s.cur_time_ms ),
+    cur_beat ( s.cur_beat ),
+    cur_measure ( s.cur_measure ),
+    next_beat_time ( s.next_beat_time )
 {
     for ( int i = 0; i < num_tracks; ++i )
     {
@@ -517,7 +517,7 @@ MIDISequencerState::~MIDISequencerState()
 {
     for ( int i = 0; i < num_tracks; ++i )
     {
-        safe_delete_object( track_state[i] ); // VRM
+        jdks_safe_delete_object( track_state[i] ); // VRM
     }
 }
 
@@ -528,7 +528,7 @@ const MIDISequencerState & MIDISequencerState::operator = ( const MIDISequencerS
         {
             for ( int i = 0; i < num_tracks; ++i )
             {
-                safe_delete_object( track_state[i] ); // VRM
+                jdks_safe_delete_object( track_state[i] ); // VRM
             }
         }
         num_tracks = s.num_tracks;
@@ -557,11 +557,11 @@ MIDISequencer::MIDISequencer (
     MIDIMultiTrack *m,
     MIDISequencerGUIEventNotifier *n
 )
-        :
-        solo_mode ( false ),
-        tempo_scale ( 100 ),
-        num_tracks ( m->GetNumTracks() ),
-        state ( this, m, n ) // TO DO: fix this hack
+    :
+    solo_mode ( false ),
+    tempo_scale ( 100 ),
+    num_tracks ( m->GetNumTracks() ),
+    state ( this, m, n ) // TO DO: fix this hack
 {
     for ( int i = 0; i < num_tracks; ++i )
     {
@@ -574,7 +574,7 @@ MIDISequencer::~MIDISequencer()
 {
     for ( int i = 0; i < num_tracks; ++i )
     {
-        safe_delete_object( track_processors[i] ); // VRM
+        jdks_safe_delete_object( track_processors[i] ); // VRM
     }
 }
 
@@ -1103,37 +1103,37 @@ void MIDISequencer::ScanEventsAtThisTime()
 
 double MIDISequencer::GetMisicDurationInSeconds( float time_precision_sec, int max_duration_hours ) // func by VRM
 {
-  double dur = 0.;
-  double clock_time;
-  float  next_event_time; // in milliseconds
-  const double tp_msec = 1000. * time_precision_sec;
+    double dur = 0.;
+    double clock_time;
+    float  next_event_time; // in milliseconds
+    const double tp_msec = 1000. * time_precision_sec;
 
-  MIDITimedBigMessage ev;
-  int ev_track;
+    MIDITimedBigMessage ev;
+    int ev_track;
 
-  GoToTimeMs ( 0.f );
-  if ( !GetNextEventTimeMs ( &next_event_time ) ) return dur;
+    GoToTimeMs ( 0.f );
+    if ( !GetNextEventTimeMs ( &next_event_time ) ) return dur;
 
-  // simulate a clock going forward with tp_msec resolution for hours
-  const double hours = max_duration_hours * 3600. * 1000.;
-  for ( clock_time = next_event_time = 0.f; clock_time < hours; clock_time += tp_msec )
-  {
-    // find all events that came before or a the current time
-    while ( double(next_event_time) <= clock_time )
+    // simulate a clock going forward with tp_msec resolution for hours
+    const double hours = max_duration_hours * 3600. * 1000.;
+    for ( clock_time = next_event_time = 0.f; clock_time < hours; clock_time += tp_msec )
     {
-      if ( GetNextEvent( &ev_track, &ev ) )
-      {
-        if ( !GetNextEventTimeMs( &next_event_time ) ) // no events left so end
+        // find all events that came before or a the current time
+        while ( double(next_event_time) <= clock_time )
         {
-          dur = 0.001f * clock_time;
-          return dur;
+            if ( GetNextEvent( &ev_track, &ev ) )
+            {
+                if ( !GetNextEventTimeMs( &next_event_time ) ) // no events left so end
+                {
+                    dur = 0.001f * clock_time;
+                    return dur;
+                }
+            }
         }
-      }
     }
-  }
 
-  dur = 0.001f * clock_time;
-  return dur;
+    dur = 0.001f * clock_time;
+    return dur;
 }
 
 

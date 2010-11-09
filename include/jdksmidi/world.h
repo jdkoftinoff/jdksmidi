@@ -42,6 +42,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <string> // VRM
+#include <vector> // VRM
+#include <algorithm> // VRM
+
+namespace jdksmidi // VRM
+{
+
 #define ENTER(a)
 
 #define DBG(a)
@@ -78,11 +85,19 @@ MIDI Files easily.
 #pragma warning(disable: 4355) // 'this' used in base member initializer list
 #endif
 
-#include <vector>
-#include <algorithm>
+template <class I> inline void jdks_safe_delete_object(I *&obj)
+{
+    delete obj;
+    obj = 0;
+}
 
-template <class I> inline void safe_delete_object(I *&obj) { delete obj; obj = 0; }
-template <class I> inline void safe_delete_array(I *&arr)  { delete [] arr; arr = 0; }
+template <class I> inline void jdks_safe_delete_array(I *&arr)
+{
+    delete [] arr;
+    arr = 0;
+}
+
+}
 
 #endif
 

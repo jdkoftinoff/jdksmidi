@@ -29,10 +29,10 @@ namespace jdksmidi
 {
 
 MIDIShowControlPacket::MIDIShowControlPacket()
-        :
-        QNumber ( 0 ),
-        QList ( 0 ),
-        QPath ( 0 )
+    :
+    QNumber ( 0 ),
+    QList ( 0 ),
+    QPath ( 0 )
 {
     DeviceId = 0;
     CommandFmt = 0;

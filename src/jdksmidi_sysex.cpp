@@ -86,16 +86,16 @@ MIDISystemExclusive::~MIDISystemExclusive()
 
     if ( deletable )
     {
-        safe_delete_array( buf ); // VRM
+        jdks_safe_delete_array( buf ); // VRM
     }
 }
 
 bool operator == ( const MIDISystemExclusive &e1, const MIDISystemExclusive &e2 ) // func by VRM
 {
-  if ( e1.cur_len != e2.cur_len ) return false;
-  if ( e1.cur_len == 0 ) return true;
+    if ( e1.cur_len != e2.cur_len ) return false;
+    if ( e1.cur_len == 0 ) return true;
 
-  return memcmp( e1.buf, e2.buf, e1.cur_len ) == 0 ;
+    return memcmp( e1.buf, e2.buf, e1.cur_len ) == 0 ;
 }
 
 }

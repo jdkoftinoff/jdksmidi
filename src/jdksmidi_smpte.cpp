@@ -101,16 +101,16 @@ SMPTE::SMPTE (
     SMPTE_RATE smpte_rate_,
     SAMPLE_RATE sample_rate_
 )
-        :
-        smpte_rate ( smpte_rate_ ),
-        sample_rate ( sample_rate_ ),
-        sample_number ( 0 ),
-        hours ( 0 ),
-        minutes ( 0 ),
-        seconds ( 0 ),
-        frames ( 0 ),
-        sub_frames ( 0 ),
-        sample_number_dirty ( false )
+    :
+    smpte_rate ( smpte_rate_ ),
+    sample_rate ( sample_rate_ ),
+    sample_number ( 0 ),
+    hours ( 0 ),
+    minutes ( 0 ),
+    seconds ( 0 ),
+    frames ( 0 ),
+    sub_frames ( 0 ),
+    sample_number_dirty ( false )
 {
 }
 

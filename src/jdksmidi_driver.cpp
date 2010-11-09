@@ -29,14 +29,14 @@ namespace jdksmidi
 {
 
 MIDIDriver::MIDIDriver ( int queue_size )
-        :
-        in_queue ( queue_size ),
-        out_queue ( queue_size ),
-        in_proc ( 0 ),
-        out_proc ( 0 ),
-        thru_proc ( 0 ),
-        thru_enable ( false ),
-        tick_proc ( 0 )
+    :
+    in_queue ( queue_size ),
+    out_queue ( queue_size ),
+    in_proc ( 0 ),
+    out_proc ( 0 ),
+    thru_proc ( 0 ),
+    thru_enable ( false ),
+    tick_proc ( 0 )
 {
 }
 
