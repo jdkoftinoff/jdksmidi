@@ -42,10 +42,12 @@ template <class I, class D> inline void test_max(D &x, I ma)
 {
     if ( x > (D)ma ) x = (D)ma;
 }
+
 template <class I, class D> inline void test_min(D &x, I mi)
 {
     if ( x < (D)mi ) x = (D)mi;
 }
+
 template <class I1, class D, class I2> inline void mintestmax(I1 mi, D &x, I2 ma)
 {
     test_max(x, ma);
@@ -157,11 +159,13 @@ int main ( int argc, char **argv )
         const char *key = argv[i];
         int ival = 0;
         double dval = 0.;
+
         if ( (i+1) < argc )
         {
             ival = atol( argv[i+1] );
             dval = atof( argv[i+1] );
         }
+
         switch ( key[1] )
         {
         case 'i':
@@ -371,6 +375,7 @@ int main ( int argc, char **argv )
             cerr << "\nError writing file " << fname.c_str() << endl;
         }
     }
+
     return 0;
 }
 

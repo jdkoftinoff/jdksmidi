@@ -217,7 +217,9 @@ int main ( int argc, char **argv )
             return_code = 0;
         }
         else
+        {
             cerr << "\nError writing file " << outfile_name << endl;
+        }
     }
 
     return return_code;
