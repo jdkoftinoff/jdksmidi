@@ -106,11 +106,26 @@ public:
     MIDIFileWrite ( MIDIFileWriteStream *out_stream_ );
     virtual ~MIDIFileWrite();
 
-    bool ErrorOccurred() { return error; }
-    unsigned long GetFileLength() { return file_length; }
-    unsigned long GetTrackLength() { return track_length; }
-    void ResetTrackLength() { track_length = 0; }
-    void ResetTrackTime() { track_time = 0; }
+    bool ErrorOccurred()
+    {
+        return error;
+    }
+    unsigned long GetFileLength()
+    {
+        return file_length;
+    }
+    unsigned long GetTrackLength()
+    {
+        return track_length;
+    }
+    void ResetTrackLength()
+    {
+        track_length = 0;
+    }
+    void ResetTrackTime()
+    {
+        track_time = 0;
+    }
 
     void WriteFileHeader ( int format, int ntrks, int division );
     void WriteTrackHeader ( unsigned long length );
@@ -135,10 +150,13 @@ public:
     void WriteEndOfTrack ( unsigned long time );
     virtual void RewriteTrackLength();
     // false argument disable use running status in midi file (true on default)
-    void UseRunningStatus( bool use ) { use_running_status = use; } // func by VRM
+    void UseRunningStatus( bool use )
+    {
+        use_running_status = use;    // func by VRM
+    }
 
 protected:
-    virtual void Error ( char *s );
+    virtual void Error ( const char *s );
 
     void WriteCharacter ( uchar c )
     {

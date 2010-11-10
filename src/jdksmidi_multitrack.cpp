@@ -88,31 +88,31 @@ bool MIDIMultiTrack::CreateObject ( int num_tracks_, bool deletable_ ) // func b
 
 bool MIDIMultiTrack::ClearAndResize ( int num_tracks ) // func by VRM
 {
-  return CreateObject ( num_tracks, this->deletable );
+    return CreateObject ( num_tracks, this->deletable );
 }
 
 bool MIDIMultiTrack::AssignEventsToTracks ( const MIDITrack *src ) // func by VRM
 {
-  MIDITrack tmp( *src ); // make copy of src track
+    MIDITrack tmp( *src ); // make copy of src track
 
-  // renew multitrack object with 17 tracks:
-  // tracks 1-16 for channal events, and track 0 for other types of events
-  ClearAndResize( 17 );
+    // renew multitrack object with 17 tracks:
+    // tracks 1-16 for channal events, and track 0 for other types of events
+    ClearAndResize( 17 );
 
-  // move events to tracks 0-16 according it's types/channals
-  for ( int i = 0; i < tmp.GetNumEvents(); ++i )
-  {
-    const MIDITimedBigMessage *msg;
-    msg = tmp.GetEventAddress ( i );
+    // move events to tracks 0-16 according it's types/channals
+    for ( int i = 0; i < tmp.GetNumEvents(); ++i )
+    {
+        const MIDITimedBigMessage *msg;
+        msg = tmp.GetEventAddress ( i );
 
-    int track_num = 0;
-    if ( msg->IsChannelMsg() )
-      track_num = 1 + msg->GetChannel();
+        int track_num = 0;
+        if ( msg->IsChannelMsg() )
+            track_num = 1 + msg->GetChannel();
 
-    if ( !GetTrack ( track_num )->PutEvent( *msg ) ) return false;
-  }
+        if ( !GetTrack ( track_num )->PutEvent( *msg ) ) return false;
+    }
 
-  return true;
+    return true;
 }
 
 MIDIMultiTrack::~MIDIMultiTrack()
@@ -140,25 +140,25 @@ void MIDIMultiTrack::Clear()
 
 int MIDIMultiTrack::GetNumTracksWithEvents() const  // func by VRM
 {
-  int i;
+    int i;
 
-  for ( i = number_of_tracks - 1; i >= 0; --i )
-  {
-    if ( !tracks[i]->IsTrackEmpty() ) break;
-  }
+    for ( i = number_of_tracks - 1; i >= 0; --i )
+    {
+        if ( !tracks[i]->IsTrackEmpty() ) break;
+    }
 
-  return i+1;
+    return i+1;
 }
 
 void MIDIMultiTrack::SortEventsOrder() // func by VRM
 {
-  for ( int i = 0; i < number_of_tracks; ++i )
-  {
-    if ( !tracks[i]->EventsOrderOK() )
+    for ( int i = 0; i < number_of_tracks; ++i )
     {
-      tracks[i]->SortEventsOrder();
+        if ( !tracks[i]->EventsOrderOK() )
+        {
+            tracks[i]->SortEventsOrder();
+        }
     }
-  }
 }
 
 
@@ -259,9 +259,9 @@ int MIDIMultiTrackIteratorState::FindTrackOfFirstEvent()
 
 
 MIDIMultiTrackIterator::MIDIMultiTrackIterator ( MIDIMultiTrack *mlt )
-        :
-        multitrack ( mlt ),
-        state ( mlt->GetNumTracks() )
+    :
+    multitrack ( mlt ),
+    state ( mlt->GetNumTracks() )
 
 {
 }

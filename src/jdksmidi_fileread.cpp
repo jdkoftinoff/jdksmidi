@@ -177,7 +177,7 @@ void MIDIFileEvents::mf_endtrack ( int trk )
 
 bool MIDIFileEvents::mf_eot ( MIDIClockTime time )
 {
-  return true; // VRM
+    return true; // VRM
 }
 
 void MIDIFileEvents::mf_error ( const char *s )
@@ -206,27 +206,27 @@ void MIDIFileEvents::mf_smpte ( MIDIClockTime time, int a, int b, int c, int d, 
 
 bool MIDIFileEvents::mf_timesig ( MIDIClockTime time, int a, int b, int c, int d )
 {
-  return true; // VRM
+    return true; // VRM
 }
 
 bool MIDIFileEvents::mf_tempo ( MIDIClockTime time, unsigned long a )
 {
-  return true; // VRM
+    return true; // VRM
 }
 
 bool MIDIFileEvents::mf_keysig ( MIDIClockTime time, int a, int b )
 {
-  return true; // VRM
+    return true; // VRM
 }
 
 bool MIDIFileEvents::mf_sqspecific ( MIDIClockTime time, int a, unsigned char *s )
 {
-  return true; // VRM
+    return true; // VRM
 }
 
 bool MIDIFileEvents::mf_text ( MIDIClockTime time, int a, int b, unsigned char *s )
 {
-  return true; // VRM
+    return true; // VRM
 }
 
 void MIDIFileEvents::mf_system_mode ( const MIDITimedMessage &msg )
@@ -263,7 +263,7 @@ void MIDIFileEvents::mf_control ( const MIDITimedMessage &msg )
 
 bool MIDIFileEvents::mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex )
 {
-  return true; // VRM
+    return true; // VRM
 }
 
 
@@ -274,10 +274,10 @@ MIDIFileRead::MIDIFileRead (
     MIDIFileReadStream *input_stream_,
     MIDIFileEvents *event_handler_,
     unsigned long max_msg_len_
-    )
-        :
-        input_stream ( input_stream_ ),
-        event_handler ( event_handler_ )
+)
+    :
+    input_stream ( input_stream_ ),
+    event_handler ( event_handler_ )
 {
     // setup data
     no_merge = 0;
@@ -322,8 +322,8 @@ void MIDIFileRead::Reset() // func by VRM
 
 int MIDIFileRead::ReadNumTracks() // func by VRM
 {
-  Reset();
-  return ReadHeader();
+    Reset();
+    return ReadHeader();
 }
 
 bool MIDIFileRead::Parse()
@@ -408,7 +408,7 @@ int MIDIFileRead::ReadHeader()
 
     // silently fix error if midi file have format = 0 and ntrks > 1
     if ( the_format == 0 && ntrks > 1 )
-         the_format = 1; // VRM
+        the_format = 1; // VRM
 
     header_format = the_format;
     header_ntrks = ntrks;
@@ -517,7 +517,7 @@ void MIDIFileRead::ReadTrack()
             }
 
             if ( !event_handler->MetaEvent ( cur_time, type, msg_index, the_msg ) )
-              abort_parse = true; // VRM
+                abort_parse = true; // VRM
 
             break;
 
@@ -543,7 +543,7 @@ void MIDIFileRead::ReadTrack()
                 );
                 // give the sysex object to our event handler
                 if ( !event_handler->mf_sysex ( cur_time, ex ) )
-                  abort_parse = true; // VRM
+                    abort_parse = true; // VRM
             }
 
             else
@@ -578,7 +578,7 @@ void MIDIFileRead::ReadTrack()
                     false
                 );
                 if ( !event_handler->mf_sysex ( cur_time, ex ) )
-                  abort_parse = true; // VRM
+                    abort_parse = true; // VRM
 
                 sysexcontinue = 0;
             }
@@ -685,7 +685,7 @@ bool MIDIFileRead::FormChanMessage ( unsigned char st, unsigned char b1, unsigne
 
     if ( st >= 0x80 && st < 0xf0 )
     {
-       return event_handler->ChanMessage ( m ); // VRM
+        return event_handler->ChanMessage ( m ); // VRM
     }
 
     return true; // VRM

@@ -36,28 +36,28 @@ using namespace std;
 
 int main ( int argc, char **argv )
 {
-  if ( argc > 1 )
-  {
-    const char *infile_name = argv[1];
-
-    MIDIFileReadStreamFile rs ( infile_name );
-    if ( !rs.IsValid() )
+    if ( argc > 1 )
     {
-      cerr << "\nError opening file " << infile_name << endl;
-      return -1;
+        const char *infile_name = argv[1];
+
+        MIDIFileReadStreamFile rs ( infile_name );
+        if ( !rs.IsValid() )
+        {
+            cerr << "\nError opening file " << infile_name << endl;
+            return -1;
+        }
+
+        bool sqspecific_as_text = true; // if true print META_SEQUENCER_SPECIFIC events as text string
+
+        MIDIFileShow shower ( stdout, sqspecific_as_text );
+        MIDIFileRead reader ( &rs, &shower );
+
+        if ( !reader.Parse() )
+        {
+            cerr << "\nError parse file " << infile_name << endl;
+            return -1;
+        }
     }
 
-    bool sqspecific_as_text = true; // if true print META_SEQUENCER_SPECIFIC events as text string
-
-    MIDIFileShow shower ( stdout, sqspecific_as_text );
-    MIDIFileRead reader ( &rs, &shower );
-
-    if ( !reader.Parse() )
-    {
-      cerr << "\nError parse file " << infile_name << endl;
-      return -1;
-    }
-  }
-
-  return 0;
+    return 0;
 }

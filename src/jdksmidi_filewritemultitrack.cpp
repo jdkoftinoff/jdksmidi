@@ -35,10 +35,10 @@ namespace jdksmidi
 MIDIFileWriteMultiTrack::MIDIFileWriteMultiTrack (
     const MIDIMultiTrack *mlt_,
     MIDIFileWriteStream *strm_
-    )
-        :
-        multitrack ( mlt_ ),
-        writer ( strm_ )
+)
+    :
+    multitrack ( mlt_ ),
+    writer ( strm_ )
 {
 }
 

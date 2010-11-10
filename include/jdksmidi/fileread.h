@@ -77,7 +77,10 @@ public:
     }
 
 #ifdef WIN32
-    explicit MIDIFileReadStreamFile ( const wchar_t *fname ) { f = _wfopen ( fname, L"rb" ); } // func by VRM
+    explicit MIDIFileReadStreamFile ( const wchar_t *fname )
+    {
+        f = _wfopen ( fname, L"rb" );    // func by VRM
+    }
 #endif
 
     explicit MIDIFileReadStreamFile ( FILE *f_ ) : f ( f_ )
@@ -94,7 +97,10 @@ public:
         if ( f ) rewind ( f );
     }
 
-    bool IsValid() { return f != 0; } // VRM
+    bool IsValid()
+    {
+        return f != 0;    // VRM
+    }
 
     virtual int ReadChar()
     {
@@ -186,12 +192,24 @@ public:
     // read midifile header, return number of tracks
     int ReadNumTracks(); // func by VRM
 
-    int GetFormat() const { return header_format; }
-    int GetNumTracks() const { return header_ntrks; } // VRM
+    int GetFormat() const
+    {
+        return header_format;
+    }
+    int GetNumTracks() const
+    {
+        return header_ntrks;    // VRM
+    }
     // call it after Parse(): return true if file contain event(s) with running status
-    bool UsedRunningStatus() const { return used_running_status; } // func by VRM
+    bool UsedRunningStatus() const
+    {
+        return used_running_status;    // func by VRM
+    }
     // return header_division = clock per beat value for range 1...32767
-    int GetDivision() const { return header_division; }
+    int GetDivision() const
+    {
+        return header_division;
+    }
 
 protected:
     virtual int ReadHeader();

@@ -58,21 +58,21 @@ static void FixQuotes ( char *s_ )
 }
 
 AdvancedSequencer::AdvancedSequencer()
-        :
-        thru_processor ( 2 ),
-        thru_transposer(),
-        thru_rechannelizer(),
-        driver ( 256, stdout ),
-        tracks ( 17 ),
-        notifier ( stdout ),
-        seq ( &tracks, &notifier ),
-        mgr ( &driver, &notifier, &seq ),
-        repeat_start_measure ( 0 ),
-        repeat_end_measure ( 0 ),
-        repeat_play_mode ( false ),
-        num_warp_positions ( 0 ),
-        file_loaded ( false ),
-        chain_mode ( false )
+    :
+    thru_processor ( 2 ),
+    thru_transposer(),
+    thru_rechannelizer(),
+    driver ( 256, stdout ),
+    tracks ( 17 ),
+    notifier ( stdout ),
+    seq ( &tracks, &notifier ),
+    mgr ( &driver, &notifier, &seq ),
+    repeat_start_measure ( 0 ),
+    repeat_end_measure ( 0 ),
+    repeat_play_mode ( false ),
+    num_warp_positions ( 0 ),
+    file_loaded ( false ),
+    chain_mode ( false )
 {
 }
 

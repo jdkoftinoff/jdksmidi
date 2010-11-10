@@ -168,9 +168,18 @@ public:
 
     bool FindEventNumber ( MIDIClockTime time, int *event_num ) const;
 
-    int GetBufferSize() const { return buf_size; }
-    int GetNumEvents() const { return num_events; }
-    bool IsTrackEmpty() const { return num_events == 0; } // VRM
+    int GetBufferSize() const
+    {
+        return buf_size;
+    }
+    int GetNumEvents() const
+    {
+        return num_events;
+    }
+    bool IsTrackEmpty() const
+    {
+        return num_events == 0;    // VRM
+    }
 
     // test events temporal order, return false if events out of order
     bool EventsOrderOK() const; // func by VRM
@@ -190,9 +199,12 @@ private:
 
     struct Event_time // VRM
     {
-      int event_number;
-      MIDIClockTime time;
-      static bool less( Event_time t1, Event_time t2 ) { return ( t1.time < t2.time ); }
+        int event_number;
+        MIDIClockTime time;
+        static bool less( Event_time t1, Event_time t2 )
+        {
+            return ( t1.time < t2.time );
+        }
     };
 
 };

@@ -87,14 +87,14 @@ MIDI Files easily.
 
 template <class I> inline void jdks_safe_delete_object(I *&obj)
 {
-  delete obj;
-  obj = 0;
+    delete obj;
+    obj = 0;
 }
 
 template <class I> inline void jdks_safe_delete_array(I *&arr)
 {
-  delete [] arr;
-  arr = 0;
+    delete [] arr;
+    arr = 0;
 }
 
 }

@@ -33,17 +33,17 @@ MIDIManager::MIDIManager (
     MIDISequencerGUIEventNotifier *n,
     MIDISequencer *seq_
 )
-        :
-        driver ( drv ),
-        sequencer ( seq_ ),
-        sys_time_offset ( 0 ),
-        seq_time_offset ( 0 ),
-        play_mode ( false ),
-        stop_mode ( true ),
-        notifier ( n ),
-        repeat_play_mode ( false ),
-        repeat_start_measure ( 0 ),
-        repeat_end_measure ( 0 )
+    :
+    driver ( drv ),
+    sequencer ( seq_ ),
+    sys_time_offset ( 0 ),
+    seq_time_offset ( 0 ),
+    play_mode ( false ),
+    stop_mode ( true ),
+    notifier ( n ),
+    repeat_play_mode ( false ),
+    repeat_start_measure ( 0 ),
+    repeat_end_measure ( 0 )
 {
     driver->SetTickProc ( this );
 }

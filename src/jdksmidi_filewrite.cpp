@@ -59,7 +59,7 @@ MIDIFileWriteStream::~MIDIFileWriteStream()
 }
 
 MIDIFileWriteStreamFile::MIDIFileWriteStreamFile ( FILE *f_ )
-        : f ( f_ )
+    : f ( f_ )
 {
 }
 
@@ -87,7 +87,7 @@ int MIDIFileWriteStreamFile::WriteChar ( int c )
 
 
 MIDIFileWrite::MIDIFileWrite ( MIDIFileWriteStream *out_stream_ )
-        : out_stream ( out_stream_ )
+    : out_stream ( out_stream_ )
 {
     ENTER ( "MIDIFileWrite::MIDIFileWrite()" );
     file_length = 0;
@@ -104,7 +104,7 @@ MIDIFileWrite::~MIDIFileWrite()
     ENTER ( "MIDIFileWrite::~MIDIFileWrite()" );
 }
 
-void MIDIFileWrite::Error ( char *s )
+void MIDIFileWrite::Error ( const char *s )
 {
     ENTER ( "void MIDIFileWrite::Error()" );
     // NULL method; can override.

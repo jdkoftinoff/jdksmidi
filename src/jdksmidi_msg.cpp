@@ -221,7 +221,7 @@ void MIDIMessage::Clear()
 
 void MIDIMessage::Copy ( const MIDIMessage & m )
 {
-   *this = m; // VRM
+    *this = m; // VRM
 }
 
 
@@ -677,15 +677,15 @@ void  MIDIMessage::SetBeatMarker()
 
 
 MIDIBigMessage::MIDIBigMessage()
-        :
-        sysex ( 0 )
+    :
+    sysex ( 0 )
 {
 }
 
 MIDIBigMessage::MIDIBigMessage ( const MIDIBigMessage &m )
-        :
-        MIDIMessage ( m ),
-        sysex ( 0 )
+    :
+    MIDIMessage ( m ),
+    sysex ( 0 )
 {
     if ( m.sysex )
     {
@@ -694,18 +694,18 @@ MIDIBigMessage::MIDIBigMessage ( const MIDIBigMessage &m )
 }
 
 MIDIBigMessage::MIDIBigMessage ( const MIDIMessage &m )
-        :
-        MIDIMessage ( m ),
-        sysex ( 0 )
+    :
+    MIDIMessage ( m ),
+    sysex ( 0 )
 {
 }
 
 MIDIBigMessage::MIDIBigMessage ( const MIDIMessage &m, const MIDISystemExclusive *e ) // func by VRM
-        :
-        MIDIMessage ( m ),
-        sysex ( 0 )
+    :
+    MIDIMessage ( m ),
+    sysex ( 0 )
 {
-  CopySysEx( e );
+    CopySysEx( e );
 }
 
 void MIDIBigMessage::Clear()
@@ -812,17 +812,17 @@ void MIDIBigMessage::ClearSysEx()
 //
 
 MIDITimedMessage::MIDITimedMessage()
-        : time ( 0 )
+    : time ( 0 )
 {
 }
 
 MIDITimedMessage::MIDITimedMessage ( const MIDITimedMessage &m )
-        : MIDIMessage ( m ), time ( m.GetTime() )
+    : MIDIMessage ( m ), time ( m.GetTime() )
 {
 }
 
 MIDITimedMessage::MIDITimedMessage ( const MIDIMessage &m )
-        : MIDIMessage ( m ), time ( 0 )
+    : MIDIMessage ( m ), time ( 0 )
 {
 }
 
@@ -919,17 +919,17 @@ int  MIDITimedMessage::CompareEvents (
 
 
 MIDIDeltaTimedMessage::MIDIDeltaTimedMessage()
-        : dtime ( 0 )
+    : dtime ( 0 )
 {
 }
 
 MIDIDeltaTimedMessage::MIDIDeltaTimedMessage ( const MIDIDeltaTimedMessage &m )
-        : MIDIMessage ( m ), dtime ( m.GetDeltaTime() )
+    : MIDIMessage ( m ), dtime ( m.GetDeltaTime() )
 {
 }
 
 MIDIDeltaTimedMessage::MIDIDeltaTimedMessage ( const MIDIMessage &m )
-        : MIDIMessage ( m ), dtime ( 0 )
+    : MIDIMessage ( m ), dtime ( 0 )
 {
 }
 
@@ -991,37 +991,37 @@ void MIDIDeltaTimedMessage::SetDeltaTime ( MIDIClockTime t )
 //
 
 MIDITimedBigMessage::MIDITimedBigMessage()
-        : time ( 0 )
+    : time ( 0 )
 {
 }
 
 MIDITimedBigMessage::MIDITimedBigMessage ( const MIDITimedBigMessage &m )
-        : MIDIBigMessage ( m ),
-        time ( m.GetTime() )
+    : MIDIBigMessage ( m ),
+      time ( m.GetTime() )
 {
 }
 
 MIDITimedBigMessage::MIDITimedBigMessage ( const MIDIBigMessage &m )
-        : MIDIBigMessage ( m ),
-        time ( 0 )
+    : MIDIBigMessage ( m ),
+      time ( 0 )
 {
 }
 
 MIDITimedBigMessage::MIDITimedBigMessage ( const MIDITimedMessage &m )
-        : MIDIBigMessage ( m ),
-        time ( m.GetTime() )
+    : MIDIBigMessage ( m ),
+      time ( m.GetTime() )
 {
 }
 
 MIDITimedBigMessage::MIDITimedBigMessage ( const MIDIMessage &m )
-        : MIDIBigMessage ( m ),
-        time ( 0 )
+    : MIDIBigMessage ( m ),
+      time ( 0 )
 {
 }
 
 MIDITimedBigMessage::MIDITimedBigMessage ( const MIDITimedMessage &m, const MIDISystemExclusive *e ) // func by VRM
-        : MIDIBigMessage ( m, e ),
-        time ( m.GetTime() )
+    : MIDIBigMessage ( m, e ),
+      time ( m.GetTime() )
 {
 }
 
@@ -1134,27 +1134,27 @@ int  MIDITimedBigMessage::CompareEvents (
 //
 
 MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage()
-        : dtime ( 0 )
+    : dtime ( 0 )
 {
 }
 
 MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage ( const MIDIDeltaTimedBigMessage &m )
-        : MIDIBigMessage ( m ), dtime ( m.GetDeltaTime() )
+    : MIDIBigMessage ( m ), dtime ( m.GetDeltaTime() )
 {
 }
 
 MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage ( const MIDIBigMessage &m )
-        : MIDIBigMessage ( m ), dtime ( 0 )
+    : MIDIBigMessage ( m ), dtime ( 0 )
 {
 }
 
 MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage ( const MIDIMessage &m )
-        : MIDIBigMessage ( m ), dtime ( 0 )
+    : MIDIBigMessage ( m ), dtime ( 0 )
 {
 }
 
 MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage ( const MIDIDeltaTimedMessage &m )
-        : MIDIBigMessage ( m ), dtime ( m.GetDeltaTime() )
+    : MIDIBigMessage ( m ), dtime ( m.GetDeltaTime() )
 {
 }
 
@@ -1224,46 +1224,46 @@ void MIDIDeltaTimedBigMessage::SetDeltaTime ( MIDIClockTime t )
 
 bool operator == ( const MIDIMessage &m1, const MIDIMessage &m2 ) // func by VRM
 {
-  return (  m1.GetStatus() == m2.GetStatus() &&
-            m1.GetByte1() == m2.GetByte1() &&
-            m1.GetByte2() == m2.GetByte2() &&
-            m1.GetByte3() == m2.GetByte3()  );
+    return (  m1.GetStatus() == m2.GetStatus() &&
+              m1.GetByte1() == m2.GetByte1() &&
+              m1.GetByte2() == m2.GetByte2() &&
+              m1.GetByte3() == m2.GetByte3()  );
 }
 
 bool operator == ( const MIDITimedMessage &m1, const MIDITimedMessage &m2 ) // func by VRM
 {
-  if ( m1.GetTime() != m2.GetTime() ) return false;
+    if ( m1.GetTime() != m2.GetTime() ) return false;
 
-  return ( (MIDIMessage) m1 ) == ( (MIDIMessage) m2 );
+    return ( (MIDIMessage) m1 ) == ( (MIDIMessage) m2 );
 }
 
 bool operator == ( const MIDIBigMessage &m1, const MIDIBigMessage &m2 ) // func by VRM
 {
-  const MIDISystemExclusive *e1 = m1.GetSysEx();
-  const MIDISystemExclusive *e2 = m2.GetSysEx();
+    const MIDISystemExclusive *e1 = m1.GetSysEx();
+    const MIDISystemExclusive *e2 = m2.GetSysEx();
 
-  if ( e1 != 0 )
-  {
-    if ( e2 == 0 ) return false;
-  }
-  else // e1 == 0
-  {
-    if ( e2 != 0 ) return false;
-  }
+    if ( e1 != 0 )
+    {
+        if ( e2 == 0 ) return false;
+    }
+    else // e1 == 0
+    {
+        if ( e2 != 0 ) return false;
+    }
 
-  if ( e1 != 0 && e2 != 0 )
-  {
-    if ( !( *e1 == *e2 ) ) return false;
-  }
+    if ( e1 != 0 && e2 != 0 )
+    {
+        if ( !( *e1 == *e2 ) ) return false;
+    }
 
-  return ( (MIDIMessage) m1 ) == ( (MIDIMessage) m2 );
+    return ( (MIDIMessage) m1 ) == ( (MIDIMessage) m2 );
 }
 
 bool operator == ( const MIDITimedBigMessage &m1, const MIDITimedBigMessage &m2 ) // func by VRM
 {
-  if ( m1.GetTime() != m2.GetTime() ) return false;
+    if ( m1.GetTime() != m2.GetTime() ) return false;
 
-  return ( (MIDIBigMessage) m1 ) == ( (MIDIBigMessage) m2 );
+    return ( (MIDIBigMessage) m1 ) == ( (MIDIBigMessage) m2 );
 }
 
 

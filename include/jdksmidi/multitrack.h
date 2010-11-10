@@ -52,19 +52,31 @@ class MIDIMultiTrack
 private:
 
     // delete old multitrack, construct new
-    bool MIDIMultiTrack::CreateObject ( int num_tracks_, bool deletable_ ); // func by VRM
+    bool CreateObject ( int num_tracks_, bool deletable_ ); // func by VRM
 
 public:
 
     MIDIMultiTrack ( int max_num_tracks_ = 64, bool deletable_ = true );
     virtual ~MIDIMultiTrack();
 
-    void SetTrack ( int track_num, MIDITrack *track ) { tracks[track_num] = track; }
+    void SetTrack ( int track_num, MIDITrack *track )
+    {
+        tracks[track_num] = track;
+    }
 
-    MIDITrack *GetTrack ( int track_num ) { return tracks[track_num]; }
-    const MIDITrack *GetTrack ( int track_num ) const  { return tracks[track_num]; }
+    MIDITrack *GetTrack ( int track_num )
+    {
+        return tracks[track_num];
+    }
+    const MIDITrack *GetTrack ( int track_num ) const
+    {
+        return tracks[track_num];
+    }
 
-    int GetNumTracks() const { return number_of_tracks; }
+    int GetNumTracks() const
+    {
+        return number_of_tracks;
+    }
 
     // return number of tracks with events, last tracks have no events
     int GetNumTracksWithEvents() const; // func by VRM
@@ -76,16 +88,25 @@ public:
     bool ClearAndResize ( int num_tracks ); // func by VRM
 
     // store src track and remake multitrack object with 17 tracks (src track can be a member of multitrack obiect),
-    // move src track channal events to tracks 1-16, and all other types of events to track 0 
+    // move src track channal events to tracks 1-16, and all other types of events to track 0
     bool AssignEventsToTracks ( const MIDITrack *src ); // func by VRM
 
     // the same as previous, but argument is track number of multitrack object himself
-    bool AssignEventsToTracks ( int track_num = 0 ) { return AssignEventsToTracks( GetTrack( track_num ) ); } // func by VRM
+    bool AssignEventsToTracks ( int track_num = 0 )
+    {
+        return AssignEventsToTracks( GetTrack( track_num ) );    // func by VRM
+    }
 
     void Clear();
 
-    int GetClksPerBeat() const { return clks_per_beat; }
-    void SetClksPerBeat ( int cpb ) { clks_per_beat = cpb; }
+    int GetClksPerBeat() const
+    {
+        return clks_per_beat;
+    }
+    void SetClksPerBeat ( int cpb )
+    {
+        clks_per_beat = cpb;
+    }
 
 protected:
 

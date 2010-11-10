@@ -29,9 +29,9 @@ namespace jdksmidi
 {
 
 MIDIDriverDump::MIDIDriverDump ( int queue_size, FILE *outfile )
-        :
-        MIDIDriver ( queue_size ),
-        f ( outfile )
+    :
+    MIDIDriver ( queue_size ),
+    f ( outfile )
 {
 }
 

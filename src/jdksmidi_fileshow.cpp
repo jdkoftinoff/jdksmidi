@@ -52,9 +52,9 @@ namespace jdksmidi
 {
 
 MIDIFileShow::MIDIFileShow ( FILE *out_, bool sqspecific_as_text_ )
-        :
-        out ( out_ ),
-        sqspecific_as_text ( sqspecific_as_text_ ) // VRM
+    :
+    out ( out_ ),
+    sqspecific_as_text ( sqspecific_as_text_ ) // VRM
 {
     ENTER ( "MIDIFileShow::MIDIFileShow()" );
 }
@@ -285,20 +285,20 @@ bool MIDIFileShow::mf_sqspecific ( MIDIClockTime time, int len, unsigned char *d
 
     if ( sqspecific_as_text )
     {
-      std::string str( (const char *) data, len );
-      fprintf ( out, "%s\n", str.c_str() );
+        std::string str( (const char *) data, len );
+        fprintf ( out, "%s\n", str.c_str() );
     }
     else
     {
-      for ( int i = 0; i < len; ++i )
-      {
-          if ( i > 0 && (i %16) == 0 ) // VRM
-              fprintf ( out, "\n" );
+        for ( int i = 0; i < len; ++i )
+        {
+            if ( i > 0 && (i %16) == 0 ) // VRM
+                fprintf ( out, "\n" );
 
-          fprintf ( out, "%02x ", ( int ) data[i] );
-      }
+            fprintf ( out, "%02x ", ( int ) data[i] );
+        }
 
-      fprintf ( out, "\n" );
+        fprintf ( out, "\n" );
     }
 
     return true; // VRM

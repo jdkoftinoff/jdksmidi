@@ -36,7 +36,7 @@ namespace jdksmidi
 {
 
 class MIDISequencerGUIEventNotifierWin32 :
-        public MIDISequencerGUIEventNotifier
+    public MIDISequencerGUIEventNotifier
 {
 
 public:

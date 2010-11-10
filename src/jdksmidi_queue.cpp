@@ -33,11 +33,11 @@ namespace jdksmidi
 {
 
 MIDIQueue::MIDIQueue ( int num_msgs )
-        :
-        buf ( new MIDITimedBigMessage[ num_msgs ] ),
-        bufsize ( num_msgs ),
-        next_in ( 0 ),
-        next_out ( 0 )
+    :
+    buf ( new MIDITimedBigMessage[ num_msgs ] ),
+    bufsize ( num_msgs ),
+    next_in ( 0 ),
+    next_out ( 0 )
 {
 }
 

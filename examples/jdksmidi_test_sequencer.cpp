@@ -159,49 +159,49 @@ void PlayDumpSequencer( MIDISequencer *seq )
 
 int main( int argc, char **argv )
 {
-  if ( argc > 1 )
-  {
-    const char *infile_name = argv[1];
+    if ( argc > 1 )
+    {
+        const char *infile_name = argv[1];
 
-    MIDIFileReadStreamFile rs( infile_name );
-    MIDIMultiTrack tracks;
-    MIDIFileReadMultiTrack track_loader( &tracks );
-    MIDIFileRead reader( &rs, &track_loader );
+        MIDIFileReadStreamFile rs( infile_name );
+        MIDIMultiTrack tracks;
+        MIDIFileReadMultiTrack track_loader( &tracks );
+        MIDIFileRead reader( &rs, &track_loader );
 
-    // set amount of tracks equal to midifile
-    tracks.ClearAndResize( reader.ReadNumTracks() );
+        // set amount of tracks equal to midifile
+        tracks.ClearAndResize( reader.ReadNumTracks() );
 
 //  MIDISequencerGUIEventNotifierText notifier( stdout );
 //  MIDISequencer seq( &tracks, &notifier );
-    MIDISequencer seq ( &tracks );
+        MIDISequencer seq ( &tracks );
 
-    // load the midifile into the multitrack object
-    if ( !reader.Parse() )
-    {
-      cerr << "\nError parse file " << infile_name << endl;
-      return -1;
+        // load the midifile into the multitrack object
+        if ( !reader.Parse() )
+        {
+            cerr << "\nError parse file " << infile_name << endl;
+            return -1;
+        }
+
+        if ( argc > 2 )
+        {
+            cout << endl;
+            int mode = atoi ( argv[2] );
+            if ( mode == 0 ) DumpMIDIMultiTrack( &tracks );
+            else             PlayDumpSequencer( &seq );
+            // note that Sequencer generate "META-EVENT 7e,00" (META_BEAT_MARKER) in files dump,
+            // but files themselves not contain this meta event!
+        }
+
+        float time_precision_sec = 0.01f;
+        int max_duration_hours = 4;
+        double dt = seq.GetMisicDurationInSeconds( time_precision_sec, max_duration_hours );
+
+        cout << "\nMisic duration = " << dt
+             << " seconds +- " << time_precision_sec << endl;
     }
+    else
+        cerr << "usage:\n\tjdkmidi_test_sequencer FILE.mid [0 for DumpMIDIMultiTrack  or  1 for PlayDumpSequencer]\n";
 
-    if ( argc > 2 )
-    {
-      cout << endl;
-      int mode = atoi ( argv[2] );
-      if ( mode == 0 ) DumpMIDIMultiTrack( &tracks );
-      else             PlayDumpSequencer( &seq );
-      // note that Sequencer generate "META-EVENT 7e,00" (META_BEAT_MARKER) in files dump,
-      // but files themselves not contain this meta event!
-    }
-
-    float time_precision_sec = 0.01f;
-    int max_duration_hours = 4;
-    double dt = seq.GetMisicDurationInSeconds( time_precision_sec, max_duration_hours );
-
-    cout << "\nMisic duration = " << dt
-         << " seconds +- " << time_precision_sec << endl;
-  }
-  else
-    cerr << "usage:\n\tjdkmidi_test_sequencer FILE.mid [0 for DumpMIDIMultiTrack  or  1 for PlayDumpSequencer]\n";
-
-  return 0;
+    return 0;
 }
 

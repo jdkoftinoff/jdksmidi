@@ -43,9 +43,9 @@ MIDIProcessor::~MIDIProcessor()
 
 
 MIDIMultiProcessor::MIDIMultiProcessor ( int num )
-        :
-        processors ( new MIDIProcessor *[num] ),
-        num_processors ( num )
+    :
+    processors ( new MIDIProcessor *[num] ),
+    num_processors ( num )
 {
     for ( int i = 0; i < num_processors; ++i )
     {

@@ -61,8 +61,8 @@ MIDIEditTrackEventMatcher::~MIDIEditTrackEventMatcher()
 
 
 MIDIEditTrack::MIDIEditTrack ( MIDITrack *track_ )
-        :
-        track ( track_ )
+    :
+    track ( track_ )
 {
     ENTER ( "MIDIEditTrack::MIDIEditTrack()" );
 }

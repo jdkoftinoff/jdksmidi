@@ -42,7 +42,7 @@ namespace jdksmidi
 {
 
 MIDIFileReadMultiTrack::MIDIFileReadMultiTrack ( MIDIMultiTrack *mlttrk )
-        : multitrack ( mlttrk ), cur_track ( -1 )
+    : multitrack ( mlttrk ), cur_track ( -1 )
 {
 }
 
@@ -66,26 +66,26 @@ void MIDIFileReadMultiTrack::mf_endtrack ( int trk )
 
 bool MIDIFileReadMultiTrack::AddEventToMultiTrack ( const MIDITimedMessage &msg, MIDISystemExclusive *sysex, int dest_track )
 {
-  bool result = false;
+    bool result = false;
 
-  if ( dest_track != -1 && dest_track < multitrack->GetNumTracks() )
-  {
-    MIDITrack *t = multitrack->GetTrack ( dest_track );
-
-    if ( t )
+    if ( dest_track != -1 && dest_track < multitrack->GetNumTracks() )
     {
-      result = t->PutEvent ( msg, sysex );
-    }
-  }
+        MIDITrack *t = multitrack->GetTrack ( dest_track );
 
-  return result;
+        if ( t )
+        {
+            result = t->PutEvent ( msg, sysex );
+        }
+    }
+
+    return result;
 }
 
 void    MIDIFileReadMultiTrack::mf_header (
     int the_format_,
     int ntrks_,
     int division_
-    )
+)
 {
     the_format = the_format_;
     num_tracks = ntrks_;
@@ -95,25 +95,25 @@ void    MIDIFileReadMultiTrack::mf_header (
 
 bool MIDIFileReadMultiTrack::ChanMessage ( const MIDITimedMessage &msg ) // VRM
 {
-/*
-    // this original code deleted for separate functionality in MIDIMultiTrack::AssignEventsToTracks(0)
-    if ( the_format == 0 )
-    {
-      // split format 0 files into separate tracks, one for each channel,
-      // keep track 0 for tempo and meta-events
-      AddEventToMultiTrack ( msg, 0, msg.GetChannel() + 1 );
-    }
-    else
-    {
-      AddEventToMultiTrack ( msg, 0, cur_track );
-    }
-*/
+    /*
+        // this original code deleted for separate functionality in MIDIMultiTrack::AssignEventsToTracks(0)
+        if ( the_format == 0 )
+        {
+          // split format 0 files into separate tracks, one for each channel,
+          // keep track 0 for tempo and meta-events
+          AddEventToMultiTrack ( msg, 0, msg.GetChannel() + 1 );
+        }
+        else
+        {
+          AddEventToMultiTrack ( msg, 0, cur_track );
+        }
+    */
     return AddEventToMultiTrack ( msg, 0, cur_track ); // VRM
 }
 
 void MIDIFileReadMultiTrack::SortEventsOrder() // func by VRM
 {
-  multitrack->SortEventsOrder();
+    multitrack->SortEventsOrder();
 }
 
 bool MIDIFileReadMultiTrack::mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex ) // VRM
@@ -151,7 +151,7 @@ bool MIDIFileReadMultiTrack::mf_timesig ( // VRM
     int denom_power,
     int clks_per_metro,
     int notated_32nd_per_quarter
-    )
+)
 {
     MIDITimedMessage msg;
     int denom = 1 << denom_power;
