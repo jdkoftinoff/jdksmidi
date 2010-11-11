@@ -77,7 +77,7 @@ bool MIDIFileEvents::ChanMessage ( const MIDITimedMessage &msg ) // VRM
         break;
 
     case CONTROL_CHANGE:
-        if ( msg.GetByte2() > C_ALL_NOTES_OFF )
+        if ( msg.GetByte2() > C_ALL_NOTES_OFF ) // TO DO VRM@ questionably: may be (msg.GetByte1() >= C_ALL_SOUNDS_OFF)?
         {
             mf_system_mode ( msg );
         }
@@ -111,12 +111,12 @@ bool MIDIFileEvents::MetaEvent ( MIDIClockTime time, int type, int leng, unsigne
         mf_seqnum ( time, To16Bit ( m[0], m[1] ) );
         break;
 
-    case MF_TEXT_EVENT:
+    case MF_GENERIC_TEXT:
     case MF_COPYRIGHT:
     case MF_TRACK_NAME:
     case MF_INSTRUMENT_NAME:
-    case MF_LYRIC:
-    case MF_MARKER:
+    case MF_LYRIC_TEXT:
+    case MF_MARKER_TEXT:
     case MF_CUE_POINT:
     case MF_GENERIC_TEXT_8:
     case MF_GENERIC_TEXT_9:

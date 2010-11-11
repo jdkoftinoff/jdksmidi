@@ -180,7 +180,7 @@ const char * MIDIMessage::MsgToText ( char *txt ) const
         size_t len = strlen ( txt ); // VRM
         char *p = txt + len;
 
-        while ( len < 45 )
+        while ( len < 40 ) // VRM was 45
         {
             *p++ = ' ';
             ++len;
@@ -417,7 +417,7 @@ bool MIDIMessage::IsTempo() const
 bool MIDIMessage::IsDataEnd() const
 {
     return ( status == META_EVENT )
-           && ( byte1 == META_DATA_END );
+           && ( byte1 == META_END_OF_TRACK );
 }
 
 bool MIDIMessage::IsTimeSig() const
@@ -655,7 +655,7 @@ void MIDIMessage::SetText ( unsigned short text_num, unsigned char type )
 
 void MIDIMessage::SetDataEnd()
 {
-    SetMetaEvent ( META_DATA_END, 0 );
+    SetMetaEvent ( META_END_OF_TRACK, 0 );
 }
 
 void  MIDIMessage::SetTimeSig ( unsigned char num, unsigned char den )

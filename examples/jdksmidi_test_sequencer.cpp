@@ -61,7 +61,18 @@ void DumpMIDITimedBigMessage( MIDITimedBigMessage *msg )
     if ( msg )
     {
         char msgbuf[1024];
-        fprintf ( stdout, "%8ld : %s\n", msg->GetTime(), msg->MsgToText ( msgbuf ) );
+
+        // note that Sequencer generate META_BEAT_MARKER in files dump,
+        // but files themselves not contain this meta event...
+        // see MIDISequencer::beat_marker_msg.SetBeatMarker()
+        if ( msg->IsBeatMarker() )
+        {
+            fprintf ( stdout, "%8ld : %s (BEAT_MARKER)\n", msg->GetTime(), msg->MsgToText ( msgbuf ) );
+        }
+        else
+        {
+            fprintf ( stdout, "%8ld : %s\n", msg->GetTime(), msg->MsgToText ( msgbuf ) );
+        }
 
         if ( msg->IsSysEx() )
         {
@@ -171,8 +182,8 @@ int main( int argc, char **argv )
         // set amount of tracks equal to midifile
         tracks.ClearAndResize( reader.ReadNumTracks() );
 
-//  MIDISequencerGUIEventNotifierText notifier( stdout );
-//  MIDISequencer seq( &tracks, &notifier );
+//      MIDISequencerGUIEventNotifierText notifier( stdout );
+//      MIDISequencer seq( &tracks, &notifier );
         MIDISequencer seq ( &tracks );
 
         // load the midifile into the multitrack object
@@ -186,10 +197,14 @@ int main( int argc, char **argv )
         {
             cout << endl;
             int mode = atoi ( argv[2] );
-            if ( mode == 0 ) DumpMIDIMultiTrack( &tracks );
-            else             PlayDumpSequencer( &seq );
-            // note that Sequencer generate "META-EVENT 7e,00" (META_BEAT_MARKER) in files dump,
-            // but files themselves not contain this meta event!
+            if ( mode == 0 )
+            {
+                DumpMIDIMultiTrack( &tracks );
+            }
+            else
+            {
+                PlayDumpSequencer( &seq );
+            }
         }
 
         float time_precision_sec = 0.01f;
@@ -200,7 +215,10 @@ int main( int argc, char **argv )
              << " seconds +- " << time_precision_sec << endl;
     }
     else
+    {
         cerr << "usage:\n\tjdkmidi_test_sequencer FILE.mid [0 for DumpMIDIMultiTrack  or  1 for PlayDumpSequencer]\n";
+        return -1;
+    }
 
     return 0;
 }

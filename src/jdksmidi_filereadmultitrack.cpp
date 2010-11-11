@@ -217,7 +217,7 @@ bool MIDIFileReadMultiTrack::mf_eot ( MIDIClockTime time ) // VRM
 {
     MIDITimedMessage msg;
     msg.SetStatus ( META_EVENT );
-    msg.SetMetaType ( META_DATA_END ); // VRM
+    msg.SetMetaType ( META_END_OF_TRACK ); // VRM
     msg.SetTime ( time );
     return AddEventToMultiTrack ( msg, 0, cur_track ); // VRM
 }
