@@ -77,9 +77,9 @@ public:
     }
 
 #ifdef WIN32
-    explicit MIDIFileReadStreamFile ( const wchar_t *fname )
+    explicit MIDIFileReadStreamFile ( const wchar_t *fname ) // func by VRM
     {
-        f = _wfopen ( fname, L"rb" );    // func by VRM
+        f = _wfopen ( fname, L"rb" );
     }
 #endif
 
@@ -201,9 +201,9 @@ public:
         return header_ntrks;    // VRM
     }
     // call it after Parse(): return true if file contain event(s) with running status
-    bool UsedRunningStatus() const
+    bool UsedRunningStatus() const // func by VRM
     {
-        return used_running_status;    // func by VRM
+        return used_running_status;
     }
     // return header_division = clock per beat value for range 1...32767
     int GetDivision() const

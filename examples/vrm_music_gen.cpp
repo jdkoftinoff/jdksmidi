@@ -2,6 +2,8 @@
 
   VRM Music Generator  based on  libJDKSmidi C++ MIDI Library
 
+  version 1.11 from November 2010
+
   Copyright (C) 2010 V.R.Madgazin
 
   www.vmgames.com
@@ -40,12 +42,14 @@ using namespace std;
 
 template <class I, class D> inline void test_max(D &x, I ma)
 {
-    if ( x > (D)ma ) x = (D)ma;
+    if ( x > (D)ma )
+      x = (D)ma;
 }
 
 template <class I, class D> inline void test_min(D &x, I mi)
 {
-    if ( x < (D)mi ) x = (D)mi;
+    if ( x < (D)mi )
+      x = (D)mi;
 }
 
 template <class I1, class D, class I2> inline void mintestmax(I1 mi, D &x, I2 ma)
@@ -72,13 +76,20 @@ inline int get_rand(int minval, int maxval)
     return minval + int( Randu(seed) * k * (maxval-minval+1) );
 }
 
-const bool ON = true, OFF = false;
+const bool ON = true,
+          OFF = false;
 bool AddNote( MIDIMultiTrack &tracks, int track_num, MIDIClockTime ticks, int chan, int note, int velocity, bool on )
 {
     MIDITimedBigMessage m;
     m.SetTime( ticks );
-    if ( on ) m.SetNoteOn( chan, note, velocity );
-    else      m.SetNoteOff( chan, note, velocity );
+    if ( on )
+    {
+        m.SetNoteOn(  chan, note, velocity );
+    }
+    else
+    {
+        m.SetNoteOff( chan, note, velocity );
+    }
     return tracks.GetTrack( track_num )->PutEvent( m );
 }
 
@@ -95,7 +106,7 @@ bool AddSilence( MIDIMultiTrack &tracks, int track_num, MIDIClockTime silence_ti
 {
     int num = tracks.GetTrack( track_num )->GetNumEvents();
     MIDIClockTime tmax = tracks.GetTrack( track_num )->GetEvent( num-1 )->GetTime();
-    AddNote(tracks, track_num, tmax + silence_ticks, 0, 0, 0, ON);
+           AddNote(tracks, track_num, tmax + silence_ticks, 0, 0, 0, ON);
     return AddNote(tracks, track_num, tmax + silence_ticks, 0, 0, 0, OFF);
 }
 
@@ -104,7 +115,8 @@ void LastEventsProlongation( MIDIMultiTrack &tracks, int track_num, MIDIClockTim
 {
     MIDITrack *track = tracks.GetTrack( track_num );
     int index = track->GetNumEvents() - 1;
-    if ( index < 0 ) return;
+    if ( index < 0 )
+        return;
 
     MIDITimedBigMessage *msg = track->GetEvent( index );
     MIDIClockTime tmax = msg->GetTime();
@@ -112,7 +124,8 @@ void LastEventsProlongation( MIDIMultiTrack &tracks, int track_num, MIDIClockTim
     while ( msg->GetTime() == tmax )
     {
         msg->SetTime( tmax + add_ticks );
-        if ( --index < 0 ) break;
+        if ( --index < 0 )
+            break;
         msg = track->GetEvent( index );
     }
 }
@@ -138,8 +151,10 @@ const int notes_table[MAX_INDEX+1] = // notes number array: all "white" notes in
 
 int main ( int argc, char **argv )
 {
-    seed = 3; // [-se] random seed value
+    int return_code = -1;
 
+    // music generator data
+    seed = 3; // [-se] random seed value
     int instrument = 25; // [-in] midi instrument number, 25 = Acoustic Guitar (steel)
     int notes_min_index = 0 ; // [-n0] min index of notes array: 0 for C-dur, 5 for A-moll
     int notes_max_index = 14; // [-n1] max index of notes array: add N*7 to min index for N octaves diapason
@@ -153,70 +168,28 @@ int main ( int argc, char **argv )
     double note_dur = 0.5; // [-nd] note duration in seconds
     double notes_density = 1.5; // [-de] average notes number per note duration
 
-    // arguments parser
+    // music generator arguments data parser
     for (int i = 1; i < argc; i += 2)
     {
-        const char *key = argv[i];
         int ival = 0;
         double dval = 0.;
-
         if ( (i+1) < argc )
         {
             ival = atol( argv[i+1] );
             dval = atof( argv[i+1] );
         }
-
-        switch ( key[1] )
-        {
-        case 'i':
-            instrument = ival;
-            break;
-        case 't':
-            transposition = ival;
-            break;
-        case 'm':
-            music_dur = dval;
-            break;
-        case 'c':
-            channel = ival;
-            break;
-        case 's':
-            switch ( key[2] )
-            {
-            case 'e':
-                seed = uint32( ival );
-                break;
-            case 'd':
-                section_dur = dval;
-                break;
-            }
-            break;
-        case 'n':
-            switch ( key[2] )
-            {
-            case '0':
-                notes_min_index = ival;
-                break;
-            case '1':
-                notes_max_index = ival;
-                break;
-            case 'd':
-                note_dur = dval;
-                break;
-            }
-            break;
-        case 'd':
-            switch ( key[2] )
-            {
-            case 'i':
-                discrete_time = ival;
-                break;
-            case 'e':
-                notes_density = dval;
-                break;
-            }
-            break;
-        }
+        string key = argv[i];
+        if ( key == "-se" ) seed = uint32( ival );
+        if ( key == "-in" ) instrument = ival;
+        if ( key == "-n0" ) notes_min_index = ival;
+        if ( key == "-n1" ) notes_max_index = ival;
+        if ( key == "-tr" ) transposition = ival;
+        if ( key == "-di" ) discrete_time = ival;
+        if ( key == "-ch" ) channel = ival;
+        if ( key == "-md" ) music_dur = dval;
+        if ( key == "-sd" ) section_dur = dval;
+        if ( key == "-nd" ) note_dur = dval;
+        if ( key == "-de" ) notes_density = dval;
     }
 
     // make midi file name from program arguments
@@ -255,7 +228,8 @@ int main ( int argc, char **argv )
     MIDIClockTime mc_section_dur = mctime( section_dur );
     MIDIClockTime mc_note_dur = mctime( note_dur );
 
-    if ( mc_music_dur < 1 ) mc_music_dur = 1;
+    if ( mc_music_dur < 1 )
+        mc_music_dur = 1;
     mintestmax( 1, mc_section_dur, mc_music_dur );
     mintestmax( 1, mc_note_dur, mc_section_dur );
 
@@ -292,7 +266,8 @@ int main ( int argc, char **argv )
     {
         // current music section duration
         MIDIClockTime dur = mc_music_dur - t;
-        if ( dur > mc_section_dur ) dur = mc_section_dur;
+        if ( dur > mc_section_dur )
+            dur = mc_section_dur;
 
         int section_dur_in_note_dur = ( dur / mc_note_dur );
 
@@ -332,9 +307,10 @@ int main ( int argc, char **argv )
             // we subtract 1 tick from note duration to avoid of such conflict!
             // there is efficiently only for (discrete_time != 0)
             MIDIClockTime sub = 1;
-            if ( discrete_time == 0 || mc_note_dur <= 1 ) sub = 0;
+            if ( discrete_time == 0 || mc_note_dur <= 1 )
+                sub = 0;
 
-            AddNote(tracks, trk, (t+dt)                    , channel, note, velocity, ON);
+                  AddNote(tracks, trk, (t+dt)                    , channel, note, velocity, ON);
             if ( !AddNote(tracks, trk, (t+dt) + (mc_note_dur-sub), channel, note, velocity, OFF) )
             {
                 stop = true; // track midi events overflow
@@ -363,12 +339,11 @@ int main ( int argc, char **argv )
     if ( out_stream.IsValid() )
     {
         MIDIFileWriteMultiTrack writer( &tracks, &out_stream );
-
         int num_tracks = tracks.GetNumTracksWithEvents();
-
         if ( writer.Write( num_tracks, clks_per_beat ) )
         {
             cout << "\nOK writing file " << fname.c_str() << endl;
+            return_code = 0;
         }
         else
         {
@@ -376,6 +351,6 @@ int main ( int argc, char **argv )
         }
     }
 
-    return 0;
+    return return_code;
 }
 

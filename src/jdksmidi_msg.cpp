@@ -1232,7 +1232,8 @@ bool operator == ( const MIDIMessage &m1, const MIDIMessage &m2 ) // func by VRM
 
 bool operator == ( const MIDITimedMessage &m1, const MIDITimedMessage &m2 ) // func by VRM
 {
-    if ( m1.GetTime() != m2.GetTime() ) return false;
+    if ( m1.GetTime() != m2.GetTime() )
+        return false;
 
     return ( (MIDIMessage) m1 ) == ( (MIDIMessage) m2 );
 }
@@ -1244,16 +1245,19 @@ bool operator == ( const MIDIBigMessage &m1, const MIDIBigMessage &m2 ) // func 
 
     if ( e1 != 0 )
     {
-        if ( e2 == 0 ) return false;
+        if ( e2 == 0 )
+            return false;
     }
     else // e1 == 0
     {
-        if ( e2 != 0 ) return false;
+        if ( e2 != 0 )
+            return false;
     }
 
     if ( e1 != 0 && e2 != 0 )
     {
-        if ( !( *e1 == *e2 ) ) return false;
+        if ( !( *e1 == *e2 ) )
+            return false;
     }
 
     return ( (MIDIMessage) m1 ) == ( (MIDIMessage) m2 );
@@ -1261,7 +1265,8 @@ bool operator == ( const MIDIBigMessage &m1, const MIDIBigMessage &m2 ) // func 
 
 bool operator == ( const MIDITimedBigMessage &m1, const MIDITimedBigMessage &m2 ) // func by VRM
 {
-    if ( m1.GetTime() != m2.GetTime() ) return false;
+    if ( m1.GetTime() != m2.GetTime() )
+        return false;
 
     return ( (MIDIBigMessage) m1 ) == ( (MIDIBigMessage) m2 );
 }

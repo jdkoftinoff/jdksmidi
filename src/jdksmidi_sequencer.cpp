@@ -1112,7 +1112,8 @@ double MIDISequencer::GetMisicDurationInSeconds( float time_precision_sec, int m
     int ev_track;
 
     GoToTimeMs ( 0.f );
-    if ( !GetNextEventTimeMs ( &next_event_time ) ) return dur;
+    if ( !GetNextEventTimeMs ( &next_event_time ) )
+        return dur;
 
     // simulate a clock going forward with tp_msec resolution for hours
     const double hours = max_duration_hours * 3600. * 1000.;

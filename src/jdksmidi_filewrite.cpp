@@ -257,7 +257,8 @@ void    MIDIFileWrite::WriteEvent ( const MIDITimedMessage &m )
             running_status = m.GetStatus();
             WriteCharacter ( ( unsigned char ) running_status );
             IncrementCounters ( 1 );
-            if ( !use_running_status ) running_status = 0; // VRM
+            if ( !use_running_status )
+                running_status = 0; // VRM
         }
 
         if ( len > 1 )
@@ -340,7 +341,8 @@ void MIDIFileWrite::WriteEvent ( const MIDITimedBigMessage &m )
                 running_status = m.GetStatus();
                 WriteCharacter ( ( unsigned char ) running_status );
                 IncrementCounters ( 1 );
-                if ( !use_running_status ) running_status = 0; // VRM
+                if ( !use_running_status )
+                    running_status = 0; // VRM
             }
 
             if ( len > 1 )
