@@ -30,7 +30,10 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
-
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #ifndef JDKSMIDI_FILE_H
 #define JDKSMIDI_FILE_H
@@ -80,30 +83,32 @@ public:
     enum
     {
         MF_SEQUENCE_NUMBER = 0,
-        MF_TEXT_EVENT  = 1,
-        MF_COPYRIGHT  = 2,
-        MF_TRACK_NAME  = 3, // Sequence/Track Name
+        MF_GENERIC_TEXT    = 1, // VRM
+        MF_COPYRIGHT       = 2,
+        MF_TRACK_NAME      = 3, // Sequence/Track Name
         MF_INSTRUMENT_NAME = 4,
-        MF_LYRIC  = 5,
-        MF_MARKER  = 6,
-        MF_CUE_POINT  = 7,
-        MF_GENERIC_TEXT_8 = 8,
-        MF_GENERIC_TEXT_9 = 9,
-        MF_GENERIC_TEXT_A = 0xA,
-        MF_GENERIC_TEXT_B = 0xB,
-        MF_GENERIC_TEXT_C = 0xC,
-        MF_GENERIC_TEXT_D = 0xD,
-        MF_GENERIC_TEXT_E = 0xE,
-        MF_GENERIC_TEXT_F = 0xF,
+        MF_LYRIC_TEXT      = 5, // VRM
+        MF_MARKER_TEXT     = 6, // VRM
+        MF_CUE_POINT       = 7,
+        MF_GENERIC_TEXT_8  = 8, // PROGRAM_NAME
+        MF_GENERIC_TEXT_9  = 9, // DEVICE_NAME
+        MF_GENERIC_TEXT_A  = 0xA,
+        MF_GENERIC_TEXT_B  = 0xB,
+        MF_GENERIC_TEXT_C  = 0xC,
+        MF_GENERIC_TEXT_D  = 0xD,
+        MF_GENERIC_TEXT_E  = 0xE,
+        MF_GENERIC_TEXT_F  = 0xF,
 
-        MF_OUTPUT_CABLE  = 0x21,
-        MF_TRACK_LOOP  = 0x2E,
-        MF_END_OF_TRACK  = 0x2F,
+        MF_CHANNEL_PREFIX = 0x20, // VRM
+        MF_OUTPUT_CABLE   = 0x21,
+        MF_TRACK_LOOP     = 0x2E,
+        MF_END_OF_TRACK   = 0x2F,
 
-        MF_TEMPO  = 0x51,
-        MF_SMPTE  = 0x54,
-        MF_TIMESIG  = 0x58,
+        MF_TEMPO   = 0x51,
+        MF_SMPTE   = 0x54,
+        MF_TIMESIG = 0x58,
         MF_KEYSIG  = 0x59,
+
         MF_SEQUENCER_SPECIFIC = 0x7F
     };
 

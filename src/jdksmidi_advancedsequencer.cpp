@@ -721,7 +721,7 @@ void AdvancedSequencer::ExtractMarkers ( std::vector< std::string > *list )
             {
                 if ( ( m->GetMetaType() == META_GENERIC_TEXT )
                         || m->GetMetaType() == META_MARKER_TEXT
-                        || m->GetMetaType() == META_CUE_TEXT )
+                        || m->GetMetaType() == META_CUE_POINT )
                 {
                     char buf[256];
                     char line[256];
