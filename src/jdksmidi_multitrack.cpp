@@ -61,13 +61,15 @@ MIDIMultiTrack::MIDIMultiTrack ( int num_tracks_, bool deletable_ )
 bool MIDIMultiTrack::CreateObject ( int num_tracks_, bool deletable_ ) // func by VRM
 {
     // delete old multitrack object
-    if ( tracks ) this->~MIDIMultiTrack();
+    if ( tracks )
+        this->~MIDIMultiTrack();
 
     number_of_tracks = num_tracks_;
     deletable = deletable_;
 
     tracks = new MIDITrack * [number_of_tracks];
-    if ( !tracks ) return false;
+    if ( !tracks )
+        return false;
 
     if ( deletable )
     {
@@ -109,7 +111,8 @@ bool MIDIMultiTrack::AssignEventsToTracks ( const MIDITrack *src ) // func by VR
         if ( msg->IsChannelMsg() )
             track_num = 1 + msg->GetChannel();
 
-        if ( !GetTrack ( track_num )->PutEvent( *msg ) ) return false;
+        if ( !GetTrack ( track_num )->PutEvent( *msg ) )
+            return false;
     }
 
     return true;
@@ -144,7 +147,8 @@ int MIDIMultiTrack::GetNumTracksWithEvents() const  // func by VRM
 
     for ( i = number_of_tracks - 1; i >= 0; --i )
     {
-        if ( !tracks[i]->IsTrackEmpty() ) break;
+        if ( !tracks[i]->IsTrackEmpty() )
+            break;
     }
 
     return i+1;

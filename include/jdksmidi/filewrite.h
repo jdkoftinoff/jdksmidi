@@ -150,9 +150,9 @@ public:
     void WriteEndOfTrack ( unsigned long time );
     virtual void RewriteTrackLength();
     // false argument disable use running status in midi file (true on default)
-    void UseRunningStatus( bool use )
+    void UseRunningStatus( bool use ) // func by VRM
     {
-        use_running_status = use;    // func by VRM
+        use_running_status = use;
     }
 
 protected:

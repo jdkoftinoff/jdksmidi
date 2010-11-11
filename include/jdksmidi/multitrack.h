@@ -92,9 +92,9 @@ public:
     bool AssignEventsToTracks ( const MIDITrack *src ); // func by VRM
 
     // the same as previous, but argument is track number of multitrack object himself
-    bool AssignEventsToTracks ( int track_num = 0 )
+    bool AssignEventsToTracks ( int track_num = 0 ) // func by VRM
     {
-        return AssignEventsToTracks( GetTrack( track_num ) );    // func by VRM
+        return AssignEventsToTracks( GetTrack( track_num ) );
     }
 
     void Clear();

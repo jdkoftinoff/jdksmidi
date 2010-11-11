@@ -106,14 +106,16 @@ void MIDITrack::Clear()
 
 bool MIDITrack::EventsOrderOK() const // func by VRM
 {
-    if ( num_events < 2 ) return true;
+    if ( num_events < 2 )
+        return true;
 
     MIDIClockTime time0 = GetEventAddress(0)->GetTime();
 
     for ( int i = 1; i < num_events; ++i )
     {
         MIDIClockTime time1 = GetEventAddress(i)->GetTime();
-        if ( time0 > time1 ) return false;
+        if ( time0 > time1 )
+            return false;
         time0 = time1;
     }
 
@@ -156,7 +158,8 @@ int MIDITrack::RemoveIdenticalEvents( int max_distance_between_identical_events 
 
         for (int i = 1; i < max_distance_between_identical_events; ++i)
         {
-            if ( (n+i) >= num_events ) break;
+            if ( (n+i) >= num_events )
+                break;
 
             MIDITimedBigMessage *mni = GetEvent( n+i );
             if ( *mn == *mni )
@@ -531,9 +534,11 @@ bool MIDITrack::PutTextEvent ( MIDIClockTime time, int meta_event_type, const ch
     msg.SetTime( time );
     msg.SetMetaEvent( meta_event_type , 0 );
 
-    if ( length < 0 ) length = (int) strlen( text );
+    if ( length < 0 )
+        length = (int) strlen( text );
     MIDISystemExclusive sysex( length );
-    for ( int i = 0; i < length; ++i ) sysex.PutSysByte ( text[i] );
+    for ( int i = 0; i < length; ++i )
+        sysex.PutSysByte ( text[i] );
 
     return PutEvent( msg, &sysex );
 }

@@ -57,7 +57,8 @@ void DeleteAllTracksText( MIDIMultiTrack &tracks )
         {
             MIDITimedBigMessage *msg = trk.GetEvent( ne );
             // convert any text midi event to META_NO_OPERATION event
-            if ( msg->IsTextEvent() ) trk.MakeEventNoOp( ne );
+            if ( msg->IsTextEvent() )
+                trk.MakeEventNoOp( ne );
         }
     }
 }
