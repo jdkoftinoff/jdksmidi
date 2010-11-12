@@ -130,7 +130,7 @@ public:
     void WriteFileHeader ( int format, int ntrks, int division );
     void WriteTrackHeader ( unsigned long length );
 
-    void WriteEvent ( const MIDITimedMessage &m );
+//  void WriteEvent ( const MIDITimedMessage &m ); // func deleted by VRM: don't need duplicate next func!
     void WriteEvent ( const MIDITimedBigMessage &m );
 
     void WriteEvent ( unsigned long time, const MIDISystemExclusive *e );

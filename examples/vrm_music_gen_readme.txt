@@ -2,7 +2,7 @@
 
   VRM Music Generator  based on  libJDKSmidi C++ MIDI Library
 
-  version 1.11  from November 2010
+  version 1.12  from November 2010
   
   Copyright (C) 2010 V.R.Madgazin
   www.vmgames.com

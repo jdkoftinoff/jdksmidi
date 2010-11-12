@@ -541,7 +541,7 @@ bool MIDIShowControlPacket::ParseAsciiNum (
     // check if there is a field
     c = e->GetData ( *pos );
 
-    if ( c == 0xf7 )
+    if ( c == 0xf7 ) // SYSEX_END
     {
         // no field
         return false;
@@ -607,7 +607,7 @@ bool MIDIShowControlPacket::ParseAsciiNum (
                 {
                     c = e->GetData ( ( *pos ) );
 
-                    if ( c == 0xf7 || c == 0x00 )
+                    if ( c == 0xf7 || c == 0x00 ) // 0xf7 = SYSEX_END
                     {
                         break;
                     }
@@ -638,7 +638,7 @@ bool MIDIShowControlPacket::ParseAsciiNum (
     ulong v = 0;
     uchar c = 0;
     //
-    // Read ascii decimal digits until '.' or 0x00 or 0xf7
+    // Read ascii decimal digits until '.' or 0x00 or 0xf7 (SYSEX_END)
     //
 
     while ( *pos < e->GetLength() )

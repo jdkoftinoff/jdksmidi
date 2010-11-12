@@ -21,6 +21,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #include "jdksmidi/world.h"
 
@@ -219,7 +223,8 @@ bool MIDIDriverWin32::HardwareMsgOut ( const MIDITimedBigMessage &msg )
     if ( out_open )
     {
         // dont send sysex or meta-events
-        if ( msg.GetStatus() < 0xff && msg.GetStatus() != 0xf0 )
+//      if ( msg.GetStatus() < 0xff && msg.GetStatus() != 0xf0 )
+        if ( msg.GetStatus() < 0xff && !msg.IsSysEx() ) // VRM
         {
             DWORD winmsg;
             winmsg =

@@ -111,9 +111,9 @@ void MIDIFileWrite::Error ( const char *s )
     error = true;
 }
 
-void    MIDIFileWrite::WriteShort ( unsigned short c )
+void MIDIFileWrite::WriteShort ( unsigned short c )
 {
-    ENTER ( "void    MIDIFileWrite::WriteShort()" );
+    ENTER ( "void MIDIFileWrite::WriteShort()" );
     WriteCharacter ( ( unsigned char ) ( ( c >> 8 ) & 0xff ) );
     WriteCharacter ( ( unsigned char ) ( ( c & 0xff ) ) );
 }
@@ -213,74 +213,9 @@ void MIDIFileWrite::WriteDeltaTime ( unsigned long abs_time )
     track_time = abs_time;
 }
 
-void    MIDIFileWrite::WriteEvent ( const MIDITimedMessage &m )
-{
-    ENTER ( "void    MIDIFileWrite::WriteEvent()" );
-
-    if ( m.IsNoOp() )
-    {
-        return;
-    }
-
-    if ( m.IsMetaEvent() )
-    {
-        // TO DO: add more meta events.
-        if ( m.IsTempo() )
-        {
-            unsigned long tempo = ( 60000000 / m.GetTempo32() ) * 32;
-            WriteTempo ( m.GetTime(), tempo );
-            return;
-        }
-
-        if ( m.IsDataEnd() )
-        {
-            WriteEndOfTrack ( m.GetTime() );
-            return;
-        }
-
-        if ( m.IsKeySig() )
-        {
-            WriteKeySignature ( m.GetTime(), m.GetKeySigSharpFlats(), m.GetKeySigMajorMinor() );
-            return;
-        }
-
-        return; // all other marks are ignored.
-    }
-
-    else
-    {
-        short len = m.GetLength();
-        WriteDeltaTime ( m.GetTime() );
-
-        if ( m.GetStatus() != running_status )
-        {
-            running_status = m.GetStatus();
-            WriteCharacter ( ( unsigned char ) running_status );
-            IncrementCounters ( 1 );
-            if ( !use_running_status )
-                running_status = 0; // VRM
-        }
-
-        if ( len > 1 )
-        {
-            WriteCharacter ( ( unsigned char ) m.GetByte1() );
-            IncrementCounters ( 1 );
-        }
-
-        if ( len > 2 )
-        {
-            WriteCharacter ( ( unsigned char ) m.GetByte2() );
-            IncrementCounters ( 1 );
-        }
-    }
-}
-
 void MIDIFileWrite::WriteEvent ( const MIDITimedBigMessage &m )
 {
-    if ( m.IsNoOp() )
-    {
-        return;
-    }
+    ENTER ( "void MIDIFileWrite::WriteEvent()" );
 
     if ( m.IsMetaEvent() )
     {
@@ -306,9 +241,10 @@ void MIDIFileWrite::WriteEvent ( const MIDITimedBigMessage &m )
                 WriteTempo ( m.GetTime(), tempo );
             }
 
+            // VRM: this META_END_OF_TRACK msg will be written only in MIDIFileWriteMultiTrack::Write()
             else if ( m.IsDataEnd() )
             {
-                WriteEndOfTrack ( m.GetTime() );
+                // WriteEndOfTrack ( m.GetTime() ); // deleted by VRM
             }
 
             else if ( m.IsKeySig() )
@@ -332,6 +268,7 @@ void MIDIFileWrite::WriteEvent ( const MIDITimedBigMessage &m )
             WriteEvent ( m.GetTime(), m.GetSysEx() );
         }
 
+        // VRM@ TO DO: see lut_sysmsglen[]: "sysex end." & undefined msgs with len=0 don't write! this is right?
         else if ( len > 0 )
         {
             WriteDeltaTime ( m.GetTime() );
@@ -384,7 +321,7 @@ void MIDIFileWrite::WriteEvent ( unsigned long time, unsigned short text_type, c
 {
     ENTER ( "void MIDIFileWrite::WriteEvent()" );
     WriteDeltaTime ( time );
-    WriteCharacter ( ( unsigned char ) 0xff );  // META-Event
+    WriteCharacter ( ( unsigned char ) META_EVENT );  // VRM
     WriteCharacter ( ( unsigned char ) text_type ); // Text event type
     IncrementCounters ( 2 );
     long len = ( long ) strlen ( text ); // VRM
@@ -403,7 +340,7 @@ void MIDIFileWrite::WriteMetaEvent ( unsigned long time, unsigned char type, con
 {
     ENTER ( "void MIDIFileWrite::WriteMetaEvent()" );
     WriteDeltaTime ( time );
-    WriteCharacter ( ( unsigned char ) 0xff ); // META-Event
+    WriteCharacter ( ( unsigned char ) META_EVENT );  // VRM
     WriteCharacter ( ( unsigned char ) type ); // Meta-event type
     IncrementCounters ( 2 );
     IncrementCounters ( WriteVariableNum ( length ) );
@@ -421,8 +358,8 @@ void MIDIFileWrite::WriteTempo ( unsigned long time, long tempo )
 {
     ENTER ( "void MIDIFileWrite::WriteTempo()" );
     WriteDeltaTime ( time );
-    WriteCharacter ( ( unsigned char ) 0xff ); // Meta-Event
-    WriteCharacter ( ( unsigned char ) 0x51 ); // Tempo event
+    WriteCharacter ( ( unsigned char ) META_EVENT ); // VRM
+    WriteCharacter ( ( unsigned char ) META_TEMPO ); // VRM
     WriteCharacter ( ( unsigned char ) 0x03 ); // length of event
     Write3Char ( tempo );
     IncrementCounters ( 6 );
@@ -433,8 +370,8 @@ void MIDIFileWrite::WriteKeySignature ( unsigned long time, char sharp_flat, cha
 {
     ENTER ( "void MIDIFileWrite::WriteKeySignature()" );
     WriteDeltaTime ( time );
-    WriteCharacter ( ( unsigned char ) 0xff );  // Meta-Event
-    WriteCharacter ( ( unsigned char ) 0x59 );  // Key Sig
+    WriteCharacter ( ( unsigned char ) META_EVENT ); // VRM
+    WriteCharacter ( ( unsigned char ) META_KEYSIG ); // VRM
     WriteCharacter ( ( unsigned char ) 0x02 );  // length of event
     WriteCharacter ( ( unsigned char ) sharp_flat ); // - for flats, + for sharps
     WriteCharacter ( ( unsigned char ) minor ); // 1 if minor key
@@ -451,8 +388,8 @@ void MIDIFileWrite::WriteTimeSignature (
 {
     ENTER ( "void MIDIFileWrite::WriteTimeSignature()" );
     WriteDeltaTime ( time );
-    WriteCharacter ( ( unsigned char ) 0xff );  // Meta-Event
-    WriteCharacter ( ( unsigned char ) 0x58 );  // time signature
+    WriteCharacter ( ( unsigned char ) META_EVENT ); // VRM
+    WriteCharacter ( ( unsigned char ) META_TIMESIG ); // VRM
     WriteCharacter ( ( unsigned char ) 0x04 );  // length of event
     WriteCharacter ( ( unsigned char ) numerator );
     WriteCharacter ( ( unsigned char ) denominator_power );
@@ -472,8 +409,8 @@ void MIDIFileWrite::WriteEndOfTrack ( unsigned long time )
             time = track_time;
 
         WriteDeltaTime ( time );
-        WriteCharacter ( ( unsigned char ) 0xff );  // Meta-Event
-        WriteCharacter ( ( unsigned char ) 0x2f );  // End of track
+        WriteCharacter ( ( unsigned char ) META_EVENT ); // VRM
+        WriteCharacter ( ( unsigned char ) META_END_OF_TRACK ); // VRM
         WriteCharacter ( ( unsigned char ) 0x00 );  // length of event
         IncrementCounters ( 3 );
         within_track = false;

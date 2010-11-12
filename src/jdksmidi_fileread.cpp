@@ -62,14 +62,7 @@ bool MIDIFileEvents::ChanMessage ( const MIDITimedMessage &msg ) // VRM
         break;
 
     case NOTE_ON:
-        if ( msg.GetVelocity() == 0 )
-        {
-            mf_note_off ( msg );
-        }
-        else
-        {
-            mf_note_on ( msg );
-        }
+        mf_note_on ( msg ); // VRM
         break;
 
     case POLY_PRESSURE:
@@ -77,7 +70,7 @@ bool MIDIFileEvents::ChanMessage ( const MIDITimedMessage &msg ) // VRM
         break;
 
     case CONTROL_CHANGE:
-        if ( msg.GetByte2() > C_ALL_NOTES_OFF ) // TO DO VRM@ questionably: may be (msg.GetByte1() >= C_ALL_SOUNDS_OFF)?
+        if ( msg.GetByte2() > C_ALL_NOTES_OFF ) // VRM@ TO DO questionably: may be (msg.GetByte1() >= C_ALL_SOUNDS_OFF)?
         {
             mf_system_mode ( msg );
         }
@@ -152,10 +145,7 @@ bool MIDIFileEvents::MetaEvent ( MIDIClockTime time, int type, int leng, unsigne
         return mf_timesig ( time, m[0], m[1], m[2], m[3] ); // VRM
 
     case MF_KEYSIG:
-    {
-        char c = m[0];
-        return mf_keysig ( time, c, m[1] ); // VRM
-    }
+        return mf_keysig ( time, (char) m[0], m[1] ); // VRM
 
     case MF_SEQUENCER_SPECIFIC:
         return mf_sqspecific ( time, leng, m ); // VRM
@@ -463,7 +453,7 @@ void MIDIFileRead::ReadTrack()
         if ( c == -1 )
             break;
 
-        if ( sysexcontinue && c != 0xF7 )
+        if ( sysexcontinue && c != SYSEX_END ) // VRM
             mf_error ( "Error after expected continuation of SysEx" );
 
         if ( ( c & 0x80 ) == 0 )
@@ -477,19 +467,9 @@ void MIDIFileRead::ReadTrack()
         }
         else
         {
-            // TO DO: is running status to be cleared or not when meta event happens?
-#if MIDIFRD_ALLOW_STATUS_ACROSS_META_EVENT // now not to do! VRM
-            if ( c != 0xFF )
-            {
-                status = c;
-                running = 0;
-                needed = 0;
-            }
-#else
             status = c;
             running = 0;
             needed = chantype[ ( status>>4 ) & 0xF ];
-#endif
         }
 
         if ( needed ) // ie. is it a channel message?
@@ -504,7 +484,7 @@ void MIDIFileRead::ReadTrack()
 
         switch ( c )
         {
-        case 0xFF: // meta-event
+        case 0xFF: // META_EVENT
 
             type = EGetC();
             lng = ReadVariableNum();
@@ -521,17 +501,17 @@ void MIDIFileRead::ReadTrack()
 
             break;
 
-        case 0xF0: // start of sys-ex
+        case 0xF0: // SYSEX_START
 
             lng = ReadVariableNum();
             lookfor = to_be_read - lng;
             MsgInit();
-            MsgAdd ( 0xF0 );
+            MsgAdd ( SYSEX_START );
 
             while ( to_be_read > lookfor )
                 MsgAdd ( c = EGetC() );
 
-            if ( c == 0xF7 || no_merge == 0 )
+            if ( c == SYSEX_END || no_merge == 0 ) // VRM
             {
                 // make a sysex object out of the raw sysex data
                 // the buffer is not to be deleted upon destruction of ex
@@ -551,7 +531,7 @@ void MIDIFileRead::ReadTrack()
 
             break;
 
-        case 0xF7: // sysex continuation or arbitary stuff
+        case 0xF7: // (SYSEX_END) sysex continuation or arbitrary stuff
 
             lng = ReadVariableNum();
             lookfor = to_be_read - lng;
@@ -564,10 +544,10 @@ void MIDIFileRead::ReadTrack()
 
             if ( !sysexcontinue )
             {
-                event_handler->mf_arbitrary ( cur_time, msg_index, the_msg );
+                event_handler->mf_arbitrary ( cur_time, msg_index, the_msg ); // VRM TO DO: if false abort parse
             }
 
-            else if ( c == 0xF7 )
+            else if ( c == SYSEX_END ) // VRM
             {
                 // make a sysex object out of the raw sysex data
                 // the buffer is not to be deleted upon destruction of ex

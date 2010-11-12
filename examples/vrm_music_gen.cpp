@@ -2,7 +2,7 @@
 
   VRM Music Generator  based on  libJDKSmidi C++ MIDI Library
 
-  version 1.11 from November 2010
+  version 1.12 from November 2010
 
   Copyright (C) 2010 V.R.Madgazin
 
@@ -101,7 +101,19 @@ bool SetInstrument( MIDIMultiTrack &tracks, int track_num, MIDIClockTime ticks, 
     return tracks.GetTrack( track_num )->PutEvent( m );
 }
 
-// add "silence" after last track event
+// add empty message after last track event: don't effect with most common midi players!
+bool AddPause( MIDIMultiTrack &tracks, int track_num, MIDIClockTime pause_ticks )
+{
+    int num = tracks.GetTrack( track_num )->GetNumEvents();
+    MIDIClockTime tmax = tracks.GetTrack( track_num )->GetEvent( num-1 )->GetTime();
+    MIDITimedBigMessage m;
+    m.SetTime( tmax + pause_ticks );
+    m.SetNoOp();
+    // the effect of NoOp msg is the only change end of track time, but - see above... 
+    return tracks.GetTrack( track_num )->PutEvent( m );
+}
+
+// add "silence" note after last track event: it always work!
 bool AddSilence( MIDIMultiTrack &tracks, int track_num, MIDIClockTime silence_ticks )
 {
     int num = tracks.GetTrack( track_num )->GetNumEvents();
