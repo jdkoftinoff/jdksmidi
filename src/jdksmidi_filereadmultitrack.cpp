@@ -128,6 +128,7 @@ bool MIDIFileReadMultiTrack::mf_sysex ( MIDIClockTime time, const MIDISystemExcl
 void MIDIFileReadMultiTrack::mf_arbitrary ( MIDIClockTime time, int len, unsigned char *data )
 {
     // ignore arbitrary byte strings
+    // VRM TO DO - add event to multitrack ? return bool...
 }
 
 void MIDIFileReadMultiTrack::mf_metamisc ( MIDIClockTime time, int, int, unsigned char * )

@@ -180,7 +180,7 @@ bool MIDIFileShow::mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex 
 
     for ( int i = 0; i < ex.GetLength(); ++i )
     {
-        if ( ( i & 0x1f ) == 0 )
+        if ( i > 0 && (i %16) == 0 ) // VRM
             fprintf ( out, "\n" );
 
         fprintf ( out, "%02x ", ( int ) ex.GetData ( i ) );
@@ -197,7 +197,7 @@ void MIDIFileShow::mf_arbitrary ( MIDIClockTime time, int len, unsigned char *da
 
     for ( int i = 0; i < len; ++i )
     {
-        if ( ( i & 0x1f ) == 0 )
+        if ( i > 0 && (i %16) == 0 ) // VRM
             fprintf ( out, "\n" );
 
         fprintf ( out, "%02x ", ( int ) data[i] );
@@ -213,7 +213,7 @@ void MIDIFileShow::mf_metamisc ( MIDIClockTime time, int type, int len, unsigned
 
     for ( int i = 0; i < len; ++i )
     {
-        if ( ( i & 0x1f ) == 0 )
+        if ( i > 0 && (i %16) == 0 ) // VRM
             fprintf ( out, "\n" );
 
         fprintf ( out, "%02x ", ( int ) data[i] );

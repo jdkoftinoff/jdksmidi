@@ -48,67 +48,60 @@ MIDIFileWriteMultiTrack::~MIDIFileWriteMultiTrack()
 
 bool MIDIFileWriteMultiTrack::Write ( int num_tracks, int division )
 {
-    bool f = true;
-
     if ( !PreWrite() )
-    {
         return false;
-    }
 
     // first, write the header.
     writer.WriteFileHeader ( ( num_tracks > 1 )? 1:0, num_tracks, division ); // VRM
     // now write each track
 
+    // this loop code completely rewritten by VRM
     for ( int i = 0; i < num_tracks; ++i )
     {
-        if ( writer.ErrorOccurred() )
-        {
-            f = false;
-            break;
-        }
-
         const MIDITrack *t = multitrack->GetTrack ( i );
 
-        if ( !t->EventsOrderOK() ) // VRM time of events out of order: t->SortEventsOrder() must be done externally
-        {
-            f = false;
-            break;
-        }
+        if ( !t || !t->EventsOrderOK() ) // VRM time of events out of order: t->SortEventsOrder() must be done externally
+            return false;
 
         writer.WriteTrackHeader ( 0 ); // will be rewritten later
 
-        if ( t )
+        MIDIClockTime max_time = 0;
+        int max_event_num = t->GetNumEvents() - 1;
+        for ( int event_num = 0; event_num <= max_event_num; ++event_num )
         {
-            for ( int event_num = 0; event_num < t->GetNumEvents(); ++event_num )
+            const MIDITimedBigMessage *ev = t->GetEventAddress ( event_num );
+
+            if ( !ev )
+                return false;
+
+            if ( event_num == max_event_num )
             {
-                const MIDITimedBigMessage *ev = t->GetEventAddress ( event_num );
-
-                if ( ev && !ev->IsNoOp() )
-                {
-                    if ( !ev->IsDataEnd() )
-                    {
-                        writer.WriteEvent ( *ev );
-
-                        if ( writer.ErrorOccurred() )
-                        {
-                            f = false;
-                            break;
-                        }
-                    }
-                }
+                // we get time from any last track message, even if it don't written to file!
+                max_time = ev->GetTime();
             }
+
+            // don't write to midifile all META_NO_OPERATION msgs
+            if ( ev->IsNoOp() )
+                continue;
+
+            // don't write all possible track's META_END_OF_TRACK msgs
+            if ( ev->IsDataEnd() )
+                continue;
+
+            writer.WriteEvent ( *ev );
+
+            if ( writer.ErrorOccurred() )
+                return false;
         }
 
-        writer.WriteEndOfTrack ( 0 );
+        writer.WriteEndOfTrack ( max_time ); // write META_END_OF_TRACK msg
         writer.RewriteTrackLength();
     }
 
     if ( !PostWrite() )
-    {
         return false;
-    }
 
-    return f;
+    return true;
 }
 
 

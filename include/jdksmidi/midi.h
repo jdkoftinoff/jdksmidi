@@ -59,7 +59,7 @@ enum
     CHANNEL_PRESSURE = 0xD0, ///< Channel pressure/aftertouch with pressure
     PITCH_BEND  = 0xE0, ///< Channel bender with 14 bit bender value
     SYSEX_START = 0xF0, ///< Start of a MIDI System-Exclusive message
-    MTC  = 0xF1, ///< Start of a two byte MIDI Time Code message
+    MTC         = 0xF1, ///< Start of a two byte MIDI Time Code message
     SONG_POSITION = 0xF2, ///< Start of a three byte MIDI Song Position message
     SONG_SELECT   = 0xF3, ///< Start of a two byte MIDI Song Select message
     TUNE_REQUEST  = 0xF6, ///< Single byte tune request message
@@ -82,7 +82,7 @@ enum
     CONTINUE = 0xFB, ///< Sequence continue message
     STOP     = 0xFC, ///< Sequence stop message
     ACTIVE_SENSE = 0xFE ///< Active sense message
-    // VRM         0xFF // see above RESET
+    // VRM         0xFF // see above RESET or META_EVENT
 };
 
 
@@ -245,7 +245,7 @@ inline signed char GetMessageLength ( unsigned char stat )
 
 inline signed char GetSystemMessageLength ( unsigned char stat )
 {
-    return lut_sysmsglen[stat-0xf0];
+    return lut_sysmsglen[stat-0xF0];
 }
 
 

@@ -47,39 +47,39 @@ const char *  MIDIMessage::chan_msg_name[16] =
     "ERROR 00    ",  // 0x00
     "ERROR 10    ",  // 0x10
     "ERROR 20    ",  // 0x20
-    "ERROR 30    ",       // 0x30
-    "ERROR 40    ",       // 0x40
-    "ERROR 50    ",       // 0x50
-    "ERROR 60    ",       // 0x60
-    "ERROR 70    ",      // 0x70
+    "ERROR 30    ",  // 0x30
+    "ERROR 40    ",  // 0x40
+    "ERROR 50    ",  // 0x50
+    "ERROR 60    ",  // 0x60
+    "ERROR 70    ",  // 0x70
     "NOTE OFF    ",  // 0x80
     "NOTE ON     ",  // 0x90
-    "POLY PRES.  ",  // 0xa0
-    "CTRL CHANGE ",  // 0xb0
-    "PG CHANGE   ",  // 0xc0
-    "CHAN PRES.  ",  // 0xd0
-    "BENDER      ",  // 0xe0
-    "SYSTEM      "   // 0xf0
+    "POLY PRES.  ",  // 0xA0
+    "CTRL CHANGE ",  // 0xB0
+    "PROG CHANGE ",  // 0xC0
+    "CHAN PRES.  ",  // 0xD0
+    "BENDER      ",  // 0xE0
+    "SYSTEM      "   // 0xF0
 };
 
 const char *  MIDIMessage::sys_msg_name[16] =
 {
-    "SYSEX       ",  // 0xf0
-    "MTC         ",  // 0xf1
-    "SONG POS    ",  // 0xf2
-    "SONG SELECT ",  // 0xf3
-    "ERR - F4    ",  // 0xf4
-    "ERR - F5    ",  // 0xf5
-    "TUNE REQ.   ",  // 0xf6
-    "SYSEX END   ",  // 0xf7
-    "CLOCK       ",  // 0xf8
-    "MEASURE END ",  // 0xf9
-    "START       ",  // 0xfa
-    "CONTINUE    ",  // 0xfb
-    "STOP        ",         // 0xfc
-    "ERR - FD    ",         // 0xfd
-    "SENSE       ",  // 0xfe
-    "META-EVENT  "  // 0xff
+    "SYSEX       ",  // 0xF0
+    "MTC         ",  // 0xF1
+    "SONG POS    ",  // 0xF2
+    "SONG SELECT ",  // 0xF3
+    "ERR - F4    ",  // 0xF4
+    "ERR - F5    ",  // 0xF5
+    "TUNE REQ.   ",  // 0xF6
+    "SYSEX END   ",  // 0xF7
+    "CLOCK       ",  // 0xF8
+    "MEASURE END ",  // 0xF9
+    "START       ",  // 0xFA
+    "CONTINUE    ",  // 0xFB
+    "STOP        ",  // 0xFC
+    "ERR - FD    ",  // 0xFD
+    "SENSE       ",  // 0xFE
+    "META-EVENT  "   // 0xFF
 };
 
 
@@ -98,12 +98,13 @@ const char * MIDIMessage::MsgToText ( char *txt ) const
     else
     {
         int type = ( status & 0xf0 ) >> 4;
-        //
-        // if it is a note on with vel=0, call it a NOTE OFF
-        //
 
+/*
+        // deleted by VRM: we must to know the true msg type!
+        // if it is a note on with vel=0, call it a NOTE OFF
         if ( type == 9 && byte2 == 0 )
             type = 8;
+*/
 
         if ( type != 0xf )
         {
@@ -143,29 +144,32 @@ const char * MIDIMessage::MsgToText ( char *txt ) const
             switch ( status & 0xf0 )
             {
             case NOTE_ON:
-
-                if ( byte2 == 0 )
-                    sprintf ( endtxt, "Note %3d", ( int ) byte1 );
-
+                if ( byte2 == 0 ) // velocity = 0: Note off
+                    sprintf ( endtxt, "Note %3d  Vel  %3d    (Note off) ", ( int ) byte1, ( int ) byte2 ); // VRM
                 else
                     sprintf ( endtxt, "Note %3d  Vel  %3d  ", ( int ) byte1, ( int ) byte2 );
-
                 break;
+
             case NOTE_OFF:
                 sprintf ( endtxt, "Note %3d  Vel  %3d  ", ( int ) byte1, ( int ) byte2 );
                 break;
+
             case POLY_PRESSURE:
                 sprintf ( endtxt, "Note %3d  Pres %3d  ", ( int ) byte1, ( int ) byte2 );
                 break;
+
             case CONTROL_CHANGE:
                 sprintf ( endtxt, "Ctrl %3d  Val  %3d  ", ( int ) byte1, ( int ) byte2 );
                 break;
+
             case PROGRAM_CHANGE:
                 sprintf ( endtxt, "PG   %3d  ", ( int ) byte1 );
                 break;
+
             case CHANNEL_PRESSURE:
                 sprintf ( endtxt, "Pres %3d  ", ( int ) byte1 );
                 break;
+
             case PITCH_BEND:
                 sprintf ( endtxt, "Val %5d", ( int ) GetBenderValue() );
                 break;
@@ -242,7 +246,7 @@ const MIDIMessage & MIDIMessage::operator = ( const MIDIMessage &m )
 
 char MIDIMessage::GetLength() const
 {
-    if ( ( status & 0xf0 ) == 0xf0 )
+    if ( IsSystemMessage() ) // VRM
     {
         return GetSystemMessageLength ( status );
     }
@@ -304,7 +308,7 @@ bool MIDIMessage::IsNoteOn() const
 bool MIDIMessage::IsNoteOff() const
 {
     return ( ( status & 0xf0 ) == NOTE_OFF ) ||
-           ( ( ( status & 0xf0 ) == NOTE_ON ) && byte2 == 0 );
+           ( ( ( status & 0xf0 ) == NOTE_ON ) && byte2 == 0 ); // Note on with velocity = 0 is Note off
 }
 
 
