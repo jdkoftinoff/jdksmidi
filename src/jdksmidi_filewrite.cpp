@@ -268,7 +268,7 @@ void MIDIFileWrite::WriteEvent ( const MIDITimedBigMessage &m )
             WriteEvent ( m.GetTime(), m.GetSysEx() );
         }
 
-        // VRM@ TO DO: see lut_sysmsglen[]: "sysex end." & undefined msgs with len=0 don't write! this is right?
+        // !VRM@ TO DO: see lut_sysmsglen[]: "sysex end." & undefined msgs with len=0 don't write! this is right?
         else if ( len > 0 )
         {
             WriteDeltaTime ( m.GetTime() );

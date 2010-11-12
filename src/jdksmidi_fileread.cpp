@@ -70,7 +70,7 @@ bool MIDIFileEvents::ChanMessage ( const MIDITimedMessage &msg ) // VRM
         break;
 
     case CONTROL_CHANGE:
-        if ( msg.GetByte2() > C_ALL_NOTES_OFF ) // VRM@ TO DO questionably: may be (msg.GetByte1() >= C_ALL_SOUNDS_OFF)?
+        if ( msg.GetByte2() > C_ALL_NOTES_OFF ) // !VRM@ TO DO questionably: may be (msg.GetByte1() >= C_ALL_SOUNDS_OFF)?
         {
             mf_system_mode ( msg );
         }
