@@ -200,13 +200,17 @@ bool MIDIFileReadMultiTrack::mf_sqspecific ( MIDIClockTime time, int len, unsign
 
 bool MIDIFileReadMultiTrack::mf_text ( MIDIClockTime time, int type, int len, unsigned char *s ) // VRM
 {
+    // len is string length w/o ending NULL, but NULL must contain in s[len]
+    s[len] = '\0'; // VRM
+
     MIDITimedMessage msg;
     msg.SetStatus ( META_EVENT );
     msg.SetMetaType ( ( uchar ) type ); // remember - MF_*_TEXT* id codes match META_*_TEXT codes
     msg.SetTime ( time );
-    MIDISystemExclusive *sysex = new MIDISystemExclusive ( len );
 
-    for ( int i = 0; i < len; ++i )
+    MIDISystemExclusive *sysex = new MIDISystemExclusive ( len + 1 ); // VRM add 1 for ending NULL
+
+    for ( int i = 0; i <= len; ++i ) // VRM
     {
         sysex->PutSysByte ( s[i] );
     }

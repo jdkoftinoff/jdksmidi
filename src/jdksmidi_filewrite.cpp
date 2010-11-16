@@ -233,15 +233,21 @@ void MIDIFileWrite::WriteEvent ( const MIDITimedBigMessage &m )
 
         else
         {
-            // otherwise, it is a type of sysex that doesnt have
-            // data...
+            // otherwise, it is a type of meta event that doesnt have sysex data...
+
+// VRM@ TO DO: add more meta events?
+// META_SEQUENCE_NUMBER    (Sequence Number)
+// META_CHANNEL_PREFIX     (MIDI Channel Prefix)
+// META_SMPTE              (SMPTE Offset)
+// META_SEQUENCER_SPECIFIC (Sequencer Specific)
+
             if ( m.IsTempo() )
             {
                 unsigned long tempo = ( 60000000 / m.GetTempo32() ) * 32;
                 WriteTempo ( m.GetTime(), tempo );
             }
 
-            // VRM: this META_END_OF_TRACK msg will be written only in MIDIFileWriteMultiTrack::Write()
+            // VRM: this META_END_OF_TRACK msg will be written separately and only in MIDIFileWriteMultiTrack::Write()
             else if ( m.IsDataEnd() )
             {
                 // WriteEndOfTrack ( m.GetTime() ); // deleted by VRM
@@ -268,7 +274,7 @@ void MIDIFileWrite::WriteEvent ( const MIDITimedBigMessage &m )
             WriteEvent ( m.GetTime(), m.GetSysEx() );
         }
 
-        // !VRM@ TO DO: see lut_sysmsglen[]: "sysex end." & undefined msgs with len=0 don't write! this is right?
+        // VRM@ TO DO: see lut_sysmsglen[]: 0xF7 & other msg with len=0 don't write! this is right?
         else if ( len > 0 )
         {
             WriteDeltaTime ( m.GetTime() );

@@ -120,7 +120,7 @@ bool MIDIFileEvents::MetaEvent ( MIDIClockTime time, int type, int leng, unsigne
     case MF_GENERIC_TEXT_E:
     case MF_GENERIC_TEXT_F:
         // These are all text events
-        m[leng] = 0;    // make sure string ends in NULL
+        m[leng] = '\0'; // make sure string ends in NULL
         return mf_text ( time, type, leng, m ); // VRM
 
     case MF_OUTPUT_CABLE:
@@ -274,7 +274,7 @@ MIDIFileRead::MIDIFileRead (
     cur_time = 0;
     skip_init = 1;
     to_be_read = 0;
-    msg_index = 0;
+    act_msg_len = 0;
     cur_track = 0;
     abort_parse = 0;
     used_running_status = false; // VRM
@@ -301,7 +301,7 @@ void MIDIFileRead::Reset() // func by VRM
     cur_time = 0;
     skip_init = 1;
     to_be_read = 0;
-    msg_index = 0;
+    act_msg_len = 0;
     cur_track = 0;
     abort_parse = 0;
     used_running_status = false;
@@ -496,7 +496,7 @@ void MIDIFileRead::ReadTrack()
                 MsgAdd ( EGetC() );
             }
 
-            if ( !event_handler->MetaEvent ( cur_time, type, msg_index, the_msg ) )
+            if ( !event_handler->MetaEvent ( cur_time, type, act_msg_len, the_msg ) )
                 abort_parse = true; // VRM
 
             break;
@@ -517,8 +517,8 @@ void MIDIFileRead::ReadTrack()
                 // the buffer is not to be deleted upon destruction of ex
                 MIDISystemExclusive ex (
                     the_msg,
-                    msg_index,
-                    msg_index,
+                    act_msg_len,
+                    act_msg_len,
                     false
                 );
                 // give the sysex object to our event handler
@@ -544,7 +544,7 @@ void MIDIFileRead::ReadTrack()
 
             if ( !sysexcontinue )
             {
-                event_handler->mf_arbitrary ( cur_time, msg_index, the_msg ); // VRM TO DO: if false abort parse
+                event_handler->mf_arbitrary ( cur_time, act_msg_len, the_msg ); // VRM TO DO: if false abort parse
             }
 
             else if ( c == SYSEX_END ) // VRM
@@ -553,8 +553,8 @@ void MIDIFileRead::ReadTrack()
                 // the buffer is not to be deleted upon destruction of ex
                 MIDISystemExclusive ex (
                     the_msg,
-                    msg_index,
-                    msg_index,
+                    act_msg_len,
+                    act_msg_len,
                     false
                 );
                 if ( !event_handler->mf_sysex ( cur_time, ex ) )
@@ -640,13 +640,13 @@ int MIDIFileRead::EGetC()
 
 void MIDIFileRead::MsgAdd ( int a )
 {
-    if ( msg_index < max_msg_len )
-        the_msg[ msg_index++ ] = ( unsigned char ) a;
+    if ( act_msg_len < (max_msg_len-1) ) // VRM spare 1 byte for last NULL char
+        the_msg[ act_msg_len++ ] = ( unsigned char ) a;
 }
 
 void MIDIFileRead::MsgInit()
 {
-    msg_index = 0;
+    act_msg_len = 0;
 }
 
 void MIDIFileRead::BadByte ( int c )

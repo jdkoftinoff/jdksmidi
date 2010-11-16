@@ -57,31 +57,35 @@ const signed char lut_msglen[16] =
 
 const signed char lut_sysmsglen[16] =
 {
-   -1, // 0xF0=sysex start. may vary
+// System Common Messages 
+   -1, // 0xF0=Normal SysEx Events start. may vary
     2, // 0xF1=MIDI Time Code. 2 bytes
     3, // 0xF2=MIDI Song position. 3 bytes
     2, // 0xF3=MIDI Song Select. 2 bytes.
-    0, // 0xF4=undefined              may be 1 ?
-    0, // 0xF5=undefined              may be 1 ?
+    0, // 0xF4=undefined. (Reserved)
+    0, // 0xF5=undefined. (Reserved)
     1, // 0xF6=TUNE Request. 1 byte
-    0, // 0xF7=sysex end.    0 byte ? !VRM@ TO DO: may be 1 ? see MIDIFileWrite::WriteEvent( const MIDITimedBigMessage )
+    0, // 0xF7=Normal or Divided SysEx Events end. VRM see MIDIFileWrite::WriteEvent ( const MIDITimedBigMessage &m )
+// -1, // 0xF7=Divided or Authorization SysEx Events. may vary! VRM@ TO DO?
+
+// System Real-Time Messages
     1, // 0xF8=timing clock. 1 byte
-    1, // 0xF9=proposed measure end?
+    1, // 0xF9=proposed measure end? (Reserved)
     1, // 0xFA=start. 1 byte
     1, // 0xFB=continue. 1 byte
     1, // 0xFC=stop. 1 byte
-    0, // 0xFD=undefined              may be 1 ?
+    0, // 0xFD=undefined. (Reserved)
     1, // 0xFE=active sensing. 1 byte
-    3  // 0xFF= not reset, but a META-EVENT, which is always 3 bytes
+//  1, // 0xFF=reset. 1 byte
+
+    3  // 0xFF=not reset, but a META-EVENT, which is always 3 bytes
 };
 
 
 const bool lut_is_white[12] =
 {
-//
-// C C#  D D#  E    F F# G G# A A# B
-//
-    1, 0,  1, 0,  1,   1, 0, 1, 0, 1, 0, 1
+//  C C#  D D#  E  F F#  G G#  A A#  B
+    1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1
 };
 
 

@@ -2,7 +2,7 @@
 
   VRM Music Generator  based on  libJDKSmidi C++ MIDI Library
 
-  version 1.12 from November 2010
+  version 1.20 from November 2010
 
   Copyright (C) 2010 V.R.Madgazin
 
@@ -118,8 +118,8 @@ bool AddSilence( MIDIMultiTrack &tracks, int track_num, MIDIClockTime silence_ti
 {
     int num = tracks.GetTrack( track_num )->GetNumEvents();
     MIDIClockTime tmax = tracks.GetTrack( track_num )->GetEvent( num-1 )->GetTime();
-           AddNote(tracks, track_num, tmax + silence_ticks, 0, 0, 0, ON);
-    return AddNote(tracks, track_num, tmax + silence_ticks, 0, 0, 0, OFF);
+    // add lowest note on in channal 0 with velocity = 0 (i.e. note off)
+    return AddNote(tracks, track_num, tmax + silence_ticks, 0, 0, 0, ON);
 }
 
 // add ticks time to all last track events (i.e. to all events with max time value)
@@ -154,16 +154,22 @@ MIDIClockTime mctime(double seconds)
     return MIDIClockTime( 0.5 + mctime1sec * seconds );
 }
 
-const int MAX_INDEX = 28;
-const int notes_table[MAX_INDEX+1] = // notes number array: all "white" notes in 4 octaves
-{  0, 2, 4, 5, 7, 9,11,  12,14,16,17,19,21,23,  24,26,28,29,31,33,35,  36,38,40,41,43,45,47,  48  };
-// 0  1  2  3  4  5  6    7  8  9 10 11 12 13   14 15 16 17 18 19 20   21 22 23 24 25 26 27   28  index
-// C  D  E  F  G  A  B    C  D  E  F  G  A  B    C  D  E  F  G  A  B    C  D  E  F  G  A  B    C  notes
-
+const int MAX_INDEX = 70;
+int notes_table[MAX_INDEX+1] = // notes number array: all "white" notes in 10 octaves
+{  0, 2, 4, 5, 7, 9,11, 12, };
+// 0  1  2  3  4  5  6   7  index
+// C  D  E  F  G  A  B   C  notes
+void setup_notes()
+{
+    for (int i = 7; i <= MAX_INDEX; i += 7)
+        for (int j = 0; ( j < 7 && i+j <= MAX_INDEX ); ++j)
+            notes_table[i+j] = 12 + notes_table[i+j-7];
+}
 
 int main ( int argc, char **argv )
 {
-    int return_code = -1;
+    int ret_code = -1;
+    setup_notes();
 
     // music generator data
     seed = 3; // [-se] random seed value
@@ -355,14 +361,14 @@ int main ( int argc, char **argv )
         if ( writer.Write( num_tracks, clks_per_beat ) )
         {
             cout << "\nOK writing file " << fname.c_str() << endl;
-            return_code = 0;
+            ret_code = 0;
         }
         else
-        {
             cerr << "\nError writing file " << fname.c_str() << endl;
-        }
     }
+    else
+        cerr << "\nError opening file " << fname.c_str() << endl;
 
-    return return_code;
+    return ret_code;
 }
 

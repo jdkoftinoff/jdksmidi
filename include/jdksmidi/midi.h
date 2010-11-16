@@ -189,10 +189,15 @@ enum
 
 enum
 {
-    META_SEQUENCE_NUMBER = 0x00, ///< value=16 bits. type 2 files
+// Sequence Number
+// This meta event defines the pattern number of a Type 2 MIDI file
+// or the number of a sequence in a Type 0 or Type 1 MIDI file.
+// This meta event should always have a delta time of 0 and come before
+// all MIDI Channel Events and non-zero delta time events.
+    META_SEQUENCE_NUMBER = 0x00, ///< value=16 bits.
 
     META_GENERIC_TEXT = 0x01, ///< value=16 bits, text item #
-    META_COPYRIGHT    = 0x02, ///< value=17 bits, text item #
+    META_COPYRIGHT    = 0x02, ///< value=16 bits, text item #
     META_TRACK_NAME      = 0x03, // VRM (was 0x04) Sequence/Track Name
     META_INSTRUMENT_NAME = 0x04, // VRM (was 0x03)
     META_LYRIC_TEXT  = 0x05,
@@ -202,7 +207,7 @@ enum
     META_PROGRAM_NAME   = 0x08, // VRM
     META_DEVICE_NAME    = 0x09, // VRM
 
-    MIDI_CHANNEL_PREFIX = 0x20, // VRM This meta event associates a MIDI channel with following meta events.
+    META_CHANNEL_PREFIX = 0x20, // VRM This meta event associates a MIDI channel with following meta events.
     // It's effect is terminated by another MIDI Channel Prefix event or any non-Meta event.
     // It is often used before an Instrument Name Event to specify which channel an instrument name represents.
 
@@ -264,7 +269,7 @@ inline bool IsNoteWhite ( unsigned char note )
 
 inline bool IsNoteBlack ( unsigned char note )
 {
-    return !lut_is_white[ note%12 ];
+    return !IsNoteWhite( note ); // VRM
 }
 
 

@@ -2,7 +2,7 @@
 
   VRM Music Generator  based on  libJDKSmidi C++ MIDI Library
 
-  version 1.12  from November 2010
+  version 1.20  from November 2010
   
   Copyright (C) 2010 V.R.Madgazin
   www.vmgames.com
@@ -29,9 +29,9 @@
 
   "-in I" midi melodic instrument number (25), see section 4; 0...127
 
-  "-n0 I" min index of notes array (0), see section 3; 0 for C-dur, 5 for A-moll; 0...28
+  "-n0 I" min index of notes array (0), see section 3; 0 for C-dur, 5 for A-moll; 0...70
 
-  "-n1 I" max index of notes array (14); add N*7 to min index for N octaves diapason; 0...28
+  "-n1 I" max index of notes array (14); add N*7 to min index for N octaves diapason; 0...70
 
   "-tr I" notes transposition (48); 0...127
           abs. note number is calculated on formula ( notes_table[index] + transposition )
@@ -53,11 +53,11 @@
 3. Notes array.
 
 
-const int MAX_INDEX = 28;
-const int notes_table[MAX_INDEX+1] = // notes number array: all "white" notes in 4 octaves
-{  0, 2, 4, 5, 7, 9,11,  12,14,16,17,19,21,23,  24,26,28,29,31,33,35,  36,38,40,41,43,45,47,  48  };
-// 0  1  2  3  4  5  6    7  8  9 10 11 12 13   14 15 16 17 18 19 20   21 22 23 24 25 26 27   28  index
-// C  D  E  F  G  A  B    C  D  E  F  G  A  B    C  D  E  F  G  A  B    C  D  E  F  G  A  B    C  notes
+const int MAX_INDEX = 70;
+int notes_table[MAX_INDEX+1] = // notes number array: all "white" notes in 10 octaves
+{  0, 2, 4, 5, 7, 9,11,  12,14,16,17,19,21,23,  24,26,28,29,31,33,35,  36,38,40,41,43,45,47, ... };
+// 0  1  2  3  4  5  6    7  8  9 10 11 12 13   14 15 16 17 18 19 20   21 22 23 24 25 26 27  index
+// C  D  E  F  G  A  B    C  D  E  F  G  A  B    C  D  E  F  G  A  B    C  D  E  F  G  A  B  notes
 
 
 4. General Midi melodic instruments numbers and names.

@@ -259,7 +259,7 @@ bool MIDISequencerTrackProcessor::Process ( MIDITimedBigMessage *msg )
         }
 
         // is it a note on message?
-        if ( msg->IsNoteOn() && msg->GetVelocity() > 0 )
+        if ( msg->IsNoteOn() && msg->GetVelocity() != 0 )
         {
             // yes, scale the velocity value as required
             int vel = ( int ) msg->GetVelocity();

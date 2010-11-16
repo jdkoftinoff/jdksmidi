@@ -301,14 +301,13 @@ bool MIDIMessage::IsChannelMsg() const
 
 bool MIDIMessage::IsNoteOn() const
 {
-    return ( ( status & 0xf0 ) == NOTE_ON ) && byte2;
+    return ( ( status & 0xf0 ) == NOTE_ON ); // VRM
 }
 
 
 bool MIDIMessage::IsNoteOff() const
 {
-    return ( ( status & 0xf0 ) == NOTE_OFF ) ||
-           ( ( ( status & 0xf0 ) == NOTE_ON ) && byte2 == 0 ); // Note on with velocity = 0 is Note off
+    return ( ( status & 0xf0 ) == NOTE_OFF ); // VRM
 }
 
 

@@ -189,10 +189,13 @@ public:
     /// If the message is some sort of real time channel message, IsChannelMsg() will return true. You can then call GetChannel() for more information.
     bool IsChannelMsg() const;
 
-    /// If the message is a note on message (but not a note on message with velocity>0), IsNoteOn() will return true. You can then call GetChannel(), GetNote() and GetVelocity() for further information.
+    /// If the message is a note on message, IsNoteOn() will return true. You can then call GetChannel(), GetNote() and GetVelocity() for further information.
     bool IsNoteOn() const;
 
-    /// If the message is a note off message or a note on message with velocity == 0, IsNoteOff() will return true. You can then call GetChannel(), GetNote() and GetVelocity() for further information.
+    /// If the message is a note on message and velocity=0 (i.e. note off), IsNoteOnV0() will return true. You can then call GetChannel(), GetNote() for further information.
+    bool IsNoteOnV0() const { return IsNoteOn() && GetVelocity() == 0; } // func by VRM
+
+    /// If the message is a note off message, IsNoteOff() will return true. You can then call GetChannel(), GetNote() and GetVelocity() for further information.
     bool IsNoteOff() const;
 
     /// If the message is a polyphonic pressure chanel message, IsPolyPressure() will return true. You can then call GetChannel(), GetNote() and GetVelocity() for further informtion.

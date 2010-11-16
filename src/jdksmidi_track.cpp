@@ -534,11 +534,16 @@ bool MIDITrack::PutTextEvent ( MIDIClockTime time, int meta_event_type, const ch
     msg.SetTime( time );
     msg.SetMetaEvent( meta_event_type , 0 );
 
-    if ( length < 0 )
+    if ( length == 0 )
         length = (int) strlen( text );
-    MIDISystemExclusive sysex( length );
+
+    // length is string length w/o ending NULL, but ending NULL must contain in sysex string!
+    MIDISystemExclusive sysex( length + 1 );
+
     for ( int i = 0; i < length; ++i )
         sysex.PutSysByte ( text[i] );
+
+    sysex.PutSysByte ( '\0' ); // add NULL to end of sysex string
 
     return PutEvent( msg, &sysex );
 }

@@ -224,7 +224,7 @@ protected:
 
     unsigned char *the_msg;
     int max_msg_len;
-    int msg_index;
+    int act_msg_len; // VRM actual msg length
 
 private:
     unsigned long ReadVariableNum();

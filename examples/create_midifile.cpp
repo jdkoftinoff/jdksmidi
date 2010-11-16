@@ -221,6 +221,8 @@ int main ( int argc, char **argv )
             cerr << "\nError writing file " << outfile_name << endl;
         }
     }
+    else
+        cerr << "\nError opening file " << outfile_name << endl;
 
     return return_code;
 }
