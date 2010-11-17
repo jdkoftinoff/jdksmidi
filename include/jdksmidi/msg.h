@@ -341,6 +341,9 @@ public:
 
     void SetControlChange ( unsigned char chan, unsigned char ctrl, unsigned char val );
 
+    // set pan control in chan: pan = -1. for left, 0. for centre, +1.0 for right
+    void SetPanorama( unsigned char chan, double pan ); // func by VRM
+
     void SetProgramChange ( unsigned char chan, unsigned char val );
 
     void SetChannelPressure ( unsigned char chan, unsigned char val );

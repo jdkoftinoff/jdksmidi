@@ -513,6 +513,24 @@ void MIDIMessage::SetControlChange ( unsigned char chan, unsigned char ctrl, uns
 }
 
 
+void MIDIMessage::SetPanorama( unsigned char chan, double pan )
+{
+    //      left   centre     right
+    //  pan = -1 ...    0 ...    +1
+    // ipan =  0 ... 8192 ... 16384
+    int ipan = jdks_float2int( 8192. * (pan + 1.) );
+    if ( ipan > 16383 ) ipan = 16383;
+
+    int pan_msb = ipan / 128;
+    int pan_lsb = ipan % 128;
+
+    SetControlChange( chan, C_PAN, pan_msb );
+//  к сожалению любое pan_lsb сбрасывает панораму в центр при проигрывании midi
+//  и через MediaPlayer и даже через Timidity, поэтому не делаем установку lsb
+//  SetControlChange( chan, C_PAN + C_LSB, pan_lsb );
+}
+
+
 void MIDIMessage::SetProgramChange ( unsigned char chan, unsigned char val )
 {
     status = ( unsigned char ) ( chan | PROGRAM_CHANGE );
@@ -539,7 +557,6 @@ void MIDIMessage::SetPitchBend ( unsigned char chan, short val )
     byte2 = ( unsigned char ) ( ( val >> 7 ) & 0x7f );
     byte3 = 0;
 }
-
 
 void MIDIMessage::SetPitchBend ( unsigned char chan, unsigned char low, unsigned char high )
 {
