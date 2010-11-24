@@ -725,8 +725,8 @@ void AdvancedSequencer::ExtractMarkers ( std::vector< std::string > *list )
                 {
                     char buf[256];
                     char line[256];
-                    memcpy ( buf, m->GetSysEx()->GetBuf(), m->GetSysEx()->GetLength() );
-                    buf[ m->GetSysEx()->GetLength() ] = '\0';
+                    memcpy ( buf, m->GetSysEx()->GetBuf(), m->GetSysEx()->GetLengthSE() );
+                    buf[ m->GetSysEx()->GetLengthSE() ] = '\0';
                     FixQuotes ( buf );
                     sprintf ( line, "%03d:%d        %s", measure + 1, beat + 1, buf );
                     list->push_back ( std::string ( line ) );

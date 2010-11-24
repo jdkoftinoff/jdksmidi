@@ -80,7 +80,7 @@ bool MIDIFileWriteMultiTrack::Write ( int num_tracks, int division )
                 max_time = ev->GetTime();
             }
 
-            // don't write to midifile all META_NO_OPERATION msgs
+            // don't write to midifile NoOp msgs
             if ( ev->IsNoOp() )
                 continue;
 

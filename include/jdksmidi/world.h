@@ -97,6 +97,11 @@ template <class I> inline void jdks_safe_delete_array(I *&arr)
     arr = 0;
 }
 
+template <class D> inline int jdks_float2int(D d)
+{
+    return int( d >= D(0.) ? ( d + D(0.5) ):( d - D(0.5) ) );
+}
+
 }
 
 #endif

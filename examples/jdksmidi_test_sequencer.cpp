@@ -47,12 +47,14 @@ void DumpMIDIBigMessage( MIDITimedBigMessage *msg )
     if ( msg )
     {
         char msgbuf[1024];
-        fprintf ( stdout, "%s\n", msg->MsgToText ( msgbuf ) );
+        fprintf ( stdout, "%s", msg->MsgToText ( msgbuf ) );
 
         if ( msg->IsSysEx() )
         {
-            fprintf ( stdout, "\tSYSEX length: %d\n", msg->GetSysEx()->GetLength() );
+            fprintf ( stdout, "SYSEX length: %d", msg->GetSysEx()->GetLengthSE() );
         }
+
+        fprintf ( stdout, "\n" );
     }
 }
 
@@ -62,22 +64,24 @@ void DumpMIDITimedBigMessage( MIDITimedBigMessage *msg )
     {
         char msgbuf[1024];
 
-        // note that Sequencer generate META_BEAT_MARKER in files dump,
+        // note that Sequencer generate SERVICE_BEAT_MARKER in files dump,
         // but files themselves not contain this meta event...
         // see MIDISequencer::beat_marker_msg.SetBeatMarker()
         if ( msg->IsBeatMarker() )
         {
-            fprintf ( stdout, "%8ld : %s (BEAT_MARKER)\n", msg->GetTime(), msg->MsgToText ( msgbuf ) );
+            fprintf ( stdout, "%8ld : %s <------------------>", msg->GetTime(), msg->MsgToText ( msgbuf ) );
         }
         else
         {
-            fprintf ( stdout, "%8ld : %s\n", msg->GetTime(), msg->MsgToText ( msgbuf ) );
+            fprintf ( stdout, "%8ld : %s", msg->GetTime(), msg->MsgToText ( msgbuf ) );
         }
 
         if ( msg->IsSysEx() )
         {
-            fprintf ( stdout, "\tSYSEX length: %d\n", msg->GetSysEx()->GetLength() );
+            fprintf ( stdout, "SYSEX length: %d", msg->GetSysEx()->GetLengthSE() );
         }
+
+        fprintf ( stdout, "\n" );
     }
 }
 
@@ -201,7 +205,7 @@ int main( int argc, char **argv )
             {
                 DumpMIDIMultiTrack( &tracks );
             }
-            else
+            else // mode = 1
             {
                 PlayDumpSequencer( &seq );
             }

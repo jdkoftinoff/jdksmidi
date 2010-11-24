@@ -217,93 +217,98 @@ void MIDIFileWrite::WriteEvent ( const MIDITimedBigMessage &m )
 {
     ENTER ( "void MIDIFileWrite::WriteEvent()" );
 
-    if ( m.IsMetaEvent() )
+    // code nearly completely rewritten by VRM
+
+    if ( m.IsMetaEvent() ) // all Meta Events
     {
-        // if this meta-event has a sysex buffer attached, this
+        // if this Meta Event has a sysex buffer attached, this
         // buffer contains the raw midi file meta data
         if ( m.GetSysEx() )
         {
-            WriteMetaEvent (
-                m.GetTime(),
-                m.GetMetaType(),
-                m.GetSysEx()->GetBuf(),
-                m.GetSysEx()->GetLength()
-            );
+            WriteMetaEvent ( m.GetTime(), m.GetMetaType(), m.GetSysEx()->GetBuf(), m.GetSysEx()->GetLengthSE() );
+            return;
         }
 
-        else
+        // otherwise, it is a type of meta event that doesnt have sysex data...
+
+        if ( m.IsTempo() )
         {
-            // otherwise, it is a type of sysex that doesnt have
-            // data...
-            if ( m.IsTempo() )
-            {
-                unsigned long tempo = ( 60000000 / m.GetTempo32() ) * 32;
-                WriteTempo ( m.GetTime(), tempo );
-            }
-
-            // VRM: this META_END_OF_TRACK msg will be written only in MIDIFileWriteMultiTrack::Write()
-            else if ( m.IsDataEnd() )
-            {
-                // WriteEndOfTrack ( m.GetTime() ); // deleted by VRM
-            }
-
-            else if ( m.IsKeySig() )
-            {
-                WriteKeySignature ( m.GetTime(), m.GetKeySigSharpFlats(), m.GetKeySigMajorMinor() );
-            }
-
-            else if ( m.IsTimeSig() )
-            {
-                WriteTimeSignature ( m.GetTime(), m.GetTimeSigNumerator(), m.GetTimeSigDenominator() );
-            }
+            WriteTempo ( m );
         }
+
+        // VRM: this META_END_OF_TRACK msg will be written separately and only in MIDIFileWriteMultiTrack::Write()
+        else if ( m.IsDataEnd() )
+        {
+            // WriteEndOfTrack ( m.GetTime() ); // deleted by VRM
+        }
+
+        else if ( m.IsKeySig() )
+        {
+            WriteKeySignature ( m.GetTime(), m.GetKeySigSharpFlats(), m.GetKeySigMajorMinor() );
+        }
+
+        else if ( m.IsTimeSig() )
+        {
+            // numerator in byte2 (denomenator in byte3), but denominator power in byte4
+            WriteTimeSignature ( m.GetTime(), m.GetByte2(), m.GetByte4(), m.GetByte5(), m.GetByte6() );
+        }
+
+        else // all other meta events
+        {
+            WriteMetaMisc( m );
+        }
+
+        return;
     }
 
-    else
-    {
-        short len = m.GetLength();
+    // else not Meta Events: all System Exclusive Events and all Channel Events
 
-        if ( m.IsSysEx() && m.GetSysEx() )
+    // all System Exclusive Events
+
+    if ( m.IsSysEx() && m.GetSysEx() ) // Normal SysEx Events
+    {
+        WriteEvent ( m.GetTime(), m.GetSysEx() );
+        return;
+    }
+    // VRM@TODO: update code for IsSysExA() - Authorization SysEx Events ??
+
+    // else all Channel Events
+
+    int len = m.GetLengthMSG();
+
+    if ( len > 0 )
+    {
+        WriteDeltaTime ( m.GetTime() );
+
+        unsigned char status = m.GetStatus(); // VRM
+
+        if ( running_status != status )
         {
-            WriteEvent ( m.GetTime(), m.GetSysEx() );
+            WriteCharacter ( status );
+            IncrementCounters ( 1 );
+            running_status = status;
+            if ( !use_running_status )
+                running_status = 0; // VRM
         }
 
-        // !VRM@ TO DO: see lut_sysmsglen[]: "sysex end." & undefined msgs with len=0 don't write! this is right?
-        else if ( len > 0 )
+        if ( len > 1 )
         {
-            WriteDeltaTime ( m.GetTime() );
+            WriteCharacter ( m.GetByte1() );
+            IncrementCounters ( 1 );
+        }
 
-            if ( m.GetStatus() != running_status )
-            {
-                running_status = m.GetStatus();
-                WriteCharacter ( ( unsigned char ) running_status );
-                IncrementCounters ( 1 );
-                if ( !use_running_status )
-                    running_status = 0; // VRM
-            }
-
-            if ( len > 1 )
-            {
-                WriteCharacter ( ( unsigned char ) m.GetByte1() );
-                IncrementCounters ( 1 );
-            }
-
-            if ( len > 2 )
-            {
-                WriteCharacter ( ( unsigned char ) m.GetByte2() );
-                IncrementCounters ( 1 );
-            }
+        if ( len > 2 )
+        {
+            WriteCharacter ( m.GetByte2() );
+            IncrementCounters ( 1 );
         }
     }
 }
 
-void MIDIFileWrite::WriteEvent (
-    unsigned long time,
-    const MIDISystemExclusive *e
-)
+void MIDIFileWrite::WriteEvent ( unsigned long time, const MIDISystemExclusive *e )
 {
     ENTER ( "void MIDIFileWrite::WriteEvent()" );
-    int len = e->GetLength();
+    int len = e->GetLengthSE();
     WriteDeltaTime ( time );
     WriteCharacter ( ( unsigned char ) SYSEX_START );
     IncrementCounters ( WriteVariableNum ( len - 1 ) );
@@ -354,14 +359,51 @@ void MIDIFileWrite::WriteMetaEvent ( unsigned long time, unsigned char type, con
     running_status = 0;
 }
 
-void MIDIFileWrite::WriteTempo ( unsigned long time, long tempo )
+void MIDIFileWrite::WriteMetaMisc ( const MIDITimedBigMessage &m ) // func by VRM
+{
+    ENTER ( "void MIDIFileWrite::WriteMetaMisc()" );
+
+    int len = m.GetDataLength();
+    if ( len > 5 )
+        return; // not valid meta event, do'nt write to output midifile!
+
+    WriteDeltaTime ( m.GetTime() );
+
+    WriteCharacter ( m.GetStatus() );
+    WriteCharacter ( m.GetByte1() );
+    WriteCharacter ( len ); // length of event
+
+    if ( len > 0 )
+        WriteCharacter ( m.GetByte2() );
+
+    if ( len > 1 )
+        WriteCharacter ( m.GetByte3() );
+
+    if ( len > 2 )
+        WriteCharacter ( m.GetByte4() );
+
+    if ( len > 3 )
+        WriteCharacter ( m.GetByte5() );
+
+    if ( len > 4 )
+        WriteCharacter ( m.GetByte6() );
+
+    IncrementCounters ( len + 3 );
+    running_status = 0;
+}
+
+void MIDIFileWrite::WriteTempo ( const MIDITimedBigMessage &m )
 {
     ENTER ( "void MIDIFileWrite::WriteTempo()" );
-    WriteDeltaTime ( time );
-    WriteCharacter ( ( unsigned char ) META_EVENT ); // VRM
-    WriteCharacter ( ( unsigned char ) META_TEMPO ); // VRM
+    // VRM
+    WriteDeltaTime ( m.GetTime() );
+
+    WriteCharacter ( m.GetStatus() ); // META_EVENT
+    WriteCharacter ( m.GetByte1() );  // META_TEMPO
     WriteCharacter ( ( unsigned char ) 0x03 ); // length of event
-    Write3Char ( tempo );
+    WriteCharacter ( m.GetByte2() ); // a 
+    WriteCharacter ( m.GetByte3() ); // b
+    WriteCharacter ( m.GetByte4() ); // c
     IncrementCounters ( 6 );
     running_status = 0;
 }
@@ -380,21 +422,21 @@ void MIDIFileWrite::WriteKeySignature ( unsigned long time, char sharp_flat, cha
 }
 
 void MIDIFileWrite::WriteTimeSignature (
-    unsigned long time,
-    char numerator,
-    char denominator_power,
-    char midi_clocks_per_metronome,
-    char num_32nd_per_midi_quarter_note )
+        unsigned long time,
+        unsigned char numerator,
+        unsigned char denominator_power,
+        unsigned char midi_clocks_per_metronome,
+        unsigned char num_32nd_per_midi_quarter_note ) // VRM
 {
     ENTER ( "void MIDIFileWrite::WriteTimeSignature()" );
     WriteDeltaTime ( time );
     WriteCharacter ( ( unsigned char ) META_EVENT ); // VRM
     WriteCharacter ( ( unsigned char ) META_TIMESIG ); // VRM
     WriteCharacter ( ( unsigned char ) 0x04 );  // length of event
-    WriteCharacter ( ( unsigned char ) numerator );
-    WriteCharacter ( ( unsigned char ) denominator_power );
-    WriteCharacter ( ( unsigned char ) midi_clocks_per_metronome );
-    WriteCharacter ( ( unsigned char ) num_32nd_per_midi_quarter_note );
+    WriteCharacter ( numerator );
+    WriteCharacter ( denominator_power );
+    WriteCharacter ( midi_clocks_per_metronome );
+    WriteCharacter ( num_32nd_per_midi_quarter_note );
     IncrementCounters ( 7 );
     running_status = 0;
 }

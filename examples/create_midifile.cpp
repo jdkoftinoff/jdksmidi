@@ -44,7 +44,8 @@ int main ( int argc, char **argv )
     int return_code = -1;
 
     MIDITimedBigMessage m; // the object for individual midi events
-    unsigned char chan, note, velocity, ctrl, val;
+    unsigned char chan, // internal midi channel number 0...15 (named 1...16)
+      note, velocity, ctrl, val;
 
     MIDIClockTime t; // time in midi ticks
     MIDIClockTime dt = 100; // time interval (1 second)
@@ -62,14 +63,14 @@ int main ( int argc, char **argv )
     trk = 0;
 
     /*
-      SetTimeSig( numerator, denominator )
-      The numerator is specified as a literal value, but the denominator is specified as (get ready!)
+      SetTimeSig( numerator, denominator_power )
+      The numerator is specified as a literal value, the denominator_power is specified as (get ready!)
       the value to which the power of 2 must be raised to equal the number of subdivisions per whole note.
 
       For example, a value of 0 means a whole note because 2 to the power of 0 is 1 (whole note),
       a value of 1 means a half-note because 2 to the power of 1 is 2 (half-note), and so on.
 
-      (numerator, denominator) => musical measure conversion
+      (numerator, denominator_power) => musical measure conversion
       (1, 1) => 1/2
       (2, 1) => 2/2
       (1, 2) => 1/4
@@ -79,19 +80,18 @@ int main ( int argc, char **argv )
       (1, 3) => 1/8
     */
 
-    m.SetTimeSig( 4, 2 ); // measure 4/4 (default values)
+    m.SetTimeSig( 4, 2 ); // measure 4/4 (default values for time signature)
     tracks.GetTrack( trk )->PutEvent( m );
 
-    // tempo stored as bpm * 32, giving 1/32 bpm resolution
-    unsigned short tempo_times_32 = 60*32; // this tempo equivalent: (1 000 000 usec = 1 sec) in crotchet
+    int tempo = 1000000; // set tempo to 1 000 000 usec = 1 sec in crotchet
     // with value of clks_per_beat (100) result 10 msec in 1 midi tick
 
     // m.SetTime( t ); // do'nt need, because previous time is not changed
-    m.SetTempo32( tempo_times_32 );
+    m.SetTempo( tempo );
     tracks.GetTrack( trk )->PutEvent( m );
 
     // META_TRACK_NAME text in track 0 music notation software like Sibelius uses as headline of the music
-    tracks.GetTrack( trk )->PutTextEvent(t, META_TRACK_NAME, "libjdksmidi create_midifile example");
+    tracks.GetTrack( trk )->PutTextEvent(t, META_TRACK_NAME, "LibJDKSmidi create_midifile.cpp example by VRM");
 
     // create cannal midi events and add them to a track 1
 
@@ -220,6 +220,10 @@ int main ( int argc, char **argv )
         {
             cerr << "\nError writing file " << outfile_name << endl;
         }
+    }
+    else
+    {
+        cerr << "\nError opening file " << outfile_name << endl;
     }
 
     return return_code;

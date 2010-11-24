@@ -224,13 +224,14 @@ bool MIDIDriverWin32::HardwareMsgOut ( const MIDITimedBigMessage &msg )
     {
         // dont send sysex or meta-events
 //      if ( msg.GetStatus() < 0xff && msg.GetStatus() != 0xf0 )
-        if ( msg.GetStatus() < 0xff && !msg.IsSysEx() ) // VRM
+//      if ( msg.GetStatus() < 0xff && !msg.IsSysEx() ) // VRM
+        if ( msg.IsChannelEvent() ) // VRM
         {
             DWORD winmsg;
             winmsg =
-                ( ( ( DWORD ) msg.GetStatus() & 0xff ) << 0 )
-                | ( ( ( DWORD ) msg.GetByte1() & 0xff ) << 8 )
-                | ( ( ( DWORD ) msg.GetByte2() & 0xff ) << 16 );
+                  ( ( ( DWORD ) msg.GetStatus() & 0xFF )       )
+                | ( ( ( DWORD ) msg.GetByte1()  & 0xFF ) <<  8 )
+                | ( ( ( DWORD ) msg.GetByte2()  & 0xFF ) << 16 );
 
             if ( midiOutShortMsg ( out_handle, winmsg ) != 0 )
             {

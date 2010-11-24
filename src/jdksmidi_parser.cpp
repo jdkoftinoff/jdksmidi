@@ -235,7 +235,7 @@ bool MIDIParser::ParseSystemByte ( uchar b, MIDIMessage *msg )
 void MIDIParser::ParseStatusByte ( uchar b )
 {
     ENTER ( "MIDIParser::ParseStatusByte" );
-    char len = GetMessageLength ( b );
+    int len = GetMessageLength ( b ); // VRM
 
     if ( len == 2 )
     {

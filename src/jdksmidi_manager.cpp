@@ -198,9 +198,8 @@ void MIDIManager::TimeTickPlayMode ( unsigned long sys_time_ )
     MIDITimedBigMessage ev;
 
     // if we are in repeat mode, repeat if we hit end of the repeat region
-    if ( repeat_play_mode
-            && sequencer->GetCurrentMeasure() >= repeat_end_measure
-       )
+    if ( repeat_play_mode &&
+         sequencer->GetCurrentMeasure() >= repeat_end_measure )
     {
         // yes we hit the end of our repeat block
         // shut off all notes on
@@ -220,12 +219,10 @@ void MIDIManager::TimeTickPlayMode ( unsigned long sys_time_ )
     // also limit ourselves to 100 midi events max.
     int output_count = 100;
 
-    while (
-        sequencer->GetNextEventTimeMs ( &next_event_time )
-        && ( next_event_time - seq_time_offset ) <= sys_time
-        && driver->CanOutputMessage()
-        && ( --output_count ) > 0
-    )
+    while ( sequencer->GetNextEventTimeMs ( &next_event_time ) &&
+            ( next_event_time - seq_time_offset ) <= sys_time  &&
+            driver->CanOutputMessage() &&
+            ( --output_count ) > 0 )
     {
         // found an event! get it!
         if ( sequencer->GetNextEvent ( &ev_track, &ev ) )

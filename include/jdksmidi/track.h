@@ -139,9 +139,9 @@ public:
     ///
     void ClearAndMerge ( const MIDITrack *src1, const MIDITrack *src2 );
 
-// bool Insert( int start_event, int num_events );
-//    bool  Delete( int start_event, int num_events);
-//    void  Sort();
+//  bool Insert( int start_event, int num_events );
+//  bool  Delete( int start_event, int num_events);
+//  void  Sort();
 
     const MIDITrack & operator = ( const MIDITrack & src ); // func by VRM
 
@@ -161,8 +161,8 @@ public:
     bool PutEvent ( const MIDITimedMessage &msg, const MIDISystemExclusive *sysex ); // VRM
     bool SetEvent ( int event_num, const MIDITimedBigMessage &msg );
 
-    // put text message with known length, or evaluate its length if negative
-    bool PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length = -1 ); // func by VRM
+    // put text message with known length (w/o ending NULL), or evaluate it if zero length
+    bool PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length = 0 ); // func by VRM
 
     bool MakeEventNoOp ( int event_num );
 

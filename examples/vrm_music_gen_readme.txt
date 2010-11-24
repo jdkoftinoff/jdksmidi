@@ -2,7 +2,7 @@
 
   VRM Music Generator  based on  libJDKSmidi C++ MIDI Library
 
-  version 1.12  from November 2010
+  version 1.21  from November 2010
   
   Copyright (C) 2010 V.R.Madgazin
   www.vmgames.com
@@ -16,7 +16,7 @@
 
   or with equivalent default arguments
 
-  "vrm_music_gen -se 3 -in 25 -n0 0 -n1 14 -tr 48 -di 1 -ch 0 -md 43 -sd 1 -nd 0.5 -de 1.5"
+  "vrm_music_gen -se 3 -in 25 -n0 0 -n1 14 -tr 48 -di 1 -ch 1 -md 43 -sd 1 -nd 0.5 -de 1.5"
 
 
 2. Arguments.
@@ -29,17 +29,17 @@
 
   "-in I" midi melodic instrument number (25), see section 4; 0...127
 
-  "-n0 I" min index of notes array (0), see section 3; 0 for C-dur, 5 for A-moll; 0...28
+  "-n0 I" min index of notes array (0), see section 3; 0 for C-dur, 5 for A-moll; 0...70
 
-  "-n1 I" max index of notes array (14); add N*7 to min index for N octaves diapason; 0...28
+  "-n1 I" max index of notes array (14); add N*7 to min index for N octaves diapason; 0...70
 
   "-tr I" notes transposition (48); 0...127
           abs. note number is calculated on formula ( notes_table[index] + transposition )
 
   "-di I" switch for discretization of all time intervals in note duration unit (1); 0...1
 
-  "-ch I" channel number (0 for melodic instruments); 0...15
-          channel number 9 for percussion instruments, which correspond to abs. note number
+  "-ch I" channel number (1 for melodic instruments); 1...16
+          channel number 10 for percussion instruments, which correspond to abs. note number
   
   "-md F" total music duration in seconds (43); 0.001...3600...
 
@@ -53,11 +53,11 @@
 3. Notes array.
 
 
-const int MAX_INDEX = 28;
-const int notes_table[MAX_INDEX+1] = // notes number array: all "white" notes in 4 octaves
-{  0, 2, 4, 5, 7, 9,11,  12,14,16,17,19,21,23,  24,26,28,29,31,33,35,  36,38,40,41,43,45,47,  48  };
-// 0  1  2  3  4  5  6    7  8  9 10 11 12 13   14 15 16 17 18 19 20   21 22 23 24 25 26 27   28  index
-// C  D  E  F  G  A  B    C  D  E  F  G  A  B    C  D  E  F  G  A  B    C  D  E  F  G  A  B    C  notes
+const int MAX_INDEX = 70;
+int notes_table[MAX_INDEX+1] = // notes number array: all "white" notes in 10 octaves
+{  0, 2, 4, 5, 7, 9,11,  12,14,16,17,19,21,23,  24,26,28,29,31,33,35,  36,38,40,41,43,45,47, ... };
+// 0  1  2  3  4  5  6    7  8  9 10 11 12 13   14 15 16 17 18 19 20   21 22 23 24 25 26 27  index
+// C  D  E  F  G  A  B    C  D  E  F  G  A  B    C  D  E  F  G  A  B    C  D  E  F  G  A  B  notes
 
 
 4. General Midi melodic instruments numbers and names.
