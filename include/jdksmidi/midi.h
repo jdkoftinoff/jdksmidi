@@ -63,7 +63,8 @@ enum
     SONG_POSITION = 0xF2, ///< Start of a three byte MIDI Song Position message
     SONG_SELECT   = 0xF3, ///< Start of a two byte MIDI Song Select message
     TUNE_REQUEST  = 0xF6, ///< Single byte tune request message
-    SYSEX_END  = 0xF7, ///< End of a MIDI System-Exclusive message
+    SYSEX_END     = 0xF7, ///< End of a MIDI System-Exclusive message
+    SYSEX_START_A = 0xF7, // ?? VRM@TODO Authorization SysEx Event
     RESET      = 0xFF, ///< 0xFF is a reset byte on the serial line. We never used as reset in a MIDIMessage object,
     META_EVENT = 0xFF ///< 0xFF means a meta event in our internal processing.
 };
@@ -182,9 +183,8 @@ enum
 /// META Event types (stored in first data byte if status==META_EVENT)
 /// These types are the same as MIDIFile meta-events,
 /// except when a meta-event is in a MIDIMessage, there is a limit
-/// of two data bytes. So the format of the meta-events in a
-/// MIDIMessage class will be different than the standard MIDIFile
-/// meta-events.
+/// of 5 data bytes. So the format of the meta-events in a MIDIMessage
+/// class will be different than the standard MIDIFile meta-events.
 ///
 
 enum
@@ -194,42 +194,54 @@ enum
 // or the number of a sequence in a Type 0 or Type 1 MIDI file.
 // This meta event should always have a delta time of 0 and come before
 // all MIDI Channel Events and non-zero delta time events.
-    META_SEQUENCE_NUMBER = 0x00, ///< value=16 bits.
+    META_SEQUENCE_NUMBER = 0x00,
 
-    META_GENERIC_TEXT = 0x01, ///< value=16 bits, text item #
-    META_COPYRIGHT    = 0x02, ///< value=16 bits, text item #
-    META_TRACK_NAME      = 0x03, // VRM (was 0x04) Sequence/Track Name
+    META_GENERIC_TEXT   = 0x01,
+    META_COPYRIGHT      = 0x02,
+    META_TRACK_NAME     = 0x03, // VRM (was 0x04) Sequence/Track Name
     META_INSTRUMENT_NAME = 0x04, // VRM (was 0x03)
-    META_LYRIC_TEXT  = 0x05,
-    META_MARKER_TEXT = 0x06,
-    META_CUE_POINT   = 0x07, // VRM
-
+    META_LYRIC_TEXT     = 0x05,
+    META_MARKER_TEXT    = 0x06,
+    META_CUE_POINT      = 0x07, // VRM
     META_PROGRAM_NAME   = 0x08, // VRM
     META_DEVICE_NAME    = 0x09, // VRM
+    META_GENERIC_TEXT_A = 0x0A, // VRM
+    META_GENERIC_TEXT_B = 0x0B, // VRM
+    META_GENERIC_TEXT_C = 0x0C, // VRM
+    META_GENERIC_TEXT_D = 0x0D, // VRM
+    META_GENERIC_TEXT_E = 0x0E, // VRM
+    META_GENERIC_TEXT_F = 0x0F, // VRM
 
     META_CHANNEL_PREFIX = 0x20, // VRM This meta event associates a MIDI channel with following meta events.
     // It's effect is terminated by another MIDI Channel Prefix event or any non-Meta event.
     // It is often used before an Instrument Name Event to specify which channel an instrument name represents.
 
-    META_OUTPUT_CABLE = 0x21, // VRM MIDI Output Port
+    META_OUTPUT_CABLE = 0x21, // VRM may be MIDI Output Port, data length = 1 byte
     META_TRACK_LOOP   = 0x2E,
     META_END_OF_TRACK = 0x2F, // VRM
 
-    META_TEMPO   = 0x51, ///< value=16 bits, tempo(bpm)*256
-    META_SMPTE   = 0x54, ///< what for? SMPTE Offset: SMPTE time to denote playback offset from the beginning
-    META_TIMESIG = 0x58, ///< value=num, denom
-    META_KEYSIG  = 0x59, ///< value=# of sharps/flats, major/minor
-
-    META_BEAT_MARKER  = 0x7D, // VRM: was 0x7E
-    META_NO_OPERATION = 0x7E, // VRM: was 0x7F
+    META_TEMPO   = 0x51,
+    META_SMPTE   = 0x54, // SMPTE Offset: SMPTE time to denote playback offset from the beginning
+    META_TIMESIG = 0x58,
+    META_KEYSIG  = 0x59,
 
     META_SEQUENCER_SPECIFIC = 0x7F  // This meta event is used to specify information specific to a hardware or
     // software sequencer. The first Data byte (or three bytes if the first byte is 0) specifies the manufacturer's
     // ID and the following bytes contain information specified by the manufacturer.
 };
 
-extern const signed  char lut_msglen[16];
-extern  const signed char lut_sysmsglen[16];
+// VRM internal service numbers for MIDIMessage::service_num message variable
+
+enum
+{
+    NOT_SERVICE = 0,
+    SERVICE_BEAT_MARKER = 1,
+    SERVICE_NO_OPERATION = 2,
+    OUT_OF_RANGE_SERVICE_NUM = 3,
+};
+
+extern const int lut_msglen[16];
+extern const int lut_sysmsglen[16];
 extern const bool lut_is_white[12];
 
 
@@ -238,7 +250,7 @@ extern const bool lut_is_white[12];
 /// GetSystemMessageLength() instead.
 ///
 
-inline signed char GetMessageLength ( unsigned char stat )
+inline int GetMessageLength ( unsigned char stat ) // VRM
 {
     return lut_msglen[stat>>4];
 }
@@ -248,7 +260,7 @@ inline signed char GetMessageLength ( unsigned char stat )
 /// length is unknown until parsing is complete.
 ///
 
-inline signed char GetSystemMessageLength ( unsigned char stat )
+inline int GetSystemMessageLength ( unsigned char stat ) // VRM
 {
     return lut_sysmsglen[stat-0xF0];
 }

@@ -26,6 +26,7 @@
 2010 October 12: branch created in git repository called "last-revision-with-only-jdkoftinoff-content". 
      From this point on this project has multiple contributors
 
-2010 October 12: GPL Patches from Vadim Madgazin <vrm@vmgames> accepted into jdksmidi. http://github.com/vadimrm/jdksmidi.
+2010 October 12: GPL Patches from Vadim Madgazin <vrm@vmgames> accepted into jdksmidi.
+     http://github.com/vadimrm/jdksmidi
      The file CONTRIBUTORS is created
 

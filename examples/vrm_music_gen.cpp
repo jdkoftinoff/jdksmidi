@@ -2,7 +2,7 @@
 
   VRM Music Generator  based on  libJDKSmidi C++ MIDI Library
 
-  version 1.20 from November 2010
+  version 1.21 from November 2010
 
   Copyright (C) 2010 V.R.Madgazin
 
@@ -178,7 +178,7 @@ int main ( int argc, char **argv )
     int notes_max_index = 14; // [-n1] max index of notes array: add N*7 to min index for N octaves diapason
     int transposition = 48; // [-tr] notes transposition
     int discrete_time = 1; // [-di] switch for discretization of all time intervals in note duration unit
-    int channel = 0; // [-ch] channel number (0...15), 0 for melodic instruments, 9 for percussion instruments
+    int channel = 1; // [-ch] channel number (1...16), 1 for melodic instruments, 10 for percussion instruments
     double music_dur = 43; // [-md] total music duration in seconds (approximately)
     // делим всё время music_dur на отрезки section_dur, чтобы не было слишком больших и малых плотностей нот,
     // а также чтобы при увеличении только одного параметра music_dur не менялись предыдущие отрезки музыки!
@@ -234,7 +234,8 @@ int main ( int argc, char **argv )
     text += Copyright;
     tracks.GetTrack( trk )->PutTextEvent( 0, META_GENERIC_TEXT, text.c_str() );
 
-    SetInstrument( tracks, trk, 0, channel, instrument );
+    // midifile channel num = "external" channel num - 1
+    SetInstrument( tracks, trk, 0, channel-1, instrument );
 
     // incorrect data protection
 
@@ -328,8 +329,8 @@ int main ( int argc, char **argv )
             if ( discrete_time == 0 || mc_note_dur <= 1 )
                 sub = 0;
 
-                  AddNote(tracks, trk, (t+dt)                    , channel, note, velocity, ON);
-            if ( !AddNote(tracks, trk, (t+dt) + (mc_note_dur-sub), channel, note, velocity, OFF) )
+                  AddNote(tracks, trk, (t+dt)                    , channel-1, note, velocity, ON);
+            if ( !AddNote(tracks, trk, (t+dt) + (mc_note_dur-sub), channel-1, note, velocity, OFF) )
             {
                 stop = true; // track midi events overflow
                 break;
@@ -364,10 +365,14 @@ int main ( int argc, char **argv )
             ret_code = 0;
         }
         else
+        {
             cerr << "\nError writing file " << fname.c_str() << endl;
+        }
     }
     else
+    {
         cerr << "\nError opening file " << fname.c_str() << endl;
+    }
 
     return ret_code;
 }

@@ -139,9 +139,9 @@ public:
     ///
     void ClearAndMerge ( const MIDITrack *src1, const MIDITrack *src2 );
 
-// bool Insert( int start_event, int num_events );
-//    bool  Delete( int start_event, int num_events);
-//    void  Sort();
+//  bool Insert( int start_event, int num_events );
+//  bool  Delete( int start_event, int num_events);
+//  void  Sort();
 
     const MIDITrack & operator = ( const MIDITrack & src ); // func by VRM
 

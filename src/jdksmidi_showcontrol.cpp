@@ -162,7 +162,7 @@ bool MIDIShowControlPacket::ParseEntireSysEx ( const MIDISystemExclusive *e )
         break;
     }
 
-    if ( e->GetLength() < pos )
+    if ( e->GetLengthSE() < pos )
     {
         return false;
     }
@@ -335,7 +335,7 @@ bool MIDIShowControlPacket::Parse3Param (
             HasQNumber = true;
             SetQNumber ( v );
 
-            if ( *pos < e->GetLength() )
+            if ( *pos < e->GetLengthSE() )
             {
                 //
                 // read the q list
@@ -347,7 +347,7 @@ bool MIDIShowControlPacket::Parse3Param (
                     HasQList = true;
                     SetQList ( v );
 
-                    if ( *pos < e->GetLength() )
+                    if ( *pos < e->GetLengthSE() )
                     {
                         //
                         // read the q path
@@ -603,7 +603,7 @@ bool MIDIShowControlPacket::ParseAsciiNum (
                 //
                 // Yes, skip them
                 //
-                while ( *pos < e->GetLength() )
+                while ( *pos < e->GetLengthSE() )
                 {
                     c = e->GetData ( ( *pos ) );
 
@@ -618,7 +618,7 @@ bool MIDIShowControlPacket::ParseAsciiNum (
         }
     }
 
-    while ( ++ ( *pos ) < e->GetLength() )
+    while ( ++ ( *pos ) < e->GetLengthSE() )
     {
         if ( e->GetData ( *pos ) != 0 )
             break;
@@ -641,7 +641,7 @@ bool MIDIShowControlPacket::ParseAsciiNum (
     // Read ascii decimal digits until '.' or 0x00 or 0xf7 (SYSEX_END)
     //
 
-    while ( *pos < e->GetLength() )
+    while ( *pos < e->GetLengthSE() )
     {
         c = e->GetData ( ( *pos ) );
 

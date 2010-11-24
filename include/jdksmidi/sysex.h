@@ -124,7 +124,7 @@ public:
         return ( unsigned char ) ( chk_sum & 0x7f );
     }
 
-    int  GetLength() const
+    int GetLengthSE() const // VRM
     {
         return cur_len;
     }

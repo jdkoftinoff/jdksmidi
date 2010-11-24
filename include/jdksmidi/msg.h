@@ -30,6 +30,10 @@
 ** without the written permission given by J.D. Koftinoff Software, Ltd.
 **
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #ifndef JDKSMIDI_MSG_H
 #define JDKSMIDI_MSG_H
@@ -52,7 +56,7 @@ class MIDIDeltaTimedBigMessage;
 
 ///
 /// The MIDIMessage class is a simple, lightweight container which can hold a single
-/// MIDI Message that can fit within 3 bytes plus status byte.  It can also hold some
+/// MIDI Message that can fit within 7 bytes plus status byte.  It can also hold some
 /// non-MIDI messages, known as Meta messages like No-op, Key signature, Time Signature, etc,
 /// which are useful for internal processing.
 ///
@@ -64,7 +68,7 @@ class MIDIDeltaTimedBigMessage;
 /// had problems with MI.
 ///
 
-class  MIDIMessage
+class MIDIMessage
 {
 public:
 
@@ -77,7 +81,14 @@ public:
 
     const MIDIMessage & operator = ( const MIDIMessage &m ); ///< The assignment operator. Copies the MIDIMessage value.
 
-    void Clear();  ///< Set the MIDIMessage object to 0,0,0,0.
+    void Clear() ///< Set the MIDIMessage object to 0
+    {
+        status = 0;
+        byte1 = byte2 = byte3 = 0;
+        byte4 = byte5 = byte6 = 0; // VRM
+        data_length = 0; // VRM
+        service_num = NOT_SERVICE; // VRM
+    }
 
     void Copy ( const MIDIMessage & m ); ///< Copy the value of the specified MIDIMessage.
 
@@ -88,7 +99,7 @@ public:
     ///@name The Query methods.
     //@{
 
-    char GetLength() const; ///< Get the length in bytes of the entire message.
+    int GetLengthMSG() const; ///< Get the length in bytes of the entire message.
 
     /// Get the status byte of the message.
     unsigned char GetStatus() const
@@ -99,13 +110,13 @@ public:
     /// If the message is a channel message, this method returns the MIDI channel that the message is on.
     unsigned char GetChannel() const
     {
-        return ( unsigned char ) ( status & 0x0f );
+        return ( unsigned char ) ( status & 0x0F );
     }
 
     /// If the message is a channel message, this method returns the relevant top 4 bits which describe what type of channel message it is.
     unsigned char GetType() const
     {
-        return ( unsigned char ) ( status & 0xf0 );
+        return ( unsigned char ) ( status & 0xF0 );
     }
 
     /// If the message is some sort of meta-message, then GetMetaType returns the type byte.
@@ -130,6 +141,36 @@ public:
     unsigned char GetByte3() const
     {
         return byte3;
+    }
+
+    /// Access to the raw byte4 of the message
+    unsigned char GetByte4() const
+    {
+        return byte4;
+    }
+
+    /// Access to the raw byte5 of the message
+    unsigned char GetByte5() const
+    {
+        return byte5;
+    }
+
+    /// Access to the raw byte6 of the message
+    unsigned char GetByte6() const
+    {
+        return byte6;
+    }
+
+    /// Access to the raw data_length byte of the message
+    unsigned char GetDataLength() const
+    {
+        return data_length;
+    }
+
+    /// Access to the raw service_num data of the message
+    unsigned int GetServiceNum() const
+    {
+        return service_num;
     }
 
     /// If the message is a note on, note off, or poly aftertouch message, GetNote() returns the note number
@@ -180,11 +221,16 @@ public:
     /// If the message is a time signature meta-message, GetTimeSigDenominator() returns the denominator of the time signature.
     unsigned char GetTimeSigDenominator() const;
 
+    /// If the message is a time signature meta-message, GetTimeSigDenominatorPower() returns the denominator power of the time signature.
+    unsigned char GetTimeSigDenominatorPower() const;
+
     /// If the message is a key signature meta-message, GetKeySigSharpFlats() returns to standard midi file form of the key. Negative values means that many flats, positive numbers means that many sharps.
     signed char GetKeySigSharpFlats() const;
 
     /// If the message is a key signature meta-message, GetKeySigMajorMinor() returns to standard midi file form of the key major/minor flag. 0 means a major key, 1 means a minor key.
     unsigned char GetKeySigMajorMinor() const;
+
+    bool IsServiceMsg() const { return service_num != NOT_SERVICE; } // func by VRM
 
     /// If the message is some sort of real time channel message, IsChannelMsg() will return true. You can then call GetChannel() for more information.
     bool IsChannelMsg() const;
@@ -218,9 +264,13 @@ public:
 
     /// If the message is a system exclusive marker, IsSysEx() will return true. You can then call GetSysExNum() to extract a sysex id code which must be managed separately.
     /// \note Sysex messages are not stored in the MIDIMessage object. \see MIDIBigMessage
-    bool IsSysEx() const;
+    bool IsSysEx() const; // VRM Normal SysEx Event
 
-    short GetSysExNum() const;
+    short GetSysExNum() const; // VRM ???
+
+    bool IsSysExA() const; // func by VRM Authorization SysEx Event
+
+    bool IsSystemExclusiveEvent() const { return ( IsSysEx() || IsSysExA() ); } // func by VRM
 
     bool IsMTC() const;
 
@@ -232,11 +282,15 @@ public:
 
     bool IsMetaEvent() const;
 
+    bool IsChannelEvent() const; // func by VRM
+
     bool IsTextEvent() const;
 
     bool IsAllNotesOff() const;
 
     bool IsNoOp() const;
+
+    bool IsChannelPrefix() const; // func by VRM
 
     bool IsTempo() const;
 
@@ -249,9 +303,12 @@ public:
     bool IsBeatMarker() const;
 
     ///
-    /// GetTempo() returns the tempo value in 1/32 bpm
+    /// GetTempo32() returns the tempo value in 1/32 bpm
     ///
-    unsigned short GetTempo32() const;
+    unsigned long GetTempo32() const; // VRM
+
+    // GetTempo() returns the original midifile tempo value (microseconds per beat)
+    unsigned long GetTempo() const; // func by VRM
 
     unsigned short GetLoopNumber() const;
 
@@ -294,6 +351,30 @@ public:
     void SetByte3 ( unsigned char b )
     {
         byte3 = b;
+    }
+
+    /// Set the value of the data byte 4
+    void SetByte4 ( unsigned char b )
+    {
+        byte4 = b;
+    }
+
+    /// Set the value of the data byte 5
+    void SetByte5 ( unsigned char b )
+    {
+        byte5 = b;
+    }
+
+    /// Set the value of the data byte 6
+    void SetByte6 ( unsigned char b )
+    {
+        byte6 = b;
+    }
+
+    /// Set the value of the data byte data_length
+    void SetDataLength ( unsigned char b )
+    {
+        data_length = b;
     }
 
     /// Set the note number for note on, note off, and polyphonic aftertouch messages
@@ -370,15 +451,25 @@ public:
 
     void SetLocal ( unsigned char chan, unsigned char v );
 
-    void SetNoOp();
+    void SetNoOp() // func by VRM
+    {
+        Clear();
+        service_num = SERVICE_NO_OPERATION;
+    }
 
-    void SetTempo32 ( unsigned short tempo_times_32 );
+    void SetTempo ( unsigned long tempo ); // func by VRM
+
+    void SetTempo32 ( unsigned long tempo_times_32 ); // func by VRM
 
     void SetText ( unsigned short text_num, unsigned char type = META_GENERIC_TEXT );
 
     void SetDataEnd();
 
-    void SetTimeSig ( unsigned char numerator, unsigned char denominator );
+    void SetTimeSig (
+        unsigned char numerator = 4,
+        unsigned char denominator_power = 2,
+        unsigned char midi_clocks_per_metronome = 24,
+        unsigned char num_32nd_per_midi_quarter_note = 8 ); // func by VRM
 
     void SetKeySig ( signed char sharp_flats, unsigned char major_minor );
 
@@ -390,14 +481,22 @@ public:
 
 protected:
 
-    static const char *  chan_msg_name[16]; ///< Simple ascii text strings describing each channel message type (0x8X to 0xeX)
-    static const char *  sys_msg_name[16]; ///< Simple ascii text strings describing each system message type (0xf0 to 0xff)
+    static const char * chan_msg_name[16]; ///< Simple ascii text strings describing each channel message type (0x8X to 0xeX)
+    static const char * sys_msg_name[16]; ///< Simple ascii text strings describing each system message type (0xf0 to 0xff)
+    static const char * service_msg_name[];
 
-    unsigned char status;
-    unsigned char byte1;
-    unsigned char byte2;
-    unsigned char byte3;  ///< byte 3 is only used for meta-events and to round out the structure size to 32 bits
+    unsigned int service_num; // VRM if service_num != NOT_SERVICE than event used for internal service
 
+    unsigned char status; // type of events and channal for channal events
+    unsigned char byte1; // type of meta events
+    unsigned char byte2; // meta events first data byte (#1)
+    unsigned char byte3; 
+
+    // VRM add these bytes for const length meta events like Set Tempo, SMPTE Offset and Time Signature
+    unsigned char byte4;
+    unsigned char byte5;
+    unsigned char byte6; // meta events last data byte (#5), used for SMPTE Offset msg
+    unsigned char data_length; // number of data bytes in meta events with constatnt data length 0...5
 };
 
 
@@ -448,6 +547,11 @@ public:
 
     ~MIDIBigMessage();
 
+    void SetNoOp() // func by VRM
+    {
+        Clear();
+        MIDIMessage::SetNoOp();
+    }
 
     MIDISystemExclusive *GetSysEx();
 
@@ -462,7 +566,7 @@ protected: // VRM
 
 
 
-class  MIDITimedMessage : public MIDIMessage
+class MIDITimedMessage : public MIDIMessage
 {
 public:
 
@@ -520,7 +624,7 @@ protected:
 
 
 
-class  MIDIDeltaTimedMessage : public MIDIMessage // VRM this class don't need because don't used ?
+class MIDIDeltaTimedMessage : public MIDIMessage // VRM this class don't need because don't used ?
 {
 public:
 
@@ -565,7 +669,7 @@ protected:
 
 
 
-class  MIDITimedBigMessage : public MIDIBigMessage
+class MIDITimedBigMessage : public MIDIBigMessage
 {
 public:
 
@@ -630,7 +734,7 @@ protected:
 
 
 
-class  MIDIDeltaTimedBigMessage : public MIDIBigMessage // VRM this class don't need because don't used ?
+class MIDIDeltaTimedBigMessage : public MIDIBigMessage // VRM this class don't need because don't used ?
 {
 public:
     //

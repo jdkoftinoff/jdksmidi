@@ -52,11 +52,10 @@ namespace jdksmidi
 // reading and writing midi files.
 //
 
-
 const unsigned long _MThd = OSTYPE ( 'M', 'T', 'h', 'd' );
-const unsigned long  _MTrk = OSTYPE ( 'M', 'T', 'r', 'k' );
+const unsigned long _MTrk = OSTYPE ( 'M', 'T', 'r', 'k' );
 
-class  MIDIFile
+class MIDIFile
 {
 public:
 
@@ -82,34 +81,36 @@ public:
 
     enum
     {
-        MF_SEQUENCE_NUMBER = 0,
-        MF_GENERIC_TEXT    = 1, // VRM
-        MF_COPYRIGHT       = 2,
-        MF_TRACK_NAME      = 3, // Sequence/Track Name
-        MF_INSTRUMENT_NAME = 4,
-        MF_LYRIC_TEXT      = 5, // VRM
-        MF_MARKER_TEXT     = 6, // VRM
-        MF_CUE_POINT       = 7,
-        MF_GENERIC_TEXT_8  = 8, // PROGRAM_NAME
-        MF_GENERIC_TEXT_9  = 9, // DEVICE_NAME
-        MF_GENERIC_TEXT_A  = 0xA,
-        MF_GENERIC_TEXT_B  = 0xB,
-        MF_GENERIC_TEXT_C  = 0xC,
-        MF_GENERIC_TEXT_D  = 0xD,
-        MF_GENERIC_TEXT_E  = 0xE,
-        MF_GENERIC_TEXT_F  = 0xF,
+        // VRM
+        MF_META_SEQUENCE_NUMBER = META_SEQUENCE_NUMBER,
 
-        MF_CHANNEL_PREFIX = 0x20, // VRM
-        MF_OUTPUT_CABLE   = 0x21,
-        MF_TRACK_LOOP     = 0x2E,
-        MF_END_OF_TRACK   = 0x2F,
+        MF_META_GENERIC_TEXT    = META_GENERIC_TEXT,
+        MF_META_COPYRIGHT       = META_COPYRIGHT,
+        MF_META_TRACK_NAME      = META_TRACK_NAME,
+        MF_META_INSTRUMENT_NAME = META_INSTRUMENT_NAME,
+        MF_META_LYRIC_TEXT      = META_LYRIC_TEXT,
+        MF_META_MARKER_TEXT     = META_MARKER_TEXT,
+        MF_META_CUE_POINT       = META_CUE_POINT,
+        MF_META_GENERIC_TEXT_8  = META_PROGRAM_NAME,
+        MF_META_GENERIC_TEXT_9  = META_DEVICE_NAME,
+        MF_META_GENERIC_TEXT_A  = META_GENERIC_TEXT_A,
+        MF_META_GENERIC_TEXT_B  = META_GENERIC_TEXT_B,
+        MF_META_GENERIC_TEXT_C  = META_GENERIC_TEXT_C,
+        MF_META_GENERIC_TEXT_D  = META_GENERIC_TEXT_D,
+        MF_META_GENERIC_TEXT_E  = META_GENERIC_TEXT_E,
+        MF_META_GENERIC_TEXT_F  = META_GENERIC_TEXT_F,
 
-        MF_TEMPO   = 0x51,
-        MF_SMPTE   = 0x54,
-        MF_TIMESIG = 0x58,
-        MF_KEYSIG  = 0x59,
+        MF_META_CHANNEL_PREFIX = META_CHANNEL_PREFIX,
+        MF_META_OUTPUT_CABLE   = META_OUTPUT_CABLE,
+        MF_META_TRACK_LOOP     = META_TRACK_LOOP,
+        MF_META_END_OF_TRACK   = META_END_OF_TRACK,
 
-        MF_SEQUENCER_SPECIFIC = 0x7F
+        MF_META_TEMPO   = META_TEMPO,
+        MF_META_SMPTE   = META_SMPTE,
+        MF_META_TIMESIG = META_TIMESIG,
+        MF_META_KEYSIG  = META_KEYSIG,
+
+        MF_META_SEQUENCER_SPECIFIC = META_SEQUENCER_SPECIFIC
     };
 
 
@@ -118,38 +119,32 @@ public:
     // tempo clock
     //
 
-    static unsigned long ConvertTempoToFreq (
-        short division,
-        MIDITempo &tempo
-    );
+    static unsigned long ConvertTempoToFreq ( short division, MIDITempo &tempo );
 
     //
     // Convert a four byte number to an unsigned long.
     //
 
-    static unsigned long   To32Bit ( unsigned char a, unsigned char b, unsigned char c, unsigned char d )
+    static unsigned long To32Bit ( unsigned char a, unsigned char b, unsigned char c, unsigned char d )
     {
-        return ( ( unsigned long ) a << 24 )
-               + ( ( unsigned long ) b << 16 )
-               + ( ( unsigned long ) c << 8 )
-               + ( ( unsigned long ) d << 0 );
+        return ( unsigned long ( a ) << 24 ) |
+               ( unsigned long ( b ) << 16 ) |
+               ( unsigned long ( c ) <<  8 ) |
+               ( unsigned long ( d )       ); // VRM
     }
-
 
     //
     // Convert a two byte number to an unsigned short
     //
 
-    static unsigned short  To16Bit ( unsigned char a, unsigned char b )
+    static unsigned short To16Bit ( unsigned char a, unsigned char b )
     {
-        return ( unsigned short ) ( ( ( unsigned short ) a << 8 )
-                                    + ( ( unsigned short ) b << 0 ) );
+        return ( unsigned short ( a ) << 8 ) |
+               ( unsigned short ( b )      ); // VRM
     }
 
     static unsigned long ReadVariableLengthNumber ( unsigned char **in );
-
     static unsigned char * WriteVariableLengthNumber ( unsigned long num, unsigned char *out );
-
 };
 
 }

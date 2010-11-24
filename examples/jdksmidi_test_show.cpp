@@ -48,7 +48,7 @@ int main ( int argc, char **argv )
         }
 
         // if true print META_SEQUENCER_SPECIFIC events as text string
-        bool sqspecific_as_text = true;
+        bool sqspecific_as_text = true; // VRM
 
         MIDIFileShow shower ( stdout, sqspecific_as_text );
         MIDIFileRead reader ( &rs, &shower );
@@ -58,6 +58,11 @@ int main ( int argc, char **argv )
             cerr << "\nError parse file " << infile_name << endl;
             return -1;
         }
+    }
+    else
+    {
+        cerr << "usage:\n\tjdkmidi_test_show INFILE.mid\n";
+        return -1;
     }
 
     return 0;

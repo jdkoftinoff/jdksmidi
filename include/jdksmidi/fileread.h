@@ -143,13 +143,12 @@ public:
     virtual void mf_program ( const MIDITimedMessage &msg );
     virtual void mf_chan_after ( const MIDITimedMessage &msg );
     virtual void mf_control ( const MIDITimedMessage &msg );
-    virtual void mf_arbitrary ( MIDIClockTime time, int len, unsigned char *data );
-    virtual void mf_metamisc ( MIDIClockTime time, int, int, unsigned char * );
-    virtual void mf_seqnum ( MIDIClockTime time, int );
-    virtual void mf_smpte ( MIDIClockTime time, int, int, int, int, int );
 
-    virtual bool mf_timesig ( MIDIClockTime time, int, int, int, int ); // VRM
-    virtual bool mf_tempo ( MIDIClockTime time, unsigned long tempo ); // VRM
+    virtual bool mf_arbitrary ( MIDIClockTime time, int len, unsigned char *data ); // VRM
+    virtual bool mf_metamisc ( MIDIClockTime time, int type, int len, unsigned char *data ); // VRM
+    virtual bool mf_timesig ( MIDIClockTime time, int, int, int, int ); // func by VRM
+    virtual bool mf_tempo ( MIDIClockTime time, unsigned char a, unsigned char b, unsigned char c ); // func by VRM
+
     virtual bool mf_keysig ( MIDIClockTime time, int, int ); // VRM
     virtual bool mf_sqspecific ( MIDIClockTime time, int, unsigned char * ); // VRM
     virtual bool mf_text ( MIDIClockTime time, int, int, unsigned char * ); // VRM

@@ -401,12 +401,10 @@ bool MIDISequencerTrackState::Process ( MIDITimedBigMessage *msg )
             if ( msg->IsTempo() )
             {
                 // yes get the current tempo
-                tempobpm = ( ( float ) msg->GetTempo32() ) * ( 1.0f / 32.0f );
+                tempobpm = ( float ) ( msg->GetTempo32() / 32. ); // VRM
 
-                if ( tempobpm < 1 )
-                {
+                if ( tempobpm < 1. )
                     tempobpm = 120.0;
-                }
 
                 NotifyConductor (
                     MIDISequencerGUIEvent::GROUP_CONDUCTOR_TEMPO
@@ -434,7 +432,7 @@ bool MIDISequencerTrackState::Process ( MIDITimedBigMessage *msg )
                     {
                         got_good_track_name = true;
                         // yes, copy the track name
-                        int len = msg->GetSysEx()->GetLength();
+                        int len = msg->GetSysEx()->GetLengthSE();
 
                         if ( len > ( int ) sizeof ( track_name ) - 1 )
                             len = ( int ) sizeof ( track_name ) - 1;
@@ -561,7 +559,7 @@ MIDISequencer::MIDISequencer (
     solo_mode ( false ),
     tempo_scale ( 100 ),
     num_tracks ( m->GetNumTracks() ),
-    state ( this, m, n ) // TO DO: fix this hack
+    state ( this, m, n ) // TO DO: fix this hack  VRM@TODO
 {
     for ( int i = 0; i < num_tracks; ++i )
     {

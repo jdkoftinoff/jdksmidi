@@ -136,16 +136,16 @@ public:
     void WriteEvent ( unsigned long time, const MIDISystemExclusive *e );
     void WriteEvent ( unsigned long time, unsigned short text_type, const char *text );
     void WriteMetaEvent ( unsigned long time, unsigned char type, const unsigned char *data, long length );
-    void WriteTempo ( unsigned long time, long tempo );
+    void WriteMetaMisc ( const MIDITimedBigMessage &m ); // func by VRM
+    void WriteTempo ( const MIDITimedBigMessage &m ); // VRM
 
     void WriteKeySignature ( unsigned long time, char sharp_flat, char minor );
     void WriteTimeSignature (
         unsigned long time,
-        char numerator = 4,
-        char denominator_power = 2,
-        char midi_clocks_per_metronome = 24,
-        char num_32nd_per_midi_quarter_note = 8
-    );
+        unsigned char numerator = 4,
+        unsigned char denominator_power = 2,
+        unsigned char midi_clocks_per_metronome = 24,
+        unsigned char num_32nd_per_midi_quarter_note = 8 ); // VRM
 
     void WriteEndOfTrack ( unsigned long time );
     virtual void RewriteTrackLength();

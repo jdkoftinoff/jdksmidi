@@ -56,7 +56,7 @@ void DeleteAllTracksText( MIDIMultiTrack &tracks )
         for ( int ne = 0; ne < num_events; ++ne )
         {
             MIDITimedBigMessage *msg = trk.GetEvent( ne );
-            // convert any text midi event to META_NO_OPERATION event
+            // convert any text midi event to NoOp event
             if ( msg->IsTextEvent() )
                 trk.MakeEventNoOp( ne );
         }
@@ -153,13 +153,19 @@ int main ( int argc, char **argv )
                 return_code = 0;
             }
             else
+            {
                 cerr << "\nError writing file " << outfile_name << endl;
+            }
         }
         else
+        {
             cerr << "\nError opening file " << outfile_name << endl;
+        }
     }
     else
+    {
         args_err();
+    }
 
     return return_code;
 }

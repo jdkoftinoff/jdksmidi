@@ -174,7 +174,7 @@ int MIDITrack::RemoveIdenticalEvents( int max_distance_between_identical_events 
     return removed;
 }
 
-const MIDITrack & MIDITrack::operator=( const MIDITrack & src ) // func by VRM
+const MIDITrack & MIDITrack::operator = ( const MIDITrack & src ) // func by VRM
 {
     if ( num_events == src.num_events )
     {
@@ -537,13 +537,10 @@ bool MIDITrack::PutTextEvent ( MIDIClockTime time, int meta_event_type, const ch
     if ( length == 0 )
         length = (int) strlen( text );
 
-    // length is string length w/o ending NULL, but ending NULL must contain in sysex string!
-    MIDISystemExclusive sysex( length + 1 );
+    MIDISystemExclusive sysex( length );
 
     for ( int i = 0; i < length; ++i )
         sysex.PutSysByte ( text[i] );
-
-    sysex.PutSysByte ( '\0' ); // add NULL to end of sysex string
 
     return PutEvent( msg, &sysex );
 }
@@ -583,13 +580,8 @@ bool MIDITrack::MakeEventNoOp ( int event_num )
     else
     {
         MIDITimedBigMessage *ev = GetEventAddress ( event_num );
-
         if ( ev )
-        {
-            ev->ClearSysEx();
-            ev->SetNoOp();
-        }
-
+          ev->SetNoOp(); // VRM
         return true;
     }
 }

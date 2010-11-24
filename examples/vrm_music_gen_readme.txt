@@ -2,7 +2,7 @@
 
   VRM Music Generator  based on  libJDKSmidi C++ MIDI Library
 
-  version 1.20  from November 2010
+  version 1.21  from November 2010
   
   Copyright (C) 2010 V.R.Madgazin
   www.vmgames.com
@@ -16,7 +16,7 @@
 
   or with equivalent default arguments
 
-  "vrm_music_gen -se 3 -in 25 -n0 0 -n1 14 -tr 48 -di 1 -ch 0 -md 43 -sd 1 -nd 0.5 -de 1.5"
+  "vrm_music_gen -se 3 -in 25 -n0 0 -n1 14 -tr 48 -di 1 -ch 1 -md 43 -sd 1 -nd 0.5 -de 1.5"
 
 
 2. Arguments.
@@ -38,8 +38,8 @@
 
   "-di I" switch for discretization of all time intervals in note duration unit (1); 0...1
 
-  "-ch I" channel number (0 for melodic instruments); 0...15
-          channel number 9 for percussion instruments, which correspond to abs. note number
+  "-ch I" channel number (1 for melodic instruments); 1...16
+          channel number 10 for percussion instruments, which correspond to abs. note number
   
   "-md F" total music duration in seconds (43); 0.001...3600...
 
