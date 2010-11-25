@@ -104,11 +104,11 @@ const char * MIDIMessage::MsgToText ( char *txt ) const
 
     if ( IsServiceMsg() )
     {
-      unsigned int serv = GetServiceNum();
-      if ( serv > OUT_OF_RANGE_SERVICE_NUM ) serv = OUT_OF_RANGE_SERVICE_NUM;
-      sprintf ( buf, "%s  ", service_msg_name[ serv ] );
-      strcat ( txt, buf );
-      return txt;
+        unsigned int serv = GetServiceNum();
+        if ( serv > OUT_OF_RANGE_SERVICE_NUM ) serv = OUT_OF_RANGE_SERVICE_NUM;
+        sprintf ( buf, "%s  ", service_msg_name[ serv ] );
+        strcat ( txt, buf );
+        return txt;
     }
 
     if ( IsAllNotesOff() )
@@ -229,23 +229,23 @@ const char * MIDIMessage::MsgToText ( char *txt ) const
         }
     }
 
-/* VRM
-    //
-    // pad the rest with spaces
-    //
-    {
-        size_t len = strlen ( txt ); // VRM
-        char *p = txt + len;
-
-        while ( len < 40 ) // VRM was 45
+    /* VRM
+        //
+        // pad the rest with spaces
+        //
         {
-            *p++ = ' ';
-            ++len;
-        }
+            size_t len = strlen ( txt ); // VRM
+            char *p = txt + len;
 
-        *p++ = '\0';
-    }
-*/
+            while ( len < 40 ) // VRM was 45
+            {
+                *p++ = ' ';
+                ++len;
+            }
+
+            *p++ = '\0';
+        }
+    */
 
     return txt;
 }
@@ -295,6 +295,25 @@ const MIDIMessage & MIDIMessage::operator = ( const MIDIMessage &m )
 }
 
 int MIDIMessage::GetLengthMSG() const
+{
+    if ( IsMetaEvent() ) // VRM for all Meta Events
+    {
+        return data_length; // VRM
+    }
+
+    else if ( IsSystemMessage() ) // VRM for all System Exclusive Events
+    {
+        return GetSystemMessageLength ( status );
+    }
+
+    else // for all Channel Events
+    {
+        return GetMessageLength ( status );
+    }
+}
+
+
+int MIDIMessage::GetLength() const
 {
     if ( IsMetaEvent() ) // VRM for all Meta Events
     {
@@ -515,7 +534,7 @@ bool  MIDIMessage::IsBeatMarker() const
 
 unsigned long MIDIMessage::GetTempo() const // func by VRM
 {
-  return MIDIFile::To32Bit ( 0, byte2, byte3, byte4 );
+    return MIDIFile::To32Bit ( 0, byte2, byte3, byte4 );
 }
 
 unsigned long MIDIMessage::GetTempo32() const // VRM
@@ -524,12 +543,12 @@ unsigned long MIDIMessage::GetTempo32() const // VRM
     unsigned long tempo = GetTempo();
     if ( tempo == 0 )
         tempo = 1;
-/*
-    // calculate beats per second by
-    double beats_per_second = 1e6 / ( double ) tempo;// 1 million microseconds per second
-    double beats_per_minute = beats_per_second * 60.;
-    unsigned long tempo_bpm_times_32 = (unsigned long) ( 0.5 + beats_per_minute * 32. );
-*/
+    /*
+        // calculate beats per second by
+        double beats_per_second = 1e6 / ( double ) tempo;// 1 million microseconds per second
+        double beats_per_minute = beats_per_second * 60.;
+        unsigned long tempo_bpm_times_32 = (unsigned long) ( 0.5 + beats_per_minute * 32. );
+    */
     unsigned long tempo_bpm_times_32 = (unsigned long) ( 0.5 + (32*60*1e6) / ( double ) tempo );
     return tempo_bpm_times_32;
 }
@@ -598,7 +617,7 @@ void MIDIMessage::SetPanorama( unsigned char chan, double pan ) // func by VRM
     if ( ipan > 16383 ) ipan = 16383;
 
     int pan_msb = ipan / 128;
-    int pan_lsb = ipan % 128;
+//    int pan_lsb = ipan % 128;
 
     SetControlChange( chan, C_PAN, pan_msb );
 //  к сожалению любое pan_lsb сбрасывает панораму в центр при проигрывании midi
@@ -641,12 +660,12 @@ void MIDIMessage::SetSysEx()
 {
     Clear(); // VRM
     status = SYSEX_START;
-/*  VRM what is this?
-    byte1 = 0;
-    int num = 0;
-    byte2 = ( unsigned char ) ( num & 0xff );
-    byte3 = ( unsigned char ) ( ( num >> 8 ) & 0xff );
-*/
+    /*  VRM what is this?
+        byte1 = 0;
+        int num = 0;
+        byte2 = ( unsigned char ) ( num & 0xff );
+        byte3 = ( unsigned char ) ( ( num >> 8 ) & 0xff );
+    */
 }
 
 void MIDIMessage::SetMTC ( unsigned char field, unsigned char v )
@@ -739,10 +758,10 @@ void MIDIMessage::SetDataEnd()
 }
 
 void  MIDIMessage::SetTimeSig (
-        unsigned char numerator,
-        unsigned char denominator_power,
-        unsigned char midi_clocks_per_metronome,
-        unsigned char num_32nd_per_midi_quarter_note ) // func by VRM
+    unsigned char numerator,
+    unsigned char denominator_power,
+    unsigned char midi_clocks_per_metronome,
+    unsigned char num_32nd_per_midi_quarter_note ) // func by VRM
 {
     int denominator = 1 << denominator_power;
     // forward to msg denominator instead denominator power

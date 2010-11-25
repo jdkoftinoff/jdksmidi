@@ -401,7 +401,7 @@ void MIDIFileWrite::WriteTempo ( const MIDITimedBigMessage &m )
     WriteCharacter ( m.GetStatus() ); // META_EVENT
     WriteCharacter ( m.GetByte1() );  // META_TEMPO
     WriteCharacter ( ( unsigned char ) 0x03 ); // length of event
-    WriteCharacter ( m.GetByte2() ); // a 
+    WriteCharacter ( m.GetByte2() ); // a
     WriteCharacter ( m.GetByte3() ); // b
     WriteCharacter ( m.GetByte4() ); // c
     IncrementCounters ( 6 );
@@ -422,11 +422,11 @@ void MIDIFileWrite::WriteKeySignature ( unsigned long time, char sharp_flat, cha
 }
 
 void MIDIFileWrite::WriteTimeSignature (
-        unsigned long time,
-        unsigned char numerator,
-        unsigned char denominator_power,
-        unsigned char midi_clocks_per_metronome,
-        unsigned char num_32nd_per_midi_quarter_note ) // VRM
+    unsigned long time,
+    unsigned char numerator,
+    unsigned char denominator_power,
+    unsigned char midi_clocks_per_metronome,
+    unsigned char num_32nd_per_midi_quarter_note ) // VRM
 {
     ENTER ( "void MIDIFileWrite::WriteTimeSignature()" );
     WriteDeltaTime ( time );

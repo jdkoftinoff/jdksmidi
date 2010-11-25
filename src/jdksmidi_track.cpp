@@ -581,7 +581,7 @@ bool MIDITrack::MakeEventNoOp ( int event_num )
     {
         MIDITimedBigMessage *ev = GetEventAddress ( event_num );
         if ( ev )
-          ev->SetNoOp(); // VRM
+            ev->SetNoOp(); // VRM
         return true;
     }
 }

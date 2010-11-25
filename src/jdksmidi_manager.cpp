@@ -199,7 +199,7 @@ void MIDIManager::TimeTickPlayMode ( unsigned long sys_time_ )
 
     // if we are in repeat mode, repeat if we hit end of the repeat region
     if ( repeat_play_mode &&
-         sequencer->GetCurrentMeasure() >= repeat_end_measure )
+            sequencer->GetCurrentMeasure() >= repeat_end_measure )
     {
         // yes we hit the end of our repeat block
         // shut off all notes on

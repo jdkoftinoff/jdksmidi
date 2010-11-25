@@ -229,7 +229,7 @@ bool MIDIDriverWin32::HardwareMsgOut ( const MIDITimedBigMessage &msg )
         {
             DWORD winmsg;
             winmsg =
-                  ( ( ( DWORD ) msg.GetStatus() & 0xFF )       )
+                ( ( ( DWORD ) msg.GetStatus() & 0xFF )       )
                 | ( ( ( DWORD ) msg.GetByte1()  & 0xFF ) <<  8 )
                 | ( ( ( DWORD ) msg.GetByte2()  & 0xFF ) << 16 );
 
