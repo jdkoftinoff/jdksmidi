@@ -57,8 +57,8 @@ const int lut_msglen[16] = // VRM
 
 const int lut_sysmsglen[16] = // VRM
 {
-// System Common Messages 
-   -1, // 0xF0=Normal SysEx Events start. may vary
+// System Common Messages
+    -1, // 0xF0=Normal SysEx Events start. may vary
     2, // 0xF1=MIDI Time Code. 2 bytes
     3, // 0xF2=MIDI Song position. 3 bytes
     2, // 0xF3=MIDI Song Select. 2 bytes.
@@ -79,8 +79,8 @@ const int lut_sysmsglen[16] = // VRM
 //  1, // 0xFF=reset. 1 byte
 
     3  // 0xFF=not reset, but a META-EVENT, which is always 3 bytes
-       // VRM not valid jet? see comment to midi.h function:
-       // inline int GetSystemMessageLength ( unsigned char stat )
+    // VRM not valid jet? see comment to midi.h function:
+    // inline int GetSystemMessageLength ( unsigned char stat )
 };
 
 

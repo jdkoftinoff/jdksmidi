@@ -116,18 +116,18 @@ enum
     C_SOFT_PEDAL  = 0x43, ///< soft pedal
     // VRM          0x44   Legato Footswitch
     C_HOLD_2      = 0x45, ///< hold pedal 2
-/*     VRM
-                    0x46, // Sound Controller 1, default: Sound Variation
-                    0x47, // Sound Controller 2, default: Timbre/Harmonic Intens.
-                    0x48, // Sound Controller 3, default: Release Time
-                    0x49, // Sound Controller 4, default: Attack Time
-                    0x4A, // Sound Controller 5, default: Brightness
-                    0x4B, // Sound Controller 6, default: Decay Time
-                    0x4C, // Sound Controller 7, default: Vibrato Rate
-                    0x4D, // Sound Controller 8, default: Vibrato Depth
-                    0x4E, // Sound Controller 9, default: Vibrato Delay
-                    0x4F, // Sound Controller 10, default undefined
-*/
+    /*     VRM
+                        0x46, // Sound Controller 1, default: Sound Variation
+                        0x47, // Sound Controller 2, default: Timbre/Harmonic Intens.
+                        0x48, // Sound Controller 3, default: Release Time
+                        0x49, // Sound Controller 4, default: Attack Time
+                        0x4A, // Sound Controller 5, default: Brightness
+                        0x4B, // Sound Controller 6, default: Decay Time
+                        0x4C, // Sound Controller 7, default: Vibrato Rate
+                        0x4D, // Sound Controller 8, default: Vibrato Depth
+                        0x4E, // Sound Controller 9, default: Vibrato Delay
+                        0x4F, // Sound Controller 10, default undefined
+    */
     C_GENERAL_5 = 0x50, ///< general purpose controller 5
     C_GENERAL_6 = 0x51, ///< general purpose controller 6
     C_GENERAL_7 = 0x52, ///< general purpose controller 7
@@ -140,8 +140,8 @@ enum
     C_CELESTE_DEPTH = 0x5E, ///< celeste (detune) depth
     C_PHASER_DEPTH  = 0x5F, ///< phaser effect depth
 
-    C_DATA_INC = 0x60, ///< increment data value (Data Entry +1) 
-    C_DATA_DEC = 0x61, ///< decrement data value (Data Entry -1) 
+    C_DATA_INC = 0x60, ///< increment data value (Data Entry +1)
+    C_DATA_DEC = 0x61, ///< decrement data value (Data Entry -1)
 
     C_NONRPN_LSB = 0x62, ///< non registered parameter LSB
     C_NONRPN_MSB = 0x63, ///< non registered parameter MSB
@@ -170,11 +170,11 @@ enum
     RPN_BEND_WIDTH  = 0x00, ///< bender sensitivity
     RPN_FINE_TUNE   = 0x01, ///< fine tuning
     RPN_COARSE_TUNE = 0x02 ///< coarse tuning
-/* VRM
-                      0x03, // Tuning Program Change
-                      0x04, // Tuning Bank Select
-                      0x05, // Modulation Depth Range 
-*/
+    /* VRM
+                          0x03, // Tuning Program Change
+                          0x04, // Tuning Bank Select
+                          0x05, // Modulation Depth Range
+    */
 };
 
 

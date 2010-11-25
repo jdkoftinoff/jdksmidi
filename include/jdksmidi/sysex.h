@@ -129,7 +129,7 @@ public:
         return cur_len;
     }
 
-    int GetLength() const 
+    int GetLength() const
     {
         return cur_len;
     }

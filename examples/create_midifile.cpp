@@ -45,7 +45,7 @@ int main ( int argc, char **argv )
 
     MIDITimedBigMessage m; // the object for individual midi events
     unsigned char chan, // internal midi channel number 0...15 (named 1...16)
-      note, velocity, ctrl, val;
+             note, velocity, ctrl, val;
 
     MIDIClockTime t; // time in midi ticks
     MIDIClockTime dt = 100; // time interval (1 second)

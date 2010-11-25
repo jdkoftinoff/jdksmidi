@@ -232,7 +232,10 @@ public:
     /// If the message is a key signature meta-message, GetKeySigMajorMinor() returns to standard midi file form of the key major/minor flag. 0 means a major key, 1 means a minor key.
     unsigned char GetKeySigMajorMinor() const;
 
-    bool IsServiceMsg() const { return service_num != NOT_SERVICE; } // func by VRM
+    bool IsServiceMsg() const
+    {
+        return service_num != NOT_SERVICE;    // func by VRM
+    }
 
     /// If the message is some sort of real time channel message, IsChannelMsg() will return true. You can then call GetChannel() for more information.
     bool IsChannelMsg() const;
@@ -241,7 +244,10 @@ public:
     bool IsNoteOn() const;
 
     /// If the message is a note on message and velocity=0 (i.e. note off), IsNoteOnV0() will return true. You can then call GetChannel(), GetNote() for further information.
-    bool IsNoteOnV0() const { return IsNoteOn() && GetVelocity() == 0; } // func by VRM
+    bool IsNoteOnV0() const
+    {
+        return IsNoteOn() && GetVelocity() == 0;    // func by VRM
+    }
 
     /// If the message is a note off message, IsNoteOff() will return true. You can then call GetChannel(), GetNote() and GetVelocity() for further information.
     bool IsNoteOff() const;
@@ -272,7 +278,10 @@ public:
 
     bool IsSysExA() const; // func by VRM Authorization SysEx Event
 
-    bool IsSystemExclusiveEvent() const { return ( IsSysEx() || IsSysExA() ); } // func by VRM
+    bool IsSystemExclusiveEvent() const
+    {
+        return ( IsSysEx() || IsSysExA() );    // func by VRM
+    }
 
     bool IsMTC() const;
 
@@ -492,7 +501,7 @@ protected:
     unsigned char status; // type of events and channal for channal events
     unsigned char byte1; // type of meta events
     unsigned char byte2; // meta events first data byte (#1)
-    unsigned char byte3; 
+    unsigned char byte3;
 
     // VRM add these bytes for const length meta events like Set Tempo, SMPTE Offset and Time Signature
     unsigned char byte4;
