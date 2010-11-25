@@ -1,0 +1,9 @@
+Things to do:
+
+More unit tests
+More documentation of existing classes
+Make the additional new fields in MIDIMsg move to MIDIBigMsg
+Add Windows driver usage examples/tests, sequencer, sysex send/recv
+Add Mac OSX driver usage examples/tests, sequencer, sysex send/recv
+
+
