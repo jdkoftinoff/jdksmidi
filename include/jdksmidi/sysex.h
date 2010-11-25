@@ -129,6 +129,11 @@ public:
         return cur_len;
     }
 
+    int GetLength() const 
+    {
+        return cur_len;
+    }
+
     unsigned char GetData ( int i ) const
     {
         return buf[i];

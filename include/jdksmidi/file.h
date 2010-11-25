@@ -127,10 +127,10 @@ public:
 
     static unsigned long To32Bit ( unsigned char a, unsigned char b, unsigned char c, unsigned char d )
     {
-        return ( unsigned long ( a ) << 24 ) |
-               ( unsigned long ( b ) << 16 ) |
-               ( unsigned long ( c ) <<  8 ) |
-               ( unsigned long ( d )       ); // VRM
+        return ( static_cast<unsigned long> ( a ) << 24 ) |
+               ( static_cast<unsigned long> ( b ) << 16 ) |
+               ( static_cast<unsigned long> ( c ) <<  8 ) |
+               ( static_cast<unsigned long> ( d )       );
     }
 
     //
@@ -139,8 +139,8 @@ public:
 
     static unsigned short To16Bit ( unsigned char a, unsigned char b )
     {
-        return ( unsigned short ( a ) << 8 ) |
-               ( unsigned short ( b )      ); // VRM
+        return ( static_cast<unsigned short> ( a ) << 8 ) |
+               ( static_cast<unsigned short> ( b )      );
     }
 
     static unsigned long ReadVariableLengthNumber ( unsigned char **in );

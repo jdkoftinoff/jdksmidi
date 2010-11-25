@@ -312,6 +312,25 @@ int MIDIMessage::GetLengthMSG() const
     }
 }
 
+
+int MIDIMessage::GetLength() const
+{
+    if ( IsMetaEvent() ) // VRM for all Meta Events
+    {
+        return data_length; // VRM
+    }
+
+    else if ( IsSystemMessage() ) // VRM for all System Exclusive Events
+    {
+        return GetSystemMessageLength ( status );
+    }
+
+    else // for all Channel Events
+    {
+        return GetMessageLength ( status );
+    }
+}
+
 short MIDIMessage::GetBenderValue() const
 {
     return ( short ) ( ( ( byte2 << 7 ) | byte1 ) - 8192 );
@@ -598,7 +617,7 @@ void MIDIMessage::SetPanorama( unsigned char chan, double pan ) // func by VRM
     if ( ipan > 16383 ) ipan = 16383;
 
     int pan_msb = ipan / 128;
-    int pan_lsb = ipan % 128;
+//    int pan_lsb = ipan % 128;
 
     SetControlChange( chan, C_PAN, pan_msb );
 //  к сожалению любое pan_lsb сбрасывает панораму в центр при проигрывании midi

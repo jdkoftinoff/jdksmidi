@@ -101,6 +101,8 @@ public:
 
     int GetLengthMSG() const; ///< Get the length in bytes of the entire message.
 
+    int GetLength() const; ///< Get the length in bytes of the entire message.
+
     /// Get the status byte of the message.
     unsigned char GetStatus() const
     {
