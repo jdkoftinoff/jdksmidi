@@ -1,9 +1,21 @@
 Things to do:
 
 More unit tests
+
 More documentation of existing classes
+
 Make the additional new fields in MIDIMsg move to MIDIBigMsg
+
 Add Windows driver usage examples/tests, sequencer, sysex send/recv
+
 Add Mac OSX driver usage examples/tests, sequencer, sysex send/recv
 
+Test parser with big collection of complex midi files:
+for ex. rewrite midi file and compare result with using xml copy of both files,
+see "Midi -> XML" converter on http://en.nemidi.com/converters.html
+Note: this service work not correct with midi event types "0xFF 0x21" and "0xF7"
+
+See in code comment labels:
+TODO@VRM
+TO DO
 

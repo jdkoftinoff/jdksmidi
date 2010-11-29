@@ -21,6 +21,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #include "jdksmidi/world.h"
 #include "jdksmidi/midi.h"
@@ -31,10 +35,18 @@
 using namespace jdksmidi;
 
 
-void PrintSysEx ( FILE *f, MIDISystemExclusive *ex )
+void PrintSysEx ( FILE *f, MIDISystemExclusive *ex, bool normal_sysex)
 {
     int l = ex->GetLength();
-    fprintf ( f, "Sysex Len=%d", l );
+
+    if ( normal_sysex )
+    {
+        fprintf ( f, "Normal System-Exclusive message Len=%d", l );
+    }
+    else
+    {
+        fprintf ( f, "Authorization System-Exclusive message Len=%d", l );
+    }
 
     for ( int i = 0; i < l; ++i )
     {
@@ -94,9 +106,9 @@ int main ( int argc, char ** argv )
 
         if ( p.Parse ( ( uchar ) c, &m ) )
         {
-            if ( m.IsSysEx() )
+            if ( m.IsSystemExclusive() )
             {
-                PrintSysEx ( stdout, p.GetSystemExclusive() );
+                PrintSysEx ( stdout, p.GetSystemExclusive(), m.IsSysExN() );
             }
 
             else

@@ -66,7 +66,7 @@ const int lut_sysmsglen[16] = // VRM
     0, // 0xF5=undefined. (Reserved)
     1, // 0xF6=TUNE Request. 1 byte
     0, // 0xF7=Normal or Divided SysEx Events end.
-// -1, // 0xF7=Divided or Authorization SysEx Events. may vary ?? VRM@TODO
+// -1, // 0xF7=Divided or Authorization SysEx Events. may vary
 
 // System Real-Time Messages
     1, // 0xF8=timing clock. 1 byte
@@ -79,7 +79,7 @@ const int lut_sysmsglen[16] = // VRM
 //  1, // 0xFF=reset. 1 byte
 
     3  // 0xFF=not reset, but a META-EVENT, which is always 3 bytes
-    // VRM not valid jet? see comment to midi.h function:
+    // TODO@VRM // not valid jet? see comment to midi.h function:
     // inline int GetSystemMessageLength ( unsigned char stat )
 };
 

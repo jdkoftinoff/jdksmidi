@@ -43,13 +43,13 @@ using namespace std;
 template <class I, class D> inline void test_max(D &x, I ma)
 {
     if ( x > (D)ma )
-        x = (D)ma;
+      x = (D)ma;
 }
 
 template <class I, class D> inline void test_min(D &x, I mi)
 {
     if ( x < (D)mi )
-        x = (D)mi;
+      x = (D)mi;
 }
 
 template <class I1, class D, class I2> inline void mintestmax(I1 mi, D &x, I2 ma)
@@ -77,7 +77,7 @@ inline int get_rand(int minval, int maxval)
 }
 
 const bool ON = true,
-           OFF = false;
+          OFF = false;
 bool AddNote( MIDIMultiTrack &tracks, int track_num, MIDIClockTime ticks, int chan, int note, int velocity, bool on )
 {
     MIDITimedBigMessage m;
@@ -109,7 +109,7 @@ bool AddPause( MIDIMultiTrack &tracks, int track_num, MIDIClockTime pause_ticks 
     MIDITimedBigMessage m;
     m.SetTime( tmax + pause_ticks );
     m.SetNoOp();
-    // the effect of NoOp msg is the only change end of track time, but - see above...
+    // the effect of NoOp msg is the only change end of track time, but - see above... 
     return tracks.GetTrack( track_num )->PutEvent( m );
 }
 
@@ -329,7 +329,7 @@ int main ( int argc, char **argv )
             if ( discrete_time == 0 || mc_note_dur <= 1 )
                 sub = 0;
 
-            AddNote(tracks, trk, (t+dt)                    , channel-1, note, velocity, ON);
+                  AddNote(tracks, trk, (t+dt)                    , channel-1, note, velocity, ON);
             if ( !AddNote(tracks, trk, (t+dt) + (mc_note_dur-sub), channel-1, note, velocity, OFF) )
             {
                 stop = true; // track midi events overflow

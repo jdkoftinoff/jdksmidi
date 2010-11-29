@@ -80,7 +80,7 @@ public:
     }
 
 #ifdef WIN32
-    MIDIFileWriteStreamFileName ( const wchar_t *fname ) : MIDIFileWriteStreamFile ( _wfopen ( fname, L"wb" ) ) // func by VRM
+    MIDIFileWriteStreamFileName ( const wchar_t *fname ) : MIDIFileWriteStreamFile ( _wfopen ( fname, L"wb" ) ) // funcVRM
     {
     }
 #endif
@@ -130,13 +130,12 @@ public:
     void WriteFileHeader ( int format, int ntrks, int division );
     void WriteTrackHeader ( unsigned long length );
 
-//  void WriteEvent ( const MIDITimedMessage &m ); // func deleted by VRM: don't need duplicate next func!
-    void WriteEvent ( const MIDITimedBigMessage &m );
+    void WriteEvent ( const MIDITimedBigMessage &m ); // funcVRM
 
-    void WriteEvent ( unsigned long time, const MIDISystemExclusive *e );
-    void WriteEvent ( unsigned long time, unsigned short text_type, const char *text );
+    void WriteSystemExclusiveEvent ( const MIDITimedBigMessage &m ); // funcVRM
+    void WriteTextEvent ( unsigned long time, unsigned char type, const char *text );
     void WriteMetaEvent ( unsigned long time, unsigned char type, const unsigned char *data, long length );
-    void WriteMetaMisc ( const MIDITimedBigMessage &m ); // func by VRM
+    void WriteMetaMisc ( const MIDITimedBigMessage &m ); // funcVRM
     void WriteTempo ( const MIDITimedBigMessage &m ); // VRM
 
     void WriteKeySignature ( unsigned long time, char sharp_flat, char minor );
@@ -150,7 +149,7 @@ public:
     void WriteEndOfTrack ( unsigned long time );
     virtual void RewriteTrackLength();
     // false argument disable use running status in midi file (true on default)
-    void UseRunningStatus( bool use ) // func by VRM
+    void UseRunningStatus( bool use ) // funcVRM
     {
         use_running_status = use;
     }

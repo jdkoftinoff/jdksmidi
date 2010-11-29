@@ -559,7 +559,7 @@ MIDISequencer::MIDISequencer (
     solo_mode ( false ),
     tempo_scale ( 100 ),
     num_tracks ( m->GetNumTracks() ),
-    state ( this, m, n ) // TO DO: fix this hack  VRM@TODO
+    state ( this, m, n ) // TO DO: fix this hack
 {
     for ( int i = 0; i < num_tracks; ++i )
     {
@@ -1099,7 +1099,7 @@ void MIDISequencer::ScanEventsAtThisTime()
     state.cur_beat = prev_beat;
 }
 
-double MIDISequencer::GetMisicDurationInSeconds( float time_precision_sec, int max_duration_hours ) // func by VRM
+double MIDISequencer::GetMisicDurationInSeconds( float time_precision_sec, int max_duration_hours ) // funcVRM
 {
     double dur = 0.;
     double clock_time;

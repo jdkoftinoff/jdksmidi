@@ -91,45 +91,17 @@ void MIDIFileReadMultiTrack::mf_header (int the_format_, int ntrks_, int divisio
 
 bool MIDIFileReadMultiTrack::ChanMessage ( const MIDITimedMessage &msg ) // VRM
 {
-    /*
-        // this original code deleted for separate functionality in MIDIMultiTrack::AssignEventsToTracks(0)
-        if ( the_format == 0 )
-        {
-          // split format 0 files into separate tracks, one for each channel,
-          // keep track 0 for tempo and meta-events
-          AddEventToMultiTrack ( msg, 0, msg.GetChannel() + 1 );
-        }
-        else
-        {
-          AddEventToMultiTrack ( msg, 0, cur_track );
-        }
-    */
     return AddEventToMultiTrack ( msg, 0, cur_track ); // VRM
 }
 
-void MIDIFileReadMultiTrack::SortEventsOrder() // func by VRM
+void MIDIFileReadMultiTrack::SortEventsOrder() // funcVRM
 {
     multitrack->SortEventsOrder();
 }
 
-bool MIDIFileReadMultiTrack::mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex ) // VRM
+bool MIDIFileReadMultiTrack::mf_metamisc ( MIDIClockTime time, int type, int len, unsigned char *data ) // funcVRM
 {
-    MIDITimedMessage msg;
-    msg.SetSysEx();
-    msg.SetTime ( time );
-    MIDISystemExclusive *sysex = new MIDISystemExclusive ( ex );
-    return AddEventToMultiTrack ( msg, sysex, cur_track ); // VRM
-}
-
-bool MIDIFileReadMultiTrack::mf_arbitrary ( MIDIClockTime time, int len, unsigned char *data )
-{
-    // ignore arbitrary byte strings; VRM@TODO - add event to multitrack ??
-    return true; // VRM
-}
-
-bool MIDIFileReadMultiTrack::mf_metamisc ( MIDIClockTime time, int type, int len, unsigned char *data )
-{
-    // VRM code for all miscellaneous meta events
+    // code for all miscellaneous meta events
 
     MIDITimedMessage msg;
     msg.SetTime ( time );
@@ -157,20 +129,19 @@ bool MIDIFileReadMultiTrack::mf_metamisc ( MIDIClockTime time, int type, int len
     // else msg add to track, but do'nt write to output midifile!
 
     msg.SetDataLength( len );
-
     return AddEventToMultiTrack ( msg, 0, cur_track );
 }
 
-bool MIDIFileReadMultiTrack::mf_timesig ( MIDIClockTime time, int num, int den_pow, int clks_per_metro, int notated_32nd_per_quarter ) // func by VRM
+bool MIDIFileReadMultiTrack::mf_timesig ( MIDIClockTime time, int num, int den_pow, int clks_per_metro, int notated_32nd_per_quarter ) // funcVRM
 {
     MIDITimedMessage msg;
     msg.SetTime ( time );
     msg.SetTimeSig ( num, den_pow, clks_per_metro, notated_32nd_per_quarter );
-    msg.SetDataLength( 5 ); // VRM source 4 bytes + 1 byte for denominator
+    msg.SetDataLength( 5 ); // VRM // source 4 bytes + 1 byte for denominator
     return AddEventToMultiTrack ( msg, 0, cur_track );
 }
 
-bool MIDIFileReadMultiTrack::mf_tempo ( MIDIClockTime time, unsigned char a, unsigned char b, unsigned char c ) // func by VRM
+bool MIDIFileReadMultiTrack::mf_tempo ( MIDIClockTime time, unsigned char a, unsigned char b, unsigned char c ) // funcVRM
 {
     MIDITimedMessage msg;
     msg.SetTime ( time );
@@ -202,15 +173,48 @@ bool MIDIFileReadMultiTrack::mf_text ( MIDIClockTime time, int type, int len, un
     msg.SetMetaType ( ( uchar ) type ); // remember - MF_META_* id codes match META_* codes
     msg.SetTime ( time );
 
-    MIDISystemExclusive *sysex = new MIDISystemExclusive ( len );
+    MIDISystemExclusive sysex( len ); // VRM
 
     for ( int i = 0; i < len; ++i )
     {
-        sysex->PutSysByte ( s[i] );
+        sysex.PutSysByte ( s[i] ); // VRM
     }
 
-    msg.SetDataLength( 0 ); // VRM variable data length don't saved to data_length
-    return AddEventToMultiTrack ( msg, sysex, cur_track ); // VRM
+    msg.SetDataLength( 0 ); // VRM // variable data length don't saved to data_length
+    return AddEventToMultiTrack ( msg, &sysex, cur_track ); // VRM
+}
+
+bool MIDIFileReadMultiTrack::mf_sysex ( MIDIClockTime time, int type, int len, unsigned char *s ) // funcVRM
+{
+    MIDITimedMessage msg;
+    msg.SetSysEx( type ); // set msg status byte (0xF0 or 0xF7)
+
+    int num = len; // number of possible SysExURT header data bytes in msg, 0...5
+    if ( num > 5 )
+        num = 5;
+
+    // add up to 5 starting bytes for SysExURT functions
+    if ( num > 0 )
+        msg.SetByte2( s[0] );
+    if ( num > 1 )
+        msg.SetByte3( s[1] );
+    if ( num > 2 )
+        msg.SetByte4( s[2] );
+    if ( num > 3 )
+        msg.SetByte5( s[3] );
+    if ( num > 4 )
+        msg.SetByte6( s[4] );
+
+    msg.SetTime ( time );
+    MIDISystemExclusive sysex( len );
+
+    for ( int i = 0; i < len; ++i )
+    {
+        sysex.PutSysByte ( s[i] );
+    }
+
+   msg.SetDataLength( num );
+   return AddEventToMultiTrack ( msg, &sysex, cur_track );
 }
 
 bool MIDIFileReadMultiTrack::mf_eot ( MIDIClockTime time ) // VRM

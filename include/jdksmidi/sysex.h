@@ -67,7 +67,7 @@ public:
 
     virtual ~MIDISystemExclusive();
 
-    friend bool operator == ( const MIDISystemExclusive &e1, const MIDISystemExclusive &e2 ); // func by VRM
+    friend bool operator == ( const MIDISystemExclusive &e1, const MIDISystemExclusive &e2 ); // funcVRM
 
     void Clear()
     {
@@ -93,7 +93,7 @@ public:
 
     void PutEXC()
     {
-        PutSysByte ( SYSEX_START );
+        PutSysByte ( SYSEX_START_N );
     }
     void PutEOX()
     {
@@ -131,7 +131,7 @@ public:
 
     int GetLength() const
     {
-        return cur_len;
+        return GetLengthSE();
     }
 
     unsigned char GetData ( int i ) const

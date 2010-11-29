@@ -52,7 +52,7 @@ class MIDIMultiTrack
 private:
 
     // delete old multitrack, construct new
-    bool CreateObject ( int num_tracks_, bool deletable_ ); // func by VRM
+    bool CreateObject ( int num_tracks_, bool deletable_ ); // funcVRM
 
 public:
 
@@ -79,20 +79,20 @@ public:
     }
 
     // return number of tracks with events, last tracks have no events
-    int GetNumTracksWithEvents() const; // func by VRM
+    int GetNumTracksWithEvents() const; // funcVRM
 
     // test and sort events temporal order in all tracks
-    void SortEventsOrder(); // func by VRM
+    void SortEventsOrder(); // funcVRM
 
     // delete all tracks and remake multitrack with new amount of empty tracks
-    bool ClearAndResize ( int num_tracks ); // func by VRM
+    bool ClearAndResize ( int num_tracks ); // funcVRM
 
     // store src track and remake multitrack object with 17 tracks (src track can be a member of multitrack obiect),
     // move src track channal events to tracks 1-16, and all other types of events to track 0
-    bool AssignEventsToTracks ( const MIDITrack *src ); // func by VRM
+    bool AssignEventsToTracks ( const MIDITrack *src ); // funcVRM
 
     // the same as previous, but argument is track number of multitrack object himself
-    bool AssignEventsToTracks ( int track_num = 0 ) // func by VRM
+    bool AssignEventsToTracks ( int track_num = 0 ) // funcVRM
     {
         return AssignEventsToTracks( GetTrack( track_num ) );
     }

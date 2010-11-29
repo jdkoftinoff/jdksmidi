@@ -90,7 +90,7 @@ MIDISystemExclusive::~MIDISystemExclusive()
     }
 }
 
-bool operator == ( const MIDISystemExclusive &e1, const MIDISystemExclusive &e2 ) // func by VRM
+bool operator == ( const MIDISystemExclusive &e1, const MIDISystemExclusive &e2 ) // funcVRM
 {
     if ( e1.cur_len != e2.cur_len )
         return false;
