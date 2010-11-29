@@ -21,6 +21,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+//
+// Copyright (C) 2010 V.R.Madgazin
+// www.vmgames.com vrm@vmgames.com
+//
 
 #ifdef WIN32
 #include <windows.h>
@@ -42,7 +46,7 @@ void DumpMIDITimedBigMessage ( MIDITimedBigMessage *msg )
         char msgbuf[1024];
         fprintf ( stdout, "%8ld : %s\n", msg->GetTime(), msg->MsgToText ( msgbuf ) );
 
-        if ( msg->IsSysEx() )
+        if ( msg->IsSystemExclusive() )
         {
             fprintf ( stdout, "\tSYSEX length: %d\n", msg->GetSysEx()->GetLength() );
         }

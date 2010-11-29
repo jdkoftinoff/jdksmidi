@@ -49,7 +49,7 @@ void DumpMIDIBigMessage( MIDITimedBigMessage *msg )
         char msgbuf[1024];
         fprintf ( stdout, "%s", msg->MsgToText ( msgbuf ) );
 
-        if ( msg->IsSysEx() )
+        if ( msg->IsSystemExclusive() )
         {
             fprintf ( stdout, "SYSEX length: %d", msg->GetSysEx()->GetLengthSE() );
         }
@@ -76,7 +76,7 @@ void DumpMIDITimedBigMessage( MIDITimedBigMessage *msg )
             fprintf ( stdout, "%8ld : %s", msg->GetTime(), msg->MsgToText ( msgbuf ) );
         }
 
-        if ( msg->IsSysEx() )
+        if ( msg->IsSystemExclusive() )
         {
             fprintf ( stdout, "SYSEX length: %d", msg->GetSysEx()->GetLengthSE() );
         }

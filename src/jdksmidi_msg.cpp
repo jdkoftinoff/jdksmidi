@@ -43,9 +43,8 @@
 namespace jdksmidi
 {
 
-const char * MIDIMessage::chan_msg_name[16] =
+const char * MIDIMessage::chan_msg_name[16] = // VRM
 {
-    // VRM
     "CHANNEL MSG  ERROR 0x00",  // 0x00
     "CHANNEL MSG  ERROR 0x10",  // 0x10
     "CHANNEL MSG  ERROR 0x20",  // 0x20
@@ -64,17 +63,16 @@ const char * MIDIMessage::chan_msg_name[16] =
     "CHANNEL MSG  ERROR 0xF0"   // 0xF0
 };
 
-const char * MIDIMessage::sys_msg_name[16] =
+const char * MIDIMessage::sys_msg_name[16] = // VRM
 {
-    // VRM
-    "SYSTEM MSG   SYSEX       ",  // 0xF0
+    "SYSTEM MSG   SYSEX-N     ",  // 0xF0
     "SYSTEM MSG   MTC         ",  // 0xF1
     "SYSTEM MSG   SONG POS    ",  // 0xF2
     "SYSTEM MSG   SONG SELECT ",  // 0xF3
     "SYSTEM MSG   ERROR 0xF4  ",  // 0xF4
     "SYSTEM MSG   ERROR 0xF5  ",  // 0xF5
     "SYSTEM MSG   TUNE REQ.   ",  // 0xF6
-    "SYSTEM MSG   SYSEX END   ",  // 0xF7
+    "SYSTEM MSG   SYSEX-A     ",  // 0xF7
     "SYSTEM MSG   CLOCK       ",  // 0xF8
     "SYSTEM MSG   MEASURE END ",  // 0xF9
     "SYSTEM MSG   START       ",  // 0xFA
@@ -94,13 +92,11 @@ const char * MIDIMessage::service_msg_name[] =
 };
 
 
-const char * MIDIMessage::MsgToText ( char *txt ) const
+const char * MIDIMessage::MsgToText ( char *txt ) const // funcVRM
 {
-    char buf[64];
+    char buf[256];
     int len = GetLengthMSG();
     *txt = 0;
-
-    // ~all code rewritten by VRM
 
     if ( IsServiceMsg() )
     {
@@ -111,14 +107,7 @@ const char * MIDIMessage::MsgToText ( char *txt ) const
         return txt;
     }
 
-    if ( IsAllNotesOff() )
-    {
-        sprintf ( buf, "Ch %2d  All Notes Off  (ctrl=%3d)  ", ( int ) GetChannel() + 1, ( int ) byte1 );
-        strcat ( txt, buf );
-        return txt;
-    }
-
-    if ( IsMetaEvent() ) // all Meta Events - print sys_msg_name[]
+    if ( IsMetaEvent() ) // all Meta Events
     {
         sprintf ( buf, "%s ", sys_msg_name[ status - 0xF0 ] );
         strcat ( txt, buf );
@@ -155,114 +144,84 @@ const char * MIDIMessage::MsgToText ( char *txt ) const
             sprintf ( buf, "%02X  ", ( int ) byte6 );
             strcat ( txt, buf );
         }
+
+        return txt;
     }
 
-    else if ( IsSystemMessage() ) // all System Exclusive Events - print sys_msg_name[]
+    if ( IsSystemExclusive() ) // all System Exclusive Events
     {
         sprintf ( buf, "%s  ", sys_msg_name[ status - 0xF0 ] );
         strcat ( txt, buf );
-
-        // VRM@TODO this code don't need? because len = 0 ?
-        if ( len > 1 )
-        {
-            sprintf ( buf, "%02X  ", ( int ) byte1 );
-            strcat ( txt, buf );
-        }
-
-        if ( len > 2 )
-        {
-            sprintf ( buf, "%02X  ", ( int ) byte2 );
-            strcat ( txt, buf );
-        }
-
-        if ( len > 3 )
-        {
-            sprintf ( buf, "%02X  ", ( int ) byte3 );
-            strcat ( txt, buf );
-        }
+        return txt;
     }
 
-    else // Channel Events - print chan_msg_name[]
+    // else all Channel Events
+
+    if ( IsAllNotesOff() )
     {
-        int type = ( status & 0xF0 ) >> 4;
-
-        sprintf ( buf, "Ch %2d  ", ( int ) GetChannel() + 1 );
+        sprintf ( buf, "Ch %2d  All Notes Off  (ctrl=%3d)  ", ( int ) GetChannel() + 1, ( int ) byte1 );
         strcat ( txt, buf );
-
-        sprintf ( buf, "%s  ", chan_msg_name[ type ] );
-        strcat ( txt, buf );
-
-        char *endtxt = txt + strlen ( txt );
-
-        switch ( status & 0xf0 )
-        {
-        case NOTE_ON:
-            if ( IsNoteOnV0() ) // velocity = 0: Note off
-                sprintf ( endtxt, "Note %3d  Vel  %3d    (Note off)  ", ( int ) byte1, ( int ) byte2 ); // VRM
-            else
-                sprintf ( endtxt, "Note %3d  Vel  %3d  ", ( int ) byte1, ( int ) byte2 );
-            break;
-
-        case NOTE_OFF:
-            sprintf ( endtxt, "Note %3d  Vel  %3d  ", ( int ) byte1, ( int ) byte2 );
-            break;
-
-        case POLY_PRESSURE:
-            sprintf ( endtxt, "Note %3d  Pres %3d  ", ( int ) byte1, ( int ) byte2 );
-            break;
-
-        case CONTROL_CHANGE:
-            sprintf ( endtxt, "Ctrl %3d  Val  %3d  ", ( int ) byte1, ( int ) byte2 );
-            break;
-
-        case PROGRAM_CHANGE:
-            sprintf ( endtxt, "PG   %3d  ", ( int ) byte1 );
-            break;
-
-        case CHANNEL_PRESSURE:
-            sprintf ( endtxt, "Pres %3d  ", ( int ) byte1 );
-            break;
-
-        case PITCH_BEND:
-            sprintf ( endtxt, "Val %5d  ", ( int ) GetBenderValue() );
-            break;
-        }
+        return txt;
     }
 
-    /* VRM
-        //
-        // pad the rest with spaces
-        //
-        {
-            size_t len = strlen ( txt ); // VRM
-            char *p = txt + len;
+    int type = ( status & 0xF0 ) >> 4;
 
-            while ( len < 40 ) // VRM was 45
-            {
-                *p++ = ' ';
-                ++len;
-            }
+    sprintf ( buf, "Ch %2d  ", ( int ) GetChannel() + 1 );
+    strcat ( txt, buf );
 
-            *p++ = '\0';
-        }
-    */
+    sprintf ( buf, "%s  ", chan_msg_name[ type ] );
+    strcat ( txt, buf );
+
+    char *endtxt = txt + strlen ( txt );
+
+    switch ( status & 0xf0 )
+    {
+    case NOTE_ON:
+        if ( IsNoteOnV0() ) // velocity = 0: Note off
+            sprintf ( endtxt, "Note %3d  Vel  %3d    (Note off)  ", ( int ) byte1, ( int ) byte2 ); // VRM
+        else
+            sprintf ( endtxt, "Note %3d  Vel  %3d  ", ( int ) byte1, ( int ) byte2 );
+        break;
+
+    case NOTE_OFF:
+        sprintf ( endtxt, "Note %3d  Vel  %3d  ", ( int ) byte1, ( int ) byte2 );
+        break;
+
+    case POLY_PRESSURE:
+        sprintf ( endtxt, "Note %3d  Pres %3d  ", ( int ) byte1, ( int ) byte2 );
+        break;
+
+    case CONTROL_CHANGE:
+        sprintf ( endtxt, "Ctrl %3d  Val  %3d  ", ( int ) byte1, ( int ) byte2 );
+        break;
+
+    case PROGRAM_CHANGE:
+        sprintf ( endtxt, "PG   %3d  ", ( int ) byte1 );
+        break;
+
+    case CHANNEL_PRESSURE:
+        sprintf ( endtxt, "Pres %3d  ", ( int ) byte1 );
+        break;
+
+    case PITCH_BEND:
+        sprintf ( endtxt, "Val %5d  ", ( int ) GetBenderValue() );
+        break;
+    }
 
     return txt;
 }
-
 
 MIDIMessage::MIDIMessage()
 {
     Clear(); // VRM
 }
 
-MIDIMessage::MIDIMessage ( const MIDIMessage &m )
+MIDIMessage::MIDIMessage ( const MIDIMessage &m ) // funcVRM
 {
     status = m.status;
     byte1 = m.byte1;
     byte2 = m.byte2;
     byte3 = m.byte3;
-    // VRM
     byte4 = m.byte4;
     byte5 = m.byte5;
     byte6 = m.byte6;
@@ -296,31 +255,12 @@ const MIDIMessage & MIDIMessage::operator = ( const MIDIMessage &m )
 
 int MIDIMessage::GetLengthMSG() const
 {
-    if ( IsMetaEvent() ) // VRM for all Meta Events
+    if ( IsMetaEvent() ) // VRM // for all Meta Events
     {
         return data_length; // VRM
     }
 
-    else if ( IsSystemMessage() ) // VRM for all System Exclusive Events
-    {
-        return GetSystemMessageLength ( status );
-    }
-
-    else // for all Channel Events
-    {
-        return GetMessageLength ( status );
-    }
-}
-
-
-int MIDIMessage::GetLength() const
-{
-    if ( IsMetaEvent() ) // VRM for all Meta Events
-    {
-        return data_length; // VRM
-    }
-
-    else if ( IsSystemMessage() ) // VRM for all System Exclusive Events
+    else if ( IsSystemMessage() ) // VRM // for all System Exclusive Events
     {
         return GetSystemMessageLength ( status );
     }
@@ -420,18 +360,28 @@ bool MIDIMessage::IsSystemMessage() const
            ( status & 0xf0 ) == 0xf0;
 }
 
-bool MIDIMessage::IsSysEx() const
+bool MIDIMessage::IsSysExN() const
 {
     return ( service_num == NOT_SERVICE) && // VRM
-           ( status == SYSEX_START );
+           ( status == SYSEX_START_N );
 }
 
-short MIDIMessage::GetSysExNum() const
+bool MIDIMessage::IsSysExURT() const // funcVRM
 {
-    return ( short ) ( ( byte3 << 8 ) | byte2 );
+    return IsSysExN() && ( byte1 == 0x7F );
 }
 
-bool MIDIMessage::IsSysExA() const // func by VRM
+int MIDIMessage::GetSysExURTdevID() const // funcVRM
+{
+    return byte2;
+}
+
+int MIDIMessage::GetSysExURTsubID() const // funcVRM
+{
+    return byte3;
+}
+
+bool MIDIMessage::IsSysExA() const // funcVRM
 {
     return ( service_num == NOT_SERVICE) &&
            ( status == SYSEX_START_A );
@@ -467,7 +417,7 @@ bool MIDIMessage::IsMetaEvent() const
            ( status == META_EVENT );
 }
 
-bool MIDIMessage::IsChannelEvent() const // func by VRM
+bool MIDIMessage::IsChannelEvent() const // funcVRM
 {
     return ( service_num == NOT_SERVICE) &&
            ( 0x80 <= status && status < 0xF0 );
@@ -492,7 +442,7 @@ bool MIDIMessage::IsNoOp() const
     return ( service_num == SERVICE_NO_OPERATION );
 }
 
-bool MIDIMessage::IsChannelPrefix() const // func by VRM
+bool MIDIMessage::IsChannelPrefix() const // funcVRM
 {
     return ( service_num == NOT_SERVICE) &&
            ( status == META_EVENT ) &&
@@ -532,7 +482,7 @@ bool  MIDIMessage::IsBeatMarker() const
     return ( service_num == SERVICE_BEAT_MARKER );
 }
 
-unsigned long MIDIMessage::GetTempo() const // func by VRM
+unsigned long MIDIMessage::GetTempo() const // funcVRM
 {
     return MIDIFile::To32Bit ( 0, byte2, byte3, byte4 );
 }
@@ -608,7 +558,7 @@ void MIDIMessage::SetControlChange ( unsigned char chan, unsigned char ctrl, uns
     byte2 = val;
 }
 
-void MIDIMessage::SetPanorama( unsigned char chan, double pan ) // func by VRM
+void MIDIMessage::SetPanorama( unsigned char chan, double pan ) // funcVRM
 {
     //      left   centre     right
     //  pan = -1 ...    0 ...    +1
@@ -656,16 +606,10 @@ void MIDIMessage::SetPitchBend ( unsigned char chan, unsigned char low, unsigned
     byte2 = ( unsigned char ) ( high );
 }
 
-void MIDIMessage::SetSysEx()
+void MIDIMessage::SetSysEx( unsigned char type ) // funcVRM
 {
-    Clear(); // VRM
-    status = SYSEX_START;
-    /*  VRM what is this?
-        byte1 = 0;
-        int num = 0;
-        byte2 = ( unsigned char ) ( num & 0xff );
-        byte3 = ( unsigned char ) ( ( num >> 8 ) & 0xff );
-    */
+    Clear();
+    status = type; // SYSEX_START or SYSEX_START_A
 }
 
 void MIDIMessage::SetMTC ( unsigned char field, unsigned char v )
@@ -731,7 +675,7 @@ void MIDIMessage::SetLocal ( unsigned char chan, unsigned char v )
     byte2 = v;
 }
 
-void MIDIMessage::SetTempo ( unsigned long tempo ) // func by VRM
+void MIDIMessage::SetTempo ( unsigned long tempo ) // funcVRM
 {
     int a, b, c;
     c = tempo & 0xFF;
@@ -741,7 +685,7 @@ void MIDIMessage::SetTempo ( unsigned long tempo ) // func by VRM
     SetByte4( c );
 }
 
-void MIDIMessage::SetTempo32 ( unsigned long tempo_times_32 ) // func by VRM
+void MIDIMessage::SetTempo32 ( unsigned long tempo_times_32 ) // funcVRM
 {
     unsigned long tempo = (unsigned long) ( 0.5 + (32*60*1e6) / ( double ) tempo_times_32 );
     SetTempo ( tempo );
@@ -757,11 +701,11 @@ void MIDIMessage::SetDataEnd()
     SetMetaEvent ( META_END_OF_TRACK, 0 );
 }
 
-void  MIDIMessage::SetTimeSig (
+void  MIDIMessage::SetTimeSig ( // funcVRM
     unsigned char numerator,
     unsigned char denominator_power,
     unsigned char midi_clocks_per_metronome,
-    unsigned char num_32nd_per_midi_quarter_note ) // func by VRM
+    unsigned char num_32nd_per_midi_quarter_note )
 {
     int denominator = 1 << denominator_power;
     // forward to msg denominator instead denominator power
@@ -808,7 +752,7 @@ MIDIBigMessage::MIDIBigMessage ( const MIDIMessage &m )
 {
 }
 
-MIDIBigMessage::MIDIBigMessage ( const MIDIMessage &m, const MIDISystemExclusive *e ) // func by VRM
+MIDIBigMessage::MIDIBigMessage ( const MIDIMessage &m, const MIDISystemExclusive *e ) // funcVRM
     :
     MIDIMessage ( m ),
     sysex ( 0 )
@@ -1115,7 +1059,7 @@ MIDITimedBigMessage::MIDITimedBigMessage ( const MIDIMessage &m )
 {
 }
 
-MIDITimedBigMessage::MIDITimedBigMessage ( const MIDITimedMessage &m, const MIDISystemExclusive *e ) // func by VRM
+MIDITimedBigMessage::MIDITimedBigMessage ( const MIDITimedMessage &m, const MIDISystemExclusive *e ) // funcVRM
     : MIDIBigMessage ( m, e ),
       time ( m.GetTime() )
 {
@@ -1316,7 +1260,7 @@ void MIDIDeltaTimedBigMessage::SetDeltaTime ( MIDIClockTime t )
 
 // friend operators
 
-bool operator == ( const MIDIMessage &m1, const MIDIMessage &m2 ) // func by VRM
+bool operator == ( const MIDIMessage &m1, const MIDIMessage &m2 ) // funcVRM
 {
     if ( m1.GetServiceNum() != m2.GetServiceNum() ) return false;
     // else equal service_num values
@@ -1333,7 +1277,7 @@ bool operator == ( const MIDIMessage &m1, const MIDIMessage &m2 ) // func by VRM
            );
 }
 
-bool operator == ( const MIDITimedMessage &m1, const MIDITimedMessage &m2 ) // func by VRM
+bool operator == ( const MIDITimedMessage &m1, const MIDITimedMessage &m2 ) // funcVRM
 {
     if ( m1.GetTime() != m2.GetTime() )
         return false;
@@ -1341,7 +1285,7 @@ bool operator == ( const MIDITimedMessage &m1, const MIDITimedMessage &m2 ) // f
     return ( (MIDIMessage) m1 ) == ( (MIDIMessage) m2 );
 }
 
-bool operator == ( const MIDIBigMessage &m1, const MIDIBigMessage &m2 ) // func by VRM
+bool operator == ( const MIDIBigMessage &m1, const MIDIBigMessage &m2 ) // funcVRM
 {
     const MIDISystemExclusive *e1 = m1.GetSysEx();
     const MIDISystemExclusive *e2 = m2.GetSysEx();
@@ -1366,7 +1310,7 @@ bool operator == ( const MIDIBigMessage &m1, const MIDIBigMessage &m2 ) // func 
     return ( (MIDIMessage) m1 ) == ( (MIDIMessage) m2 );
 }
 
-bool operator == ( const MIDITimedBigMessage &m1, const MIDITimedBigMessage &m2 ) // func by VRM
+bool operator == ( const MIDITimedBigMessage &m1, const MIDITimedBigMessage &m2 ) // funcVRM
 {
     if ( m1.GetTime() != m2.GetTime() )
         return false;

@@ -99,9 +99,12 @@ public:
     ///@name The Query methods.
     //@{
 
-    int GetLengthMSG() const; ///< Get the length in bytes of the entire message.
+    int GetLengthMSG() const;
 
-    int GetLength() const; ///< Get the length in bytes of the entire message.
+    int GetLength() const ///< Get the length in bytes of the entire message.
+    {
+        return GetLengthMSG();
+    }
 
     /// Get the status byte of the message.
     unsigned char GetStatus() const
@@ -232,9 +235,9 @@ public:
     /// If the message is a key signature meta-message, GetKeySigMajorMinor() returns to standard midi file form of the key major/minor flag. 0 means a major key, 1 means a minor key.
     unsigned char GetKeySigMajorMinor() const;
 
-    bool IsServiceMsg() const
+    bool IsServiceMsg() const // funcVRM
     {
-        return service_num != NOT_SERVICE;    // func by VRM
+        return service_num != NOT_SERVICE;
     }
 
     /// If the message is some sort of real time channel message, IsChannelMsg() will return true. You can then call GetChannel() for more information.
@@ -244,9 +247,9 @@ public:
     bool IsNoteOn() const;
 
     /// If the message is a note on message and velocity=0 (i.e. note off), IsNoteOnV0() will return true. You can then call GetChannel(), GetNote() for further information.
-    bool IsNoteOnV0() const
+    bool IsNoteOnV0() const // funcVRM
     {
-        return IsNoteOn() && GetVelocity() == 0;    // func by VRM
+        return IsNoteOn() && GetVelocity() == 0;
     }
 
     /// If the message is a note off message, IsNoteOff() will return true. You can then call GetChannel(), GetNote() and GetVelocity() for further information.
@@ -270,17 +273,23 @@ public:
     /// If the message is a system message (the status byte is 0xf0 or higher), IsSystemMessage() will return true.
     bool IsSystemMessage() const;
 
-    /// If the message is a system exclusive marker, IsSysEx() will return true. You can then call GetSysExNum() to extract a sysex id code which must be managed separately.
+    /// If the message is a normal system exclusive marker, IsSysExN() will return true.
     /// \note Sysex messages are not stored in the MIDIMessage object. \see MIDIBigMessage
-    bool IsSysEx() const; // VRM Normal SysEx Event
+    bool IsSysExN() const; // Normal SysEx Event
 
-    short GetSysExNum() const; // VRM ???
+    bool IsSysExURT() const; // funcVRM // Universal Real Time System Exclusive message, URT sysex
 
-    bool IsSysExA() const; // func by VRM Authorization SysEx Event
+    int GetSysExURTdevID() const; // funcVRM // return Device ID code for URT sysex
 
-    bool IsSystemExclusiveEvent() const
+    int GetSysExURTsubID() const; // funcVRM // return Sub ID code for URT sysex
+
+    bool IsSysExA() const; // funcVRM // Authorization SysEx Event
+
+    // TODO@VRM note to Jeff:
+    // code with old fun IsSysEx() need to rewrite manually, because now it's two fun IsSysExN() and IsSysExA()
+    bool IsSystemExclusive() const // funcVRM
     {
-        return ( IsSysEx() || IsSysExA() );    // func by VRM
+        return ( IsSysExN() || IsSysExA() );
     }
 
     bool IsMTC() const;
@@ -293,7 +302,7 @@ public:
 
     bool IsMetaEvent() const;
 
-    bool IsChannelEvent() const; // func by VRM
+    bool IsChannelEvent() const; // funcVRM
 
     bool IsTextEvent() const;
 
@@ -301,7 +310,7 @@ public:
 
     bool IsNoOp() const;
 
-    bool IsChannelPrefix() const; // func by VRM
+    bool IsChannelPrefix() const; // funcVRM
 
     bool IsTempo() const;
 
@@ -319,7 +328,7 @@ public:
     unsigned long GetTempo32() const; // VRM
 
     // GetTempo() returns the original midifile tempo value (microseconds per beat)
-    unsigned long GetTempo() const; // func by VRM
+    unsigned long GetTempo() const; // funcVRM
 
     unsigned short GetLoopNumber() const;
 
@@ -434,7 +443,7 @@ public:
     void SetControlChange ( unsigned char chan, unsigned char ctrl, unsigned char val );
 
     // set pan control in chan: pan = -1. for left, 0. for centre, +1.0 for right
-    void SetPanorama( unsigned char chan, double pan ); // func by VRM
+    void SetPanorama( unsigned char chan, double pan ); // funcVRM
 
     void SetProgramChange ( unsigned char chan, unsigned char val );
 
@@ -444,7 +453,7 @@ public:
 
     void SetPitchBend ( unsigned char chan, unsigned char low, unsigned char high );
 
-    void SetSysEx();
+    void SetSysEx( unsigned char type ); // funcVRM // type = SYSEX_START or SYSEX_START_A
 
     void SetMTC ( unsigned char field, unsigned char v );
 
@@ -462,31 +471,31 @@ public:
 
     void SetLocal ( unsigned char chan, unsigned char v );
 
-    void SetNoOp() // func by VRM
+    void SetNoOp() // funcVRM
     {
         Clear();
         service_num = SERVICE_NO_OPERATION;
     }
 
-    void SetTempo ( unsigned long tempo ); // func by VRM
+    void SetTempo ( unsigned long tempo ); // funcVRM
 
-    void SetTempo32 ( unsigned long tempo_times_32 ); // func by VRM
+    void SetTempo32 ( unsigned long tempo_times_32 ); // funcVRM
 
     void SetText ( unsigned short text_num, unsigned char type = META_GENERIC_TEXT );
 
     void SetDataEnd();
 
-    void SetTimeSig (
+    void SetTimeSig ( // funcVRM
         unsigned char numerator = 4,
         unsigned char denominator_power = 2,
         unsigned char midi_clocks_per_metronome = 24,
-        unsigned char num_32nd_per_midi_quarter_note = 8 ); // func by VRM
+        unsigned char num_32nd_per_midi_quarter_note = 8 );
 
     void SetKeySig ( signed char sharp_flats, unsigned char major_minor );
 
     void SetBeatMarker();
 
-    friend bool operator == ( const MIDIMessage &m1, const MIDIMessage &m2 ); // func by VRM
+    friend bool operator == ( const MIDIMessage &m1, const MIDIMessage &m2 ); // funcVRM
 
     //@}
 
@@ -496,18 +505,16 @@ protected:
     static const char * sys_msg_name[16]; ///< Simple ascii text strings describing each system message type (0xf0 to 0xff)
     static const char * service_msg_name[];
 
-    unsigned int service_num; // VRM if service_num != NOT_SERVICE than event used for internal service
+    unsigned int service_num; // VRM // if service_num != NOT_SERVICE than event used for internal service
 
-    unsigned char status; // type of events and channal for channal events
-    unsigned char byte1; // type of meta events
-    unsigned char byte2; // meta events first data byte (#1)
+    unsigned char status; // type of events and channal for Channal events, type of SysEx events
+    unsigned char byte1; // type of Meta events, not used for SysExURT events
+    unsigned char byte2; // Meta events or SysExURT events first data byte (#1)
     unsigned char byte3;
-
-    // VRM add these bytes for const length meta events like Set Tempo, SMPTE Offset and Time Signature
-    unsigned char byte4;
-    unsigned char byte5;
-    unsigned char byte6; // meta events last data byte (#5), used for SMPTE Offset msg
-    unsigned char data_length; // number of data bytes in meta events with constatnt data length 0...5
+    unsigned char byte4; // VRM
+    unsigned char byte5; // VRM
+    unsigned char byte6; // VRM // Meta events or SysExURT events last data byte (#5)
+    unsigned char data_length; // VRM // number of data bytes in Meta events or SysExURT events (0...5)
 };
 
 
@@ -531,7 +538,7 @@ public:
 
     MIDIBigMessage ( const MIDIMessage &m );
 
-    MIDIBigMessage ( const MIDIMessage &m, const MIDISystemExclusive *e ); // func by VRM
+    MIDIBigMessage ( const MIDIMessage &m, const MIDISystemExclusive *e ); // funcVRM
 
     const MIDIBigMessage &operator = ( const MIDIBigMessage &m );
 
@@ -558,7 +565,7 @@ public:
 
     ~MIDIBigMessage();
 
-    void SetNoOp() // func by VRM
+    void SetNoOp() // funcVRM
     {
         Clear();
         MIDIMessage::SetNoOp();
@@ -568,7 +575,7 @@ public:
 
     const MIDISystemExclusive *GetSysEx() const;
 
-    friend bool operator == ( const MIDIBigMessage &m1, const MIDIBigMessage &m2 ); // func by VRM
+    friend bool operator == ( const MIDIBigMessage &m1, const MIDIBigMessage &m2 ); // funcVRM
 
 protected: // VRM
 
@@ -625,7 +632,7 @@ public:
         const MIDITimedMessage &b
     );
 
-    friend bool operator == ( const MIDITimedMessage &m1, const MIDITimedMessage &m2 ); // func by VRM
+    friend bool operator == ( const MIDITimedMessage &m1, const MIDITimedMessage &m2 ); // funcVRM
 
 protected:
 
@@ -635,7 +642,7 @@ protected:
 
 
 
-class MIDIDeltaTimedMessage : public MIDIMessage // VRM this class don't need because don't used ?
+class MIDIDeltaTimedMessage : public MIDIMessage // TODO@VRM this class don't need because don't used ?
 {
 public:
 
@@ -698,7 +705,7 @@ public:
 
     MIDITimedBigMessage ( const MIDIMessage &m );
 
-    MIDITimedBigMessage ( const MIDITimedMessage &m, const MIDISystemExclusive *e ); // func by VRM
+    MIDITimedBigMessage ( const MIDITimedMessage &m, const MIDISystemExclusive *e ); // funcVRM
 
     void Clear();
 
@@ -737,7 +744,7 @@ public:
         const MIDITimedBigMessage &b
     );
 
-    friend bool operator == ( const MIDITimedBigMessage &m1, const MIDITimedBigMessage &m2 ); // func by VRM
+    friend bool operator == ( const MIDITimedBigMessage &m1, const MIDITimedBigMessage &m2 ); // funcVRM
 
 protected:
     MIDIClockTime time;
@@ -745,7 +752,7 @@ protected:
 
 
 
-class MIDIDeltaTimedBigMessage : public MIDIBigMessage // VRM this class don't need because don't used ?
+class MIDIDeltaTimedBigMessage : public MIDIBigMessage // TODO@VRM this class don't need because don't used ?
 {
 public:
     //

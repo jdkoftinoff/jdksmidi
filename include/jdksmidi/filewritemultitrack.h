@@ -58,7 +58,7 @@ public:
     }
 
     // false argument disable use running status in midi file (true on default)
-    void UseRunningStatus( bool use ) // func by VRM
+    void UseRunningStatus( bool use ) // funcVRM
     {
         writer.UseRunningStatus( use );
     }

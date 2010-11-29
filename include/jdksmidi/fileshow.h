@@ -73,15 +73,14 @@ protected:
     virtual void mf_chan_after ( const MIDITimedMessage &msg );
     virtual void mf_control ( const MIDITimedMessage &msg );
 
-    virtual bool mf_arbitrary ( MIDIClockTime time, int len, unsigned char *data ); // VRM
     virtual bool mf_metamisc ( MIDIClockTime time, int type, int len, unsigned char *data ); // VRM
-    virtual bool mf_timesig ( MIDIClockTime time, int, int, int, int ); // func by VRM
-    virtual bool mf_tempo ( MIDIClockTime time, unsigned char a, unsigned char b, unsigned char c ); // func by VRM
+    virtual bool mf_timesig ( MIDIClockTime time, int, int, int, int ); // funcVRM
+    virtual bool mf_tempo ( MIDIClockTime time, unsigned char a, unsigned char b, unsigned char c ); // funcVRM
     virtual bool mf_keysig ( MIDIClockTime time, int, int ); // VRM
     virtual bool mf_sqspecific ( MIDIClockTime time, int, unsigned char * ); // VRM
     virtual bool mf_text ( MIDIClockTime time, int, int, unsigned char * ); // VRM
     virtual bool mf_eot ( MIDIClockTime time ); // VRM
-    virtual bool mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex ); // VRM
+    virtual bool mf_sysex ( MIDIClockTime time, int type, int len, unsigned char *s ); // funcVRM
 
     FILE *out;
     int division;

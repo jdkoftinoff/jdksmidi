@@ -51,22 +51,22 @@ typedef unsigned long MIDIClockTime;
 
 enum
 {
-    NOTE_OFF = 0x80, ///< Note off message with velocity
-    NOTE_ON  = 0x90, ///< Note on message with velocity or Note off if velocity is 0
+    NOTE_OFF       = 0x80, ///< Note off message with velocity
+    NOTE_ON        = 0x90, ///< Note on message with velocity or Note off if velocity is 0
     POLY_PRESSURE  = 0xA0, ///< Polyphonic key pressure/aftertouch with note and pressure
     CONTROL_CHANGE = 0xB0, ///< Control change message with controller number and 7 bit value
     PROGRAM_CHANGE = 0xC0, ///< Program change message with 7 bit program number
     CHANNEL_PRESSURE = 0xD0, ///< Channel pressure/aftertouch with pressure
-    PITCH_BEND  = 0xE0, ///< Channel bender with 14 bit bender value
-    SYSEX_START = 0xF0, ///< Start of a MIDI System-Exclusive message
-    MTC         = 0xF1, ///< Start of a two byte MIDI Time Code message
-    SONG_POSITION = 0xF2, ///< Start of a three byte MIDI Song Position message
-    SONG_SELECT   = 0xF3, ///< Start of a two byte MIDI Song Select message
-    TUNE_REQUEST  = 0xF6, ///< Single byte tune request message
-    SYSEX_END     = 0xF7, ///< End of a MIDI System-Exclusive message
-    SYSEX_START_A = 0xF7, // ?? VRM@TODO Authorization SysEx Event
-    RESET      = 0xFF, ///< 0xFF is a reset byte on the serial line. We never used as reset in a MIDIMessage object,
-    META_EVENT = 0xFF ///< 0xFF means a meta event in our internal processing.
+    PITCH_BEND     = 0xE0, ///< Channel bender with 14 bit bender value
+    SYSEX_START_N  = 0xF0, ///< Start of a MIDI Normal System-Exclusive message
+    MTC            = 0xF1, ///< Start of a two byte MIDI Time Code message
+    SONG_POSITION  = 0xF2, ///< Start of a three byte MIDI Song Position message
+    SONG_SELECT    = 0xF3, ///< Start of a two byte MIDI Song Select message
+    TUNE_REQUEST   = 0xF6, ///< Single byte tune request message
+    SYSEX_END      = 0xF7, ///< End of a MIDI Normal System-Exclusive message
+    SYSEX_START_A  = 0xF7, ///< Start of a MIDI Authorization System-Exclusive message
+    RESET          = 0xFF, ///< reset byte on the serial line. We never used as reset in a MIDIMessage object,
+    META_EVENT     = 0xFF  ///< meta event in our internal processing.
 };
 
 
@@ -83,7 +83,7 @@ enum
     CONTINUE = 0xFB, ///< Sequence continue message
     STOP     = 0xFC, ///< Sequence stop message
     ACTIVE_SENSE = 0xFE ///< Active sense message
-    // VRM         0xFF // see above RESET or META_EVENT
+    //             0xFF // see above RESET
 };
 
 
@@ -114,9 +114,9 @@ enum
     C_PORTA       = 0x41, ///< portamento switch
     C_SOSTENUTO   = 0x42, ///< sostenuto switch
     C_SOFT_PEDAL  = 0x43, ///< soft pedal
-    // VRM          0x44   Legato Footswitch
+    //              0x44   Legato Footswitch // VRM
     C_HOLD_2      = 0x45, ///< hold pedal 2
-    /*     VRM
+    /* // VRM
                         0x46, // Sound Controller 1, default: Sound Variation
                         0x47, // Sound Controller 2, default: Timbre/Harmonic Intens.
                         0x48, // Sound Controller 3, default: Release Time
@@ -132,7 +132,7 @@ enum
     C_GENERAL_6 = 0x51, ///< general purpose controller 6
     C_GENERAL_7 = 0x52, ///< general purpose controller 7
     C_GENERAL_8 = 0x53, ///< general purpose controller 8
-    // VRM        0x54  Portamento Control
+    //            0x54  Portamento Control // VRM
 
     C_EFFECT_DEPTH  = 0x5B, ///< external effects depth, default: Reverb Send Level
     C_TREMOLO_DEPTH = 0x5C, ///< tremolo depth
@@ -151,13 +151,13 @@ enum
 
     C_ALL_SOUNDS_OFF = 0x78, // VRM All Sound Off
     C_RESET         = 0x79, ///< reset all controllers
-    C_LOCAL         = 0x7A, /* VRM: was 0x79 */ ///< local control on/off
-    C_ALL_NOTES_OFF = 0x7B, /* VRM: was 0x7A */ ///< all notes off
+    C_LOCAL         = 0x7A, ///< local control on/off // VRM // was 0x79
+    C_ALL_NOTES_OFF = 0x7B, ///< all notes off // VRM // was 0x7A
 
     C_OMNI_OFF = 0x7C, ///< omni off, all notes off
     C_OMNI_ON  = 0x7D, ///< omni on, all notes off
     C_MONO     = 0x7E, ///< mono on, all notes off
-    C_POLY     = 0x7F ///< poly on, all notes off
+    C_POLY     = 0x7F  ///< poly on, all notes off
 };
 
 
@@ -170,7 +170,7 @@ enum
     RPN_BEND_WIDTH  = 0x00, ///< bender sensitivity
     RPN_FINE_TUNE   = 0x01, ///< fine tuning
     RPN_COARSE_TUNE = 0x02 ///< coarse tuning
-    /* VRM
+    /* // VRM
                           0x03, // Tuning Program Change
                           0x04, // Tuning Bank Select
                           0x05, // Modulation Depth Range
@@ -198,8 +198,8 @@ enum
 
     META_GENERIC_TEXT   = 0x01,
     META_COPYRIGHT      = 0x02,
-    META_TRACK_NAME     = 0x03, // VRM (was 0x04) Sequence/Track Name
-    META_INSTRUMENT_NAME = 0x04, // VRM (was 0x03)
+    META_TRACK_NAME     = 0x03, // Sequence/Track Name // VRM // was 0x04
+    META_INSTRUMENT_NAME = 0x04, // VRM // was 0x03
     META_LYRIC_TEXT     = 0x05,
     META_MARKER_TEXT    = 0x06,
     META_CUE_POINT      = 0x07, // VRM
@@ -212,11 +212,11 @@ enum
     META_GENERIC_TEXT_E = 0x0E, // VRM
     META_GENERIC_TEXT_F = 0x0F, // VRM
 
-    META_CHANNEL_PREFIX = 0x20, // VRM This meta event associates a MIDI channel with following meta events.
+    META_CHANNEL_PREFIX = 0x20, // This meta event associates a MIDI channel with following meta events.
     // It's effect is terminated by another MIDI Channel Prefix event or any non-Meta event.
     // It is often used before an Instrument Name Event to specify which channel an instrument name represents.
 
-    META_OUTPUT_CABLE = 0x21, // VRM may be MIDI Output Port, data length = 1 byte
+    META_OUTPUT_CABLE = 0x21, // VRM // may be MIDI Output Port, data length = 1 byte
     META_TRACK_LOOP   = 0x2E,
     META_END_OF_TRACK = 0x2F, // VRM
 
@@ -230,7 +230,7 @@ enum
     // ID and the following bytes contain information specified by the manufacturer.
 };
 
-// VRM internal service numbers for MIDIMessage::service_num message variable
+// VRM // internal service numbers for MIDIMessage::service_num message variable
 
 enum
 {

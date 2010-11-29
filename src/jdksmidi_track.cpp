@@ -104,7 +104,7 @@ void MIDITrack::Clear()
     num_events = 0;
 }
 
-bool MIDITrack::EventsOrderOK() const // func by VRM
+bool MIDITrack::EventsOrderOK() const // funcVRM
 {
     if ( num_events < 2 )
         return true;
@@ -122,7 +122,7 @@ bool MIDITrack::EventsOrderOK() const // func by VRM
     return true;
 }
 
-void MIDITrack::SortEventsOrder() // func by VRM
+void MIDITrack::SortEventsOrder() // funcVRM
 {
     std::vector< Event_time > et( num_events );
 
@@ -148,7 +148,7 @@ void MIDITrack::SortEventsOrder() // func by VRM
     *this = trk;
 }
 
-int MIDITrack::RemoveIdenticalEvents( int max_distance_between_identical_events ) // func by VRM
+int MIDITrack::RemoveIdenticalEvents( int max_distance_between_identical_events ) // funcVRM
 {
     int removed = 0;
 
@@ -174,7 +174,7 @@ int MIDITrack::RemoveIdenticalEvents( int max_distance_between_identical_events 
     return removed;
 }
 
-const MIDITrack & MIDITrack::operator = ( const MIDITrack & src ) // func by VRM
+const MIDITrack & MIDITrack::operator = ( const MIDITrack & src ) // funcVRM
 {
     if ( num_events == src.num_events )
     {
@@ -510,7 +510,7 @@ bool MIDITrack::PutEvent ( const MIDITimedBigMessage &msg )
     return true;
 }
 
-bool MIDITrack::PutEvent2 ( MIDITimedBigMessage &msg ) // func by VRM
+bool MIDITrack::PutEvent2 ( MIDITimedBigMessage &msg ) // funcVRM
 {
     if ( PutEvent ( msg ) )
     {
@@ -528,7 +528,7 @@ bool MIDITrack::PutEvent ( const MIDITimedMessage &msg, const MIDISystemExclusiv
     return PutEvent ( m ); // VRM
 }
 
-bool MIDITrack::PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length ) // func by VRM
+bool MIDITrack::PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length ) // funcVRM
 {
     MIDITimedMessage msg;
     msg.SetTime( time );

@@ -143,7 +143,7 @@ public:
 //  bool  Delete( int start_event, int num_events);
 //  void  Sort();
 
-    const MIDITrack & operator = ( const MIDITrack & src ); // func by VRM
+    const MIDITrack & operator = ( const MIDITrack & src ); // funcVRM
 
     bool Expand ( int increase_amount = ( MIDITrackChunkSize ) );
 
@@ -157,12 +157,12 @@ public:
 
     bool PutEvent ( const MIDITimedBigMessage &msg );
     // put event and clear msg, exclude its time, keep time unchanged!
-    bool PutEvent2 ( MIDITimedBigMessage &msg ); // func by VRM
+    bool PutEvent2 ( MIDITimedBigMessage &msg ); // funcVRM
     bool PutEvent ( const MIDITimedMessage &msg, const MIDISystemExclusive *sysex ); // VRM
     bool SetEvent ( int event_num, const MIDITimedBigMessage &msg );
 
     // put text message with known length (w/o ending NULL), or evaluate it if zero length
-    bool PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length = 0 ); // func by VRM
+    bool PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length = 0 ); // funcVRM
 
     bool MakeEventNoOp ( int event_num );
 
@@ -178,15 +178,15 @@ public:
     }
     bool IsTrackEmpty() const
     {
-        return num_events == 0;    // VRM
+        return num_events == 0; // VRM
     }
 
     // test events temporal order, return false if events out of order
-    bool EventsOrderOK() const; // func by VRM
+    bool EventsOrderOK() const; // funcVRM
     // sort events temporal order
-    void SortEventsOrder(); // func by VRM
+    void SortEventsOrder(); // funcVRM
     // remove events with identical time and all other data, return numbers of such events
-    int RemoveIdenticalEvents( int max_distance_between_identical_events = 32 ); // func by VRM
+    int RemoveIdenticalEvents( int max_distance_between_identical_events = 32 ); // funcVRM
 
 private:
 

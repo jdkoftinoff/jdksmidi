@@ -63,7 +63,7 @@ public:
     {
     }
 
-    virtual void Rewind() = 0; // func by VRM
+    virtual void Rewind() = 0; // funcVRM
 
     virtual int ReadChar() = 0;
 };
@@ -77,7 +77,7 @@ public:
     }
 
 #ifdef WIN32
-    explicit MIDIFileReadStreamFile ( const wchar_t *fname ) // func by VRM
+    explicit MIDIFileReadStreamFile ( const wchar_t *fname ) // funcVRM
     {
         f = _wfopen ( fname, L"rb" );
     }
@@ -92,14 +92,14 @@ public:
         if ( f ) fclose ( f );
     }
 
-    virtual void Rewind() // func by VRM
+    virtual void Rewind() // funcVRM
     {
         if ( f ) rewind ( f );
     }
 
     bool IsValid()
     {
-        return f != 0;    // VRM
+        return f != 0; // VRM
     }
 
     virtual int ReadChar()
@@ -144,16 +144,15 @@ public:
     virtual void mf_chan_after ( const MIDITimedMessage &msg );
     virtual void mf_control ( const MIDITimedMessage &msg );
 
-    virtual bool mf_arbitrary ( MIDIClockTime time, int len, unsigned char *data ); // VRM
     virtual bool mf_metamisc ( MIDIClockTime time, int type, int len, unsigned char *data ); // VRM
-    virtual bool mf_timesig ( MIDIClockTime time, int, int, int, int ); // func by VRM
-    virtual bool mf_tempo ( MIDIClockTime time, unsigned char a, unsigned char b, unsigned char c ); // func by VRM
+    virtual bool mf_timesig ( MIDIClockTime time, int, int, int, int ); // funcVRM
+    virtual bool mf_tempo ( MIDIClockTime time, unsigned char a, unsigned char b, unsigned char c ); // funcVRM
 
     virtual bool mf_keysig ( MIDIClockTime time, int, int ); // VRM
     virtual bool mf_sqspecific ( MIDIClockTime time, int, unsigned char * ); // VRM
     virtual bool mf_text ( MIDIClockTime time, int, int, unsigned char * ); // VRM
     virtual bool mf_eot ( MIDIClockTime time ); // VRM
-    virtual bool mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex ); // VRM
+    virtual bool mf_sysex ( MIDIClockTime time, int type, int len, unsigned char *s ); // funcVRM
 
 //
 // the following methods are to be overridden for your specific purpose
@@ -171,7 +170,7 @@ public:
     virtual void UpdateTime ( MIDIClockTime delta_time );
     virtual bool MetaEvent ( MIDIClockTime time, int type, int len, unsigned char *buf ); // VRM
     virtual bool ChanMessage ( const MIDITimedMessage &msg); // VRM
-    virtual void SortEventsOrder() {} // func by VRM
+    virtual void SortEventsOrder() {} // funcVRM
 
 };
 
@@ -185,11 +184,11 @@ public:
     );
     virtual ~MIDIFileRead();
 
-    // VRM return false if not enough number of tracks or events in any track
-    virtual bool Parse();
+    // return false if not enough number of tracks or events in any track
+    virtual bool Parse(); // VRM
 
     // read midifile header, return number of tracks
-    int ReadNumTracks(); // func by VRM
+    int ReadNumTracks(); // funcVRM
 
     int GetFormat() const
     {
@@ -197,10 +196,10 @@ public:
     }
     int GetNumTracks() const
     {
-        return header_ntrks;    // VRM
+        return header_ntrks; // VRM
     }
     // call it after Parse(): return true if file contain event(s) with running status
-    bool UsedRunningStatus() const // func by VRM
+    bool UsedRunningStatus() const // funcVRM
     {
         return used_running_status;
     }
@@ -214,7 +213,6 @@ protected:
     virtual int ReadHeader();
     virtual void mf_error ( const char * );
 
-    int no_merge;
     MIDIClockTime cur_time;
     int skip_init;
     unsigned long to_be_read;
@@ -223,7 +221,7 @@ protected:
 
     unsigned char *the_msg;
     int max_msg_len;
-    int act_msg_len; // VRM actual msg length
+    int act_msg_len; // VRM // actual msg length
 
 private:
     unsigned long ReadVariableNum();
@@ -238,11 +236,10 @@ private:
     int EGetC();
 
     int ReadMT ( unsigned long, int );
-    void BadByte ( int );
 
     bool FormChanMessage ( unsigned char st, unsigned char b1, unsigned char b2 ); // VRM
     // reset data for multiple parse
-    void Reset(); // func by VRM
+    void Reset(); // funcVRM
 
     bool used_running_status; // VRM
 

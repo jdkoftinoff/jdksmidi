@@ -125,7 +125,7 @@ bool MIDIParser::ParseSystemByte ( uchar b, MIDIMessage *msg )
         state = FIND_STATUS;
         return false;
     }
-    case SYSEX_START:
+    case SYSEX_START_N:
     {
         //
         // start receiving sys-ex data
@@ -165,7 +165,7 @@ bool MIDIParser::ParseSystemByte ( uchar b, MIDIMessage *msg )
         // so calling program can know to look at
         // the sysex buffer with GetSystemExclusive().
         //
-        msg->SetStatus ( SYSEX_START );
+        msg->SetStatus ( SYSEX_START_N );
         return true;
     }
     case MTC:

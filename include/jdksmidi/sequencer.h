@@ -329,7 +329,7 @@ public:
     void ScanEventsAtThisTime();
 
     // recommended values for  time_precision_sec >= 0.001  and for  max_duration_hours = 1 ... 24
-    double GetMisicDurationInSeconds( float time_precision_sec = 0.1f, int max_duration_hours = 2 ); // func by VRM
+    double GetMisicDurationInSeconds( float time_precision_sec = 0.1f, int max_duration_hours = 2 ); // funcVRM
 
 protected:
 

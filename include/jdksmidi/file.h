@@ -79,9 +79,8 @@ public:
     // define all the different meta event message types.
     //
 
-    enum
+    enum // VRM
     {
-        // VRM
         MF_META_SEQUENCE_NUMBER = META_SEQUENCE_NUMBER,
 
         MF_META_GENERIC_TEXT    = META_GENERIC_TEXT,

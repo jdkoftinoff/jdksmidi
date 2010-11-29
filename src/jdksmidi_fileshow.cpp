@@ -173,43 +173,26 @@ void MIDIFileShow::mf_control ( const MIDITimedMessage &msg )
     fprintf ( out, "%s\n", msg.MsgToText ( buf ) );
 }
 
-bool MIDIFileShow::mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex ) // VRM
+bool MIDIFileShow::mf_sysex ( MIDIClockTime time, int type, int len, unsigned char *s ) // funcVRM
 {
     show_time ( time );
-    fprintf ( out, "SysEx     Length=%d\n\n", ex.GetLengthSE() ); // VRM
-
-    for ( int i = 0; i < ex.GetLengthSE(); ++i )
-    {
-        if ( i > 0 && (i %16) == 0 ) // VRM
-            fprintf ( out, "\n" );
-
-        fprintf ( out, "%02x ", ( int ) ex.GetData ( i ) );
-    }
-
-    fprintf ( out, "\n\n" ); // VRM
-    return true; // VRM
-}
-
-bool MIDIFileShow::mf_arbitrary ( MIDIClockTime time, int len, unsigned char *data )
-{
-    show_time ( time );
-    fprintf ( out, "RAW MIDI DATA    Length=%d\n\n", len ); // VRM
+    fprintf ( out, "SysEx  Type=%02X   Length=%d\n\n", type, len );
 
     for ( int i = 0; i < len; ++i )
     {
-        if ( i > 0 && (i %16) == 0 ) // VRM
+        if ( i > 0 && (i %16) == 0 )
             fprintf ( out, "\n" );
 
-        fprintf ( out, "%02x ", ( int ) data[i] );
+        fprintf ( out, "%02x ", ( int ) s[i] );
     }
 
-    fprintf ( out, "\n\n" ); // VRM
-    return true; // VRM
+    fprintf ( out, "\n\n" );
+    return true;
 }
 
-bool MIDIFileShow::mf_metamisc ( MIDIClockTime time, int type, int len, unsigned char *d )
+bool MIDIFileShow::mf_metamisc ( MIDIClockTime time, int type, int len, unsigned char *d ) // funcVRM
 {
-    // VRM code for all miscellaneous meta events
+    // code for all miscellaneous meta events
 
     show_time ( time );
 
@@ -247,7 +230,7 @@ bool MIDIFileShow::mf_metamisc ( MIDIClockTime time, int type, int len, unsigned
     return true;
 }
 
-bool MIDIFileShow::mf_timesig ( MIDIClockTime time, int num, int den_pow, int clocks_per_metro, int notated_32nds_per_quarter_note ) // func by VRM
+bool MIDIFileShow::mf_timesig ( MIDIClockTime time, int num, int den_pow, int clocks_per_metro, int notated_32nds_per_quarter_note ) // funcVRM
 {
     show_time ( time );
     fprintf ( out, "Time Signature   %d/%d  Clks/Metro.=%d 32nd/Quarter=%d\n",
@@ -259,7 +242,7 @@ bool MIDIFileShow::mf_timesig ( MIDIClockTime time, int num, int den_pow, int cl
 }
 
 
-bool MIDIFileShow::mf_tempo ( MIDIClockTime time, unsigned char a, unsigned char b, unsigned char c ) // func by VRM
+bool MIDIFileShow::mf_tempo ( MIDIClockTime time, unsigned char a, unsigned char b, unsigned char c ) // funcVRM
 {
     unsigned long tempo = MIDIFile::To32Bit ( 0, a, b, c );
     show_time ( time );

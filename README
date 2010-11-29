@@ -12,12 +12,18 @@ Please see the documentation in the subdirectory:
        docs
 
 Supported Operating Systems
-          win32, win64, mac os x, linux, uclinux, other unix style systems, other embedded systems, 16 bit, 32 bit, 64 bit.
+          win32,
+          win64,
+          Mac OS X,
+          Linux,
+          UcLinux,
+          other Unix style systems,
+          other embedded systems, 16 bit, 32 bit, 64 bit.
           
 Supported Compilers:
           GNU gcc 3.4,4.0 - 4.4
           MSVC 6,7,8,9
-          intel c++          
+          Intel C++          
           
 This library was originally a collection of utility functions for MIDI written in C back in 1986 for the Atari ST computer. Since then it has evolved into a fairly powerful C++ MIDI Library including:
 

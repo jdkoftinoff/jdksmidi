@@ -53,12 +53,11 @@ namespace jdksmidi
 MIDIMultiTrack::MIDIMultiTrack ( int num_tracks_, bool deletable_ )
 {
     ENTER ( "MIDIMultiTrack::MIDIMultiTrack()" );
-    // VRM
-    tracks = 0; // object still don't exist
-    CreateObject ( num_tracks_, deletable_ );
+    tracks = 0; // VRM // object still don't exist
+    CreateObject ( num_tracks_, deletable_ ); // VRM
 }
 
-bool MIDIMultiTrack::CreateObject ( int num_tracks_, bool deletable_ ) // func by VRM
+bool MIDIMultiTrack::CreateObject ( int num_tracks_, bool deletable_ ) // funcVRM
 {
     // delete old multitrack object
     if ( tracks )
@@ -88,12 +87,12 @@ bool MIDIMultiTrack::CreateObject ( int num_tracks_, bool deletable_ ) // func b
     return true;
 }
 
-bool MIDIMultiTrack::ClearAndResize ( int num_tracks ) // func by VRM
+bool MIDIMultiTrack::ClearAndResize ( int num_tracks ) // funcVRM
 {
     return CreateObject ( num_tracks, this->deletable );
 }
 
-bool MIDIMultiTrack::AssignEventsToTracks ( const MIDITrack *src ) // func by VRM
+bool MIDIMultiTrack::AssignEventsToTracks ( const MIDITrack *src ) // funcVRM
 {
     MIDITrack tmp( *src ); // make copy of src track
 
@@ -141,7 +140,7 @@ void MIDIMultiTrack::Clear()
     }
 }
 
-int MIDIMultiTrack::GetNumTracksWithEvents() const  // func by VRM
+int MIDIMultiTrack::GetNumTracksWithEvents() const  // funcVRM
 {
     int i;
 
@@ -154,7 +153,7 @@ int MIDIMultiTrack::GetNumTracksWithEvents() const  // func by VRM
     return i+1;
 }
 
-void MIDIMultiTrack::SortEventsOrder() // func by VRM
+void MIDIMultiTrack::SortEventsOrder() // funcVRM
 {
     for ( int i = 0; i < number_of_tracks; ++i )
     {
