@@ -88,7 +88,8 @@ const char * MIDIMessage::service_msg_name[] =
     "SERVICE  ERROR NOT SERVICE", // NOT_SERVICE = 0,
     "SERVICE  BEAT MARKER", // SERVICE_BEAT_MARKER = 1,
     "SERVICE  NO OPERATION", // SERVICE_NO_OPERATION = 2,
-    "SERVICE  ERROR INVALID SERVICE"  // OUT_OF_RANGE_SERVICE_NUM = 3
+    "SERVICE  USERAPP MARKER", // SERVICE_USERAPP_MARKER = 3,
+    "SERVICE  ERROR INVALID SERVICE" // OUT_OF_RANGE_SERVICE_NUM = 4
 };
 
 
@@ -159,7 +160,7 @@ const char * MIDIMessage::MsgToText ( char *txt ) const // funcVRM
 
     if ( IsAllNotesOff() )
     {
-        sprintf ( buf, "Ch %2d  All Notes Off  (ctrl=%3d)  ", ( int ) GetChannel() + 1, ( int ) byte1 );
+        sprintf ( buf, "Ch %2d  All Notes Off  Type %3d  Mode %3d ", (int)GetChannel()+1, (int)byte1, (int)byte2); // VRM
         strcat ( txt, buf );
         return txt;
     }
@@ -306,12 +307,6 @@ unsigned char MIDIMessage::GetKeySigMajorMinor() const
     return byte3;
 }
 
-bool MIDIMessage::IsChannelMsg() const
-{
-    return ( service_num == NOT_SERVICE) && // VRM
-           ( status >= 0x80 ) && ( status < 0xf0 );
-}
-
 bool MIDIMessage::IsNoteOn() const
 {
     return ( service_num == NOT_SERVICE) && // VRM
@@ -417,10 +412,15 @@ bool MIDIMessage::IsMetaEvent() const
            ( status == META_EVENT );
 }
 
+bool MIDIMessage::IsChannelMsg() const
+{
+    return ( service_num == NOT_SERVICE) && // VRM
+           ( status >= 0x80 ) && ( status < 0xF0 );
+}
+
 bool MIDIMessage::IsChannelEvent() const // funcVRM
 {
-    return ( service_num == NOT_SERVICE) &&
-           ( 0x80 <= status && status < 0xF0 );
+    return IsChannelMsg();
 }
 
 bool MIDIMessage::IsTextEvent() const
@@ -435,11 +435,6 @@ bool MIDIMessage::IsAllNotesOff() const
     return ( service_num == NOT_SERVICE) && // VRM
            ( ( status & 0xf0 ) == CONTROL_CHANGE )
            && ( byte1 >= C_ALL_NOTES_OFF );
-}
-
-bool MIDIMessage::IsNoOp() const
-{
-    return ( service_num == SERVICE_NO_OPERATION );
 }
 
 bool MIDIMessage::IsChannelPrefix() const // funcVRM
@@ -477,7 +472,12 @@ bool MIDIMessage::IsKeySig() const
            ( byte1 == META_KEYSIG );
 }
 
-bool  MIDIMessage::IsBeatMarker() const
+bool  MIDIMessage::IsUserAppMarker() const // funcVRM
+{
+    return ( service_num == SERVICE_USERAPP_MARKER );
+}
+
+bool MIDIMessage::IsBeatMarker() const
 {
     return ( service_num == SERVICE_BEAT_MARKER );
 }
@@ -558,16 +558,23 @@ void MIDIMessage::SetControlChange ( unsigned char chan, unsigned char ctrl, uns
     byte2 = val;
 }
 
-void MIDIMessage::SetPanorama( unsigned char chan, double pan ) // funcVRM
+double MIDIMessage::GetPan() // funcVRM
 {
-    //      left   centre     right
+    int val = GetControllerValue(); // 0 = leftmost, 64 = centre, 127 = rightmost
+    if (val == 127) val = 128;
+    return (val-64)/64.;
+}
+
+void MIDIMessage::SetPan( unsigned char chan, double pan ) // funcVRM
+{
+    //     leftmost  centre   rightmost
     //  pan = -1 ...    0 ...    +1
     // ipan =  0 ... 8192 ... 16384
     int ipan = jdks_float2int( 8192. * (pan + 1.) );
     if ( ipan > 16383 ) ipan = 16383;
 
     int pan_msb = ipan / 128;
-//    int pan_lsb = ipan % 128;
+//  int pan_lsb = ipan % 128;
 
     SetControlChange( chan, C_PAN, pan_msb );
 //  к сожалению любое pan_lsb сбрасывает панораму в центр при проигрывании midi
@@ -656,15 +663,13 @@ void MIDIMessage::SetMetaEvent ( unsigned char type, unsigned short v )
     SetMetaEvent ( type, v1, v2 ); // VRM
 }
 
-void MIDIMessage::SetAllNotesOff (
-    unsigned char chan,
-    unsigned char type
-)
+void MIDIMessage::SetAllNotesOff (unsigned char chan, unsigned char type, unsigned char mode) // funcVRM
 {
-    Clear(); // VRM
+    Clear();
     status = ( unsigned char ) ( chan | CONTROL_CHANGE );
     byte1 = type;
-    byte2 = 0x7f;
+    byte2 = mode;
+//  byte2 = 0x7f; // was
 }
 
 void MIDIMessage::SetLocal ( unsigned char chan, unsigned char v )
@@ -701,7 +706,7 @@ void MIDIMessage::SetDataEnd()
     SetMetaEvent ( META_END_OF_TRACK, 0 );
 }
 
-void  MIDIMessage::SetTimeSig ( // funcVRM
+void MIDIMessage::SetTimeSig ( // funcVRM
     unsigned char numerator,
     unsigned char denominator_power,
     unsigned char midi_clocks_per_metronome,
@@ -716,15 +721,21 @@ void  MIDIMessage::SetTimeSig ( // funcVRM
     SetByte6( num_32nd_per_midi_quarter_note );
 }
 
-void  MIDIMessage::SetKeySig ( signed char sharp_flats, unsigned char major_minor )
+void MIDIMessage::SetKeySig ( signed char sharp_flats, unsigned char major_minor )
 {
     SetMetaEvent ( META_KEYSIG, sharp_flats, major_minor );
 }
 
-void  MIDIMessage::SetBeatMarker()
+void MIDIMessage::SetBeatMarker()
 {
     Clear(); // VRM
     service_num = SERVICE_BEAT_MARKER; // VRM
+}
+
+void MIDIMessage::SetUserAppMarker() // funcVRM
+{
+    Clear();
+    service_num = SERVICE_USERAPP_MARKER;
 }
 
 

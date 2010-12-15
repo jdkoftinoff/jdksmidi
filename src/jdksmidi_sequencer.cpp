@@ -149,7 +149,7 @@ void MIDISequencerGUIEventNotifierText::SetEnable ( bool f )
 /////////////////////////////////////////////////////////////////////////////
 
 MIDISequencerTrackNotifier::MIDISequencerTrackNotifier (
-    MIDISequencer *seq_,
+    const MIDISequencer *seq_, // VRM
     int trk,
     MIDISequencerGUIEventNotifier *n
 )
@@ -302,7 +302,7 @@ bool MIDISequencerTrackProcessor::Process ( MIDITimedBigMessage *msg )
 ////////////////////////////////////////////////////////////////////////////
 
 MIDISequencerTrackState::MIDISequencerTrackState (
-    MIDISequencer *seq_,
+    const MIDISequencer *seq_, // VRM
     int trk,
     MIDISequencerGUIEventNotifier *n
 )
@@ -471,8 +471,8 @@ bool MIDISequencerTrackState::Process ( MIDITimedBigMessage *msg )
 ////////////////////////////////////////////////////////////////////////////
 
 MIDISequencerState::MIDISequencerState (
-    MIDISequencer *s,
-    MIDIMultiTrack * m,
+    const MIDISequencer *s, // VRM
+    const MIDIMultiTrack * m, // VRM
     MIDISequencerGUIEventNotifier *n
 )
     :
@@ -552,7 +552,7 @@ const MIDISequencerState & MIDISequencerState::operator = ( const MIDISequencerS
 
 
 MIDISequencer::MIDISequencer (
-    MIDIMultiTrack *m,
+    const MIDIMultiTrack *m, // VRM
     MIDISequencerGUIEventNotifier *n
 )
     :
@@ -885,9 +885,7 @@ bool MIDISequencer::GoToMeasure ( int measure, int beat )
     return state.cur_measure == measure && state.cur_beat == beat;
 }
 
-
-
-bool MIDISequencer::GetNextEventTimeMs ( float *t )
+bool MIDISequencer::GetNextEventTimeMs ( double *t ) // funcVRM
 {
     MIDIClockTime ct;
     bool f = GetNextEventTime ( &ct );
@@ -899,13 +897,13 @@ bool MIDISequencer::GetNextEventTimeMs ( float *t )
         // calculate tempo in milliseconds per clock
         double clocks_per_sec = ( ( state.track_state[0]->tempobpm *
                                     ( ( ( double ) tempo_scale ) * 0.01 )
-                                    * ( 1.0f / 60.0f ) ) * state.multitrack->GetClksPerBeat() );
+                                    * ( 1. / 60. ) ) * state.multitrack->GetClksPerBeat() );
 
-        if ( clocks_per_sec > 0 )
+        if ( clocks_per_sec > 0. )
         {
-            float ms_per_clock = 1000.0f / ( float ) clocks_per_sec;
+            double ms_per_clock = 1000. / clocks_per_sec;
             // calculate delta time in milliseconds
-            float delta_ms = float ( delta_clocks * ms_per_clock );
+            double delta_ms = delta_clocks * ms_per_clock;
             // return it added with the current time in ms.
             *t = delta_ms + state.cur_time_ms;
         }
@@ -917,6 +915,14 @@ bool MIDISequencer::GetNextEventTimeMs ( float *t )
     }
 
     return f;
+}
+
+bool MIDISequencer::GetNextEventTimeMs ( float *t )
+{
+    double t2;
+    bool res = GetNextEventTimeMs ( &t2 );
+    *t = ( float ) t2;
+    return res;
 }
 
 bool MIDISequencer::GetNextEventTime ( MIDIClockTime *t )
@@ -1022,7 +1028,7 @@ bool MIDISequencer::GetNextEvent ( int *tracknum, MIDITimedBigMessage *msg )
 
         else // this event comes before the next beat
         {
-            MIDITimedBigMessage *msg_ptr;
+            const MIDITimedBigMessage *msg_ptr; // VRM
 
             if ( state.iterator.GetCurEvent ( tracknum, &msg_ptr ) )
             {
@@ -1099,40 +1105,28 @@ void MIDISequencer::ScanEventsAtThisTime()
     state.cur_beat = prev_beat;
 }
 
-double MIDISequencer::GetMisicDurationInSeconds( float time_precision_sec, int max_duration_hours ) // funcVRM
+double MIDISequencer::GetMisicDurationInSeconds() // funcVRM
 {
-    double dur = 0.;
-    double clock_time;
-    float  next_event_time; // in milliseconds
-    const double tp_msec = 1000. * time_precision_sec;
+    double event_time = 0.; // in milliseconds
 
     MIDITimedBigMessage ev;
     int ev_track;
 
-    GoToTimeMs ( 0.f );
-    if ( !GetNextEventTimeMs ( &next_event_time ) )
-        return dur;
+    GoToZero();
 
-    // simulate a clock going forward with tp_msec resolution for hours
-    const double hours = max_duration_hours * 3600. * 1000.;
-    for ( clock_time = next_event_time = 0.f; clock_time < hours; clock_time += tp_msec )
+    while ( GetNextEvent( &ev_track, &ev ) )
     {
-        // find all events that came before or a the current time
-        while ( double(next_event_time) <= clock_time )
-        {
-            if ( GetNextEvent( &ev_track, &ev ) )
-            {
-                if ( !GetNextEventTimeMs( &next_event_time ) ) // no events left so end
-                {
-                    dur = 0.001f * clock_time;
-                    return dur;
-                }
-            }
-        }
+        // std::cout << EventAsText( ev ) << std::endl;
+
+        // skip these events
+        if ( ev.IsEndOfTrack() || ev.IsBeatMarker() )
+            continue;
+
+        // end of music is the time of last not end of track midi event!
+        event_time = GetCurrentTimeInMs();
     }
 
-    dur = 0.001f * clock_time;
-    return dur;
+    return ( 0.001 * event_time );
 }
 
 

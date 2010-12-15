@@ -230,14 +230,15 @@ enum
     // ID and the following bytes contain information specified by the manufacturer.
 };
 
-// VRM // internal service numbers for MIDIMessage::service_num message variable
+// VRM // internal service number for MIDIMessage::service_num message variable
 
 enum
 {
     NOT_SERVICE = 0,
     SERVICE_BEAT_MARKER = 1,
     SERVICE_NO_OPERATION = 2,
-    OUT_OF_RANGE_SERVICE_NUM = 3,
+    SERVICE_USERAPP_MARKER = 3, // this marker not used in lib, only in user app code!
+    OUT_OF_RANGE_SERVICE_NUM = 4,
 };
 
 extern const int lut_msglen[16];

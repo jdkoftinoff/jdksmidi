@@ -2,12 +2,10 @@
 
   VRM Music Generator  based on  libJDKSmidi C++ MIDI Library
 
-  version 1.21 from November 2010
+  version 1.22 from December 2010
 
   Copyright (C) 2010 V.R.Madgazin
-
   www.vmgames.com
-
   vrm@vmgames.com
 
   This program is free software; you can redistribute it and/or
@@ -32,9 +30,6 @@
 #endif
 
 #include "jdksmidi/world.h"
-#include "jdksmidi/track.h"
-#include "jdksmidi/multitrack.h"
-#include "jdksmidi/filewritemultitrack.h"
 using namespace jdksmidi;
 
 #include <iostream>
@@ -101,47 +96,6 @@ bool SetInstrument( MIDIMultiTrack &tracks, int track_num, MIDIClockTime ticks, 
     return tracks.GetTrack( track_num )->PutEvent( m );
 }
 
-// add empty message after last track event: don't effect with most common midi players!
-bool AddPause( MIDIMultiTrack &tracks, int track_num, MIDIClockTime pause_ticks )
-{
-    int num = tracks.GetTrack( track_num )->GetNumEvents();
-    MIDIClockTime tmax = tracks.GetTrack( track_num )->GetEvent( num-1 )->GetTime();
-    MIDITimedBigMessage m;
-    m.SetTime( tmax + pause_ticks );
-    m.SetNoOp();
-    // the effect of NoOp msg is the only change end of track time, but - see above...
-    return tracks.GetTrack( track_num )->PutEvent( m );
-}
-
-// add "silence" note after last track event: it always work!
-bool AddSilence( MIDIMultiTrack &tracks, int track_num, MIDIClockTime silence_ticks )
-{
-    int num = tracks.GetTrack( track_num )->GetNumEvents();
-    MIDIClockTime tmax = tracks.GetTrack( track_num )->GetEvent( num-1 )->GetTime();
-    // add lowest note on in channal 0 with velocity = 0 (i.e. note off)
-    return AddNote(tracks, track_num, tmax + silence_ticks, 0, 0, 0, ON);
-}
-
-// add ticks time to all last track events (i.e. to all events with max time value)
-void LastEventsProlongation( MIDIMultiTrack &tracks, int track_num, MIDIClockTime add_ticks )
-{
-    MIDITrack *track = tracks.GetTrack( track_num );
-    int index = track->GetNumEvents() - 1;
-    if ( index < 0 )
-        return;
-
-    MIDITimedBigMessage *msg = track->GetEvent( index );
-    MIDIClockTime tmax = msg->GetTime();
-
-    while ( msg->GetTime() == tmax )
-    {
-        msg->SetTime( tmax + add_ticks );
-        if ( --index < 0 )
-            break;
-        msg = track->GetEvent( index );
-    }
-}
-
 const char *Program = "VRM Music Generator based on libJDKSmidi C++ MIDI Library";
 const char *Copyright = "Copyright (C) 2010 V.R.Madgazin";
 
@@ -168,7 +122,8 @@ void setup_notes()
 
 int main ( int argc, char **argv )
 {
-    int ret_code = -1;
+    int retcode = -1;
+
     setup_notes();
 
     // music generator data
@@ -350,30 +305,21 @@ int main ( int argc, char **argv )
     // last note (or last chord) prolongation
     LastEventsProlongation( tracks, trk, 4*mc_note_dur );
 
-    // add silence ending
-    AddSilence( tracks, trk, 2*mc_note_dur );
+    // add ending "silence"
+    AddEndingPause( tracks, trk, 2*mc_note_dur );
 
-    MIDIFileWriteStreamFileName out_stream( fname.c_str() );
+    tracks.SetClksPerBeat( clks_per_beat );
 
-    if ( out_stream.IsValid() )
+    if ( WriteMidiFile( tracks, fname.c_str() ) )
     {
-        MIDIFileWriteMultiTrack writer( &tracks, &out_stream );
-        int num_tracks = tracks.GetNumTracksWithEvents();
-        if ( writer.Write( num_tracks, clks_per_beat ) )
-        {
-            cout << "\nOK writing file " << fname.c_str() << endl;
-            ret_code = 0;
-        }
-        else
-        {
-            cerr << "\nError writing file " << fname.c_str() << endl;
-        }
+        cout << "\nOK writing file " << fname.c_str() << endl;
+        retcode = 0;
     }
     else
     {
-        cerr << "\nError opening file " << fname.c_str() << endl;
+        cerr << "\nError writing file " << fname.c_str() << endl;
     }
 
-    return ret_code;
+    return retcode;
 }
 

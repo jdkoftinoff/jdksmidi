@@ -43,7 +43,6 @@
 #include "jdksmidi/sysex.h"
 #include "jdksmidi/tempo.h"
 
-
 namespace jdksmidi
 {
 

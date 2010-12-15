@@ -35,8 +35,7 @@
 #define JDKSMIDI_TEMPO_H
 
 //
-// This class makes it easy to deal with Tempos as fixed point
-// numbers.
+// This class makes it easy to deal with Tempos as fixed point numbers.
 //
 // The actual tempo is stored times 256 for 1/256 bpm accuracy.
 //

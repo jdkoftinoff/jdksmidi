@@ -234,12 +234,6 @@ void MIDIFileWrite::WriteEvent ( const MIDITimedBigMessage &m ) // funcVRM
             WriteTempo ( m );
         }
 
-        // this META_END_OF_TRACK msg will be written separately and only in MIDIFileWriteMultiTrack::Write()
-        else if ( m.IsDataEnd() )
-        {
-            // WriteEndOfTrack ( m.GetTime() ); // VRM
-        }
-
         else if ( m.IsKeySig() )
         {
             WriteKeySignature ( m.GetTime(), m.GetKeySigSharpFlats(), m.GetKeySigMajorMinor() );

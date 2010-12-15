@@ -510,6 +510,15 @@ bool MIDITrack::PutEvent ( const MIDITimedBigMessage &msg )
     return true;
 }
 
+bool MIDITrack::PutEvent ( const MIDIDeltaTimedBigMessage &msg ) // funcVRM
+{
+    const MIDIBigMessage msg2( msg );
+    MIDITimedBigMessage m = msg2;
+    MIDIClockTime t = msg.GetDeltaTime() + GetLastEventTime();
+    m.SetTime( t );
+    return PutEvent( m );
+}
+
 bool MIDITrack::PutEvent2 ( MIDITimedBigMessage &msg ) // funcVRM
 {
     if ( PutEvent ( msg ) )
@@ -547,7 +556,7 @@ bool MIDITrack::PutTextEvent ( MIDIClockTime time, int meta_event_type, const ch
 
 bool MIDITrack::GetEvent ( int event_num, MIDITimedBigMessage *msg ) const
 {
-    if ( event_num >= num_events )
+    if ( !IsValidEventNum( event_num ) ) // VRM
     {
         return false;
     }
@@ -560,7 +569,7 @@ bool MIDITrack::GetEvent ( int event_num, MIDITimedBigMessage *msg ) const
 
 bool MIDITrack::SetEvent ( int event_num, const MIDITimedBigMessage &msg )
 {
-    if ( event_num >= num_events )
+    if ( !IsValidEventNum( event_num ) ) // VRM
     {
         return false;
     }
@@ -573,7 +582,7 @@ bool MIDITrack::SetEvent ( int event_num, const MIDITimedBigMessage &msg )
 
 bool MIDITrack::MakeEventNoOp ( int event_num )
 {
-    if ( event_num >= num_events )
+    if ( !IsValidEventNum( event_num ) ) // VRM
     {
         return false;
     }
@@ -608,7 +617,7 @@ bool MIDITrack::FindEventNumber ( MIDIClockTime time, int *event_num ) const
 
 const MIDITimedBigMessage *MIDITrack::GetEvent ( int event_num ) const
 {
-    if ( event_num >= num_events )
+    if ( !IsValidEventNum( event_num ) ) // VRM
     {
         return 0;
     }
@@ -620,7 +629,7 @@ const MIDITimedBigMessage *MIDITrack::GetEvent ( int event_num ) const
 
 MIDITimedBigMessage *MIDITrack::GetEvent ( int event_num )
 {
-    if ( event_num >= num_events )
+    if ( !IsValidEventNum( event_num ) ) // VRM
     {
         return 0;
     }

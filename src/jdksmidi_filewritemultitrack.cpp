@@ -64,36 +64,33 @@ bool MIDIFileWriteMultiTrack::Write ( int num_tracks, int division )
 
         writer.WriteTrackHeader ( 0 ); // will be rewritten later
 
-        MIDIClockTime max_time = 0;
-        int max_event_num = t->GetNumEvents() - 1;
-        for ( int event_num = 0; event_num <= max_event_num; ++event_num )
-        {
-            const MIDITimedBigMessage *ev = t->GetEventAddress ( event_num );
+        const MIDITimedBigMessage *ev;
+        MIDIClockTime ev_time = 0;
 
+        for ( int event_num = 0; event_num < t->GetNumEvents(); ++event_num )
+        {
+            ev = t->GetEventAddress ( event_num );
             if ( !ev )
                 return false;
-
-            if ( event_num == max_event_num )
-            {
-                // we get time from any last track message, even if it don't written to file!
-                max_time = ev->GetTime();
-            }
 
             // don't write to midifile NoOp msgs
             if ( ev->IsNoOp() )
                 continue;
 
-            // don't write all possible track's META_END_OF_TRACK msgs
-            if ( ev->IsDataEnd() )
-                continue;
+            ev_time = ev->GetTime();
 
+            // ignore all msgs after EndOfTrack
+            if ( ev->IsDataEnd() )
+              break;
+
+            // write all other msgs
             writer.WriteEvent ( *ev );
 
             if ( writer.ErrorOccurred() )
                 return false;
         }
 
-        writer.WriteEndOfTrack ( max_time ); // write META_END_OF_TRACK msg
+        writer.WriteEndOfTrack ( ev_time );
         writer.RewriteTrackLength();
     }
 

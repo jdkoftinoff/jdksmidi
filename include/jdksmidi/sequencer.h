@@ -172,7 +172,7 @@ class MIDISequencerTrackNotifier : public MIDIProcessor
 {
 public:
     MIDISequencerTrackNotifier (
-        MIDISequencer *seq_,
+        const MIDISequencer *seq_, // VRM
         int trk,
         MIDISequencerGUIEventNotifier *n
     );
@@ -195,7 +195,7 @@ public:
     void NotifyConductor ( int item );
 
 private:
-    MIDISequencer *seq;
+    const MIDISequencer *seq; // VRM
     int track_num;
     MIDISequencerGUIEventNotifier *notifier;
 };
@@ -223,7 +223,7 @@ class MIDISequencerTrackState : public MIDISequencerTrackNotifier
 public:
 
     MIDISequencerTrackState (
-        MIDISequencer *seq_,
+        const MIDISequencer *seq_, // VRM
         int trk,
         MIDISequencerGUIEventNotifier *n
     );
@@ -244,16 +244,14 @@ public:
 
     bool notes_are_on;   // true if there are any notes currently on
     MIDIMatrix note_matrix;  // to keep track of all notes on
-
-
 };
 
 
 class MIDISequencerState
 {
 public:
-    MIDISequencerState ( MIDISequencer *s,
-                         MIDIMultiTrack *multitrack_,
+    MIDISequencerState ( const MIDISequencer *s, // VRM
+                         const MIDIMultiTrack *multitrack_, // VRM
                          MIDISequencerGUIEventNotifier *n );
 
     MIDISequencerState ( const MIDISequencerState &s );
@@ -262,7 +260,7 @@ public:
     const MIDISequencerState & operator = ( const MIDISequencerState &s );
 
     MIDISequencerGUIEventNotifier *notifier;
-    MIDIMultiTrack *multitrack;
+    const MIDIMultiTrack *multitrack; // VRM
     int num_tracks;
 
     MIDISequencerTrackState *track_state[64];
@@ -279,7 +277,7 @@ class MIDISequencer
 public:
 
     MIDISequencer (
-        MIDIMultiTrack *m,
+        const MIDIMultiTrack *m, // VRM
         MIDISequencerGUIEventNotifier *n = 0
     );
 
@@ -323,13 +321,14 @@ public:
     bool GoToMeasure ( int measure, int beat = 0 );
 
     bool GetNextEventTimeMs ( float *t );
+    bool GetNextEventTimeMs ( double *t ); // funcVRM
     bool GetNextEventTime ( MIDIClockTime *t );
     bool GetNextEvent ( int *tracknum, MIDITimedBigMessage *msg );
 
     void ScanEventsAtThisTime();
 
-    // recommended values for  time_precision_sec >= 0.001  and for  max_duration_hours = 1 ... 24
-    double GetMisicDurationInSeconds( float time_precision_sec = 0.1f, int max_duration_hours = 2 ); // funcVRM
+    // end of music is the time of last not end of track midi event!
+    double GetMisicDurationInSeconds(); // funcVRM
 
 protected:
 
@@ -342,8 +341,8 @@ protected:
     MIDISequencerTrackProcessor *track_processors[64];
 
     MIDISequencerState state;
-
 } ;
+
 }
 
 #endif
