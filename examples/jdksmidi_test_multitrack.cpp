@@ -39,7 +39,7 @@
 
 using namespace jdksmidi;
 
-void DumpMIDITimedBigMessage ( MIDITimedBigMessage *msg )
+void DumpMIDITimedBigMessage ( const MIDITimedBigMessage *msg )
 {
     if ( msg )
     {
@@ -83,7 +83,7 @@ void DumpAllTracks ( MIDIMultiTrack *mlt )
 void DumpMIDIMultiTrack ( MIDIMultiTrack *mlt )
 {
     MIDIMultiTrackIterator i ( mlt );
-    MIDITimedBigMessage *msg;
+    const MIDITimedBigMessage *msg;
     fprintf ( stdout , "Clocks per beat: %d\n\n", mlt->GetClksPerBeat() );
     i.GoToTime ( 0 );
 
