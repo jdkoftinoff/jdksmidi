@@ -45,6 +45,8 @@
 #include <string> // VRM
 #include <vector> // VRM
 #include <algorithm> // VRM
+#include <iostream> // VRM
+#include <sstream> // VRM
 
 namespace jdksmidi // VRM
 {
@@ -78,31 +80,14 @@ MIDI Files easily.
 
 */
 
-// VRM
-
 #ifdef WIN32
-#pragma warning(disable: 4996) // to take away "function was declared deprecated" warnings
-#pragma warning(disable: 4355) // 'this' used in base member initializer list
+#pragma warning(disable: 4996) // VRM // to take away "function was declared deprecated" warnings
+#pragma warning(disable: 4355) // VRM // 'this' used in base member initializer list
 #endif
 
-template <class I> inline void jdks_safe_delete_object(I *&obj)
-{
-    delete obj;
-    obj = 0;
 }
 
-template <class I> inline void jdks_safe_delete_array(I *&arr)
-{
-    delete [] arr;
-    arr = 0;
-}
-
-template <class D> inline int jdks_float2int(D d)
-{
-    return int( d >= D(0.) ? ( d + D(0.5) ):( d - D(0.5) ) );
-}
-
-}
+#include "jdksmidi/utils.h" // VRM
 
 #endif
 

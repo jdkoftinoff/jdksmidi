@@ -32,7 +32,6 @@
 */
 
 #ifndef JDKSMIDI_ADVANCEDSEQUENCER_H
-
 #define JDKSMIDI_ADVANCEDSEQUENCER_H
 
 #include "jdksmidi/midi.h"

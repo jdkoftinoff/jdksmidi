@@ -58,7 +58,7 @@ void DumpMIDIBigMessage( MIDITimedBigMessage *msg )
     }
 }
 
-void DumpMIDITimedBigMessage( MIDITimedBigMessage *msg )
+void DumpMIDITimedBigMessage( const MIDITimedBigMessage *msg )
 {
     if ( msg )
     {
@@ -114,7 +114,7 @@ void DumpAllTracks( MIDIMultiTrack *mlt )
 void DumpMIDIMultiTrack( MIDIMultiTrack *mlt )
 {
     MIDIMultiTrackIterator i ( mlt );
-    MIDITimedBigMessage *msg;
+    const MIDITimedBigMessage *msg;
     fprintf ( stdout , "Clocks per beat: %d\n\n", mlt->GetClksPerBeat() );
     i.GoToTime ( 0 );
 
@@ -211,16 +211,16 @@ int main( int argc, char **argv )
             }
         }
 
-        float time_precision_sec = 0.01f;
-        int max_duration_hours = 4;
-        double dt = seq.GetMisicDurationInSeconds( time_precision_sec, max_duration_hours );
+//      cout << MultiTrackAsText( tracks ); // new util fun
 
-        cout << "\nMisic duration = " << dt
-             << " seconds +- " << time_precision_sec << endl;
+        double dt = seq.GetMisicDurationInSeconds();
+
+        cout << "\nMisic duration = " << dt << endl;
     }
     else
     {
-        cerr << "usage:\n\tjdkmidi_test_sequencer FILE.mid [0 for DumpMIDIMultiTrack  or  1 for PlayDumpSequencer]\n";
+        cerr << "\nusage:\n    jdkmidi_test_sequencer FILE.mid [0 for DumpMIDIMultiTrack]\n";
+        cerr <<           "                                    [1 for PlayDumpSequencer]\n";
         return -1;
     }
 

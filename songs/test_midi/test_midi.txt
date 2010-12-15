@@ -1,0 +1,67 @@
+
+  {
+    outfile = "test1.mid";
+
+    Note(tracks, trk=0, t=0, chan=0, note=70, velocity=100, ON);
+          Note(tracks, trk,   t+=dt, chan, note+6,  velocity, ON);
+          Note(tracks, trk,   t+=dt, chan, note+6,  velocity, OFF);
+    Note(tracks, trk,   t+=dt, chan, note,  velocity, OFF);
+
+  }
+
+  {
+    outfile = "test2.mid";
+
+    Note(tracks, trk=0, t=0, chan=0, note=70, velocity=100, ON);
+          Note(tracks, trk,   t+=dt, chan, note+6,  velocity, ON);
+          Note(tracks, trk,   t+=dt, chan, note+6,  velocity, OFF);
+    Note(tracks, trk,   t+=dt, chan, note,  velocity, OFF);
+
+    Note(tracks, trk,   t+=dt, chan, note+2,  velocity, ON);
+    Note(tracks, trk,   t+=dt, chan, note+2,  velocity, OFF);
+  }
+
+  {
+    outfile = "test3.mid";
+
+    Note(tracks, trk=0, t=0, chan=0, note=70, velocity=100, ON);
+      Note(tracks, trk,   t+=dt, chan, note+2,  velocity, ON);
+        Note(tracks, trk,   t+=dt, chan, note+4,  velocity, ON);
+    Note(tracks, trk,   t+=dt, chan, note,  velocity, OFF);
+          Note(tracks, trk,   t+=dt, chan, note+6,  velocity, ON);
+          Note(tracks, trk,   t+=dt, chan, note+6,  velocity, OFF);
+      Note(tracks, trk,   t+=dt, chan, note+2,  velocity, OFF);
+        Note(tracks, trk,   t+=dt, chan, note+4,  velocity, OFF);
+  }
+
+  {
+    outfile = "test4.mid";
+
+    Note(tracks, trk=0, t=0, chan=0, note=70, velocity=100, ON);
+      Note(tracks, trk,   t+=dt, chan, note+2,  velocity, ON);
+        Note(tracks, trk,   t+=dt, chan, note+4,  velocity, ON);
+
+    AllNotesOff(tracks, trk, t+=dt, chan);
+  }
+
+  {
+    outfile = "test5.mid";
+
+    Note(tracks, trk=0, t=0, chan=0, note=70, velocity=100, ON);
+    Note(tracks, trk,   t+=dt, chan, 0,  0, ON);
+    Note(tracks, trk,   t+=dt, chan, 0,  0, OFF);
+  }
+
+  {
+    outfile = "test6.mid";
+
+    Note(tracks, trk=0, t=0, chan=0, note=70, velocity=100, ON);
+      Note(tracks, trk,   t+=dt, chan, note+2,  velocity, ON);
+        Note(tracks, trk,   t+=dt, chan, note+4,  velocity, ON);
+
+    AllNotesOff(tracks, trk, t+=dt, chan);
+
+    Note(tracks, trk,   t, chan, note+6,  velocity, ON);
+    Note(tracks, trk,   t+=dt, chan, 0,  0, ON);
+    Note(tracks, trk,   t+=dt, chan, 0,  0, OFF);
+  }

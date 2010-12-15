@@ -246,20 +246,40 @@ public:
     /// If the message is a note on message, IsNoteOn() will return true. You can then call GetChannel(), GetNote() and GetVelocity() for further information.
     bool IsNoteOn() const;
 
+    /// If the message is a note off message, IsNoteOff() will return true. You can then call GetChannel(), GetNote() and GetVelocity() for further information.
+    bool IsNoteOff() const;
+
     /// If the message is a note on message and velocity=0 (i.e. note off), IsNoteOnV0() will return true. You can then call GetChannel(), GetNote() for further information.
     bool IsNoteOnV0() const // funcVRM
     {
         return IsNoteOn() && GetVelocity() == 0;
     }
 
-    /// If the message is a note off message, IsNoteOff() will return true. You can then call GetChannel(), GetNote() and GetVelocity() for further information.
-    bool IsNoteOff() const;
+    bool IsNote() const // funcVRM
+    {
+        return IsNoteOn() || IsNoteOff();
+    }
+
+    bool ImplicitIsNoteOn() const // funcVRM
+    {
+        return IsNoteOn() && GetVelocity() != 0;
+    }
+
+    bool ImplicitIsNoteOff() const // funcVRM
+    {
+        return IsNoteOff() || IsNoteOnV0();
+    }
 
     /// If the message is a polyphonic pressure chanel message, IsPolyPressure() will return true. You can then call GetChannel(), GetNote() and GetVelocity() for further informtion.
     bool IsPolyPressure() const;
 
     /// If the message is a control change message, IsControlChange() will return true. You can then call GetChannel(), GetController() and GetControllerValue() for further information.
     bool IsControlChange() const;
+
+    bool IsPanChange() const // funcVRM
+    {
+        return IsControlChange() && GetController() == C_PAN;
+    }
 
     /// If the message is a program change message, IsProgramChange() will return true.  You can then call GetChannel() and GetPGValue() for further information.
     bool IsProgramChange() const;
@@ -302,25 +322,39 @@ public:
 
     bool IsMetaEvent() const;
 
-    bool IsChannelEvent() const; // funcVRM
+    bool IsChannelEvent() const; // funcVRM // the same as IsChannelMsg()
 
     bool IsTextEvent() const;
 
+    bool IsTrackName() const // funcVRM
+    {
+        return IsTextEvent() && GetMetaType() == META_TRACK_NAME ;
+    }
+
     bool IsAllNotesOff() const;
 
-    bool IsNoOp() const;
+    bool IsNoOp() const
+    {
+        return ( service_num == SERVICE_NO_OPERATION ); // VRM
+    }
 
     bool IsChannelPrefix() const; // funcVRM
 
     bool IsTempo() const;
 
     bool IsDataEnd() const;
+    bool IsEndOfTrack() const // funcVRM
+    {
+        return IsDataEnd();
+    }
 
     bool IsTimeSig() const;
 
     bool IsKeySig() const;
 
     bool IsBeatMarker() const;
+
+    bool IsUserAppMarker() const; // funcVRM
 
     ///
     /// GetTempo32() returns the tempo value in 1/32 bpm
@@ -442,8 +476,10 @@ public:
 
     void SetControlChange ( unsigned char chan, unsigned char ctrl, unsigned char val );
 
-    // set pan control in chan: pan = -1. for left, 0. for centre, +1.0 for right
-    void SetPanorama( unsigned char chan, double pan ); // funcVRM
+    // set panorama control in chan: pan = -1. for lefmost, 0. for centre, +1. for rightmost
+    void SetPan( unsigned char chan, double pan ); // funcVRM
+
+    double GetPan(); // funcVRM
 
     void SetProgramChange ( unsigned char chan, unsigned char val );
 
@@ -467,7 +503,7 @@ public:
 
     void SetMetaEvent ( unsigned char type, unsigned short v );
 
-    void SetAllNotesOff ( unsigned char chan, unsigned char type = C_ALL_NOTES_OFF );
+    void SetAllNotesOff ( unsigned char chan, unsigned char type = C_ALL_NOTES_OFF, unsigned char mode = 0); // funcVRM
 
     void SetLocal ( unsigned char chan, unsigned char v );
 
@@ -477,13 +513,17 @@ public:
         service_num = SERVICE_NO_OPERATION;
     }
 
-    void SetTempo ( unsigned long tempo ); // funcVRM
+    void SetTempo ( unsigned long tempo ); // funcVRM // If no tempo is define, 120 beats per minute is assumed.
 
     void SetTempo32 ( unsigned long tempo_times_32 ); // funcVRM
 
     void SetText ( unsigned short text_num, unsigned char type = META_GENERIC_TEXT );
 
     void SetDataEnd();
+    void SetEndOfTrack() // funcVRM
+    {
+        SetDataEnd();
+    }
 
     void SetTimeSig ( // funcVRM
         unsigned char numerator = 4,
@@ -494,6 +534,8 @@ public:
     void SetKeySig ( signed char sharp_flats, unsigned char major_minor );
 
     void SetBeatMarker();
+
+    void SetUserAppMarker(); // funcVRM
 
     friend bool operator == ( const MIDIMessage &m1, const MIDIMessage &m2 ); // funcVRM
 
@@ -575,6 +617,16 @@ public:
 
     const MIDISystemExclusive *GetSysEx() const;
 
+    std::string GetSysExString() const // funcVRM
+    {
+        const unsigned char *buf = GetSysEx()->GetBuf();
+        int len = GetSysEx()->GetLengthSE();
+        std::string str;
+        for (int i = 0; i < len; ++i)
+            str.push_back( (char) buf[i] );
+        return str;
+    }
+
     friend bool operator == ( const MIDIBigMessage &m1, const MIDIBigMessage &m2 ); // funcVRM
 
 protected: // VRM
@@ -642,7 +694,7 @@ protected:
 
 
 
-class MIDIDeltaTimedMessage : public MIDIMessage // TODO@VRM this class don't need because don't used ?
+class MIDIDeltaTimedMessage : public MIDIMessage
 {
 public:
 
@@ -752,7 +804,7 @@ protected:
 
 
 
-class MIDIDeltaTimedBigMessage : public MIDIBigMessage // TODO@VRM this class don't need because don't used ?
+class MIDIDeltaTimedBigMessage : public MIDIBigMessage
 {
 public:
     //

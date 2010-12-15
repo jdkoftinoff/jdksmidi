@@ -50,9 +50,10 @@ int main ( int argc, char **argv )
     MIDIClockTime t; // time in midi ticks
     MIDIClockTime dt = 100; // time interval (1 second)
     int clks_per_beat = 100; // number of ticks in crotchet (1...32767)
-
     int num_tracks = 2; // tracks 0 and 1
+
     MIDIMultiTrack tracks( num_tracks );  // the object which will hold all the tracks
+    tracks.SetClksPerBeat( clks_per_beat );
     int trk; // track number, 0 or 1
 
     t = 0;
@@ -85,6 +86,7 @@ int main ( int argc, char **argv )
 
     int tempo = 1000000; // set tempo to 1 000 000 usec = 1 sec in crotchet
     // with value of clks_per_beat (100) result 10 msec in 1 midi tick
+    // If no tempo is define, 120 beats per minute is assumed.
 
     // m.SetTime( t ); // do'nt need, because previous time is not changed
     m.SetTempo( tempo );
@@ -211,7 +213,7 @@ int main ( int argc, char **argv )
         MIDIFileWriteMultiTrack writer( &tracks, &out_stream );
 
         // write the output file
-        if ( writer.Write( num_tracks, clks_per_beat ) )
+        if ( writer.Write( num_tracks ) )
         {
             cout << "\nOK writing file " << outfile_name << endl;
             return_code = 0;

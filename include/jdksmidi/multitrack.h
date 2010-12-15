@@ -108,6 +108,14 @@ public:
         clks_per_beat = cpb;
     }
 
+    int GetNumEvents() const // funcVRM
+    {
+        int num_events = 0;
+        for ( int i = 0; i < number_of_tracks; ++i )
+            num_events += tracks[i]->GetNumEvents();
+        return num_events;
+    }
+
 protected:
 
     MIDITrack **tracks;
@@ -154,14 +162,14 @@ class MIDIMultiTrackIterator
 {
 public:
 
-    MIDIMultiTrackIterator ( MIDIMultiTrack *mlt );
+    MIDIMultiTrackIterator ( const MIDIMultiTrack *mlt ); // VRM
     virtual ~MIDIMultiTrackIterator();
 
 
     void GoToTime ( MIDIClockTime time );
 
     bool GetCurEventTime ( MIDIClockTime *t ) const;
-    bool GetCurEvent ( int *track, MIDITimedBigMessage **msg ) const;
+    bool GetCurEvent ( int *track, const MIDITimedBigMessage **msg ) const; // VRM
     bool GoToNextEvent();
 
     bool GoToNextEventOnTrack ( int track );
@@ -181,10 +189,6 @@ public:
         state = s;
     }
 
-    MIDIMultiTrack * GetMultiTrack()
-    {
-        return multitrack;
-    }
     const MIDIMultiTrack * GetMultiTrack() const
     {
         return multitrack;
@@ -192,7 +196,7 @@ public:
 
 protected:
 
-    MIDIMultiTrack *multitrack;
+    const MIDIMultiTrack *multitrack; // VRM
     MIDIMultiTrackIteratorState state;
 };
 

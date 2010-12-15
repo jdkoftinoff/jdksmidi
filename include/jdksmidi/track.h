@@ -151,11 +151,31 @@ public:
 
     const MIDITimedBigMessage * GetEventAddress ( int event_num ) const;
 
-    const  MIDITimedBigMessage *GetEvent ( int event_num ) const;
+    const MIDITimedBigMessage *GetEvent ( int event_num ) const;
     MIDITimedBigMessage *GetEvent ( int event_num );
+
+    const MIDITimedBigMessage *GetLastEvent() const // funcVRM
+    {
+        return GetEvent( GetNumEvents() - 1 );
+    }
+
+    MIDIClockTime GetLastEventTime() const // funcVRM
+    {
+        const MIDITimedBigMessage *msg = GetLastEvent();
+        return ( msg == 0 )? 0 : msg->GetTime();
+    }
+
     bool GetEvent ( int event_num, MIDITimedBigMessage *msg ) const;
 
     bool PutEvent ( const MIDITimedBigMessage &msg );
+
+    bool PutEvent ( const MIDIDeltaTimedMessage &msg ) // funcVRM
+    {
+        return PutEvent ( MIDIDeltaTimedBigMessage (msg) );
+    }
+
+    bool PutEvent ( const MIDIDeltaTimedBigMessage &msg ); // funcVRM
+
     // put event and clear msg, exclude its time, keep time unchanged!
     bool PutEvent2 ( MIDITimedBigMessage &msg ); // funcVRM
     bool PutEvent ( const MIDITimedMessage &msg, const MIDISystemExclusive *sysex ); // VRM
@@ -176,6 +196,12 @@ public:
     {
         return num_events;
     }
+
+    bool IsValidEventNum( int event_num ) const // funcVRM
+    {
+        return ( 0 <= event_num && event_num < num_events );
+    }
+
     bool IsTrackEmpty() const
     {
         return num_events == 0; // VRM
@@ -185,7 +211,7 @@ public:
     bool EventsOrderOK() const; // funcVRM
     // sort events temporal order
     void SortEventsOrder(); // funcVRM
-    // remove events with identical time and all other data, return numbers of such events
+    // remove events with identical time and all other data, return number of such events
     int RemoveIdenticalEvents( int max_distance_between_identical_events = 32 ); // funcVRM
 
 private:
