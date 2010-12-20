@@ -112,7 +112,7 @@ public:
         return ( unsigned char ) status;
     }
 
-    /// If the message is a channel message, this method returns the MIDI channel that the message is on.
+    /// If the message is a channel message, this method returns the MIDI channel (0...15) that the message is on.
     unsigned char GetChannel() const
     {
         return ( unsigned char ) ( status & 0x0F );
@@ -235,6 +235,7 @@ public:
     /// If the message is a key signature meta-message, GetKeySigMajorMinor() returns to standard midi file form of the key major/minor flag. 0 means a major key, 1 means a minor key.
     unsigned char GetKeySigMajorMinor() const;
 
+    // not midi message
     bool IsServiceMsg() const // funcVRM
     {
         return service_num != NOT_SERVICE;
@@ -276,6 +277,7 @@ public:
     /// If the message is a control change message, IsControlChange() will return true. You can then call GetChannel(), GetController() and GetControllerValue() for further information.
     bool IsControlChange() const;
 
+    // panorama msg
     bool IsPanChange() const // funcVRM
     {
         return IsControlChange() && GetController() == C_PAN;
@@ -326,9 +328,14 @@ public:
 
     bool IsTextEvent() const;
 
+    bool IsLyricText() const // funcVRM
+    {
+        return ( IsTextEvent() && GetMetaType() == META_LYRIC_TEXT );
+    }
+
     bool IsTrackName() const // funcVRM
     {
-        return IsTextEvent() && GetMetaType() == META_TRACK_NAME ;
+        return ( IsTextEvent() && GetMetaType() == META_TRACK_NAME );
     }
 
     bool IsAllNotesOff() const;
@@ -549,7 +556,7 @@ protected:
 
     unsigned int service_num; // VRM // if service_num != NOT_SERVICE than event used for internal service
 
-    unsigned char status; // type of events and channal for Channal events, type of SysEx events
+    unsigned char status; // type of events and channel for Channel events, type of SysEx events
     unsigned char byte1; // type of Meta events, not used for SysExURT events
     unsigned char byte2; // Meta events or SysExURT events first data byte (#1)
     unsigned char byte3;

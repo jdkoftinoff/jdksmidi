@@ -130,11 +130,12 @@ int main ( int argc, char **argv )
 
     // we add note 1: press and release in (dt) ticks
 
-    tracks.GetTrack( trk )->PutTextEvent(t, META_LYRIC_TEXT, "Left"); // add words to music in the present situation
-
     m.SetTime( t );
     m.SetNoteOn( chan = 0, note = 60, velocity = 100 );
     tracks.GetTrack( trk )->PutEvent( m );
+
+    // after note(s) on before note(s) off: add words to music in the present situation
+    tracks.GetTrack( trk )->PutTextEvent(t, META_LYRIC_TEXT, "Left");
 
     m.SetTime( t += dt );
     m.SetNoteOff( chan, note, velocity );
@@ -144,10 +145,10 @@ int main ( int argc, char **argv )
 
     // note 2
 
-    tracks.GetTrack( trk )->PutTextEvent(t, META_LYRIC_TEXT, "Centre");
-
     m.SetNoteOn( chan = 1, note = 64, velocity );
     tracks.GetTrack( trk )->PutEvent( m );
+
+    tracks.GetTrack( trk )->PutTextEvent(t, META_LYRIC_TEXT, "Centre");
 
     m.SetTime( t += dt );
     m.SetNoteOff( chan, note, velocity );
@@ -155,10 +156,10 @@ int main ( int argc, char **argv )
 
     // note 3
 
-    tracks.GetTrack( trk )->PutTextEvent(t, META_LYRIC_TEXT, "Right");
-
     m.SetNoteOn( chan = 2, note = 67, velocity );
     tracks.GetTrack( trk )->PutEvent( m );
+
+    tracks.GetTrack( trk )->PutTextEvent(t, META_LYRIC_TEXT, "Right");
 
     m.SetTime( t += dt );
     m.SetNoteOff( chan, note, velocity );
@@ -170,8 +171,6 @@ int main ( int argc, char **argv )
 
     // add chord: 3 notes simultaneous
 
-    tracks.GetTrack( trk )->PutTextEvent(t, META_LYRIC_TEXT, "Chord");
-
     // press
     m.SetTime( t );
     m.SetNoteOn( chan = 0, note = 60, velocity );
@@ -180,6 +179,8 @@ int main ( int argc, char **argv )
     tracks.GetTrack( trk )->PutEvent( m );
     m.SetNoteOn( chan = 2, note = 67, velocity );
     tracks.GetTrack( trk )->PutEvent( m );
+
+    tracks.GetTrack( trk )->PutTextEvent(t, META_LYRIC_TEXT, "Chord");
 
     // release
     m.SetTime( t += (2*dt) );

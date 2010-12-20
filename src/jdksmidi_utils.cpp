@@ -34,7 +34,7 @@ namespace jdksmidi
 {
 
 
-void CompressStartPause( const MIDIMultiTrack &src, MIDIMultiTrack &dst )
+void CompressStartPause( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ignore_channel )
 {
     dst.ClearAndResize( src.GetNumTracks() );
     dst.SetClksPerBeat( src.GetClksPerBeat() );
@@ -55,6 +55,10 @@ void CompressStartPause( const MIDIMultiTrack &src, MIDIMultiTrack &dst )
         if ( ev.IsServiceMsg() )
             continue;
 
+        if ( ev.IsChannelEvent() &&
+             ev.GetChannel() == ignore_channel )
+            continue;
+
         ev_time = ev.GetTime();
         if ( compress )
         {
@@ -66,7 +70,7 @@ void CompressStartPause( const MIDIMultiTrack &src, MIDIMultiTrack &dst )
 
             ev.SetTime( delta_ev_time );
 
-            if ( ev.IsNoteOn() && !ev.IsNoteOnV0() )
+            if ( ev.ImplicitIsNoteOn() )
             {
                 compress = false;
                 ev_time0 = ev_time - delta_ev_time;
@@ -206,7 +210,7 @@ bool AddEndingPause( MIDIMultiTrack &tracks, int track_num, MIDIClockTime pause_
     MIDIClockTime t = tracks.GetTrack( track_num )->GetLastEventTime();
     MIDITimedBigMessage msg;
     msg.SetTime( t + pause_ticks );
-    // add lowest "note on" in channal 0 with velocity 0 (i.e. "note off")
+    // add lowest "note on" in channel 0 with velocity 0 (i.e. "note off")
     msg.SetNoteOn( 0, 0, 0 );
     return tracks.GetTrack( track_num )->PutEvent( msg );
 }

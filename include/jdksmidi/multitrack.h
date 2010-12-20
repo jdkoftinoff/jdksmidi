@@ -88,7 +88,7 @@ public:
     bool ClearAndResize ( int num_tracks ); // funcVRM
 
     // store src track and remake multitrack object with 17 tracks (src track can be a member of multitrack obiect),
-    // move src track channal events to tracks 1-16, and all other types of events to track 0
+    // move src track channel events to tracks 1-16, and all other types of events to track 0
     bool AssignEventsToTracks ( const MIDITrack *src ); // funcVRM
 
     // the same as previous, but argument is track number of multitrack object himself
