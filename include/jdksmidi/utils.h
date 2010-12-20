@@ -33,8 +33,8 @@ namespace jdksmidi
 // copy events from src to dst multitrack for time interval from 0 to max_time_sec seconds
 void ClipMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst, double max_time_sec );
 
-// skip pause before really start of music
-void CompressStartPause( const MIDIMultiTrack &src, MIDIMultiTrack &dst );
+// skip pause before really start of music, ignore channel 0...15 events (9 for percussion)
+void CompressStartPause( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ignore_channel = -1 );
 
 bool ReadMidiFile(const char *file, MIDIMultiTrack &dst);
   

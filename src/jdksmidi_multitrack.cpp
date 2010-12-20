@@ -98,10 +98,10 @@ bool MIDIMultiTrack::AssignEventsToTracks ( const MIDITrack *src ) // funcVRM
     MIDITrack tmp( *src ); // make copy of src track
 
     // renew multitrack object with 17 tracks:
-    // tracks 1-16 for channal events, and track 0 for other types of events
+    // tracks 1-16 for channel events, and track 0 for other types of events
     ClearAndResize( 17 );
 
-    // move events to tracks 0-16 according it's types/channals
+    // move events to tracks 0-16 according it's types/channels
     for ( int i = 0; i < tmp.GetNumEvents(); ++i )
     {
         const MIDITimedBigMessage *msg;
