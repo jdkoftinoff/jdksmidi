@@ -60,14 +60,14 @@ public:
 // The possible events in a MIDI Files
 //
 
-    virtual bool mf_metamisc ( MIDIClockTime time, int type, int len, unsigned char *data ); // VRM
-    virtual bool mf_timesig ( MIDIClockTime time, int, int, int, int ); // funcVRM
-    virtual bool mf_tempo ( MIDIClockTime time, unsigned char a, unsigned char b, unsigned char c ); // funcVRM
-    virtual bool mf_keysig ( MIDIClockTime time, int, int ); // VRM
-    virtual bool mf_sqspecific ( MIDIClockTime time, int, unsigned char * ); // VRM
-    virtual bool mf_text ( MIDIClockTime time, int, int, unsigned char * ); // VRM
-    virtual bool mf_eot ( MIDIClockTime time ); // VRM
-    virtual bool mf_sysex ( MIDIClockTime time, int type, int len, unsigned char *s ); // funcVRM
+    virtual bool mf_metamisc ( MIDIClockTime time, int type, int len, unsigned char *data );
+    virtual bool mf_timesig ( MIDIClockTime time, int, int, int, int );
+    virtual bool mf_tempo ( MIDIClockTime time, unsigned char a, unsigned char b, unsigned char c );
+    virtual bool mf_keysig ( MIDIClockTime time, int, int );
+    virtual bool mf_sqspecific ( MIDIClockTime time, int, unsigned char * );
+    virtual bool mf_text ( MIDIClockTime time, int, int, unsigned char * );
+    virtual bool mf_eot ( MIDIClockTime time );
+    virtual bool mf_sysex ( MIDIClockTime time, int type, int len, unsigned char *s );
 
 //
 // the following methods are to be overridden for your specific purpose
@@ -82,14 +82,14 @@ public:
 // Higher level dispatch functions
 //
 
-    virtual bool ChanMessage ( const MIDITimedMessage &msg ); // VRM
+    virtual bool ChanMessage ( const MIDITimedMessage &msg );
     // test and sort events temporal order in all tracks
-    virtual void SortEventsOrder(); // funcVRM
+    virtual void SortEventsOrder();
 
 protected:
 
     // return false if dest_track absent or no space for event
-    bool AddEventToMultiTrack ( const MIDITimedMessage &msg, MIDISystemExclusive *sysex, int dest_track ); // VRM
+    bool AddEventToMultiTrack ( const MIDITimedMessage &msg, MIDISystemExclusive *sysex, int dest_track );
 
     MIDIMultiTrack *multitrack;
     int cur_track;

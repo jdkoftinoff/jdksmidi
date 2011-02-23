@@ -60,7 +60,7 @@ MIDIParser::MIDIParser ( ushort max_sysex_size )
 MIDIParser::~MIDIParser()
 {
     ENTER ( "MIDIParser::~MIDIParser" );
-    jdks_safe_delete_object( sysex ); // VRM
+    jdks_safe_delete_object( sysex );
 }
 
 
@@ -235,7 +235,7 @@ bool MIDIParser::ParseSystemByte ( uchar b, MIDIMessage *msg )
 void MIDIParser::ParseStatusByte ( uchar b )
 {
     ENTER ( "MIDIParser::ParseStatusByte" );
-    int len = GetMessageLength ( b ); // VRM
+    int len = GetMessageLength ( b );
 
     if ( len == 2 )
     {

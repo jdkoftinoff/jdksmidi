@@ -46,7 +46,7 @@ namespace jdksmidi
 class  MIDIFileShow : public MIDIFileEvents
 {
 public:
-    MIDIFileShow ( FILE *out_, bool sqspecific_as_text_ = false ); // VRM
+    MIDIFileShow ( FILE *out_, bool sqspecific_as_text_ = false );
     virtual ~MIDIFileShow();
 
 protected:
@@ -73,20 +73,20 @@ protected:
     virtual void mf_chan_after ( const MIDITimedMessage &msg );
     virtual void mf_control ( const MIDITimedMessage &msg );
 
-    virtual bool mf_metamisc ( MIDIClockTime time, int type, int len, unsigned char *data ); // VRM
-    virtual bool mf_timesig ( MIDIClockTime time, int, int, int, int ); // funcVRM
-    virtual bool mf_tempo ( MIDIClockTime time, unsigned char a, unsigned char b, unsigned char c ); // funcVRM
-    virtual bool mf_keysig ( MIDIClockTime time, int, int ); // VRM
-    virtual bool mf_sqspecific ( MIDIClockTime time, int, unsigned char * ); // VRM
-    virtual bool mf_text ( MIDIClockTime time, int, int, unsigned char * ); // VRM
-    virtual bool mf_eot ( MIDIClockTime time ); // VRM
-    virtual bool mf_sysex ( MIDIClockTime time, int type, int len, unsigned char *s ); // funcVRM
+    virtual bool mf_metamisc ( MIDIClockTime time, int type, int len, unsigned char *data );
+    virtual bool mf_timesig ( MIDIClockTime time, int, int, int, int );
+    virtual bool mf_tempo ( MIDIClockTime time, unsigned char a, unsigned char b, unsigned char c );
+    virtual bool mf_keysig ( MIDIClockTime time, int, int );
+    virtual bool mf_sqspecific ( MIDIClockTime time, int, unsigned char * );
+    virtual bool mf_text ( MIDIClockTime time, int, int, unsigned char * );
+    virtual bool mf_eot ( MIDIClockTime time );
+    virtual bool mf_sysex ( MIDIClockTime time, int type, int len, unsigned char *s );
 
     FILE *out;
     int division;
 
 private:
-    bool sqspecific_as_text; // VRM if true print META_SEQUENCER_SPECIFIC events as text string
+    bool sqspecific_as_text; // if true print META_SEQUENCER_SPECIFIC events as text string
 
 };
 

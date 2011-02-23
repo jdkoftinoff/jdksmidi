@@ -172,7 +172,7 @@ class MIDISequencerTrackNotifier : public MIDIProcessor
 {
 public:
     MIDISequencerTrackNotifier (
-        const MIDISequencer *seq_, // VRM
+        const MIDISequencer *seq_,
         int trk,
         MIDISequencerGUIEventNotifier *n
     );
@@ -195,7 +195,7 @@ public:
     void NotifyConductor ( int item );
 
 private:
-    const MIDISequencer *seq; // VRM
+    const MIDISequencer *seq;
     int track_num;
     MIDISequencerGUIEventNotifier *notifier;
 };
@@ -223,7 +223,7 @@ class MIDISequencerTrackState : public MIDISequencerTrackNotifier
 public:
 
     MIDISequencerTrackState (
-        const MIDISequencer *seq_, // VRM
+        const MIDISequencer *seq_,
         int trk,
         MIDISequencerGUIEventNotifier *n
     );
@@ -250,8 +250,8 @@ public:
 class MIDISequencerState
 {
 public:
-    MIDISequencerState ( const MIDISequencer *s, // VRM
-                         const MIDIMultiTrack *multitrack_, // VRM
+    MIDISequencerState ( const MIDISequencer *s,
+                         const MIDIMultiTrack *multitrack_,
                          MIDISequencerGUIEventNotifier *n );
 
     MIDISequencerState ( const MIDISequencerState &s );
@@ -260,7 +260,7 @@ public:
     const MIDISequencerState & operator = ( const MIDISequencerState &s );
 
     MIDISequencerGUIEventNotifier *notifier;
-    const MIDIMultiTrack *multitrack; // VRM
+    const MIDIMultiTrack *multitrack;
     int num_tracks;
 
     MIDISequencerTrackState *track_state[64];
@@ -277,7 +277,7 @@ class MIDISequencer
 public:
 
     MIDISequencer (
-        const MIDIMultiTrack *m, // VRM
+        const MIDIMultiTrack *m,
         MIDISequencerGUIEventNotifier *n = 0
     );
 
@@ -321,14 +321,14 @@ public:
     bool GoToMeasure ( int measure, int beat = 0 );
 
     bool GetNextEventTimeMs ( float *t );
-    bool GetNextEventTimeMs ( double *t ); // funcVRM
+    bool GetNextEventTimeMs ( double *t );
     bool GetNextEventTime ( MIDIClockTime *t );
     bool GetNextEvent ( int *tracknum, MIDITimedBigMessage *msg );
 
     void ScanEventsAtThisTime();
 
     // end of music is the time of last not end of track midi event!
-    double GetMisicDurationInSeconds(); // funcVRM
+    double GetMisicDurationInSeconds();
 
 protected:
 

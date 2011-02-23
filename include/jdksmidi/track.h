@@ -143,7 +143,7 @@ public:
 //  bool  Delete( int start_event, int num_events);
 //  void  Sort();
 
-    const MIDITrack & operator = ( const MIDITrack & src ); // funcVRM
+    const MIDITrack & operator = ( const MIDITrack & src );
 
     bool Expand ( int increase_amount = ( MIDITrackChunkSize ) );
 
@@ -154,12 +154,12 @@ public:
     const MIDITimedBigMessage *GetEvent ( int event_num ) const;
     MIDITimedBigMessage *GetEvent ( int event_num );
 
-    const MIDITimedBigMessage *GetLastEvent() const // funcVRM
+    const MIDITimedBigMessage *GetLastEvent() const
     {
         return GetEvent( GetNumEvents() - 1 );
     }
 
-    MIDIClockTime GetLastEventTime() const // funcVRM
+    MIDIClockTime GetLastEventTime() const
     {
         const MIDITimedBigMessage *msg = GetLastEvent();
         return ( msg == 0 )? 0 : msg->GetTime();
@@ -169,20 +169,20 @@ public:
 
     bool PutEvent ( const MIDITimedBigMessage &msg );
 
-    bool PutEvent ( const MIDIDeltaTimedMessage &msg ) // funcVRM
+    bool PutEvent ( const MIDIDeltaTimedMessage &msg )
     {
         return PutEvent ( MIDIDeltaTimedBigMessage (msg) );
     }
 
-    bool PutEvent ( const MIDIDeltaTimedBigMessage &msg ); // funcVRM
+    bool PutEvent ( const MIDIDeltaTimedBigMessage &msg );
 
     // put event and clear msg, exclude its time, keep time unchanged!
-    bool PutEvent2 ( MIDITimedBigMessage &msg ); // funcVRM
-    bool PutEvent ( const MIDITimedMessage &msg, const MIDISystemExclusive *sysex ); // VRM
+    bool PutEvent2 ( MIDITimedBigMessage &msg );
+    bool PutEvent ( const MIDITimedMessage &msg, const MIDISystemExclusive *sysex );
     bool SetEvent ( int event_num, const MIDITimedBigMessage &msg );
 
     // put text message with known length (w/o ending NULL), or evaluate it if zero length
-    bool PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length = 0 ); // funcVRM
+    bool PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length = 0 );
 
     bool MakeEventNoOp ( int event_num );
 
@@ -197,22 +197,22 @@ public:
         return num_events;
     }
 
-    bool IsValidEventNum( int event_num ) const // funcVRM
+    bool IsValidEventNum( int event_num ) const
     {
         return ( 0 <= event_num && event_num < num_events );
     }
 
     bool IsTrackEmpty() const
     {
-        return num_events == 0; // VRM
+        return num_events == 0;
     }
 
     // test events temporal order, return false if events out of order
-    bool EventsOrderOK() const; // funcVRM
+    bool EventsOrderOK() const;
     // sort events temporal order
-    void SortEventsOrder(); // funcVRM
+    void SortEventsOrder();
     // remove events with identical time and all other data, return number of such events
-    int RemoveIdenticalEvents( int max_distance_between_identical_events = 32 ); // funcVRM
+    int RemoveIdenticalEvents( int max_distance_between_identical_events = 32 );
 
 private:
 
@@ -223,7 +223,7 @@ private:
     int buf_size;
     int num_events;
 
-    struct Event_time // VRM
+    struct Event_time
     {
         int event_number;
         MIDIClockTime time;

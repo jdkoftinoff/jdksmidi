@@ -28,5 +28,5 @@
 
 2010 October 12: GPL Patches from Vadim Madgazin <vrm@vmgames> accepted into jdksmidi.
      http://github.com/vadimrm/jdksmidi
-     The file CONTRIBUTORS is created
+     The file CONTRIBUTORS (AUTHORS) is created
 

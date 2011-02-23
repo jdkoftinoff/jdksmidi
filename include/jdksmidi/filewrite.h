@@ -80,7 +80,7 @@ public:
     }
 
 #ifdef WIN32
-    MIDIFileWriteStreamFileName ( const wchar_t *fname ) : MIDIFileWriteStreamFile ( _wfopen ( fname, L"wb" ) ) // funcVRM
+    MIDIFileWriteStreamFileName ( const wchar_t *fname ) : MIDIFileWriteStreamFile ( _wfopen ( fname, L"wb" ) )
     {
     }
 #endif
@@ -130,13 +130,13 @@ public:
     void WriteFileHeader ( int format, int ntrks, int division );
     void WriteTrackHeader ( unsigned long length );
 
-    void WriteEvent ( const MIDITimedBigMessage &m ); // funcVRM
+    void WriteEvent ( const MIDITimedBigMessage &m );
 
-    void WriteSystemExclusiveEvent ( const MIDITimedBigMessage &m ); // funcVRM
+    void WriteSystemExclusiveEvent ( const MIDITimedBigMessage &m );
     void WriteTextEvent ( unsigned long time, unsigned char type, const char *text );
     void WriteMetaEvent ( unsigned long time, unsigned char type, const unsigned char *data, long length );
-    void WriteMetaMisc ( const MIDITimedBigMessage &m ); // funcVRM
-    void WriteTempo ( const MIDITimedBigMessage &m ); // VRM
+    void WriteMetaMisc ( const MIDITimedBigMessage &m );
+    void WriteTempo ( const MIDITimedBigMessage &m );
 
     void WriteKeySignature ( unsigned long time, char sharp_flat, char minor );
     void WriteTimeSignature (
@@ -144,12 +144,12 @@ public:
         unsigned char numerator = 4,
         unsigned char denominator_power = 2,
         unsigned char midi_clocks_per_metronome = 24,
-        unsigned char num_32nd_per_midi_quarter_note = 8 ); // VRM
+        unsigned char num_32nd_per_midi_quarter_note = 8 );
 
     void WriteEndOfTrack ( unsigned long time );
     virtual void RewriteTrackLength();
     // false argument disable use running status in midi file (true on default)
-    void UseRunningStatus( bool use ) // funcVRM
+    void UseRunningStatus( bool use )
     {
         use_running_status = use;
     }
@@ -182,7 +182,7 @@ protected:
     void WriteDeltaTime ( unsigned long time );
 
 private:
-    bool use_running_status; // VRM true on default
+    bool use_running_status; // true on default
     bool error;
     bool within_track;
     unsigned long file_length;

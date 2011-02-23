@@ -42,7 +42,7 @@
 namespace jdksmidi
 {
 
-const int lut_msglen[16] = // VRM
+const int lut_msglen[16] =
 {
     0, 0, 0, 0, 0, 0, 0, 0,
     3, // 0x80=note off, 3 bytes
@@ -55,7 +55,7 @@ const int lut_msglen[16] = // VRM
     -1 // 0xF0=other things. may vary.
 };
 
-const int lut_sysmsglen[16] = // VRM
+const int lut_sysmsglen[16] =
 {
 // System Common Messages
     -1, // 0xF0=Normal SysEx Events start. may vary

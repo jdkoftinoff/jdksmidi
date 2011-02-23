@@ -95,7 +95,7 @@ MIDITrack::~MIDITrack()
 {
     for ( int i = 0; i < buf_size / MIDITrackChunkSize; ++i )
     {
-        jdks_safe_delete_object( chunk[i] ); // VRM
+        jdks_safe_delete_object( chunk[i] );
     }
 }
 
@@ -104,7 +104,7 @@ void MIDITrack::Clear()
     num_events = 0;
 }
 
-bool MIDITrack::EventsOrderOK() const // funcVRM
+bool MIDITrack::EventsOrderOK() const
 {
     if ( num_events < 2 )
         return true;
@@ -122,7 +122,7 @@ bool MIDITrack::EventsOrderOK() const // funcVRM
     return true;
 }
 
-void MIDITrack::SortEventsOrder() // funcVRM
+void MIDITrack::SortEventsOrder()
 {
     std::vector< Event_time > et( num_events );
 
@@ -148,7 +148,7 @@ void MIDITrack::SortEventsOrder() // funcVRM
     *this = trk;
 }
 
-int MIDITrack::RemoveIdenticalEvents( int max_distance_between_identical_events ) // funcVRM
+int MIDITrack::RemoveIdenticalEvents( int max_distance_between_identical_events )
 {
     int removed = 0;
 
@@ -174,7 +174,7 @@ int MIDITrack::RemoveIdenticalEvents( int max_distance_between_identical_events 
     return removed;
 }
 
-const MIDITrack & MIDITrack::operator = ( const MIDITrack & src ) // funcVRM
+const MIDITrack & MIDITrack::operator = ( const MIDITrack & src )
 {
     if ( num_events == src.num_events )
     {
@@ -510,7 +510,7 @@ bool MIDITrack::PutEvent ( const MIDITimedBigMessage &msg )
     return true;
 }
 
-bool MIDITrack::PutEvent ( const MIDIDeltaTimedBigMessage &msg ) // funcVRM
+bool MIDITrack::PutEvent ( const MIDIDeltaTimedBigMessage &msg )
 {
     const MIDIBigMessage msg2( msg );
     MIDITimedBigMessage m = msg2;
@@ -519,7 +519,7 @@ bool MIDITrack::PutEvent ( const MIDIDeltaTimedBigMessage &msg ) // funcVRM
     return PutEvent( m );
 }
 
-bool MIDITrack::PutEvent2 ( MIDITimedBigMessage &msg ) // funcVRM
+bool MIDITrack::PutEvent2 ( MIDITimedBigMessage &msg )
 {
     if ( PutEvent ( msg ) )
     {
@@ -531,13 +531,13 @@ bool MIDITrack::PutEvent2 ( MIDITimedBigMessage &msg ) // funcVRM
     return false;
 }
 
-bool MIDITrack::PutEvent ( const MIDITimedMessage &msg, const MIDISystemExclusive *sysex ) // VRM
+bool MIDITrack::PutEvent ( const MIDITimedMessage &msg, const MIDISystemExclusive *sysex )
 {
-    MIDITimedBigMessage m ( msg, sysex ); // VRM
-    return PutEvent ( m ); // VRM
+    MIDITimedBigMessage m ( msg, sysex );
+    return PutEvent ( m );
 }
 
-bool MIDITrack::PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length ) // funcVRM
+bool MIDITrack::PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length )
 {
     MIDITimedMessage msg;
     msg.SetTime( time );
@@ -556,7 +556,7 @@ bool MIDITrack::PutTextEvent ( MIDIClockTime time, int meta_event_type, const ch
 
 bool MIDITrack::GetEvent ( int event_num, MIDITimedBigMessage *msg ) const
 {
-    if ( !IsValidEventNum( event_num ) ) // VRM
+    if ( !IsValidEventNum( event_num ) )
     {
         return false;
     }
@@ -569,7 +569,7 @@ bool MIDITrack::GetEvent ( int event_num, MIDITimedBigMessage *msg ) const
 
 bool MIDITrack::SetEvent ( int event_num, const MIDITimedBigMessage &msg )
 {
-    if ( !IsValidEventNum( event_num ) ) // VRM
+    if ( !IsValidEventNum( event_num ) )
     {
         return false;
     }
@@ -582,7 +582,7 @@ bool MIDITrack::SetEvent ( int event_num, const MIDITimedBigMessage &msg )
 
 bool MIDITrack::MakeEventNoOp ( int event_num )
 {
-    if ( !IsValidEventNum( event_num ) ) // VRM
+    if ( !IsValidEventNum( event_num ) )
     {
         return false;
     }
@@ -590,7 +590,7 @@ bool MIDITrack::MakeEventNoOp ( int event_num )
     {
         MIDITimedBigMessage *ev = GetEventAddress ( event_num );
         if ( ev )
-            ev->SetNoOp(); // VRM
+            ev->SetNoOp();
         return true;
     }
 }
@@ -617,7 +617,7 @@ bool MIDITrack::FindEventNumber ( MIDIClockTime time, int *event_num ) const
 
 const MIDITimedBigMessage *MIDITrack::GetEvent ( int event_num ) const
 {
-    if ( !IsValidEventNum( event_num ) ) // VRM
+    if ( !IsValidEventNum( event_num ) )
     {
         return 0;
     }
@@ -629,7 +629,7 @@ const MIDITimedBigMessage *MIDITrack::GetEvent ( int event_num ) const
 
 MIDITimedBigMessage *MIDITrack::GetEvent ( int event_num )
 {
-    if ( !IsValidEventNum( event_num ) ) // VRM
+    if ( !IsValidEventNum( event_num ) )
     {
         return 0;
     }

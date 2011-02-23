@@ -112,6 +112,37 @@ void ClipMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst, double max_
     }
 }
 
+void CollapseMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst )
+{
+    dst.ClearAndResize( 1 );
+    dst.SetClksPerBeat( src.GetClksPerBeat() );
+
+    MIDISequencer seq( &src );
+    seq.GoToZero();
+
+    MIDITimedBigMessage ev;
+    int ev_track;
+    while ( seq.GetNextEvent( &ev_track, &ev ) )
+    {
+        // ignore all src EndOfTrack messages!
+        if ( ev.IsDataEnd() )
+            continue;
+
+        dst.GetTrack(0)->PutEvent(ev);
+    }
+
+    // set dst EndOfTrack message
+    MIDITimedBigMessage end(ev); // copy time of last src event
+    end.SetDataEnd();
+    dst.GetTrack(0)->PutEvent(end);
+}
+
+void CollapseAndExpandMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst )
+{
+    CollapseMultiTrack(src, dst);
+    dst.AssignEventsToTracks(0);
+}
+
 bool ReadMidiFile(const char *file, MIDIMultiTrack &dst)
 {
     MIDIFileReadStreamFile rs( file );
@@ -190,7 +221,7 @@ void LastEventsProlongation( MIDIMultiTrack &tracks, int track_num, MIDIClockTim
 {
     MIDITrack *track = tracks.GetTrack( track_num );
     int index = track->GetNumEvents() - 1;
-    if ( index < 0 )
+    if ( add_ticks == 0 || index < 0 )
         return;
 
     MIDITimedBigMessage *msg = track->GetEvent( index );

@@ -86,11 +86,11 @@ MIDISystemExclusive::~MIDISystemExclusive()
 
     if ( deletable )
     {
-        jdks_safe_delete_array( buf ); // VRM
+        jdks_safe_delete_array( buf );
     }
 }
 
-bool operator == ( const MIDISystemExclusive &e1, const MIDISystemExclusive &e2 ) // funcVRM
+bool operator == ( const MIDISystemExclusive &e1, const MIDISystemExclusive &e2 )
 {
     if ( e1.cur_len != e2.cur_len )
         return false;

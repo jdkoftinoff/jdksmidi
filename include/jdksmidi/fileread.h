@@ -63,7 +63,7 @@ public:
     {
     }
 
-    virtual void Rewind() = 0; // funcVRM
+    virtual void Rewind() = 0;
 
     virtual int ReadChar() = 0;
 };
@@ -77,7 +77,7 @@ public:
     }
 
 #ifdef WIN32
-    explicit MIDIFileReadStreamFile ( const wchar_t *fname ) // funcVRM
+    explicit MIDIFileReadStreamFile ( const wchar_t *fname )
     {
         f = _wfopen ( fname, L"rb" );
     }
@@ -92,14 +92,14 @@ public:
         if ( f ) fclose ( f );
     }
 
-    virtual void Rewind() // funcVRM
+    virtual void Rewind()
     {
         if ( f ) rewind ( f );
     }
 
     bool IsValid()
     {
-        return f != 0; // VRM
+        return f != 0;
     }
 
     virtual int ReadChar()
@@ -144,15 +144,15 @@ public:
     virtual void mf_chan_after ( const MIDITimedMessage &msg );
     virtual void mf_control ( const MIDITimedMessage &msg );
 
-    virtual bool mf_metamisc ( MIDIClockTime time, int type, int len, unsigned char *data ); // VRM
-    virtual bool mf_timesig ( MIDIClockTime time, int, int, int, int ); // funcVRM
-    virtual bool mf_tempo ( MIDIClockTime time, unsigned char a, unsigned char b, unsigned char c ); // funcVRM
+    virtual bool mf_metamisc ( MIDIClockTime time, int type, int len, unsigned char *data );
+    virtual bool mf_timesig ( MIDIClockTime time, int, int, int, int );
+    virtual bool mf_tempo ( MIDIClockTime time, unsigned char a, unsigned char b, unsigned char c );
 
-    virtual bool mf_keysig ( MIDIClockTime time, int, int ); // VRM
-    virtual bool mf_sqspecific ( MIDIClockTime time, int, unsigned char * ); // VRM
-    virtual bool mf_text ( MIDIClockTime time, int, int, unsigned char * ); // VRM
-    virtual bool mf_eot ( MIDIClockTime time ); // VRM
-    virtual bool mf_sysex ( MIDIClockTime time, int type, int len, unsigned char *s ); // funcVRM
+    virtual bool mf_keysig ( MIDIClockTime time, int, int );
+    virtual bool mf_sqspecific ( MIDIClockTime time, int, unsigned char * );
+    virtual bool mf_text ( MIDIClockTime time, int, int, unsigned char * );
+    virtual bool mf_eot ( MIDIClockTime time );
+    virtual bool mf_sysex ( MIDIClockTime time, int type, int len, unsigned char *s );
 
 //
 // the following methods are to be overridden for your specific purpose
@@ -168,9 +168,9 @@ public:
 // Higher level dispatch functions
 //
     virtual void UpdateTime ( MIDIClockTime delta_time );
-    virtual bool MetaEvent ( MIDIClockTime time, int type, int len, unsigned char *buf ); // VRM
-    virtual bool ChanMessage ( const MIDITimedMessage &msg); // VRM
-    virtual void SortEventsOrder() {} // funcVRM
+    virtual bool MetaEvent ( MIDIClockTime time, int type, int len, unsigned char *buf );
+    virtual bool ChanMessage ( const MIDITimedMessage &msg);
+    virtual void SortEventsOrder() {}
 
 };
 
@@ -185,10 +185,10 @@ public:
     virtual ~MIDIFileRead();
 
     // return false if not enough number of tracks or events in any track
-    virtual bool Parse(); // VRM
+    virtual bool Parse();
 
     // read midifile header, return number of tracks
-    int ReadNumTracks(); // funcVRM
+    int ReadNumTracks();
 
     int GetFormat() const
     {
@@ -196,10 +196,10 @@ public:
     }
     int GetNumTracks() const
     {
-        return header_ntrks; // VRM
+        return header_ntrks;
     }
     // call it after Parse(): return true if file contain event(s) with running status
-    bool UsedRunningStatus() const // funcVRM
+    bool UsedRunningStatus() const
     {
         return used_running_status;
     }
@@ -221,7 +221,7 @@ protected:
 
     unsigned char *the_msg;
     int max_msg_len;
-    int act_msg_len; // VRM // actual msg length
+    int act_msg_len; // actual msg length
 
 private:
     unsigned long ReadVariableNum();
@@ -237,11 +237,11 @@ private:
 
     int ReadMT ( unsigned long, int );
 
-    bool FormChanMessage ( unsigned char st, unsigned char b1, unsigned char b2 ); // VRM
+    bool FormChanMessage ( unsigned char st, unsigned char b1, unsigned char b2 );
     // reset data for multiple parse
-    void Reset(); // funcVRM
+    void Reset();
 
-    bool used_running_status; // VRM
+    bool used_running_status;
 
     int header_format;
     int header_ntrks;
