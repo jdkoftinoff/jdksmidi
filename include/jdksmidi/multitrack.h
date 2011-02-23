@@ -52,7 +52,7 @@ class MIDIMultiTrack
 private:
 
     // delete old multitrack, construct new
-    bool CreateObject ( int num_tracks_, bool deletable_ ); // funcVRM
+    bool CreateObject ( int num_tracks_, bool deletable_ );
 
 public:
 
@@ -79,20 +79,20 @@ public:
     }
 
     // return number of tracks with events, last tracks have no events
-    int GetNumTracksWithEvents() const; // funcVRM
+    int GetNumTracksWithEvents() const;
 
     // test and sort events temporal order in all tracks
-    void SortEventsOrder(); // funcVRM
+    void SortEventsOrder();
 
     // delete all tracks and remake multitrack with new amount of empty tracks
-    bool ClearAndResize ( int num_tracks ); // funcVRM
+    bool ClearAndResize ( int num_tracks );
 
     // store src track and remake multitrack object with 17 tracks (src track can be a member of multitrack obiect),
     // move src track channel events to tracks 1-16, and all other types of events to track 0
-    bool AssignEventsToTracks ( const MIDITrack *src ); // funcVRM
+    bool AssignEventsToTracks ( const MIDITrack *src );
 
     // the same as previous, but argument is track number of multitrack object himself
-    bool AssignEventsToTracks ( int track_num = 0 ) // funcVRM
+    bool AssignEventsToTracks ( int track_num = 0 )
     {
         return AssignEventsToTracks( GetTrack( track_num ) );
     }
@@ -108,7 +108,7 @@ public:
         clks_per_beat = cpb;
     }
 
-    int GetNumEvents() const // funcVRM
+    int GetNumEvents() const
     {
         int num_events = 0;
         for ( int i = 0; i < number_of_tracks; ++i )
@@ -119,7 +119,7 @@ public:
 protected:
 
     MIDITrack **tracks;
-    int number_of_tracks; // VRM
+    int number_of_tracks;
     bool deletable;
 
     int clks_per_beat;
@@ -162,14 +162,14 @@ class MIDIMultiTrackIterator
 {
 public:
 
-    MIDIMultiTrackIterator ( const MIDIMultiTrack *mlt ); // VRM
+    MIDIMultiTrackIterator ( const MIDIMultiTrack *mlt );
     virtual ~MIDIMultiTrackIterator();
 
 
     void GoToTime ( MIDIClockTime time );
 
     bool GetCurEventTime ( MIDIClockTime *t ) const;
-    bool GetCurEvent ( int *track, const MIDITimedBigMessage **msg ) const; // VRM
+    bool GetCurEvent ( int *track, const MIDITimedBigMessage **msg ) const;
     bool GoToNextEvent();
 
     bool GoToNextEventOnTrack ( int track );
@@ -196,7 +196,7 @@ public:
 
 protected:
 
-    const MIDIMultiTrack *multitrack; // VRM
+    const MIDIMultiTrack *multitrack;
     MIDIMultiTrackIteratorState state;
 };
 

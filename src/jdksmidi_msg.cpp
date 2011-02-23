@@ -43,7 +43,7 @@
 namespace jdksmidi
 {
 
-const char * MIDIMessage::chan_msg_name[16] = // VRM
+const char * MIDIMessage::chan_msg_name[16] =
 {
     "CHANNEL MSG  ERROR 0x00",  // 0x00
     "CHANNEL MSG  ERROR 0x10",  // 0x10
@@ -63,7 +63,7 @@ const char * MIDIMessage::chan_msg_name[16] = // VRM
     "CHANNEL MSG  ERROR 0xF0"   // 0xF0
 };
 
-const char * MIDIMessage::sys_msg_name[16] = // VRM
+const char * MIDIMessage::sys_msg_name[16] =
 {
     "SYSTEM MSG   SYSEX-N     ",  // 0xF0
     "SYSTEM MSG   MTC         ",  // 0xF1
@@ -93,7 +93,7 @@ const char * MIDIMessage::service_msg_name[] =
 };
 
 
-const char * MIDIMessage::MsgToText ( char *txt ) const // funcVRM
+const char * MIDIMessage::MsgToText ( char *txt ) const
 {
     char buf[256];
     int len = GetLengthMSG();
@@ -160,7 +160,7 @@ const char * MIDIMessage::MsgToText ( char *txt ) const // funcVRM
 
     if ( IsAllNotesOff() )
     {
-        sprintf ( buf, "Ch %2d  All Notes Off  Type %3d  Mode %3d ", (int)GetChannel()+1, (int)byte1, (int)byte2); // VRM
+        sprintf ( buf, "Ch %2d  All Notes Off  Type %3d  Mode %3d ", (int)GetChannel()+1, (int)byte1, (int)byte2);
         strcat ( txt, buf );
         return txt;
     }
@@ -179,7 +179,7 @@ const char * MIDIMessage::MsgToText ( char *txt ) const // funcVRM
     {
     case NOTE_ON:
         if ( IsNoteOnV0() ) // velocity = 0: Note off
-            sprintf ( endtxt, "Note %3d  Vel  %3d    (Note off)  ", ( int ) byte1, ( int ) byte2 ); // VRM
+            sprintf ( endtxt, "Note %3d  Vel  %3d    (Note off)  ", ( int ) byte1, ( int ) byte2 );
         else
             sprintf ( endtxt, "Note %3d  Vel  %3d  ", ( int ) byte1, ( int ) byte2 );
         break;
@@ -214,10 +214,10 @@ const char * MIDIMessage::MsgToText ( char *txt ) const // funcVRM
 
 MIDIMessage::MIDIMessage()
 {
-    Clear(); // VRM
+    Clear();
 }
 
-MIDIMessage::MIDIMessage ( const MIDIMessage &m ) // funcVRM
+MIDIMessage::MIDIMessage ( const MIDIMessage &m )
 {
     status = m.status;
     byte1 = m.byte1;
@@ -232,7 +232,7 @@ MIDIMessage::MIDIMessage ( const MIDIMessage &m ) // funcVRM
 
 void MIDIMessage::Copy ( const MIDIMessage & m )
 {
-    *this = m; // VRM
+    *this = m;
 }
 
 
@@ -256,12 +256,12 @@ const MIDIMessage & MIDIMessage::operator = ( const MIDIMessage &m )
 
 int MIDIMessage::GetLengthMSG() const
 {
-    if ( IsMetaEvent() ) // VRM // for all Meta Events
+    if ( IsMetaEvent() ) // for all Meta Events
     {
-        return data_length; // VRM
+        return data_length;
     }
 
-    else if ( IsSystemMessage() ) // VRM // for all System Exclusive Events
+    else if ( IsSystemMessage() ) // for all System Exclusive Events
     {
         return GetSystemMessageLength ( status );
     }
@@ -309,74 +309,74 @@ unsigned char MIDIMessage::GetKeySigMajorMinor() const
 
 bool MIDIMessage::IsNoteOn() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
-           ( ( status & 0xf0 ) == NOTE_ON ); // VRM
+    return ( service_num == NOT_SERVICE) &&
+           ( ( status & 0xf0 ) == NOTE_ON );
 }
 
 bool MIDIMessage::IsNoteOff() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
-           ( ( status & 0xf0 ) == NOTE_OFF ); // VRM
+    return ( service_num == NOT_SERVICE) &&
+           ( ( status & 0xf0 ) == NOTE_OFF );
 }
 
 bool MIDIMessage::IsPolyPressure() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( ( status & 0xf0 ) == POLY_PRESSURE );
 }
 
 bool MIDIMessage::IsControlChange() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( ( status & 0xf0 ) == CONTROL_CHANGE );
 }
 
 bool MIDIMessage::IsProgramChange() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( ( status & 0xf0 ) == PROGRAM_CHANGE );
 }
 
 bool MIDIMessage::IsChannelPressure() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( ( status & 0xf0 ) == CHANNEL_PRESSURE );
 }
 
 bool MIDIMessage::IsPitchBend() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( ( status & 0xf0 ) == PITCH_BEND );
 }
 
 bool MIDIMessage::IsSystemMessage() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( status & 0xf0 ) == 0xf0;
 }
 
 bool MIDIMessage::IsSysExN() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( status == SYSEX_START_N );
 }
 
-bool MIDIMessage::IsSysExURT() const // funcVRM
+bool MIDIMessage::IsSysExURT() const
 {
     return IsSysExN() && ( byte1 == 0x7F );
 }
 
-int MIDIMessage::GetSysExURTdevID() const // funcVRM
+int MIDIMessage::GetSysExURTdevID() const
 {
     return byte2;
 }
 
-int MIDIMessage::GetSysExURTsubID() const // funcVRM
+int MIDIMessage::GetSysExURTsubID() const
 {
     return byte3;
 }
 
-bool MIDIMessage::IsSysExA() const // funcVRM
+bool MIDIMessage::IsSysExA() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( status == SYSEX_START_A );
@@ -384,60 +384,60 @@ bool MIDIMessage::IsSysExA() const // funcVRM
 
 bool MIDIMessage::IsMTC() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( status == MTC );
 }
 
 bool MIDIMessage::IsSongPosition() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( status == SONG_POSITION );
 }
 
 bool MIDIMessage::IsSongSelect() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( status == SONG_SELECT );
 }
 
 bool  MIDIMessage::IsTuneRequest() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( status == TUNE_REQUEST );
 }
 
 bool MIDIMessage::IsMetaEvent() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( status == META_EVENT );
 }
 
 bool MIDIMessage::IsChannelMsg() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( status >= 0x80 ) && ( status < 0xF0 );
 }
 
-bool MIDIMessage::IsChannelEvent() const // funcVRM
+bool MIDIMessage::IsChannelEvent() const
 {
     return IsChannelMsg();
 }
 
 bool MIDIMessage::IsTextEvent() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( status == META_EVENT ) &&
            ( byte1 >= 0x01 && byte1 <= 0x0F );
 }
 
 bool MIDIMessage::IsAllNotesOff() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( ( status & 0xf0 ) == CONTROL_CHANGE )
            && ( byte1 >= C_ALL_NOTES_OFF );
 }
 
-bool MIDIMessage::IsChannelPrefix() const // funcVRM
+bool MIDIMessage::IsChannelPrefix() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( status == META_EVENT ) &&
@@ -446,33 +446,33 @@ bool MIDIMessage::IsChannelPrefix() const // funcVRM
 
 bool MIDIMessage::IsTempo() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( status == META_EVENT ) &&
            ( byte1 == META_TEMPO );
 }
 
 bool MIDIMessage::IsDataEnd() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( status == META_EVENT ) &&
            ( byte1 == META_END_OF_TRACK );
 }
 
 bool MIDIMessage::IsTimeSig() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( status == META_EVENT ) &&
            ( byte1 == META_TIMESIG );
 }
 
 bool MIDIMessage::IsKeySig() const
 {
-    return ( service_num == NOT_SERVICE) && // VRM
+    return ( service_num == NOT_SERVICE) &&
            ( status == META_EVENT ) &&
            ( byte1 == META_KEYSIG );
 }
 
-bool  MIDIMessage::IsUserAppMarker() const // funcVRM
+bool  MIDIMessage::IsUserAppMarker() const
 {
     return ( service_num == SERVICE_USERAPP_MARKER );
 }
@@ -482,12 +482,12 @@ bool MIDIMessage::IsBeatMarker() const
     return ( service_num == SERVICE_BEAT_MARKER );
 }
 
-unsigned long MIDIMessage::GetTempo() const // funcVRM
+unsigned long MIDIMessage::GetTempo() const
 {
     return MIDIFile::To32Bit ( 0, byte2, byte3, byte4 );
 }
 
-unsigned long MIDIMessage::GetTempo32() const // VRM
+unsigned long MIDIMessage::GetTempo32() const
 {
     // tempo is in microseconds per beat
     unsigned long tempo = GetTempo();
@@ -528,7 +528,7 @@ void MIDIMessage::SetMetaValue ( unsigned short v )
 
 void MIDIMessage::SetNoteOn ( unsigned char chan, unsigned char note, unsigned char vel )
 {
-    Clear(); // VRM
+    Clear();
     status = ( unsigned char ) ( chan | NOTE_ON );
     byte1 = note;
     byte2 = vel;
@@ -536,7 +536,7 @@ void MIDIMessage::SetNoteOn ( unsigned char chan, unsigned char note, unsigned c
 
 void MIDIMessage::SetNoteOff ( unsigned char chan, unsigned char note, unsigned char vel )
 {
-    Clear(); // VRM
+    Clear();
     status = ( unsigned char ) ( chan | NOTE_OFF );
     byte1 = note;
     byte2 = vel;
@@ -544,7 +544,7 @@ void MIDIMessage::SetNoteOff ( unsigned char chan, unsigned char note, unsigned 
 
 void MIDIMessage::SetPolyPressure ( unsigned char chan, unsigned char note, unsigned char pres )
 {
-    Clear(); // VRM
+    Clear();
     status = ( unsigned char ) ( chan | POLY_PRESSURE );
     byte1 = note;
     byte2 = pres;
@@ -552,20 +552,20 @@ void MIDIMessage::SetPolyPressure ( unsigned char chan, unsigned char note, unsi
 
 void MIDIMessage::SetControlChange ( unsigned char chan, unsigned char ctrl, unsigned char val )
 {
-    Clear(); // VRM
+    Clear();
     status = ( unsigned char ) ( chan | CONTROL_CHANGE );
     byte1 = ctrl;
     byte2 = val;
 }
 
-double MIDIMessage::GetPan() // funcVRM
+double MIDIMessage::GetPan()
 {
     int val = GetControllerValue(); // 0 = leftmost, 64 = centre, 127 = rightmost
     if (val == 127) val = 128;
     return (val-64)/64.;
 }
 
-void MIDIMessage::SetPan( unsigned char chan, double pan ) // funcVRM
+void MIDIMessage::SetPan( unsigned char chan, double pan )
 {
     //     leftmost  centre   rightmost
     //  pan = -1 ...    0 ...    +1
@@ -577,28 +577,32 @@ void MIDIMessage::SetPan( unsigned char chan, double pan ) // funcVRM
 //  int pan_lsb = ipan % 128;
 
     SetControlChange( chan, C_PAN, pan_msb );
+//  Russian (windows 1251):
 //  к сожалению любое pan_lsb сбрасывает панораму в центр при проигрывании midi
 //  и через MediaPlayer и даже через Timidity, поэтому не делаем установку lsb
+//  English:
+//  unfortunately any pan_lsb drops panorama to the center with the playback of midi file
+//  through MediaPlayer and even through Timidity; therefore we do not make the set of lsb
 //  SetControlChange( chan, C_PAN + C_LSB, pan_lsb ); // don't work...
 }
 
 void MIDIMessage::SetProgramChange ( unsigned char chan, unsigned char val )
 {
-    Clear(); // VRM
+    Clear();
     status = ( unsigned char ) ( chan | PROGRAM_CHANGE );
     byte1 = val;
 }
 
 void MIDIMessage::SetChannelPressure ( unsigned char chan, unsigned char val )
 {
-    Clear(); // VRM
+    Clear();
     status = ( unsigned char ) ( chan | CHANNEL_PRESSURE );
     byte1 = val;
 }
 
 void MIDIMessage::SetPitchBend ( unsigned char chan, short val )
 {
-    Clear(); // VRM
+    Clear();
     status = ( unsigned char ) ( chan | PITCH_BEND );
     val += ( short ) 0x2000; // center value
     byte1 = ( unsigned char ) ( val & 0x7f ); // 7 bit bytes
@@ -607,13 +611,13 @@ void MIDIMessage::SetPitchBend ( unsigned char chan, short val )
 
 void MIDIMessage::SetPitchBend ( unsigned char chan, unsigned char low, unsigned char high )
 {
-    Clear(); // VRM
+    Clear();
     status = ( unsigned char ) ( chan | PITCH_BEND );
     byte1 = ( unsigned char ) ( low );
     byte2 = ( unsigned char ) ( high );
 }
 
-void MIDIMessage::SetSysEx( unsigned char type ) // funcVRM
+void MIDIMessage::SetSysEx( unsigned char type )
 {
     Clear();
     status = type; // SYSEX_START or SYSEX_START_A
@@ -621,14 +625,14 @@ void MIDIMessage::SetSysEx( unsigned char type ) // funcVRM
 
 void MIDIMessage::SetMTC ( unsigned char field, unsigned char v )
 {
-    Clear(); // VRM
+    Clear();
     status = MTC;
     byte1 = ( unsigned char ) ( ( field << 4 ) | v );
 }
 
 void MIDIMessage::SetSongPosition ( short pos )
 {
-    Clear(); // VRM
+    Clear();
     status = SONG_POSITION;
     byte1 = ( unsigned char ) ( pos & 0x7f );
     byte2 = ( unsigned char ) ( ( pos >> 7 ) & 0x7f );
@@ -636,20 +640,20 @@ void MIDIMessage::SetSongPosition ( short pos )
 
 void MIDIMessage::SetSongSelect ( unsigned char sng )
 {
-    Clear(); // VRM
+    Clear();
     status = SONG_SELECT;
     byte1 = sng;
 }
 
 void MIDIMessage::SetTuneRequest()
 {
-    Clear(); // VRM
+    Clear();
     status = TUNE_REQUEST;
 }
 
 void MIDIMessage::SetMetaEvent ( unsigned char type, unsigned char v1, unsigned char v2 )
 {
-    Clear(); // VRM
+    Clear();
     status = META_EVENT;
     byte1 = type;
     byte2 = v1;
@@ -660,10 +664,10 @@ void MIDIMessage::SetMetaEvent ( unsigned char type, unsigned short v )
 {
     unsigned char v1 = ( unsigned char ) ( v & 0xff );
     unsigned char v2 = ( unsigned char ) ( ( v >> 8 ) & 0xff );
-    SetMetaEvent ( type, v1, v2 ); // VRM
+    SetMetaEvent ( type, v1, v2 );
 }
 
-void MIDIMessage::SetAllNotesOff (unsigned char chan, unsigned char type, unsigned char mode) // funcVRM
+void MIDIMessage::SetAllNotesOff (unsigned char chan, unsigned char type, unsigned char mode)
 {
     Clear();
     status = ( unsigned char ) ( chan | CONTROL_CHANGE );
@@ -674,13 +678,13 @@ void MIDIMessage::SetAllNotesOff (unsigned char chan, unsigned char type, unsign
 
 void MIDIMessage::SetLocal ( unsigned char chan, unsigned char v )
 {
-    Clear(); // VRM
+    Clear();
     status = ( unsigned char ) ( chan | CONTROL_CHANGE );
     byte1 = C_LOCAL;
     byte2 = v;
 }
 
-void MIDIMessage::SetTempo ( unsigned long tempo ) // funcVRM
+void MIDIMessage::SetTempo ( unsigned long tempo )
 {
     int a, b, c;
     c = tempo & 0xFF;
@@ -690,7 +694,7 @@ void MIDIMessage::SetTempo ( unsigned long tempo ) // funcVRM
     SetByte4( c );
 }
 
-void MIDIMessage::SetTempo32 ( unsigned long tempo_times_32 ) // funcVRM
+void MIDIMessage::SetTempo32 ( unsigned long tempo_times_32 )
 {
     unsigned long tempo = (unsigned long) ( 0.5 + (32*60*1e6) / ( double ) tempo_times_32 );
     SetTempo ( tempo );
@@ -706,7 +710,7 @@ void MIDIMessage::SetDataEnd()
     SetMetaEvent ( META_END_OF_TRACK, 0 );
 }
 
-void MIDIMessage::SetTimeSig ( // funcVRM
+void MIDIMessage::SetTimeSig (
     unsigned char numerator,
     unsigned char denominator_power,
     unsigned char midi_clocks_per_metronome,
@@ -728,11 +732,11 @@ void MIDIMessage::SetKeySig ( signed char sharp_flats, unsigned char major_minor
 
 void MIDIMessage::SetBeatMarker()
 {
-    Clear(); // VRM
-    service_num = SERVICE_BEAT_MARKER; // VRM
+    Clear();
+    service_num = SERVICE_BEAT_MARKER;
 }
 
-void MIDIMessage::SetUserAppMarker() // funcVRM
+void MIDIMessage::SetUserAppMarker()
 {
     Clear();
     service_num = SERVICE_USERAPP_MARKER;
@@ -763,7 +767,7 @@ MIDIBigMessage::MIDIBigMessage ( const MIDIMessage &m )
 {
 }
 
-MIDIBigMessage::MIDIBigMessage ( const MIDIMessage &m, const MIDISystemExclusive *e ) // funcVRM
+MIDIBigMessage::MIDIBigMessage ( const MIDIMessage &m, const MIDISystemExclusive *e )
     :
     MIDIMessage ( m ),
     sysex ( 0 )
@@ -773,7 +777,7 @@ MIDIBigMessage::MIDIBigMessage ( const MIDIMessage &m, const MIDISystemExclusive
 
 void MIDIBigMessage::Clear()
 {
-    ClearSysEx(); // VRM
+    ClearSysEx();
     MIDIMessage::Clear();
 }
 
@@ -783,7 +787,7 @@ void MIDIBigMessage::Clear()
 
 MIDIBigMessage::~MIDIBigMessage()
 {
-    Clear(); // VRM
+    Clear();
 }
 
 //
@@ -811,12 +815,12 @@ const MIDIBigMessage &MIDIBigMessage::operator = ( const MIDIMessage &m )
 
 void MIDIBigMessage::Copy ( const MIDIMessage &m )
 {
-    *this = m; // VRM
+    *this = m;
 }
 
 void MIDIBigMessage::Copy ( const MIDIBigMessage &m )
 {
-    *this = m; // VRM
+    *this = m;
 }
 
 //
@@ -839,7 +843,7 @@ const MIDISystemExclusive *MIDIBigMessage::GetSysEx() const
 
 void MIDIBigMessage::CopySysEx ( const MIDISystemExclusive *e )
 {
-    ClearSysEx(); // VRM
+    ClearSysEx();
     if ( e )
     {
         sysex = new MIDISystemExclusive ( *e );
@@ -856,7 +860,7 @@ void MIDIBigMessage::SetSysEx ( MIDISystemExclusive *e )
 
 void MIDIBigMessage::ClearSysEx()
 {
-    jdks_safe_delete_object( sysex ); // VRM
+    jdks_safe_delete_object( sysex );
 }
 
 
@@ -891,7 +895,7 @@ void MIDITimedMessage::Clear()
 
 void MIDITimedMessage::Copy ( const MIDITimedMessage &m )
 {
-    *this = m; // VRM
+    *this = m;
 }
 
 //
@@ -1070,7 +1074,7 @@ MIDITimedBigMessage::MIDITimedBigMessage ( const MIDIMessage &m )
 {
 }
 
-MIDITimedBigMessage::MIDITimedBigMessage ( const MIDITimedMessage &m, const MIDISystemExclusive *e ) // funcVRM
+MIDITimedBigMessage::MIDITimedBigMessage ( const MIDITimedMessage &m, const MIDISystemExclusive *e )
     : MIDIBigMessage ( m, e ),
       time ( m.GetTime() )
 {
@@ -1084,12 +1088,12 @@ void MIDITimedBigMessage::Clear()
 
 void MIDITimedBigMessage::Copy ( const MIDITimedBigMessage &m )
 {
-    *this = m; // VRM
+    *this = m;
 }
 
 void MIDITimedBigMessage::Copy ( const MIDITimedMessage &m )
 {
-    *this = m; // VRM
+    *this = m;
 }
 
 //
@@ -1271,7 +1275,7 @@ void MIDIDeltaTimedBigMessage::SetDeltaTime ( MIDIClockTime t )
 
 // friend operators
 
-bool operator == ( const MIDIMessage &m1, const MIDIMessage &m2 ) // funcVRM
+bool operator == ( const MIDIMessage &m1, const MIDIMessage &m2 )
 {
     if ( m1.GetServiceNum() != m2.GetServiceNum() ) return false;
     // else equal service_num values
@@ -1288,7 +1292,7 @@ bool operator == ( const MIDIMessage &m1, const MIDIMessage &m2 ) // funcVRM
            );
 }
 
-bool operator == ( const MIDITimedMessage &m1, const MIDITimedMessage &m2 ) // funcVRM
+bool operator == ( const MIDITimedMessage &m1, const MIDITimedMessage &m2 )
 {
     if ( m1.GetTime() != m2.GetTime() )
         return false;
@@ -1296,7 +1300,7 @@ bool operator == ( const MIDITimedMessage &m1, const MIDITimedMessage &m2 ) // f
     return ( (MIDIMessage) m1 ) == ( (MIDIMessage) m2 );
 }
 
-bool operator == ( const MIDIBigMessage &m1, const MIDIBigMessage &m2 ) // funcVRM
+bool operator == ( const MIDIBigMessage &m1, const MIDIBigMessage &m2 )
 {
     const MIDISystemExclusive *e1 = m1.GetSysEx();
     const MIDISystemExclusive *e2 = m2.GetSysEx();
@@ -1321,7 +1325,7 @@ bool operator == ( const MIDIBigMessage &m1, const MIDIBigMessage &m2 ) // funcV
     return ( (MIDIMessage) m1 ) == ( (MIDIMessage) m2 );
 }
 
-bool operator == ( const MIDITimedBigMessage &m1, const MIDITimedBigMessage &m2 ) // funcVRM
+bool operator == ( const MIDITimedBigMessage &m1, const MIDITimedBigMessage &m2 )
 {
     if ( m1.GetTime() != m2.GetTime() )
         return false;

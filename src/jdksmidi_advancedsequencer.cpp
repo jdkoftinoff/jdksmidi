@@ -83,7 +83,7 @@ AdvancedSequencer::~AdvancedSequencer()
 
     for ( int i = 0; i < num_warp_positions; ++i )
     {
-        jdks_safe_delete_object ( warp_positions[i] ); // VRM
+        jdks_safe_delete_object ( warp_positions[i] );
     }
 }
 
@@ -175,7 +175,7 @@ bool AdvancedSequencer::Load ( const char *fname )
 {
     char realname[1024];
     strcpy ( realname, fname );
-    int orignamelen = ( int ) strlen ( fname ); // VRM
+    int orignamelen = ( int ) strlen ( fname );
     chain_mode = false;
 
     if ( orignamelen > 0 )
@@ -813,7 +813,7 @@ void AdvancedSequencer::ExtractWarpPositions()
     {
         for ( int i = 0; i < num_warp_positions; ++i )
         {
-            jdks_safe_delete_object ( warp_positions[i] ); // VRM
+            jdks_safe_delete_object ( warp_positions[i] );
         }
 
         num_warp_positions = 0;
@@ -825,7 +825,7 @@ void AdvancedSequencer::ExtractWarpPositions()
 
     for ( int i = 0; i < num_warp_positions; ++i )
     {
-        jdks_safe_delete_object ( warp_positions[i] ); // VRM
+        jdks_safe_delete_object ( warp_positions[i] );
     }
 
     num_warp_positions = 0;

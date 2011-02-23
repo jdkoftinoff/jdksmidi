@@ -42,13 +42,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <string> // VRM
-#include <vector> // VRM
-#include <algorithm> // VRM
-#include <iostream> // VRM
-#include <sstream> // VRM
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iostream>
+#include <sstream>
 
-namespace jdksmidi // VRM
+namespace jdksmidi
 {
 
 #define ENTER(a)
@@ -81,13 +81,13 @@ MIDI Files easily.
 */
 
 #ifdef WIN32
-#pragma warning(disable: 4996) // VRM // to take away "function was declared deprecated" warnings
-#pragma warning(disable: 4355) // VRM // 'this' used in base member initializer list
+#pragma warning(disable: 4996) // to take away "function was declared deprecated" warnings
+#pragma warning(disable: 4355) // 'this' used in base member initializer list
 #endif
 
 }
 
-#include "jdksmidi/utils.h" // VRM
+#include "jdksmidi/utils.h"
 
 #endif
 

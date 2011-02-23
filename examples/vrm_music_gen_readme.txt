@@ -2,7 +2,7 @@
 
   VRM Music Generator  based on  libJDKSmidi C++ MIDI Library
 
-  version 1.22  from December 2010
+  version 1.23  from February 2011
   
   Copyright (C) 2010 V.R.Madgazin
   www.vmgames.com
@@ -16,7 +16,7 @@
 
   or with equivalent default arguments
 
-  "vrm_music_gen -se 3 -in 25 -n0 0 -n1 14 -tr 48 -di 1 -ch 1 -md 43 -sd 1 -nd 0.5 -de 1.5"
+  "vrm_music_gen -se 3 -in 25 -n0 0 -n1 14 -tr 48 -di 1 -ch 1 -md 43 -sd 1 -nd 0.5 -de 1.5 -pr 4"
 
 
 2. Arguments.
@@ -48,6 +48,8 @@
   "-nd F" note duration in seconds (0.5); 0.001...10...
 
   "-de F" average notes number per note duration (1.5); 0.1...10...
+
+  "-pr I" last note prolongation time in note duration time (4); 0...4...
 
 
 3. Notes array.

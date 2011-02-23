@@ -67,7 +67,7 @@ public:
 
     virtual ~MIDISystemExclusive();
 
-    friend bool operator == ( const MIDISystemExclusive &e1, const MIDISystemExclusive &e2 ); // funcVRM
+    friend bool operator == ( const MIDISystemExclusive &e1, const MIDISystemExclusive &e2 );
 
     void Clear()
     {
@@ -124,7 +124,7 @@ public:
         return ( unsigned char ) ( chk_sum & 0x7f );
     }
 
-    int GetLengthSE() const // VRM
+    int GetLengthSE() const
     {
         return cur_len;
     }

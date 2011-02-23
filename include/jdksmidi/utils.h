@@ -36,6 +36,13 @@ void ClipMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst, double max_
 // skip pause before really start of music, ignore channel 0...15 events (9 for percussion)
 void CompressStartPause( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ignore_channel = -1 );
 
+// collapse all tracks from src to dst track 0
+void CollapseMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst );
+
+// collapse all src tracks to track 0 and than expand it to dst tracks 0-17:
+// midi channel events to tracks 1-16, and all other types of events to track 0
+void CollapseAndExpandMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst );
+
 bool ReadMidiFile(const char *file, MIDIMultiTrack &dst);
   
 // write multitrack to midi file; note that src must contain right clks_per_beat value

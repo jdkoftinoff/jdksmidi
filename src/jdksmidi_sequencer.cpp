@@ -149,7 +149,7 @@ void MIDISequencerGUIEventNotifierText::SetEnable ( bool f )
 /////////////////////////////////////////////////////////////////////////////
 
 MIDISequencerTrackNotifier::MIDISequencerTrackNotifier (
-    const MIDISequencer *seq_, // VRM
+    const MIDISequencer *seq_,
     int trk,
     MIDISequencerGUIEventNotifier *n
 )
@@ -302,7 +302,7 @@ bool MIDISequencerTrackProcessor::Process ( MIDITimedBigMessage *msg )
 ////////////////////////////////////////////////////////////////////////////
 
 MIDISequencerTrackState::MIDISequencerTrackState (
-    const MIDISequencer *seq_, // VRM
+    const MIDISequencer *seq_,
     int trk,
     MIDISequencerGUIEventNotifier *n
 )
@@ -401,7 +401,7 @@ bool MIDISequencerTrackState::Process ( MIDITimedBigMessage *msg )
             if ( msg->IsTempo() )
             {
                 // yes get the current tempo
-                tempobpm = ( float ) ( msg->GetTempo32() / 32. ); // VRM
+                tempobpm = ( float ) ( msg->GetTempo32() / 32. );
 
                 if ( tempobpm < 1. )
                     tempobpm = 120.0;
@@ -471,8 +471,8 @@ bool MIDISequencerTrackState::Process ( MIDITimedBigMessage *msg )
 ////////////////////////////////////////////////////////////////////////////
 
 MIDISequencerState::MIDISequencerState (
-    const MIDISequencer *s, // VRM
-    const MIDIMultiTrack * m, // VRM
+    const MIDISequencer *s,
+    const MIDIMultiTrack * m,
     MIDISequencerGUIEventNotifier *n
 )
     :
@@ -515,7 +515,7 @@ MIDISequencerState::~MIDISequencerState()
 {
     for ( int i = 0; i < num_tracks; ++i )
     {
-        jdks_safe_delete_object( track_state[i] ); // VRM
+        jdks_safe_delete_object( track_state[i] );
     }
 }
 
@@ -526,7 +526,7 @@ const MIDISequencerState & MIDISequencerState::operator = ( const MIDISequencerS
         {
             for ( int i = 0; i < num_tracks; ++i )
             {
-                jdks_safe_delete_object( track_state[i] ); // VRM
+                jdks_safe_delete_object( track_state[i] );
             }
         }
         num_tracks = s.num_tracks;
@@ -552,7 +552,7 @@ const MIDISequencerState & MIDISequencerState::operator = ( const MIDISequencerS
 
 
 MIDISequencer::MIDISequencer (
-    const MIDIMultiTrack *m, // VRM
+    const MIDIMultiTrack *m,
     MIDISequencerGUIEventNotifier *n
 )
     :
@@ -572,7 +572,7 @@ MIDISequencer::~MIDISequencer()
 {
     for ( int i = 0; i < num_tracks; ++i )
     {
-        jdks_safe_delete_object( track_processors[i] ); // VRM
+        jdks_safe_delete_object( track_processors[i] );
     }
 }
 
@@ -885,7 +885,7 @@ bool MIDISequencer::GoToMeasure ( int measure, int beat )
     return state.cur_measure == measure && state.cur_beat == beat;
 }
 
-bool MIDISequencer::GetNextEventTimeMs ( double *t ) // funcVRM
+bool MIDISequencer::GetNextEventTimeMs ( double *t )
 {
     MIDIClockTime ct;
     bool f = GetNextEventTime ( &ct );
@@ -1028,7 +1028,7 @@ bool MIDISequencer::GetNextEvent ( int *tracknum, MIDITimedBigMessage *msg )
 
         else // this event comes before the next beat
         {
-            const MIDITimedBigMessage *msg_ptr; // VRM
+            const MIDITimedBigMessage *msg_ptr;
 
             if ( state.iterator.GetCurEvent ( tracknum, &msg_ptr ) )
             {
@@ -1105,7 +1105,7 @@ void MIDISequencer::ScanEventsAtThisTime()
     state.cur_beat = prev_beat;
 }
 
-double MIDISequencer::GetMisicDurationInSeconds() // funcVRM
+double MIDISequencer::GetMisicDurationInSeconds()
 {
     double event_time = 0.; // in milliseconds
 

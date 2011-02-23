@@ -52,14 +52,14 @@ bool MIDIFileWriteMultiTrack::Write ( int num_tracks, int division )
         return false;
 
     // first, write the header.
-    writer.WriteFileHeader ( ( num_tracks > 1 )? 1:0, num_tracks, division ); // VRM
+    writer.WriteFileHeader ( ( num_tracks > 1 )? 1:0, num_tracks, division );
     // now write each track
 
-    for ( int i = 0; i < num_tracks; ++i ) // funcVRM
+    for ( int i = 0; i < num_tracks; ++i )
     {
         const MIDITrack *t = multitrack->GetTrack ( i );
 
-        if ( !t || !t->EventsOrderOK() ) // VRM // time of events out of order: t->SortEventsOrder() must be done externally
+        if ( !t || !t->EventsOrderOK() ) // time of events out of order: t->SortEventsOrder() must be done externally
             return false;
 
         writer.WriteTrackHeader ( 0 ); // will be rewritten later

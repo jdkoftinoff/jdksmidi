@@ -48,7 +48,7 @@ int main ( int argc, char **argv )
         }
 
         // if true print META_SEQUENCER_SPECIFIC events as text string
-        bool sqspecific_as_text = true; // VRM
+        bool sqspecific_as_text = true;
 
         MIDIFileShow shower ( stdout, sqspecific_as_text );
         MIDIFileRead reader ( &rs, &shower );

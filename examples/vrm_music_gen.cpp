@@ -1,9 +1,8 @@
 /*
-
   VRM Music Generator  based on  libJDKSmidi C++ MIDI Library
-
-  version 1.22 from December 2010
-
+*/
+const char *version = "1.23"; // from February 2011
+/*
   Copyright (C) 2010 V.R.Madgazin
   www.vmgames.com
   vrm@vmgames.com
@@ -22,7 +21,6 @@
   along with this program;
   if not, write to the Free Software Foundation, Inc.,
   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
 */
 
 #ifdef WIN32
@@ -135,11 +133,12 @@ int main ( int argc, char **argv )
     int discrete_time = 1; // [-di] switch for discretization of all time intervals in note duration unit
     int channel = 1; // [-ch] channel number (1...16), 1 for melodic instruments, 10 for percussion instruments
     double music_dur = 43; // [-md] total music duration in seconds (approximately)
-    // делим всё время music_dur на отрезки section_dur, чтобы не было слишком больших и малых плотностей нот,
-    // а также чтобы при увеличении только одного параметра music_dur не менялись предыдущие отрезки музыки!
+    // РґРµР»РёРј РІСЃС‘ РІСЂРµРјСЏ music_dur РЅР° РѕС‚СЂРµР·РєРё section_dur, С‡С‚РѕР±С‹ РЅРµ Р±С‹Р»Рѕ СЃР»РёС€РєРѕРј Р±РѕР»СЊС€РёС… Рё РјР°Р»С‹С… РїР»РѕС‚РЅРѕСЃС‚РµР№ РЅРѕС‚,
+    // Р° С‚Р°РєР¶Рµ С‡С‚РѕР±С‹ РїСЂРё СѓРІРµР»РёС‡РµРЅРёРё С‚РѕР»СЊРєРѕ РѕРґРЅРѕРіРѕ РїР°СЂР°РјРµС‚СЂР° music_dur РЅРµ РјРµРЅСЏР»РёСЃСЊ РїСЂРµРґС‹РґСѓС‰РёРµ РѕС‚СЂРµР·РєРё РјСѓР·С‹РєРё!
     double section_dur = 1; // [-sd] temporal section of music in seconds
     double note_dur = 0.5; // [-nd] note duration in seconds
     double notes_density = 1.5; // [-de] average notes number per note duration
+    int prolongation = 4; // [-pr] last note (or last chord) prolongation time in note_dur
 
     // music generator arguments data parser
     for (int i = 1; i < argc; i += 2)
@@ -163,6 +162,7 @@ int main ( int argc, char **argv )
         if ( key == "-sd" ) section_dur = dval;
         if ( key == "-nd" ) note_dur = dval;
         if ( key == "-de" ) notes_density = dval;
+        if ( key == "-pr" ) prolongation = ival;
     }
 
     // make midi file name from program arguments
@@ -184,9 +184,7 @@ int main ( int argc, char **argv )
     const int trk = 0, // track number
     velocity = 100;
 
-    string text = Program;
-    text += ".  ";
-    text += Copyright;
+    string text = "\n" + string(Program) + "\nversion " + string(version) + "  " + string(Copyright) + "\n";
     tracks.GetTrack( trk )->PutTextEvent( 0, META_GENERIC_TEXT, text.c_str() );
 
     // midifile channel num = "external" channel num - 1
@@ -234,6 +232,7 @@ int main ( int argc, char **argv )
     cout << " [-sd] .section_dur = " << section_dur << endl;
     cout << " [-nd] .note_dur = " << note_dur << endl;
     cout << " [-de] .notes_density = " << notes_density << endl;
+    cout << " [-pr] prolongation = " << prolongation << endl;
 
     // music generator's main loop
     for ( MIDIClockTime t = 0; t < mc_music_dur; t += mc_section_dur )
@@ -303,7 +302,7 @@ int main ( int argc, char **argv )
     cout << endl << "Removed events quantity = " << removed << endl;
 
     // last note (or last chord) prolongation
-    LastEventsProlongation( tracks, trk, 4*mc_note_dur );
+    LastEventsProlongation( tracks, trk, prolongation*mc_note_dur );
 
     // add ending "silence"
     AddEndingPause( tracks, trk, 2*mc_note_dur );

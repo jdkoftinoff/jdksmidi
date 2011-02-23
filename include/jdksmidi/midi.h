@@ -114,9 +114,9 @@ enum
     C_PORTA       = 0x41, ///< portamento switch
     C_SOSTENUTO   = 0x42, ///< sostenuto switch
     C_SOFT_PEDAL  = 0x43, ///< soft pedal
-    //              0x44   Legato Footswitch // VRM
+    //              0x44   Legato Footswitch
     C_HOLD_2      = 0x45, ///< hold pedal 2
-    /* // VRM
+    /*
                         0x46, // Sound Controller 1, default: Sound Variation
                         0x47, // Sound Controller 2, default: Timbre/Harmonic Intens.
                         0x48, // Sound Controller 3, default: Release Time
@@ -132,7 +132,7 @@ enum
     C_GENERAL_6 = 0x51, ///< general purpose controller 6
     C_GENERAL_7 = 0x52, ///< general purpose controller 7
     C_GENERAL_8 = 0x53, ///< general purpose controller 8
-    //            0x54  Portamento Control // VRM
+    //            0x54  Portamento Control
 
     C_EFFECT_DEPTH  = 0x5B, ///< external effects depth, default: Reverb Send Level
     C_TREMOLO_DEPTH = 0x5C, ///< tremolo depth
@@ -149,10 +149,10 @@ enum
     C_RPN_LSB = 0x64, ///< registered parameter LSB
     C_RPN_MSB = 0x65, ///< registered parameter MSB
 
-    C_ALL_SOUNDS_OFF = 0x78, // VRM All Sound Off
+    C_ALL_SOUNDS_OFF = 0x78, // All Sound Off
     C_RESET         = 0x79, ///< reset all controllers
-    C_LOCAL         = 0x7A, ///< local control on/off // VRM // was 0x79
-    C_ALL_NOTES_OFF = 0x7B, ///< all notes off // VRM // was 0x7A
+    C_LOCAL         = 0x7A, ///< local control on/off // was 0x79
+    C_ALL_NOTES_OFF = 0x7B, ///< all notes off // was 0x7A
 
     C_OMNI_OFF = 0x7C, ///< omni off, all notes off
     C_OMNI_ON  = 0x7D, ///< omni on, all notes off
@@ -170,7 +170,7 @@ enum
     RPN_BEND_WIDTH  = 0x00, ///< bender sensitivity
     RPN_FINE_TUNE   = 0x01, ///< fine tuning
     RPN_COARSE_TUNE = 0x02 ///< coarse tuning
-    /* // VRM
+    /*
                           0x03, // Tuning Program Change
                           0x04, // Tuning Bank Select
                           0x05, // Modulation Depth Range
@@ -198,27 +198,27 @@ enum
 
     META_GENERIC_TEXT   = 0x01,
     META_COPYRIGHT      = 0x02,
-    META_TRACK_NAME     = 0x03, // Sequence/Track Name // VRM // was 0x04
-    META_INSTRUMENT_NAME = 0x04, // VRM // was 0x03
+    META_TRACK_NAME     = 0x03, // Sequence/Track Name // was 0x04
+    META_INSTRUMENT_NAME = 0x04, // was 0x03
     META_LYRIC_TEXT     = 0x05,
     META_MARKER_TEXT    = 0x06,
-    META_CUE_POINT      = 0x07, // VRM
-    META_PROGRAM_NAME   = 0x08, // VRM
-    META_DEVICE_NAME    = 0x09, // VRM
-    META_GENERIC_TEXT_A = 0x0A, // VRM
-    META_GENERIC_TEXT_B = 0x0B, // VRM
-    META_GENERIC_TEXT_C = 0x0C, // VRM
-    META_GENERIC_TEXT_D = 0x0D, // VRM
-    META_GENERIC_TEXT_E = 0x0E, // VRM
-    META_GENERIC_TEXT_F = 0x0F, // VRM
+    META_CUE_POINT      = 0x07,
+    META_PROGRAM_NAME   = 0x08,
+    META_DEVICE_NAME    = 0x09,
+    META_GENERIC_TEXT_A = 0x0A,
+    META_GENERIC_TEXT_B = 0x0B,
+    META_GENERIC_TEXT_C = 0x0C,
+    META_GENERIC_TEXT_D = 0x0D,
+    META_GENERIC_TEXT_E = 0x0E,
+    META_GENERIC_TEXT_F = 0x0F,
 
     META_CHANNEL_PREFIX = 0x20, // This meta event associates a MIDI channel with following meta events.
     // It's effect is terminated by another MIDI Channel Prefix event or any non-Meta event.
     // It is often used before an Instrument Name Event to specify which channel an instrument name represents.
 
-    META_OUTPUT_CABLE = 0x21, // VRM // may be MIDI Output Port, data length = 1 byte
+    META_OUTPUT_CABLE = 0x21, // may be MIDI Output Port, data length = 1 byte
     META_TRACK_LOOP   = 0x2E,
-    META_END_OF_TRACK = 0x2F, // VRM
+    META_END_OF_TRACK = 0x2F,
 
     META_TEMPO   = 0x51,
     META_SMPTE   = 0x54, // SMPTE Offset: SMPTE time to denote playback offset from the beginning
@@ -230,7 +230,7 @@ enum
     // ID and the following bytes contain information specified by the manufacturer.
 };
 
-// VRM // internal service number for MIDIMessage::service_num message variable
+// internal service number for MIDIMessage::service_num message variable
 
 enum
 {
@@ -251,7 +251,7 @@ extern const bool lut_is_white[12];
 /// GetSystemMessageLength() instead.
 ///
 
-inline int GetMessageLength ( unsigned char stat ) // VRM
+inline int GetMessageLength ( unsigned char stat )
 {
     return lut_msglen[stat>>4];
 }
@@ -261,7 +261,7 @@ inline int GetMessageLength ( unsigned char stat ) // VRM
 /// length is unknown until parsing is complete.
 ///
 
-inline int GetSystemMessageLength ( unsigned char stat ) // VRM
+inline int GetSystemMessageLength ( unsigned char stat )
 {
     return lut_sysmsglen[stat-0xF0];
 }
@@ -282,7 +282,7 @@ inline bool IsNoteWhite ( unsigned char note )
 
 inline bool IsNoteBlack ( unsigned char note )
 {
-    return !IsNoteWhite( note ); // VRM
+    return !IsNoteWhite( note );
 }
 
 
