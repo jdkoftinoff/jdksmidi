@@ -41,8 +41,8 @@ This library was originally a collection of utility functions for MIDI written i
     * Tempo calculations
     * MIDI Matrix to count note on's and off's and hold pedals to avoid stuck notes and all-notes-off problems when merging midi streams
     * SMPTE management and calculations 
+    * MIDI Utilities useful functions
 
 This project now includes copyrighted content from multiple contributors.
 Please see the file "AUTHORS" for more information.
-
 
