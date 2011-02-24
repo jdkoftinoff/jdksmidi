@@ -12,7 +12,7 @@ Add Mac OSX driver usage examples/tests, sequencer, sysex send/recv
 
 Add folder with the executable files of examples (win32, Mac, Linux)
 
-Make the simple class, which integrates all needs of "dummy” (for ex. see utils.h)
+Make the simple class, which integrates all needs of "dummy" (for ex. see utils.h)
 
 Rewrite class MIDIMultiTrack as vector<MIDITrack>
 
@@ -26,7 +26,7 @@ MIDIVariableLengthData
 Add function (into class MIDIManager?):
 -the total time of the playback of the music
 -the time, which passed from the beginning of the playback
--bool “does continue now the playback of music?”
+-bool "does continue now the playback of music?"
 
 Remove the (Sequencer) problems:
 -in file "t1_after_t0.mid" play first note in track 0, but not play second note in track 1
