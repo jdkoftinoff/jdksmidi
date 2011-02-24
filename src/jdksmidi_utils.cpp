@@ -102,6 +102,10 @@ void ClipMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst, double max_
     int ev_track;
     while ( seq.GetNextEvent( &ev_track, &ev ) )
     {
+        // ignore BeatMarker and other Service messages
+        if ( ev.IsServiceMsg() )
+            continue;
+
         dst.GetTrack(ev_track)->PutEvent(ev);
 
         if ( event_time >= max_event_time )
@@ -124,14 +128,18 @@ void CollapseMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst )
     int ev_track;
     while ( seq.GetNextEvent( &ev_track, &ev ) )
     {
-        // ignore all src EndOfTrack messages!
+        // ignore all src EndOfTrack messages!!
         if ( ev.IsDataEnd() )
+            continue;
+
+        // ignore BeatMarker and other Service messages
+        if ( ev.IsServiceMsg() )
             continue;
 
         dst.GetTrack(0)->PutEvent(ev);
     }
 
-    // set dst EndOfTrack message
+    // set (single!) dst EndOfTrack message
     MIDITimedBigMessage end(ev); // copy time of last src event
     end.SetDataEnd();
     dst.GetTrack(0)->PutEvent(end);
