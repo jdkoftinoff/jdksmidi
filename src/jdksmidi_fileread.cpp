@@ -459,6 +459,13 @@ void MIDIFileRead::ReadTrack()
         case 0xFF: // META_EVENT
             type = EGetC();
             lng = ReadVariableNum();
+            if ( lng > to_be_read )
+            {
+                // false variable length in midifile, thanks to Stephan.Huebler@tu-dresden.de
+                mf_error ( "Variable length incorrect" );
+                abort_parse = true;
+                break;
+            }
             lookfor = to_be_read - lng;
             MsgInit();
             while ( to_be_read > lookfor )
@@ -472,6 +479,12 @@ void MIDIFileRead::ReadTrack()
         case 0xF7: // SYSEX_START_A
             type = status;
             lng = ReadVariableNum();
+            if ( lng > to_be_read )
+            {
+                mf_error ( "Variable length incorrect" );
+                abort_parse = true;
+                break;
+            }
             lookfor = to_be_read - lng;
             MsgInit();
             while ( to_be_read > lookfor )
