@@ -75,7 +75,7 @@ namespace jdksmidi
 
 #define _ATTRIBUTE( TYPE, NAME ) \
 public:     \
-    const TYPE Get##NAME() const \
+    TYPE Get##NAME() const \
     { return NAME; } \
     void Set##NAME( TYPE a ) \
     { NAME=a; } \
@@ -96,7 +96,7 @@ private:    \
 
 #define _ACCESS( TYPE, NAME1, NAME2 ) \
 public:     \
-    const TYPE Get##NAME1() const \
+    TYPE Get##NAME1() const \
     { return NAME2; } \
     void Set##NAME1( TYPE a ) \
     { NAME2=a; }
@@ -183,13 +183,13 @@ public:
         return *this;
     }
 
-    const bool    operator == ( ulong v )
+    bool    operator == ( ulong v )
     {
         return v1 == v;
     }
 
     const MIDICue &operator == ( const MIDICue &c );
-    const bool    operator != ( ulong v )
+    bool    operator != ( ulong v )
     {
         return v1 != v;
     }
