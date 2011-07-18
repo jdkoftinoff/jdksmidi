@@ -1,0 +1,12 @@
+
+To use, simply include the Android.mk file in your project with the following syntax:
+
+#include <path to jdksmidi>/build/android/Android.mk
+
+The library needs the STL library, so one of the following lines should be add to the Application.mk file of the final application:
+
+APP_STL := stlport_shared
+APP_STL := stlport_static
+
+depending if you want to user a shared or static STL library.
+

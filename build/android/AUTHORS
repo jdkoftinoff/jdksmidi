@@ -1,0 +1,18 @@
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+From:    Nic Pitic <nic.pitic@gmail.com>
+To:      vrm@vmgames.com <vrm@vmgames.com>
+Date:    Thursday, July 14, 2011, 8:43:59 AM
+Subject: Android build file for jdksmidi
+Files:   android_build.tbz
+--====----====----====----====----====----====----====----====----====----===--
+
+With a friend, we are looking to use the jdksmidi library in a game for IOS
+and/or Android.
+On XCode, it was quite easy, you already did all the job.
+On Android, I had some problem, but finally, it was quite simple.
+I just want to share the build file to help however would like to use your
+library with Android.
+
+I hope it's OK with you.
+Nicolas
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
