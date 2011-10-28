@@ -179,7 +179,7 @@ const char * MIDIMessage::MsgToText ( char *txt ) const
     {
     case NOTE_ON:
         if ( IsNoteOnV0() ) // velocity = 0: Note off
-            sprintf ( endtxt, "Note %3d  Vel  %3d    (Note off)  ", ( int ) byte1, ( int ) byte2 );
+            sprintf ( endtxt, "Note %3d  Vel  %3d    (Note Off)  ", ( int ) byte1, ( int ) byte2 );
         else
             sprintf ( endtxt, "Note %3d  Vel  %3d  ", ( int ) byte1, ( int ) byte2 );
         break;
@@ -193,7 +193,10 @@ const char * MIDIMessage::MsgToText ( char *txt ) const
         break;
 
     case CONTROL_CHANGE:
-        sprintf ( endtxt, "Ctrl %3d  Val  %3d  ", ( int ) byte1, ( int ) byte2 );
+        if ( IsAllNotesOff() )
+            sprintf ( endtxt, "Ctrl %3d  Val  %3d  (All Notes Off)  ", ( int ) byte1, ( int ) byte2 );
+        else
+            sprintf ( endtxt, "Ctrl %3d  Val  %3d  ", ( int ) byte1, ( int ) byte2 );
         break;
 
     case PROGRAM_CHANGE:
@@ -416,11 +419,6 @@ bool MIDIMessage::IsChannelMsg() const
 {
     return ( service_num == NOT_SERVICE) &&
            ( status >= 0x80 ) && ( status < 0xF0 );
-}
-
-bool MIDIMessage::IsChannelEvent() const
-{
-    return IsChannelMsg();
 }
 
 bool MIDIMessage::IsTextEvent() const

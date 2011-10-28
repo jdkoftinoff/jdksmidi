@@ -33,8 +33,16 @@ namespace jdksmidi
 // copy events from src to dst multitrack for time interval from 0 to max_time_sec seconds
 void ClipMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst, double max_time_sec );
 
+// copy src to dst without all ignore_channel events
+void CopyWithoutChannel( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ignore_channel );
+
 // skip pause before really start of music, ignore channel 0...15 events (9 for percussion)
 void CompressStartPause( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ignore_channel = -1 );
+
+// convert src music to dst solo melody, ignore channel 0...15 events (9 for percussion)
+// this simple code works better for src MultiTrack with 1 track,
+// if not, we can make before the call of CollapseMultiTrack()
+void SoloMelodyConverter( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ignore_channel = -1 );
 
 // collapse all tracks from src to dst track 0
 void CollapseMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst );
