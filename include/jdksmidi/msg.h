@@ -308,7 +308,7 @@ public:
     bool IsSysExA() const; // Authorization SysEx Event
 
     // TODO@VRM note to Jeff:
-    // code with old fun IsSysEx() need to rewrite manually, because now it's two fun IsSysExN() and IsSysExA()
+    // code with old fun IsSysEx() need to rewrite manually, because now it's two func: IsSysExN() and IsSysExA()
     bool IsSystemExclusive() const
     {
         return ( IsSysExN() || IsSysExA() );
@@ -324,7 +324,10 @@ public:
 
     bool IsMetaEvent() const;
 
-    bool IsChannelEvent() const; // the same as IsChannelMsg()
+    bool IsChannelEvent() const
+    {
+        return IsChannelMsg();
+    }
 
     bool IsTextEvent() const;
 

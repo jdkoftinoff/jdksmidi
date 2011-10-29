@@ -33,6 +33,122 @@
 namespace jdksmidi
 {
 
+void SoloMelodyConverter( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ignore_channel )
+{
+    // this simple code works better for src MultiTrack with 1 track,
+    // if not, we can make before the call of CollapseMultiTrack()
+
+    dst.ClearAndResize( src.GetNumTracks() );
+    dst.SetClksPerBeat( src.GetClksPerBeat() );
+
+    MIDIClockTime ev_time = 0;
+    MIDISequencer seq( &src );
+    seq.GoToTime( 0 );
+    if ( !seq.GetNextEventTime ( &ev_time ) )
+        return; // empty src multitrack
+
+    MIDITimedBigMessage ev;
+    int ev_track;
+
+    int solo_note = -1; // highest midi note number in current time, valid values 0...127
+    bool solo_note_on = false;
+    MIDITimedBigMessage solo_note_on_ev; // last solo note on event
+    solo_note_on_ev.SetNoOp();
+
+    while ( seq.GetNextEvent( &ev_track, &ev ) )
+    {
+        if ( ev.IsServiceMsg() || ev.IsNoOp() )
+            continue;
+
+        if ( ev.IsChannelEvent() )
+        {
+            if ( ev.GetChannel() == ignore_channel )
+                continue;
+
+//          if ( ev.IsAllNotesOff() ) ... ; // for future work...
+
+            if ( ev.IsNote() )
+            {
+                int new_note = ev.GetNote();
+
+                // skip all note events if new note lower than solo note
+                if ( new_note < solo_note )
+                    continue;
+                // else ( new_note >= solo_note )
+
+                if ( ev.ImplicitIsNoteOn() ) // new note on event
+                {
+                    if ( solo_note_on ) // new note on after previous solo note on
+                    {
+                        // make noteoff message for previous solo note
+                        solo_note_on_ev.SetTime( ev.GetTime() );
+                        solo_note_on_ev.SetVelocity( 0 ); // note off
+                        dst.GetTrack(ev_track)->PutEvent( solo_note_on_ev );
+
+                        // make new solo note
+                        solo_note_on_ev = ev;
+                        solo_note = new_note;
+                    }
+                    else // ( solo_note_on == false ) - new note on after previous silence
+                    {
+                        // make new solo note
+                        solo_note_on = true;
+                        solo_note_on_ev = ev;
+                        solo_note = new_note;
+                    }
+                }
+                else // new note off event ( new_note >= solo_note )
+                {
+                    if ( solo_note_on ) // new note off after previous solo note on
+                    {
+                        if ( new_note == solo_note ) // solo note off event
+                        {
+                            // test channels of the events
+                            if ( ev.GetChannel() == solo_note_on_ev.GetChannel() )
+                            {
+                                solo_note_on = false;
+                                solo_note = -1; // erase solo_note
+                            }
+                            else
+                                continue; // skip other note off stuff
+                        }
+                        else // ( new_note > solo_note ) any other note off event
+                            continue; // skip other note off stuff
+                    }
+                    else // ( solo_note_on == false ) - new note off after previous silence
+                        continue; // skip other note off stuff
+                }
+            }
+        }
+        dst.GetTrack(ev_track)->PutEvent(ev);
+    }
+}
+
+void CopyWithoutChannel( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ignore_channel )
+{
+    dst.ClearAndResize( src.GetNumTracks() );
+    dst.SetClksPerBeat( src.GetClksPerBeat() );
+
+    MIDIClockTime ev_time = 0;
+    MIDISequencer seq( &src );
+    seq.GoToTime( 0 );
+    if ( !seq.GetNextEventTime ( &ev_time ) )
+        return; // empty src multitrack
+
+    MIDITimedBigMessage ev;
+    int ev_track;
+
+    while ( seq.GetNextEvent( &ev_track, &ev ) )
+    {
+        if ( ev.IsServiceMsg() || ev.IsNoOp() )
+            continue;
+
+        if ( ev.IsChannelEvent() && ev.GetChannel() == ignore_channel )
+            continue;
+
+        dst.GetTrack(ev_track)->PutEvent(ev);
+    }
+}
 
 void CompressStartPause( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ignore_channel )
 {
@@ -52,11 +168,10 @@ void CompressStartPause( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ign
 
     while ( seq.GetNextEvent( &ev_track, &ev ) )
     {
-        if ( ev.IsServiceMsg() )
+        if ( ev.IsServiceMsg() || ev.IsNoOp() )
             continue;
 
-        if ( ev.IsChannelEvent() &&
-             ev.GetChannel() == ignore_channel )
+        if ( ev.IsChannelEvent() && ev.GetChannel() == ignore_channel )
             continue;
 
         ev_time = ev.GetTime();
@@ -102,8 +217,8 @@ void ClipMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst, double max_
     int ev_track;
     while ( seq.GetNextEvent( &ev_track, &ev ) )
     {
-        // ignore BeatMarker and other Service messages
-        if ( ev.IsServiceMsg() )
+        // ignore NoOp, BeatMarker and other Service messages
+        if ( ev.IsServiceMsg() || ev.IsNoOp() )
             continue;
 
         dst.GetTrack(ev_track)->PutEvent(ev);
@@ -132,8 +247,8 @@ void CollapseMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst )
         if ( ev.IsDataEnd() )
             continue;
 
-        // ignore BeatMarker and other Service messages
-        if ( ev.IsServiceMsg() )
+        // ignore NoOp, BeatMarker and other Service messages
+        if ( ev.IsServiceMsg() || ev.IsNoOp() )
             continue;
 
         dst.GetTrack(0)->PutEvent(ev);
