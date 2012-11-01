@@ -102,7 +102,7 @@ done
 # we have our command line args. If the project.mk file does not exist then
 # create it if the --init arg was set
 
-print_var()
+function print_var
 {
   name="$1"
   mk_file="$2"
