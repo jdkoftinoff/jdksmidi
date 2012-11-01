@@ -1,11 +1,11 @@
 
 PROJECT=jdksmidi
 PROJECT_NAME=libjdksmidi
-PROJECT_VERSION=2.2
+PROJECT_VERSION=20121031
 PROJECT_EMAIL=<jeffk@jdkoftinoff.com>
 PROJECT_LICENSE=GPL
 PROJECT_MAINTAINER=Jeff Koftinoff <jeffk@jdkoftinoff.com>
-PROJECT_COPYRIGHT=1988-2010 by J.D. Koftinoff Software, Ltd. and others, please see CONTRIBUTORS file.
+PROJECT_COPYRIGHT=1988-2012 by J.D. Koftinoff Software, Ltd. and others, please see CONTRIBUTORS file.
 PROJECT_COMPANY=J.D. Koftinoff Software, ltd.
 PROJECT_DESCRIPTION=C++ MIDI Library.
 PROJECT_README_FILE=$(PROJECT_TOP_DIR)/README.txt
