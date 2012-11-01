@@ -2,14 +2,14 @@
 
 ##############################################################################################
 #
-# The magic.makefile configure script, Copyright 2004-2010 by Jeff Koftinoff <jeffk@jdkoftinoff.com>
-# version 8.
+# The magic.makefile configure script, Copyright 2004-2012 by J.D. Koftinoff Software, Ltd. - 
+# Jeff Koftinoff <jeffk@jdkoftinoff.com>
 #
-# Simplifies the building of a c/c++ library, it's tests, tools, examples, and documentation.
+# Simplifies the building of a c/c++ library, tests, tools, examples, and documentation.
 #
 # http://wiki.github.com/jdkoftinoff/magicmake/
 #
-# Copyright (c) 2010, Jeff Koftinoff <jeff.koftinoff@ieee.org>
+# Copyright (c) 2012, J.D. Koftinoff Software, Ltd. - Jeff Koftinoff <jeffk@jdkoftinoff.com>
 # All rights reserved.
 #
 # Permission to use, copy, modify, and/or distribute this software for any
