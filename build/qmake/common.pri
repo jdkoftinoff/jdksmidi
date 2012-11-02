@@ -1,3 +1,4 @@
+TOP = ../../..
 
 QT -= core gui
 CONFIG += link_prl debug

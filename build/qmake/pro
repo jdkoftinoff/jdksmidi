@@ -1,3 +1,7 @@
+CONFIG-=app_bundle
+
+TOP = ../../..
+
 ! include( ../common.pri ) {
   error( need common.pri file )
 }
@@ -5,7 +9,7 @@
 
 TARGET={{{1}}}
 
-SOURCES += $$TOPDIR/{{{2}}}/{{{1}}}.cpp
+SOURCES += $$TOP/{{{2}}}/{{{1}}}.cpp
 
-HEADERS += $$TOPDIR/include/*/*.h
+HEADERS += $$TOP/include/*/*.h
 

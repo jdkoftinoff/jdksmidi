@@ -6,7 +6,7 @@ CONFIG += staticlib
 
 DEFINES += 
 
-TOP = ../..
+TOP = ../../..
 
 SOURCES += \
     $$TOP/src/*.cpp 
