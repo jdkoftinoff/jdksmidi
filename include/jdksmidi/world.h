@@ -47,6 +47,7 @@
 #include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <cassert>
 
 namespace jdksmidi
 {

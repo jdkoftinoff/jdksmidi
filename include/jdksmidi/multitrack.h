@@ -66,10 +66,12 @@ public:
 
     MIDITrack *GetTrack ( int track_num )
     {
+        assert( track_num < number_of_tracks );
         return tracks[track_num];
     }
     const MIDITrack *GetTrack ( int track_num ) const
     {
+        assert( track_num < number_of_tracks );
         return tracks[track_num];
     }
 
