@@ -1,0 +1,6 @@
+
+TEMPLATE = subdirs
+
+# Directories
+SUBDIRS += jdksmidi create_midifile jdksmidi_rewrite_midifile jdksmidi_test_drv jdksmidi_test_multitrack jdksmidi_test_multitrack1 jdksmidi_test_parse jdksmidi_test_sequencer jdksmidi_test_show rewrite_midifile vrm_music_gen
+
