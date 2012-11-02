@@ -1,7 +1,7 @@
 
 PROJECT=jdksmidi
 PROJECT_NAME=libjdksmidi
-PROJECT_VERSION=20121031
+PROJECT_VERSION=20121102
 PROJECT_EMAIL=<jeffk@jdkoftinoff.com>
 PROJECT_LICENSE=GPL
 PROJECT_MAINTAINER=Jeff Koftinoff <jeffk@jdkoftinoff.com>
