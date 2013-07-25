@@ -26,6 +26,12 @@
 // www.vmgames.com vrm@vmgames.com
 //
 
+//
+// MODIFIED by N. Cassetta
+// (only a minor change to reflect changes in jdksmidi_sequencer.h)
+//
+
+
 #include "jdksmidi/world.h"
 #include "jdksmidi/advancedsequencer.h"
 
@@ -512,7 +518,8 @@ int AdvancedSequencer::GetTimeSigNumerator() const
         return 4;
     }
 
-    return seq.GetTrackState ( 0 )->timesig_numerator;
+    // return seq.GetTrackState ( 0 )->timesig_numerator;
+    return seq.GetState ()->timesig_numerator;          /* NC */
 }
 
 
@@ -523,7 +530,8 @@ int AdvancedSequencer::GetTimeSigDenominator() const
         return 4;
     }
 
-    return seq.GetTrackState ( 0 )->timesig_denominator;
+    // return seq.GetTrackState ( 0 )->timesig_denominator;
+    return seq.GetState ()->timesig_denominator;        /* NC */
 }
 
 

@@ -26,6 +26,11 @@
 // www.vmgames.com vrm@vmgames.com
 //
 
+//
+// MODIFIED by N. Cassetta
+// search /* NC */ for modifies
+//
+
 #ifndef JDKSMIDI_SEQUENCER_H
 #define JDKSMIDI_SEQUENCER_H
 
@@ -109,7 +114,9 @@ public:
     {
         GROUP_CONDUCTOR_ALL = 0,
         GROUP_CONDUCTOR_TEMPO,
-        GROUP_CONDUCTOR_TIMESIG
+        GROUP_CONDUCTOR_TIMESIG,
+        GROUP_CONDUCTOR_KEYSIG,             /* NC */    // added two items to conductor group
+        GROUP_CONDUCTOR_MARKER              /* NC */
     };
 
     // items in transport group
@@ -192,7 +199,7 @@ public:
 
 
     void Notify ( int item );
-    void NotifyConductor ( int item );
+    void NotifyConductor ( int item );      // NOTE by NC: this is now unneeded: could be eliminated
 
 private:
     const MIDISequencer *seq;
@@ -233,11 +240,11 @@ public:
     virtual void Reset();
     virtual bool Process ( MIDITimedBigMessage *msg );
 
-    float tempobpm;    // current tempo in beats per minute
+    //float tempobpm;    // current tempo in beats per minute               /* NC */    // moved to MIDISequencerState
     int pg;      // current program change, or -1
     int volume;     // current volume controller value
-    int timesig_numerator;  // numerator of current time signature
-    int timesig_denominator; // denominator of current time signature
+    //int timesig_numerator;  // numerator of current time signature        /* NC */    // moved to MIDISequencerState
+    //int timesig_denominator; // denominator of current time signature     /* NC */    // moved to MIDISequencerState
     int bender_value;   // last seen bender value
     char track_name[256];  // track name
     bool got_good_track_name; // true if we dont want to use generic text events for track name
@@ -259,7 +266,12 @@ public:
 
     const MIDISequencerState & operator = ( const MIDISequencerState &s );
 
+    void Reset();                                       /* NC */    // new
+    bool Process( MIDITimedBigMessage* msg );           /* NC */    // new
+    void Notify( int group, int item = 0 );             /* NC */    // new
+
     MIDISequencerGUIEventNotifier *notifier;
+    const MIDISequencer* seq;                           /* NC for notifying */
     const MIDIMultiTrack *multitrack;
     int num_tracks;
 
@@ -270,6 +282,13 @@ public:
     int cur_beat;
     int cur_measure;
     MIDIClockTime next_beat_time;
+    float tempobpm;           // current tempo in beats per minute      /* NC */ moved from MIDISequencerTrackState
+    char timesig_numerator;  // numerator of current time signature     /* NC */ moved from MIDISequencerTrackState
+    char timesig_denominator;// denominator of current time signature   /* NC */ moved from MIDISequencerTrackState
+    char keysig_sharpflat;   // current key signature accidents         /* NC */ new
+    char keysig_mode;        // major/minor                             /* NC */ new
+    char marker_name[40];    //current marker name                      /* NC */ new
+    int last_event_track;   // used internally by Process()             /* NC */ new
 };
 
 class MIDISequencer
