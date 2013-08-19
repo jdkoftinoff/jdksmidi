@@ -187,7 +187,7 @@ public:
     virtual ~MIDISequencerTrackNotifier();
 
     void SetNotifier (
-        MIDISequencer *seq_,
+        const MIDISequencer *seq_,  /* NC: added const */
         int trk,
         MIDISequencerGUIEventNotifier *n
     )

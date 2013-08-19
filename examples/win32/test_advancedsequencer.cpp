@@ -26,7 +26,6 @@
 // www.vmgames.com vrm@vmgames.com
 //
 
-#include "jdksmidi/world.h"     // ISSUE: wou always MUST include this as first
 #include "jdksmidi/advancedsequencer.h"
 using namespace jdksmidi;
 
@@ -36,16 +35,19 @@ using namespace std;
 
 
 string command_buf, command, par1, par2;
-AdvancedSequencer sequencer;
+AdvancedSequencer sequencer;        // a sequencer without GUI notifier
 
 const char helpstring[] =
 "\nAvailable commands:\n\
    load filename       : Loads the file into the sequencer\n\
+   ports               : Enumerates MIDI In and OUT ports\n\
    outport port        : Sets port as current output device\n\
                          (stops the sequencer)\n\
    inport port         : Sets port as current input device\n\
                          (stops the sequencer)\n\
    play                : Starts playback from current time\n\
+   loop meas1 meas2    : Sets loop play (doesn't start it!) from\n\
+                         meas1 to meas2. Input 0 0 for normal play\n\
    stop                : Stops playback\n\
    rew                 : Stops playback and go to the beginning\n\
    goto meas [beat]    : Move current time to given meas and beat\n\
@@ -145,6 +147,7 @@ void DumpMIDIMultiTrack( MIDIMultiTrack *mlt )
     fprintf ( stdout , "Clocks per beat: %d\n\n", mlt->GetClksPerBeat() );
     i.GoToTime ( 0 );
 
+    int num_lines = 0;
     do
     {
         int trk_num;
@@ -153,6 +156,12 @@ void DumpMIDIMultiTrack( MIDIMultiTrack *mlt )
         {
             fprintf ( stdout, "#%2d - ", trk_num );
             DumpMIDITimedBigMessage ( msg );
+        }
+        num_lines++;
+        if (num_lines == 100)
+        {
+            system ("PAUSE");
+            num_lines = 0;
         }
     }
     while ( i.GoToNextEvent() );
@@ -179,6 +188,34 @@ int main( int argc, char **argv )
                 cout << "Error loading file" << endl;
             }
         }
+        else if ( command == "ports")
+        {
+            if ( MIDIDriverWin32::GetNumMIDIInDevs() )
+            {using namespace jdksmidi;
+
+                cout << "MIDI IN PORTS:" << endl;
+                for ( unsigned int i = 0; i < MIDIDriverWin32::GetNumMIDIInDevs(); i++ )
+                {
+                    cout << i << ": " << MIDIDriverWin32::GetMIDIInDevName( i ) << endl;
+                }
+            }
+            else
+            {
+                cout << "NO MIDI IN PORTS" << endl;
+            }
+            if ( MIDIDriverWin32::GetNumMIDIOutDevs() )
+            {
+                cout << "MIDI OUT PORTS:" << endl;
+                for ( unsigned int i = 0; i < MIDIDriverWin32::GetNumMIDIOutDevs(); i++ )
+                {
+                    cout << i << ": " << MIDIDriverWin32::GetMIDIOutDevName( i ) << endl;
+                }
+            }
+            else
+            {
+                cout << "NO MIDI OUT PORTS" << endl;
+            }
+        }
         else if ( command == "outport")
         {
             int port = atoi( par1.c_str() );
@@ -196,6 +233,21 @@ int main( int argc, char **argv )
             sequencer.Play();
             cout << "Sequencer started at measure: " << sequencer.GetMeasure() << ":"
                  << sequencer.GetBeat() << endl;
+        }
+        else if ( command == "loop" )
+        {
+            int beg = atoi( par1.c_str() );
+            int end = atoi( par2.c_str() );
+            if ( !(beg == 0 && end == 0) )
+            {
+                sequencer.SetRepeatPlay( true, beg, end );
+                cout << "Repeat play set from measure " << beg << " to measure " << end << endl;
+            }
+            else
+            {
+                sequencer.SetRepeatPlay(false, 0, 0);
+                cout << "Repeat play cleared" << endl;
+            }
         }
         else if (command == "stop")
         {
@@ -311,7 +363,7 @@ int main( int argc, char **argv )
         {
             cout << helpstring;
         }
-        else
+        else if ( command != "quit" )
         {
             cout << "Unrecognized command" << endl;
         }

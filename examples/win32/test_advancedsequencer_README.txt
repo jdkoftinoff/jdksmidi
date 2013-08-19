@@ -1,4 +1,4 @@
-For compiling these two files you must:
+For compiling test_advancedsequencer.cpp and jdksmidi_test_drvwin32.cpp files you must:
 - Set as search directory (for header files):
         jdksmidi\include
 - Link with libraries:

@@ -39,6 +39,7 @@
 #ifndef JDKSMIDI_ADVANCEDSEQUENCER_H
 #define JDKSMIDI_ADVANCEDSEQUENCER_H
 
+#include "jdksmidi/world.h"     // ISSUE: (NC) this XXXXX
 #include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
@@ -139,6 +140,7 @@ public:
     void SetTempoScale ( double scale );
     double GetTempoWithoutScale() const;
     double GetTempoWithScale() const;
+    unsigned long GetCurrentTimeInMs() const; /* NEW BY NC */
     int GetClksPerBeat() const; /* NEW BY NC */
     int GetNumTracks() const;
     int GetNumMeasures() const;
@@ -163,13 +165,16 @@ public:
     void SetTrackTranspose ( int trk, int trans );
     int GetTrackTranspose ( int trk ) const;
 
-    void ExtractMarkers ( std::vector< std::string > *list );
-    int GetCurrentMarker() const;
+    // void ExtractMarkers ( std::vector< std::string > *list );
+    // int GetCurrentMarker() const;
     /* NOTE BY NC: I think these could be abandoned: now the current marker is given by the
-     * sequencer state. However, for now I mantain them
+     * sequencer state. However, for now I mantain them commented and substitute the second with
+     * this
      */
+    const char* GetCurrentMarker() const;
 
-    // int FindFirstChannelOnTrack ( int trk ); now protected
+
+    int FindFirstChannelOnTrack ( int trk );
     // void ExtractWarpPositions(); now protected
 
     void SetMltChanged();
@@ -226,7 +231,6 @@ protected:
 
     bool OpenMIDI ( int in_port, int out_port, int timer_resolution = DEFAULT_TIMER_RESOLUTION );
     void CloseMIDI();
-    int FindFirstChannelOnTrack ( int trk );
     void ExtractWarpPositions();
     void CatchEventsBefore();   /* NEW BY NC */
     void CatchEventsBefore( int trk );

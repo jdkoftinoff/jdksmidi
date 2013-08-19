@@ -372,6 +372,7 @@ MIDISequencerTrackState::MIDISequencerTrackState (
     :
     MIDISequencerTrackNotifier ( seq_, trk, n ),
     //tempobpm ( 120.0 ),               /* NC */
+    pg (-1),                            /* was there? NC */
     volume ( 100 ),
     //timesig_numerator ( 4 ),          /* NC */
     //timesig_denominator ( 4 ),        /* NC */
@@ -390,7 +391,9 @@ MIDISequencerTrackState::~MIDISequencerTrackState()
 
 void MIDISequencerTrackState::GoToZero()
 {
-    //tempobpm = 120.0;             /* NC */ must reset volume to 100?
+    //tempobpm = 120.0;             /* NC */
+    pg = -1;                        /* was there? NC */
+    volume = 100;                   /* NC */
     //timesig_numerator = 4;        /* NC */
     //timesig_denominator = 4;      /* NC */
     bender_value = 0;
@@ -400,6 +403,7 @@ void MIDISequencerTrackState::GoToZero()
 void MIDISequencerTrackState::Reset()
 {
     //tempobpm = 120.0;             /* NC */
+    pg = -1;                        /* was there? NC */
     volume = 100;
     notes_are_on = false;
     //timesig_numerator = 4;        /* NC */
@@ -598,9 +602,10 @@ MIDISequencerState::~MIDISequencerState()
     }
 }
 
+/* NC: THIS DOESN'T WORKS!!! if num_tracks == s.num_tracks track_state[i] aren't copied!
 const MIDISequencerState & MIDISequencerState::operator = ( const MIDISequencerState & s )
 {
-/* NOTE by NC : what if notifier != s.notifier?  (or seq != s.seq) */
+// NOTE by NC : what if notifier != s.notifier?  (or seq != s.seq)
     if ( num_tracks != s.num_tracks )
     {
         {
@@ -624,14 +629,71 @@ const MIDISequencerState & MIDISequencerState::operator = ( const MIDISequencerS
     cur_beat = s.cur_beat;
     cur_measure = s.cur_measure;
     next_beat_time = s.next_beat_time;
-    tempobpm = s.tempobpm;                      /* NC */
-    timesig_numerator = s.timesig_numerator;    /* NC */
-    timesig_denominator = s.timesig_numerator;  /* NC */
-    keysig_sharpflat = s.keysig_sharpflat;      /* NC */
-    keysig_mode = s.keysig_mode;                /* NC */
-    memmove( marker_name, s.marker_name, sizeof ( marker_name ) );    /* NC */
+    tempobpm = s.tempobpm;                      // NC
+    timesig_numerator = s.timesig_numerator;    // NC
+    timesig_denominator = s.timesig_denominator;  // NC: corrected:
+    keysig_sharpflat = s.keysig_sharpflat;      // NC
+    keysig_mode = s.keysig_mode;                // NC
+    memmove( marker_name, s.marker_name, sizeof ( marker_name ) );    // NC
     return *this;
 }
+*/
+
+/* NC NEW corrected */
+const MIDISequencerState & MIDISequencerState::operator = ( const MIDISequencerState & s )
+{
+    notifier = s.notifier;
+    seq = s.seq;
+    multitrack = s.multitrack;
+
+    if ( num_tracks != s.num_tracks )
+    {
+        {
+            for ( int i = 0; i < num_tracks; ++i )
+            {
+                jdks_safe_delete_object( track_state[i] );
+            }
+        }
+        num_tracks = s.num_tracks;
+        {
+            for ( int i = 0; i < num_tracks; ++i )
+            {
+                track_state[i] = new MIDISequencerTrackState ( *s.track_state[i] );
+            }
+        }
+    }
+    else
+    {
+        for( int i = 0; i < num_tracks; ++i )
+        {   // copies track states
+        track_state[i]->SetNotifier(s.seq, i, notifier);
+        track_state[i]->pg = s.track_state[i]->pg;
+        track_state[i]->volume = s.track_state[i]->volume;
+        track_state[i]->bender_value = s.track_state[i]->bender_value;
+        memmove( track_state[i]->track_name, s.track_state[i]->track_name, sizeof ( track_state[i] ) );
+        track_state[i]->got_good_track_name = s.track_state[i]->got_good_track_name;
+        track_state[i]->notes_are_on = s.track_state[i]->notes_are_on;
+        memmove(&(track_state[i]->note_matrix), &(s.track_state[i]->note_matrix),
+                 sizeof(MIDIMatrix));
+        }
+    }
+
+    iterator.SetState(s.iterator.GetState());
+    cur_clock = s.cur_clock;
+    cur_time_ms = s.cur_time_ms;
+    cur_beat = s.cur_beat;
+    cur_measure = s.cur_measure;
+    next_beat_time = s.next_beat_time;
+    tempobpm = s.tempobpm;
+    timesig_numerator = s.timesig_numerator;
+    timesig_denominator = s.timesig_denominator;
+    keysig_sharpflat = s.keysig_sharpflat;
+    keysig_mode = s.keysig_mode;
+    memmove( marker_name, s.marker_name, sizeof ( marker_name ) );
+
+    return *this;
+}
+
 
 void MIDISequencerState::Reset() {              /* NC */ //         new
     iterator.GoToTime(0);
@@ -724,6 +786,7 @@ bool MIDISequencerState::Process( MIDITimedBigMessage *msg ) /* NC */
             if ( len > ( int ) sizeof ( marker_name ) - 1 )
                 len = ( int ) sizeof ( marker_name ) - 1;
             memcpy ( marker_name, msg->GetSysEx()->GetBuf(), len );
+            marker_name[len] = 0;   /* NC: there was a bug! */
             Notify (
                 MIDISequencerGUIEvent::GROUP_CONDUCTOR,
                 MIDISequencerGUIEvent::GROUP_CONDUCTOR_MARKER

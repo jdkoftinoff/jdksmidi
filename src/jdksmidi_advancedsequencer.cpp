@@ -37,7 +37,7 @@
 
 /* NOTE BY NC: ISSUE: if you include "midi.h" before "world.h" the compiler gives errors. This is because
  * this #include chain: midi.h -> world.h -> utils.h -> multitrack.h -> track.h -> msg.h -> midi.h
- * I suggest to separate MIDIMultiTrack functions in utils.h from general utility functions
+ * I suggest to separate MIDIMultiTrack declarations in utils.h from general utility functions
  */
 
 namespace jdksmidi
@@ -107,7 +107,8 @@ AdvancedSequencer::AdvancedSequencer(MIDISequencerGUIEventNotifier *n)
     :
 
 #ifdef WIN32
-    driver( new MIDIDriverWin32( 256 ) ),  // TODO: set 256 as a constant in MIDIDriver
+    // driver( new MIDIDriverWin32( 256 ) ),  // OLD
+    driver( new MIDIDriverWin32() ),  /* NEW BY NC: queue_size given as default parameter */
 #else
     std:cout << "Currentky only supported WIN32\n";
     exit(EXIT_FAILURE);
@@ -138,6 +139,10 @@ AdvancedSequencer::AdvancedSequencer(MIDISequencerGUIEventNotifier *n)
     // chain_mode ( false ) OLD (see header)
 
 {
+/* NOTE BY NC: currently we open midi (and start timer) in the ctor and close it in the dtor:
+ * is this right? perhaps we should open/close only in Play/Stop (but what if thru is enabled?)
+ * What is better?
+ */
     OpenMIDI(in_port, out_port);
 }
 
@@ -259,7 +264,7 @@ bool AdvancedSequencer::Load ( const char *fname )
 }
 
 
-void AdvancedSequencer::UnLoad()
+void AdvancedSequencer::UnLoad()    /* NEW BY NC */
 {
     Reset();
     tracks.Clear();
@@ -306,7 +311,7 @@ const MIDIMultiTrack* AdvancedSequencer::GetMUltiTrackAddress() const
 
 void AdvancedSequencer::GoToZero() {
     Stop();
-    seq.GoToZero();
+    seq.GoToMeasure(0); // NC: not GoToZero() ! this sets correct values in the MIDISequencerState and notify them
 }
 /* END OF NEW */
 
@@ -429,7 +434,7 @@ void AdvancedSequencer::Play ( /* int clock_offset OLD */ )
 
     Stop();
 
-/* unneeded
+/* this is already done by Stop
     for ( int i = 0; i < seq.GetNumTracks(); ++i )
     {
         seq.GetTrackState ( i )->note_matrix.Clear();
@@ -450,16 +455,14 @@ void AdvancedSequencer::Play ( /* int clock_offset OLD */ )
     seq.GoToTime ( cur_time );
 */
 
-    /* NOTE BY NC: is this right? perhaps we should open even midi in (for thru
-     * and perhaps we should open and close only in ctor and dtor?
-     */
     CatchEventsBefore();
-    // this intercepts any CC, SYSEX and TEMPO messages and send them to the port.
+    // this intercepts any CC, SYSEX and TEMPO messages and send them to the out port
     // allowing to start with correct values; we could incorporate this in the
     // sequencer state, but it would track even CC (not difficult) and SYSEX messages
 
     mgr.SetSeqOffset ( ( unsigned long ) seq.GetCurrentTimeInMs() );
-    mgr.SetTimeOffset ( timeGetTime() );    // TODO: this is only for WIN32
+    // mgr.SetTimeOffset ( timeGetTime() ); OLD
+    mgr.SetTimeOffset ( jdks_get_system_time_ms() ); /* NC: eliminated every WIN32 call not in a #ifdef WIN32 contest */
     mgr.SeqPlay();
 }
 
@@ -488,7 +491,7 @@ void AdvancedSequencer::Stop()
         mgr.SeqStop();
         driver->AllNotesOff();
         GoToMeasure(seq.GetState()->cur_measure, seq.GetState()->cur_beat);
-        // stops on a beat
+        // stops on a beat (and clear midi matrix)
     }
 }
 
@@ -501,9 +504,9 @@ void AdvancedSequencer::OutputMessage( MIDITimedBigMessage& msg ) {
             driver->OutputMessage( msg );
             return;
         }
-        Sleep( 1 );
+        jdks_wait( 1 ); /* note by NC: this may not be accurate, however waits for a minimum period */
     }
-    std::cout << "OutputMessage failed!" << std::endl;
+    std::cerr << "OutputMessage failed!" << std::endl;
 }
 
 
@@ -584,7 +587,7 @@ void AdvancedSequencer::SoloTrack ( int trk )
     } // unsoloing done by UnSoloTrack()
     if (IsPlay())
     {
-        CatchEventsBefore(trk); // track could be muted before soloing: this set appropriate CC, PC, etc
+        CatchEventsBefore(trk); // track could be muted before soloing: this set appropriate CC, PC, etc not previously sent
     }
     seq.SetSoloMode (true, trk);
     for (int i = 0; i < seq.GetNumTracks(); ++i)
@@ -620,7 +623,7 @@ void AdvancedSequencer::UnSoloTrack()  {
     }
     if (IsPlay())
     {
-        CatchEventsBefore(); // this set appropriate CC, PC, etc for muted tracks
+        CatchEventsBefore(); // this set appropriate CC, PC, etc for previously muted tracks
     }
     seq.SetSoloMode (false);
 }
@@ -659,7 +662,7 @@ void AdvancedSequencer::SetTrackMute ( int trk, bool f )
         }
         else
         {
-           CatchEventsBefore( trk );
+           CatchEventsBefore( trk );    // track was muted: this set appropriate CC, PC, etc not previously sent
         }
     }
 }
@@ -707,7 +710,7 @@ void AdvancedSequencer::UnmuteAllTracks()
     driver->AllNotesOff();
     if (IsPlay())
     {
-        CatchEventsBefore();
+        CatchEventsBefore(); // this set appropriate CC, PC, etc for previously muted tracks
     }
 }
 
@@ -734,6 +737,23 @@ double AdvancedSequencer::GetTempoWithScale() const
 {
     return seq.GetCurrentTempo() * seq.GetCurrentTempoScale();
 }
+
+unsigned long AdvancedSequencer::GetCurrentTimeInMs() const {
+// NEW: this is effective also during playback
+    if ( mgr.IsSeqPlay() )
+    {
+        return jdks_get_system_time_ms() + mgr.GetSeqOffset() - mgr.GetTimeOffset();
+        /* time from sequencer start
+         * TODO: BY NC this should be a MIDIManager function (as stated also by Victor in TODO file)
+         * perhaps we should put specialized jdks_get_system_time_ms for every OS in the utils.h file
+         */
+    }
+    else
+    {
+       return seq.GetCurrentTimeInMs();
+    }
+}
+
 
 int AdvancedSequencer::GetClksPerBeat() const
 {
@@ -784,7 +804,7 @@ int AdvancedSequencer::GetTimeSigNumerator() const
         return 4;
     }
 
-    // return seq.GetTrackState ( 0 )->timesig_numerator;
+    // return seq.GetTrackState ( 0 )->timesig_numerator;       OLD: see MIDISequencer class changes
     return seq.GetState ()->timesig_numerator;          /* NC */
 }
 
@@ -796,7 +816,7 @@ int AdvancedSequencer::GetTimeSigDenominator() const
         return 4;
     }
 
-    // return seq.GetTrackState ( 0 )->timesig_denominator;
+    // return seq.GetTrackState ( 0 )->timesig_denominator;     OLD: see MIDISequencer class changes
     return seq.GetState ()->timesig_denominator;        /* NC */
 }
 
@@ -952,7 +972,7 @@ int AdvancedSequencer::GetTrackTranspose ( int trk ) const
 
 
 
-/* TODO: these must be revised  (see header comment) */
+/* TODO: these must be revised  (see header comment)
 void AdvancedSequencer::ExtractMarkers ( std::vector< std::string > *list )
 {
     if ( !file_loaded )
@@ -1052,7 +1072,13 @@ int AdvancedSequencer::GetCurrentMarker() const
 
     return last;
 }
+*/
+/* NC the second substituted by this */
 
+const char* AdvancedSequencer::GetCurrentMarker() const
+{
+    return seq.GetState()->marker_name;
+}
 
 void AdvancedSequencer::SetMltChanged()
 {
@@ -1324,9 +1350,5 @@ void AdvancedSequencer::CatchEventsBefore(int trk) {
         }
     }
 }
-
-
-
-
 
 }
