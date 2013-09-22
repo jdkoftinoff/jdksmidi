@@ -22,6 +22,10 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+//
+// Modified by N. Cassetta
+//
+
 #ifndef JDKSMIDI_DRIVERWIN32_H
 #define JDKSMIDI_DRIVERWIN32_H
 
@@ -35,6 +39,19 @@
 namespace jdksmidi
 {
 
+unsigned int jdks_get_safe_system_msg_id();
+
+inline unsigned long jdks_get_system_time_ms()
+{
+    return timeGetTime();
+}
+
+inline void jdks_wait( unsigned int ms )
+{
+    Sleep( ms );
+}
+
+
 class MIDISequencerGUIEventNotifierWin32 :
     public MIDISequencerGUIEventNotifier
 {
@@ -47,7 +64,15 @@ public:
         WPARAM wparam_value_ = 0
     );
 
+    /* NEW BY NC = auto sets msg and wparam_value */
+    MIDISequencerGUIEventNotifierWin32 (
+        HWND w
+    );
+
     virtual ~MIDISequencerGUIEventNotifierWin32();
+
+    /* NEW BY NC */
+    DWORD GetMsgId() const;
 
     virtual void Notify ( const MIDISequencer *seq, MIDISequencerGUIEvent e );
     virtual bool GetEnable() const;
@@ -68,7 +93,7 @@ class MIDIDriverWin32 : public MIDIDriver
 
 public:
 
-    MIDIDriverWin32 ( int queue_size );
+    MIDIDriverWin32 ( int queue_size = DEFAULT_QUEUE_SIZE );
     virtual ~MIDIDriverWin32();
 
     void ResetMIDIOut();
@@ -81,10 +106,20 @@ public:
     void CloseMIDIInPort();
     void CloseMIDIOutPort();
 
-
     bool HardwareMsgOut ( const MIDITimedBigMessage &msg );
 
+/* NEW BY NC: now the driver keep track statically of the MIDI devices installed on the computer
+ * these functions get them
+ */
+    static unsigned int GetNumMIDIInDevs();
+    static unsigned int GetNumMIDIOutDevs();
+    static const char* GetMIDIInDevName(unsigned int i);
+    static const char* GetMIDIOutDevName(unsigned int i);
+/* END OF NEW */
+
 protected:
+
+    static const int DEFAULT_QUEUE_SIZE = 256;  /* NEW BY NC */
 
     static void CALLBACK win32_timer (
         UINT wTimerID,
@@ -102,6 +137,9 @@ protected:
         DWORD dwParam2
     );
 
+    static unsigned int FillMIDIInDevices();        /* NEW BY NC */
+    static unsigned int FillMIDIOutDevices();       /* NEW BY NC */
+
     HMIDIIN in_handle;
     HMIDIOUT out_handle;
     int timer_id;
@@ -110,6 +148,17 @@ protected:
     bool in_open;
     bool out_open;
     bool timer_open;
+
+/* NEW BY NC
+ * these keep track of the MIDI devices present in the OS
+ */
+    static const int DEVICENAMELEN = 80;
+
+    static char** in_dev_names;
+    static char** out_dev_names;
+    static UINT num_in_devs;
+    static UINT num_out_devs;
+
 };
 
 

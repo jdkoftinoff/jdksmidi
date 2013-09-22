@@ -61,11 +61,11 @@ public:
 
     // to set and get the system time offset
     void SetTimeOffset ( unsigned long off );
-    unsigned long GetTimeOffset();
+    unsigned long GetTimeOffset() const;
 
     // to set and get the sequencer time offset
     void SetSeqOffset ( unsigned long seqoff );
-    unsigned long GetSeqOffset();
+    unsigned long GetSeqOffset() const;
 
 
     // to manage the playback of the sequencer

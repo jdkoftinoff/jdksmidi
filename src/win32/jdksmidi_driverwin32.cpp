@@ -26,6 +26,10 @@
 // www.vmgames.com vrm@vmgames.com
 //
 
+//
+// Modified by N. Cassetta
+//
+
 #include "jdksmidi/world.h"
 
 #ifdef WIN32
@@ -33,6 +37,14 @@
 
 namespace jdksmidi
 {
+
+unsigned int jdks_get_safe_system_msg_id()
+{
+    static UINT base = WM_APP;
+    return base++;
+}
+
+
 
 MIDISequencerGUIEventNotifierWin32::MIDISequencerGUIEventNotifierWin32 (
     HWND w,
@@ -47,10 +59,24 @@ MIDISequencerGUIEventNotifierWin32::MIDISequencerGUIEventNotifierWin32 (
 {
 }
 
+/* NEW BY NC: auto sets window_msg and wparam_value */
+MIDISequencerGUIEventNotifierWin32::MIDISequencerGUIEventNotifierWin32 ( HWND w )
+    :
+    dest_window ( w ),
+    window_msg ( jdks_get_safe_system_msg_id() ),
+    wparam_value ( 0 ),
+    en ( true )
+{
+}
+
 MIDISequencerGUIEventNotifierWin32::~MIDISequencerGUIEventNotifierWin32()
 {
 }
 
+DWORD MIDISequencerGUIEventNotifierWin32::GetMsgId() const
+{
+    return window_msg;
+}
 
 void MIDISequencerGUIEventNotifierWin32::Notify (
     const MIDISequencer *seq,
@@ -78,6 +104,13 @@ void MIDISequencerGUIEventNotifierWin32::SetEnable ( bool f )
     en = f;
 }
 
+
+
+
+char **MIDIDriverWin32::in_dev_names = 0;
+char **MIDIDriverWin32::out_dev_names = 0;
+unsigned int MIDIDriverWin32::num_in_devs = MIDIDriverWin32::FillMIDIInDevices();
+unsigned int MIDIDriverWin32::num_out_devs = MIDIDriverWin32::FillMIDIOutDevices();
 
 
 MIDIDriverWin32::MIDIDriverWin32 ( int queue_size )
@@ -244,6 +277,26 @@ bool MIDIDriverWin32::HardwareMsgOut ( const MIDITimedBigMessage &msg )
     return false;
 }
 
+/* NEW BY NC */
+unsigned int MIDIDriverWin32::GetNumMIDIInDevs() {
+    return num_in_devs;
+}
+
+unsigned int MIDIDriverWin32::GetNumMIDIOutDevs() {
+    return num_out_devs;
+}
+
+const char* MIDIDriverWin32::GetMIDIInDevName(unsigned int i) {
+    return in_dev_names[i];
+}
+
+
+const char* MIDIDriverWin32::GetMIDIOutDevName(unsigned int i) {
+    return out_dev_names[i];
+}
+
+/* END OF NEW */
+
 void CALLBACK MIDIDriverWin32::win32_timer (
     UINT wTimerID,
     UINT msg,
@@ -275,6 +328,42 @@ void CALLBACK MIDIDriverWin32::win32_midi_in (
         msg.SetTime ( timeGetTime() );
         self->HardwareMsgIn ( msg );
     }
+}
+
+
+unsigned int MIDIDriverWin32::FillMIDIInDevices()
+{
+    MIDIINCAPS InCaps;
+    UINT n_devs = midiInGetNumDevs();
+    in_dev_names = new char* [n_devs];
+    for(UINT i = 0; i < n_devs; i++)
+    {
+        if ( midiInGetDevCaps( i, &InCaps, sizeof(InCaps) ) == MMSYSERR_NOERROR )
+        {
+            in_dev_names[i] = new char[DEVICENAMELEN];
+            strncpy( in_dev_names[i], InCaps.szPname, DEVICENAMELEN-1 );
+            in_dev_names[i][DEVICENAMELEN-1] = 0;
+        }
+    }
+    return n_devs;
+}
+
+
+unsigned int MIDIDriverWin32::FillMIDIOutDevices()
+{
+    MIDIOUTCAPS OutCaps;
+    UINT n_devs = midiOutGetNumDevs();
+    out_dev_names= new char* [n_devs];
+    for(UINT i = 0; i < n_devs; i++)
+    {
+        if ( midiOutGetDevCaps( i, &OutCaps, sizeof(OutCaps) ) == MMSYSERR_NOERROR )
+        {
+            out_dev_names[i] = new char[DEVICENAMELEN];
+            strncpy( out_dev_names[i], OutCaps.szPname, DEVICENAMELEN-1 );
+            out_dev_names[i][DEVICENAMELEN-1] = 0;
+        }
+    }
+    return n_devs;
 }
 
 }

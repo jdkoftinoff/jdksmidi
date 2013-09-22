@@ -97,7 +97,7 @@ void MIDIManager::SetTimeOffset ( unsigned long off )
     sys_time_offset = off;
 }
 
-unsigned long MIDIManager::GetTimeOffset()
+unsigned long MIDIManager::GetTimeOffset() const
 {
     return sys_time_offset;
 }
@@ -108,7 +108,7 @@ void MIDIManager::SetSeqOffset ( unsigned long seqoff )
     seq_time_offset = seqoff;
 }
 
-unsigned long MIDIManager::GetSeqOffset()
+unsigned long MIDIManager::GetSeqOffset() const
 {
     return seq_time_offset;
 }
