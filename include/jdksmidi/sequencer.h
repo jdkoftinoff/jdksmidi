@@ -53,7 +53,7 @@ class MIDISequencer;
 /// This class holds data for a message that the sequencer can send to the GUI to warn it that
 /// something is happened.
 /// A MIDISequencerGUIEvent belongs to one of these four groups:
-/// - GROUP_ALL: many parameters are changed, the GUI needs a general refresh
+/// - GROUP_ALL: generic group, used by the sequencer to request the GUI for a general refresh
 /// - GROUP_CONDUCTOR: events as tempo, time, key change ...
 /// - GROUP_TRANSPORT: start, stop ...
 /// - GROUP_TRACK: note, program, control change ...
@@ -127,7 +127,7 @@ public:
     /// Main groups
     enum
     {
-        GROUP_ALL = 0,              ///< Generic group: used by the MIDISequencer to signify a full GUI reset
+        GROUP_ALL = 0,              ///< Generic group: used by the MIDISequencer to request a full GUI reset
         GROUP_CONDUCTOR,            ///< Conductor group
         GROUP_TRANSPORT,            ///< Transport group
         GROUP_TRACK                 ///< Track group (the subgroup is the track of the event)
@@ -147,7 +147,7 @@ public:
     enum
     {
         GROUP_TRANSPORT_ALL = 0,    ///< Generic event (not currently used)
-        GROUP_TRANSPORT_MODE,       ///< ??? I don't know
+        GROUP_TRANSPORT_MODE,       ///< Sequencer start and stop
         GROUP_TRANSPORT_MEASURE,    ///< Start of a measure
         GROUP_TRANSPORT_BEAT,       ///< Beat marker
         GROUP_TRANSPORT_ENDOFSONG   ///< End of playback
@@ -172,7 +172,7 @@ private:
 /// This is the object that sends messsages to the GUI.
 /// The base class is pure virtual, because we need GUI details for really sending messages; currently
 /// there are two implementations: a text notifier and a WIN32 specific GUI notifier
-/// (see \ref MIDISequencerGUIEventNotifierText, \ref MIDISequencerGUIEventNotifierWin32)
+/// (see MIDISequencerGUIEventNotifierText, MIDISequencerGUIEventNotifierWin32)
 ///
 
 class MIDISequencerGUIEventNotifier
@@ -333,7 +333,7 @@ public:
 
     /// The constructor.
     /// Initial attributes are pg = -1, volume = 100, bender_value = 0, all notes off, track_name = ""
-    /// \param seq the seguencer that sends messages (used only for notifying)
+    /// \param seq_ the seguencer that sends messages (used only for notifying)
     /// \param trk the number of the track
     /// \param n the notifier: if set to 0 no notifying
     MIDISequencerTrackState (
