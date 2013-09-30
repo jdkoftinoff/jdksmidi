@@ -372,7 +372,6 @@ public:
 
 protected:
     static const int MEASURES_PER_WARP = 4;
-    static const int DEFAULT_TIMER_RESOLUTION = 20;
 
     /// Opens the hardware MIDI in and out ports. Currently ports are opened by the constructor
     /// and closed by the destructor, to give the ability of MIDI thru.

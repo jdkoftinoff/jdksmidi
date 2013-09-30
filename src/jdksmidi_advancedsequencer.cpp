@@ -491,10 +491,10 @@ unsigned long AdvancedSequencer::GetCurrentTimeInMs() const {
 // NEW: this is now effective also during playback
     if ( mgr.IsSeqPlay() )
     {
-        return jdks_get_system_time_ms() + mgr.GetSeqOffset() - mgr.GetTimeOffset();
+        return mgr.GetCurrentTimeInMs();
         /* time from sequencer start
          * TODO: BY NC this should be a MIDIManager function (as stated also by Victor in TODO file)
-         * perhaps we should put specialized jdks_get_system_time_ms for every OS in the utils.h file
+         * DONE!
          */
     }
     else
