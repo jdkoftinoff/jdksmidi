@@ -50,7 +50,7 @@ class MIDISequencer;
 
 
 ///
-/// This class holds data for a message that the sequencer can send to the GUI to warn it that
+/// This class holds data for a message that the sequencer can send to the GUI to warn it when
 /// something is happened.
 /// A MIDISequencerGUIEvent belongs to one of these four groups:
 /// - GROUP_ALL: generic group, used by the sequencer to request the GUI for a general refresh
@@ -59,6 +59,7 @@ class MIDISequencer;
 /// - GROUP_TRACK: note, program, control change ...
 /// Every group has some items, denoting different events
 /// For GROUP_TRACK is also used a subgroup parameter, i.e. the track of the event.
+/// For effective sending messages see the MIDISequencerGUIEventNotifier class.
 ///
 
 class MIDISequencerGUIEvent
@@ -169,10 +170,12 @@ private:
 
 
 ///
-/// This is the object that sends messsages to the GUI.
+/// This is the object sending MIDISequencerGUIEvent messsages to the GUI.
 /// The base class is pure virtual, because we need GUI details for really sending messages; currently
 /// there are two implementations: a text notifier and a WIN32 specific GUI notifier
-/// (see MIDISequencerGUIEventNotifierText, MIDISequencerGUIEventNotifierWin32)
+/// (see MIDISequencerGUIEventNotifierText, MIDISequencerGUIEventNotifierWin32).
+/// This class is embedded in many other classes that need to communicate with the GUI (see
+/// MIDIManager, MIDISequencer, MIDISequencerTrackState, MIDISequencerState, AdvancedSequencer)
 ///
 
 class MIDISequencerGUIEventNotifier
@@ -203,7 +206,7 @@ public:
 
 ///
 /// This class inherits from the pure virtual MIDISequencerGUIEventNotifier, and notifies text messages
-/// to a FILE class.
+/// to a C FILE object.
 ///
 
 class MIDISequencerGUIEventNotifierText :
@@ -282,12 +285,13 @@ private:
 
 
 ///
-/// This class inherits from the pure virtual MIDIProcessor and processes MIDI messages
+/// This class inherits from the pure virtual MIDIProcessor and it is a multi-purpose processor
 /// implementing muting, soloing, rechanneling, velocity scaling and transposing.
 /// Moreover, you can set a custom MIDIProcessor pointer which extra-processes messages.
 /// The MIDISequencer class contains an independent MIDISequencerTrackProcessor for every MIDI Track.
 /// Advanced classes like MIDISequencer and AdvancedSequencer allow you to set muting, tramsposing,
 /// etc. without dealing with it: the only useful function for the user is the extra processing hook.
+/// However, you could subclass this for getting new features.
 ///
 
 class MIDISequencerTrackProcessor : public MIDIProcessor
@@ -317,9 +321,9 @@ public:
 
 
 ///
-/// This class stores curremt MIDI parameters for a track.
+/// This class stores current MIDI parameters for a track.
 /// It stores program, volume, track name, amd a matrix with notes on and off. Furthermore it inherits from
-/// the pure virtual MIDIProcessor: the MIDISequencer sends MIDI messages to it and it processes them  remembering
+/// the pure virtual MIDIProcessor: the MIDISequencer sends MIDI messages to it, which processes them  remembering
 /// actual parameters and notifying chamges to the GUI.
 /// The MIDISequencerState class contains an independent MIDISequencerTrackState for every MIDI Track and you can
 /// ask it for knowing actual track parameters. However, advanced class AdvancedSequencer allows you to know them
@@ -440,11 +444,13 @@ public:
 
 
 ///
-/// A complete sequencer. This class holds:
+/// This class implements a complete sequencer. This class holds:
 /// - a MIDIMultiTrack for storing MIDI messages
-/// - a MIDISequencerTrackProcessor for every track, allowing muting, soloing, transposition, ecc.
+/// - a MIDISequencerTrackProcessor for every track, allowing muting, soloing, transposing, ecc.
 /// - a MIDIMultiTrackIterator, allowing to set a 'now' time, moving it along
 /// - a MIDISequencerGUIEventNotifier, that notifies the GUI about MIDI events
+/// - a MIDISequencerState (which embeds the multitrack, the iterator and the notifier) to keep track
+/// of actual parameters (tempo, keysig, track parameters, etc.)
 /// \note This class has no playing capacity. For playing MIDI content you must use it together with a
 /// MIDIManager. See the example files for effective using. AdvancedSequencer is an all-in-one class for
 /// sequencing and playing

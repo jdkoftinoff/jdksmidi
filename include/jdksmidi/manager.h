@@ -46,7 +46,8 @@ extern unsigned long jdks_get_system_time_ms();
 /// MIDIDriver (and then to MIDI ports).
 /// It inherits from pure virtual MIDITick, i.e. a class with a callback method TimeTick() to be called at every
 /// timer tick: when sequencer is playing the MIDIManager uses it for moving MIDI messages from the sequencer to
-/// the driver
+/// the driver. For effective playback you must have a MIDISequencer, a MIDIDriver and a MIDIManager: the
+/// AdvancedSequencer is an all-in-one class embedding all these. See example files for effective using.
 ///
 
 class MIDIManager : public MIDITick
