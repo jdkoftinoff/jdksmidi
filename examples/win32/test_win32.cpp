@@ -434,11 +434,15 @@ const char* GetSmpteString() {
     // Get from the sequencer the current time in msecs
     unsigned long msecs = sequencer->GetCurrentTimeInMs();
 
+/* ADDED NEW METHOD SetMilliSeconds() to SMPTE class
     // Convert the msecs in samples (the default frequency of the SMPTE is 48000 but you can change it
     ulong samples = (ulong) (msecs * GetSampleRateFrequency(smpte.GetSampleRate()) / 1000);
 
     // Feed the smpte with our number of samples
     smpte.SetSampleNumber(samples);
+*/
+
+    smpte.SetMilliSeconds(msecs);
 
     // Now it qives us the hours, minutes, secs and frames corresponding to our samples
     sprintf (s, "%d:%02d:%02d:%02d", smpte.GetHours(), smpte.GetMinutes(),

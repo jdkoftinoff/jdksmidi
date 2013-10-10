@@ -124,7 +124,7 @@ inline long GetSampleRateFrequencyLong ( SAMPLE_RATE r )
 
 
 ///
-/// This class performs the conversion from the number of samples to the smpte format
+/// This class performs conversions between number of samples, milliseconds and smpte format
 /// (hours::minutes::seconds::frames::subframes).
 /// You can choose between several smpte formats and sample rates
 /// (see \ref rates "SMPTE and sample rates").
@@ -145,9 +145,7 @@ public:
         const SMPTE & s
     );
 
-    /// Sets the smpte rate.
-    /// \param r you can choose between SMPTE_RATE_24, SMPTE_RATE_25, SMPTE_RATE_2997, SMPTE_RATE_2997DF,
-    /// SMPTE_RATE_30 and SMPTE_RATE_30DF
+    /// Sets the smpte rate. See \ref rates "SMPTE and sample rates" for avalaible smpte rates
     void SetSMPTERate ( SMPTE_RATE r )
     {
         smpte_rate = r;
@@ -160,9 +158,7 @@ public:
         return smpte_rate;
     }
 
-    /// Sets the sample rate.
-    /// \param r you can choose between SAMPLE_32000, SAMPLE_44056, SAMPLE_44100, SAMPLE_47952,
-    /// SAMPLE_48000 and SAMPLE_48048
+    /// Sets the sample rate. See \ref rates "SMPTE and sample rates" for avalaible sample rates
     void SetSampleRate ( SAMPLE_RATE r )
     {
         sample_rate = r;
@@ -255,6 +251,28 @@ public:
         return sub_frames;
     }
     //@}
+
+
+    /// To perform a millisecond-to-smpte or millisecond-to-sample conversion.
+    /// You must first load the SMPTE with the number of milliseconds to convert using SetMilliSeconds();
+    /// then you can call GetSampleNumber or GetHours(), GetMinutes() etc.
+    void SetMilliSeconds ( ulong msecs )
+    {
+        sample_number = ( ulong ) ( msecs * GetSampleRateFrequency( sample_rate ) / 1000 );
+        SampleToTime();
+    }
+
+    /// To perform a smpte-to-millisecond or sample-to-millisecond conversion.
+    /// You must first load the SMPTE with the number of sample or with smpte items to convert using
+    /// SetSampleNumber() or SetHoure(), SetMinutes() etc. ; then you can call GetMilliSeconds() to get the
+    /// corresponding millieseconds
+    ulong GetMilliSeconds ()
+    {
+        if ( sample_number_dirty )
+            TimeToSample();
+
+        return ( ulong ) ( sample_number * 1000 / GetSampleRateFrequency( sample_rate ) );
+    }
 
     /// \name To add, increment and decrement samples.
     /// These functions add, increment or decrement the current sample number./ You can use them

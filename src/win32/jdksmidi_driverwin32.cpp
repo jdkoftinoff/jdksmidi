@@ -124,7 +124,7 @@ bool MIDIDriverWin32::OpenMIDIInPort ( int id )
                     id,
                     ( DWORD ) win32_midi_in,
                     ( DWORD ) this,
-                    CALLBACK_FUNCTION ) != 0
+                    CALLBACK_FUNCTION ) != MMSYSERR_NOERROR
            )
         {
             return false;
@@ -141,15 +141,14 @@ bool MIDIDriverWin32::OpenMIDIOutPort ( int id )
 {
     if ( !out_open )
     {
-        int e = midiOutOpen (
+        if ( midiOutOpen (
                     &out_handle,
                     id,
                     0,
                     0,
                     CALLBACK_NULL
-                );
-
-        if ( e != 0 )
+                ) != MMSYSERR_NOERROR
+           )
         {
             return false;
         }
@@ -239,8 +238,7 @@ bool MIDIDriverWin32::HardwareMsgOut ( const MIDITimedBigMessage &msg )
 {
     if ( out_open )
     {
-        // dont send sysex or meta-events
-        // if ( msg.GetStatus() < 0xff && !msg.IsSysEx() )
+        // msg is a channel message
         if ( msg.IsChannelEvent() )
         {
             DWORD winmsg;
@@ -249,20 +247,69 @@ bool MIDIDriverWin32::HardwareMsgOut ( const MIDITimedBigMessage &msg )
                 | ( ( ( DWORD ) msg.GetByte1()  & 0xFF ) <<  8 )
                 | ( ( ( DWORD ) msg.GetByte2()  & 0xFF ) << 16 );
 
-            if ( midiOutShortMsg ( out_handle, winmsg ) != 0 )
+            if ( midiOutShortMsg ( out_handle, winmsg ) != MMSYSERR_NOERROR )
             {
                 return false;
             }
         }
+
+        else if ( msg.IsSystemExclusive() )
+        {
+            MIDIHDR hdr;
+// TODO: the buffer of the MIDISystemExclusive class holds only sysex bytes, without the 0xF0 status, so we
+// need here to allocate a new buffer and put 0xF0 as 1st charachter. If the status byte would be held
+// in the MIDISystemExclusive this function would be simpler. This is possible, but perhaps there are
+// compatibility problems with older software using GetBuf(). WHAT TO DO?
+
+// NOTE: Currently this is NOT a good coding example, but works!  ;-) Rewrite it better!
+
+            CHAR* buffer = new CHAR[ msg.GetSysEx()->GetLength() + 1 ];
+
+            buffer[0] = msg.GetStatus();
+            memcpy(buffer+1, msg.GetSysEx()->GetBuf(), msg.GetSysEx()->GetLength());
+            hdr.lpData = buffer;
+            hdr.dwBufferLength = msg.GetSysEx()->GetLength() + 1;
+            hdr.dwFlags = 0;
+
+            if ( midiOutPrepareHeader( out_handle,
+                                       &hdr,
+                                       sizeof ( MIDIHDR ) ) != MMSYSERR_NOERROR
+               )
+            {
+                // char s[100];
+                // std::cout << "Driver FAILED to send SysEx on PrepareHeader " << msg.MsgToText(s) << std::endl;
+                delete[] buffer;
+                return false;
+            }
+
+            if ( midiOutLongMsg( out_handle,
+                                 &hdr,
+                                 sizeof ( MIDIHDR ) ) != MMSYSERR_NOERROR
+               )
+            {
+                // char s[100];
+                // std::cout << "Driver FAILED to send SysEx on OurLongMsg " << msg.MsgToText(s) << std::endl;
+                delete[] buffer;
+                return false;
+            }
+            while ( midiOutUnprepareHeader( out_handle, &hdr, sizeof( MIDIHDR ) ) == MIDIERR_STILLPLAYING )
+            {
+                /* Should put a delay in here rather than a busy-wait */
+            }
+            delete[] buffer;
+            // std::cout << "Driver sent Sysex msg " << msg.MsgToText(s) << std::endl;
+        }
+
         else
         {
-            char s[100];
-            std::cout << "Driver skipped message " << msg.MsgToText(s) << std::endl;
+            // char s[100];
+            // std::cout << "Driver skipped message " << msg.MsgToText(s) << std::endl;
         }
 
         return true;
     }
 
+    // std::cout << "Driver not open!" << std::endl;
     return false;
 }
 
