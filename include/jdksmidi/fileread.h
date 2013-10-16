@@ -55,7 +55,8 @@ class MIDIFileReadStreamFile;
 class MIDIFileEvents;
 class MIDIFileRead;
 
-/// This is a pure virtual class designed to implement a stream of *char* to be read from a MIDI file
+/// This class is used internally for reading MIDI files. It is pure virtual and implements a stream of *char*
+/// to be read from a MIDI file
 class MIDIFileReadStream
 {
 public:
@@ -74,7 +75,8 @@ public:
     virtual int ReadChar() = 0;
 };
 
-/// This class inherits from MIDIFileWriteStreamFile and writes a stream of *char* to a FILE C object,
+/// This class is used internally for reading MIDI files. It inherits from MIDIFileWriteStreamFile and writes
+/// a stream of *char* to a FILE C object,
 class MIDIFileReadStreamFile : public MIDIFileReadStream
 {
 public:
@@ -131,7 +133,7 @@ private:
     FILE *f;
 };
 
-/// Helper class for reading MIDI files
+/// This class is used internally for reading MIDI files
 class MIDIFileEvents : protected MIDIFile
 {
 public:
@@ -187,7 +189,7 @@ public:
 
 };
 
-/// This class inherits from MIDIFile and converts  a stream of *char* read from a MIDIFileReadStream
+/// This class inherits from MIDIFile and converts a stream of *char* read from a MIDIFileReadStream
 /// object into MIDI data
 class MIDIFileRead : protected MIDIFile
 {

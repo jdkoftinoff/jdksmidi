@@ -197,7 +197,8 @@ public:
 
 protected:
 
-    static const int DEFAULT_QUEUE_SIZE = 256;  /* NEW BY NC */
+    static const int DEFAULT_QUEUE_SIZE = 256;          /* NEW BY NC */
+    static const int DEFAULT_SYSEX_BUFFER_SIZE = 384;   /* NEW BY NC */
 
     /// The callback function called to every timer tick when playing
     static void CALLBACK win32_timer (
@@ -238,6 +239,9 @@ protected:
     static char** out_dev_names;
     static UINT num_in_devs;
     static UINT num_out_devs;
+
+    int sysex_buffer_size;
+    char* sysex_buffer;
 
 };
 

@@ -55,8 +55,8 @@ const unsigned long _MThd = OSTYPE ( 'M', 'T', 'h', 'd' );
 const unsigned long _MTrk = OSTYPE ( 'M', 'T', 'r', 'k' );
 
 ///
-/// This is a base class containing basic definitions and utilities to deal with reading and writing midi files.
-/// It is overriden by MIDIFileRead and MIDIFileWrite
+/// This class is used internally to read/write MIDI files. It contains basic definitions
+/// and utilities, and it is overriden by MIDIFileRead and MIDIFileWrite
 ///
 
 class MIDIFile

@@ -42,9 +42,9 @@ class MIDIProcessorTransposer;
 
 
 ///
-/// This is a pure virtual class designed to implement objects that process MIDI messages (for ex.\ transpose,
+/// This is the base class for objects that process MIDI messages (for ex.\ transpose,
 /// velocity scale, mute, solo etc).
-/// This class is embedded in the MIDIDriver for processing in, out and thru messages. Advanced class like
+/// This class is embedded in the MIDIDriver for processing in, out and thru messages. Advanced classes like
 /// MIDISequencer and AdvancedSequencer use a multi purpose derived class (see MIDISequencerTrackProcessor)
 /// for their processing, however they allows you to process data without directly dealing with it.
 /// You might want to subclass this to implement your own processing.
@@ -67,9 +67,8 @@ public:
 
 ///
 /// This class inherits from pure virtual MIDIProcessor and allows the user to set a 'chain' of MIDIProcessor
-/// objects. You can set the max number of processors in the constructor and add processors (currently not
-/// delete them). When you call the Process() method the output of a processor is passed to the input of
-/// the following.
+/// objects. You can set the max number of processors in the constructor and add or remove processors.
+/// When you call the Process() method the output of a processor is passed to the input of the following.
 ///
 
 class MIDIMultiProcessor : public MIDIProcessor
@@ -82,8 +81,8 @@ public:
     virtual ~MIDIMultiProcessor();
 
     /// Sets the MIDIProcessor _proc_ in the chain.
-    /// \param position the position of the MIDIProcessor in the chain. You have not to worry about plugging them in adjacent
-    /// positions since the processor skips unassigned positions. The range is 0 ... num_processors-1
+    /// \param position the position of the MIDIProcessor in the chain. You have not to worry about plugging them
+    /// in adjacent positions since the processor skips unassigned positions. The range is 0 ... num_processors-1
     /// \param proc the MIDIProcessor (it is not owned by the MIDIMultiProcessor
     void SetProcessor ( int position, MIDIProcessor *proc )
     {
@@ -101,6 +100,14 @@ public:
         return processors[position];
     }
 
+    // NEW by NC
+    /// Removes the MIDIProcessor from the chain.
+    /// This is equivalent to SetProcessor(_position_, 0), as the processors are not owned by the class
+    void RemoveProcessor ( int position )
+    {
+        processors[position] = 0;
+    }
+
     /// This is the method inherited from the base class MIDIProcessor. It passes the MIDI message _msg_
     /// through the chain of processors, skipping unassigned positions
     virtual bool Process ( MIDITimedBigMessage *msg );
@@ -113,7 +120,7 @@ private:
 
 
 ///
-/// This class inherits from pure virtual MIDIProcessor and is implemented to transpose MIDI note messages.
+/// This class inherits from pure virtual MIDIProcessor and transposes MIDI note messages.
 /// However, advanced classes like MIDISequencer and AdvancedSequencer implement their own transposer
 /// (see MIDISequencerTrackProcessor) so this class is not directly used in the library.
 ///
@@ -151,9 +158,7 @@ private:
 
 
 ///
-/// This class inherits from pure virtual MIDIProcessor and is implemented to recbannelize MIDI channel messages.
-/// However, advanced classes like MIDISequencer and AdvancedSequencer implement their own rechannelizer
-/// (see MIDISequencerTrackProcessor) so this class is not directly used in the library.
+/// This class inherits from pure virtual MIDIProcessor and recbannelizes MIDI channel messages.
 ///
 
 class MIDIProcessorRechannelizer : public MIDIProcessor

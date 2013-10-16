@@ -153,6 +153,8 @@ bool MIDIDriverWin32::OpenMIDIOutPort ( int id )
             return false;
         }
 
+        sysex_buffer = new char[DEFAULT_SYSEX_BUFFER_SIZE];
+        sysex_buffer_size = DEFAULT_SYSEX_BUFFER_SIZE;
         out_open = true;
     }
 
@@ -174,6 +176,8 @@ void MIDIDriverWin32::CloseMIDIOutPort()
     if ( out_open )
     {
         midiOutClose ( out_handle );
+        delete[] sysex_buffer;
+        sysex_buffer_size = 0;
         out_open = false;
         Reset();
     }
@@ -257,17 +261,21 @@ bool MIDIDriverWin32::HardwareMsgOut ( const MIDITimedBigMessage &msg )
         {
             MIDIHDR hdr;
 // TODO: the buffer of the MIDISystemExclusive class holds only sysex bytes, without the 0xF0 status, so we
-// need here to allocate a new buffer and put 0xF0 as 1st charachter. If the status byte would be held
+// need sysex_buffer and put 0xF0 as 1st charachter. If the status byte would be held
 // in the MIDISystemExclusive this function would be simpler. This is possible, but perhaps there are
 // compatibility problems with older software using GetBuf(). WHAT TO DO?
 
-// NOTE: Currently this is NOT a good coding example, but works!  ;-) Rewrite it better!
 
-            CHAR* buffer = new CHAR[ msg.GetSysEx()->GetLength() + 1 ];
+            if ( msg.GetSysEx()->GetLength() + 1 > sysex_buffer_size )
+            {   // reallocate sysex_buffer
+                delete[] sysex_buffer;
+                sysex_buffer_size = msg.GetSysEx()->GetLength() + 1;
+                sysex_buffer = new CHAR[ sysex_buffer_size ];
+            }
 
-            buffer[0] = msg.GetStatus();
-            memcpy(buffer+1, msg.GetSysEx()->GetBuf(), msg.GetSysEx()->GetLength());
-            hdr.lpData = buffer;
+            sysex_buffer[0] = msg.GetStatus();
+            memcpy(sysex_buffer + 1, msg.GetSysEx()->GetBuf(), msg.GetSysEx()->GetLength());
+            hdr.lpData = sysex_buffer;
             hdr.dwBufferLength = msg.GetSysEx()->GetLength() + 1;
             hdr.dwFlags = 0;
 
@@ -278,7 +286,6 @@ bool MIDIDriverWin32::HardwareMsgOut ( const MIDITimedBigMessage &msg )
             {
                 // char s[100];
                 // std::cout << "Driver FAILED to send SysEx on PrepareHeader " << msg.MsgToText(s) << std::endl;
-                delete[] buffer;
                 return false;
             }
 
@@ -289,14 +296,12 @@ bool MIDIDriverWin32::HardwareMsgOut ( const MIDITimedBigMessage &msg )
             {
                 // char s[100];
                 // std::cout << "Driver FAILED to send SysEx on OurLongMsg " << msg.MsgToText(s) << std::endl;
-                delete[] buffer;
                 return false;
             }
             while ( midiOutUnprepareHeader( out_handle, &hdr, sizeof( MIDIHDR ) ) == MIDIERR_STILLPLAYING )
             {
                 /* Should put a delay in here rather than a busy-wait */
             }
-            delete[] buffer;
             // std::cout << "Driver sent Sysex msg " << msg.MsgToText(s) << std::endl;
         }
 

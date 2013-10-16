@@ -40,9 +40,10 @@ namespace jdksmidi
 {
 
 ///
-/// This is the object that communicates with the hardware MIDI ports installed onto the computer.
-/// It is a pure virtual class because for effective sending and receiving we need OS details.
-/// Currently only the specialized class for Windows MIDIDriverWin32 is implemented.
+/// This is the base class for objects which communicate with the hardware MIDI ports.
+/// It is a pure virtual because for effective I/O we need OS details. Currently only two specialized
+/// classes are implemented: MIDIDriverWin32 (for MS Windows) and MIDIDriverDump (a dummy driver that only writes
+/// its I/O to the screen).
 /// The driver is capable of MIDI in and out by mean of two MIDIQueue buffers, and can process incoming and
 /// outcoming messages with optional MIDIProcessor (for transposing, muting, etc.). It inherits from pure
 /// virtual MIDITick, i.e. a class with a callback method TimeTick() to be called at every timer tick. You can
@@ -61,7 +62,7 @@ public:
     /// \param queue_size the length in bits of the in and out MIDIQueue
     MIDIDriver ( int queue_size );
 
-    /// The destructor frees the memory allocates for the MIDIQueue.\ Eventual MIDIProcessor pointer are not owned.
+    /// The destructor frees the memory allocated for the MIDIQueue.\ Eventual MIDIProcessor pointer are not owned.
     virtual ~MIDIDriver();
 
     /// Empties the in and out MIDIQueue and the MIDIMatrix
@@ -137,8 +138,8 @@ public:
     }
 
     /// Sets an additional user procedure that can process MIDI data. You should create your own class,
-    /// inherited from MIDITick, implementing the pure virtual TimeTick(). Then call this with the pointer
-    /// to your instance and your TimeTick will be called from the driver TimeTick() ( MIDIDriver also inherits
+    /// inherited from MIDITick, implementing the pure virtual TimeTick(). Then call this with a pointer
+    /// to your instance and your TimeTick() will be called by the driver TimeTick() ( MIDIDriver also inherits
     /// from MIDITick ), allowing you to process incoming and outcoming data.
     void SetTickProc ( MIDITick *tick )
     {
@@ -154,7 +155,7 @@ public:
     /// This should be called (by an OS originated callback or by TimeTick() function) every time a MIDI message
     /// comes to the system (and you want get it).
     /// Your function should parse raw bytes, arrange them into a MIDITimedBigMessage and call this,
-    /// which processes the message with the in MIDIProcessor, manages the thru and finally put it
+    /// which processes the message with the in MIDIProcessor, manages the MIDI thru and at last put it
     /// into the in queue
     /// \see TimeTick()
     virtual bool HardwareMsgIn ( MIDITimedBigMessage &msg );

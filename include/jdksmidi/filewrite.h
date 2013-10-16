@@ -55,7 +55,8 @@ class MIDIFileWriteStreamFile;
 class MIDIFileWrite;
 
 
-/// This is a pure virtual class designed to implement a stream of *char* to be written to a MIDI file
+/// This class is used internally for writing MIDI files. It is pure virtual and implements a stream of *char*
+/// to be be written to a MIDI file
 class MIDIFileWriteStream
 {
 public:
@@ -69,8 +70,8 @@ public:
     virtual int WriteChar ( int c ) = 0;
 };
 
-/// This class inherits from pure virtual MIDIWriteStream and writes a stream of *char*
-/// to a FILE C object
+/// This class is used internally for writing MIDI files. It inherits from pure virtual MIDIWriteStream and
+/// writes a stream of *char* to a FILE C object
 // note by NC: I think this class should be declared deprecated: it has no correspective in MIDIFileRead,
 // and its name generates confusion with MIDIFileReadStreamFile (which corresponds to it and MIDIFileWriteStreamFileName
 // TODO: fix this
@@ -89,8 +90,8 @@ protected:
     FILE *f;
 };
 
-/// This class inherits from MIDIFileWriteStreamFile and writes a stream of *char* to a FILE C object,
-/// specified by its filename
+/// This class is used internally for writing MIDI files. It inherits from MIDIFileWriteStreamFile and writes
+/// a stream of *char* to a FILE C object specified by its filename
 class MIDIFileWriteStreamFileName : public MIDIFileWriteStreamFile
 {
 public:

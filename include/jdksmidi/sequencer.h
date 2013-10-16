@@ -170,7 +170,7 @@ private:
 
 
 ///
-/// This is the object sending MIDISequencerGUIEvent messsages to the GUI.
+/// This class sends MIDISequencerGUIEvent messsages to the GUI.
 /// The base class is pure virtual, because we need GUI details for really sending messages; currently
 /// there are two implementations: a text notifier and a WIN32 specific GUI notifier
 /// (see MIDISequencerGUIEventNotifierText, MIDISequencerGUIEventNotifierWin32).
