@@ -27,7 +27,7 @@
 //
 
 //
-// Modified by N. Cassetta
+// Modified by N. Cassetta ncassetta@tiscali.it
 //
 
 #include "jdksmidi/world.h"
@@ -69,14 +69,6 @@ MIDISequencerGUIEventNotifierWin32::MIDISequencerGUIEventNotifierWin32 ( HWND w 
 {
 }
 
-MIDISequencerGUIEventNotifierWin32::~MIDISequencerGUIEventNotifierWin32()
-{
-}
-
-DWORD MIDISequencerGUIEventNotifierWin32::GetMsgId() const
-{
-    return window_msg;
-}
 
 void MIDISequencerGUIEventNotifierWin32::Notify (
     const MIDISequencer *seq,
@@ -94,18 +86,10 @@ void MIDISequencerGUIEventNotifierWin32::Notify (
     }
 }
 
-bool MIDISequencerGUIEventNotifierWin32::GetEnable() const
-{
-    return en;
-}
 
-void MIDISequencerGUIEventNotifierWin32::SetEnable ( bool f )
-{
-    en = f;
-}
-
-
-
+//
+///////////////////// MIDIDriverWin32
+//
 
 char **MIDIDriverWin32::in_dev_names = 0;
 char **MIDIDriverWin32::out_dev_names = 0;
@@ -129,6 +113,74 @@ MIDIDriverWin32::~MIDIDriverWin32()
     StopTimer();
     CloseMIDIInPort();
     CloseMIDIOutPort();
+}
+
+bool MIDIDriverWin32::OpenMIDIInPort ( int id )
+{
+    if ( !in_open )
+    {
+        if ( midiInOpen (
+                    &in_handle,
+                    id,
+                    ( DWORD ) win32_midi_in,
+                    ( DWORD ) this,
+                    CALLBACK_FUNCTION ) != MMSYSERR_NOERROR
+           )
+        {
+            return false;
+        }
+
+        midiInStart ( in_handle );
+        in_open = true;
+    }
+
+    return true;
+}
+
+bool MIDIDriverWin32::OpenMIDIOutPort ( int id )
+{
+    if ( !out_open )
+    {
+        if ( midiOutOpen (
+                    &out_handle,
+                    id,
+                    0,
+                    0,
+                    CALLBACK_NULL
+                ) != MMSYSERR_NOERROR
+           )
+        {
+            return false;
+        }
+
+        sysex_buffer = new char[DEFAULT_SYSEX_BUFFER_SIZE];
+        sysex_buffer_size = DEFAULT_SYSEX_BUFFER_SIZE;
+        out_open = true;
+    }
+
+    return true;
+}
+
+void MIDIDriverWin32::CloseMIDIInPort()
+{
+    if ( in_open )
+    {
+        midiInStop ( in_handle );
+        midiInClose ( in_handle );
+        in_open = false;
+    }
+}
+
+void MIDIDriverWin32::CloseMIDIOutPort()
+{
+    if ( out_open )
+    {
+        midiOutClose ( out_handle );
+        delete[] sysex_buffer;
+        sysex_buffer_size = 0;
+        out_open = false;
+        Reset();
+    }
 }
 
 void MIDIDriverWin32::ResetMIDIOut()
@@ -186,77 +238,11 @@ void MIDIDriverWin32::StopTimer()
     }
 }
 
-bool MIDIDriverWin32::OpenMIDIInPort ( int id )
-{
-    if ( !in_open )
-    {
-        if ( midiInOpen (
-                    &in_handle,
-                    id,
-                    ( DWORD ) win32_midi_in,
-                    ( DWORD ) this,
-                    CALLBACK_FUNCTION ) != 0
-           )
-        {
-            return false;
-        }
-
-        midiInStart ( in_handle );
-        in_open = true;
-    }
-
-    return true;
-}
-
-bool MIDIDriverWin32::OpenMIDIOutPort ( int id )
-{
-    if ( !out_open )
-    {
-        int e = midiOutOpen (
-                    &out_handle,
-                    id,
-                    0,
-                    0,
-                    CALLBACK_NULL
-                );
-
-        if ( e != 0 )
-        {
-            return false;
-        }
-
-        out_open = true;
-    }
-
-    return true;
-}
-
-void MIDIDriverWin32::CloseMIDIInPort()
-{
-    if ( in_open )
-    {
-        midiInStop ( in_handle );
-        midiInClose ( in_handle );
-        in_open = false;
-    }
-}
-
-void MIDIDriverWin32::CloseMIDIOutPort()
-{
-    if ( out_open )
-    {
-        midiOutClose ( out_handle );
-        out_open = false;
-        Reset();
-    }
-}
-
 bool MIDIDriverWin32::HardwareMsgOut ( const MIDITimedBigMessage &msg )
 {
     if ( out_open )
     {
-        // dont send sysex or meta-events
-//      if ( msg.GetStatus() < 0xff && !msg.IsSysEx() )
+        // msg is a channel message
         if ( msg.IsChannelEvent() )
         {
             DWORD winmsg;
@@ -265,37 +251,75 @@ bool MIDIDriverWin32::HardwareMsgOut ( const MIDITimedBigMessage &msg )
                 | ( ( ( DWORD ) msg.GetByte1()  & 0xFF ) <<  8 )
                 | ( ( ( DWORD ) msg.GetByte2()  & 0xFF ) << 16 );
 
-            if ( midiOutShortMsg ( out_handle, winmsg ) != 0 )
+            if ( midiOutShortMsg ( out_handle, winmsg ) != MMSYSERR_NOERROR )
             {
                 return false;
             }
         }
 
+        else if ( msg.IsSystemExclusive() )
+        {
+            MIDIHDR hdr;
+// TODO: the buffer of the MIDISystemExclusive class holds only sysex bytes, without the 0xF0 status, so we
+// need sysex_buffer and put 0xF0 as 1st charachter. If the status byte would be held
+// in the MIDISystemExclusive this function would be simpler. This is possible, but perhaps there are
+// compatibility problems with older software using GetBuf(). WHAT TO DO?
+
+
+            if ( msg.GetSysEx()->GetLength() + 1 > sysex_buffer_size )
+            {   // reallocate sysex_buffer
+                delete[] sysex_buffer;
+                sysex_buffer_size = msg.GetSysEx()->GetLength() + 1;
+                sysex_buffer = new CHAR[ sysex_buffer_size ];
+            }
+
+            sysex_buffer[0] = msg.GetStatus();
+            memcpy(sysex_buffer + 1, msg.GetSysEx()->GetBuf(), msg.GetSysEx()->GetLength());
+            hdr.lpData = sysex_buffer;
+            hdr.dwBufferLength = msg.GetSysEx()->GetLength() + 1;
+            hdr.dwFlags = 0;
+
+            if ( midiOutPrepareHeader( out_handle,
+                                       &hdr,
+                                       sizeof ( MIDIHDR ) ) != MMSYSERR_NOERROR
+               )
+            {
+                // char s[100];
+                // std::cout << "Driver FAILED to send SysEx on PrepareHeader " << msg.MsgToText(s) << std::endl;
+                return false;
+            }
+
+            if ( midiOutLongMsg( out_handle,
+                                 &hdr,
+                                 sizeof ( MIDIHDR ) ) != MMSYSERR_NOERROR
+               )
+            {
+                // char s[100];
+                // std::cout << "Driver FAILED to send SysEx on OurLongMsg " << msg.MsgToText(s) << std::endl;
+                return false;
+            }
+            while ( midiOutUnprepareHeader( out_handle, &hdr, sizeof( MIDIHDR ) ) == MIDIERR_STILLPLAYING )
+            {
+                /* Should put a delay in here rather than a busy-wait */
+            }
+            // std::cout << "Driver sent Sysex msg " << msg.MsgToText(s) << std::endl;
+        }
+
+        else
+        {
+            // char s[100];
+            // std::cout << "Driver skipped message " << msg.MsgToText(s) << std::endl;
+        }
+
         return true;
     }
 
+    // std::cout << "Driver not open!" << std::endl;
     return false;
 }
 
-/* NEW BY NC */
-unsigned int MIDIDriverWin32::GetNumMIDIInDevs() {
-    return num_in_devs;
-}
 
-unsigned int MIDIDriverWin32::GetNumMIDIOutDevs() {
-    return num_out_devs;
-}
-
-const char* MIDIDriverWin32::GetMIDIInDevName(unsigned int i) {
-    return in_dev_names[i];
-}
-
-
-const char* MIDIDriverWin32::GetMIDIOutDevName(unsigned int i) {
-    return out_dev_names[i];
-}
-
-/* END OF NEW */
+// protected functions
 
 void CALLBACK MIDIDriverWin32::win32_timer (
     UINT wTimerID,
@@ -340,9 +364,9 @@ unsigned int MIDIDriverWin32::FillMIDIInDevices()
     {
         if ( midiInGetDevCaps( i, &InCaps, sizeof(InCaps) ) == MMSYSERR_NOERROR )
         {
-            in_dev_names[i] = new char[DEVICENAMELEN];
-            strncpy( in_dev_names[i], InCaps.szPname, DEVICENAMELEN-1 );
-            in_dev_names[i][DEVICENAMELEN-1] = 0;
+            in_dev_names[i] = new char[DEVICENAME_LEN];
+            strncpy( in_dev_names[i], InCaps.szPname, DEVICENAME_LEN-1 );
+            in_dev_names[i][DEVICENAME_LEN-1] = 0;
         }
     }
     return n_devs;
@@ -358,9 +382,9 @@ unsigned int MIDIDriverWin32::FillMIDIOutDevices()
     {
         if ( midiOutGetDevCaps( i, &OutCaps, sizeof(OutCaps) ) == MMSYSERR_NOERROR )
         {
-            out_dev_names[i] = new char[DEVICENAMELEN];
-            strncpy( out_dev_names[i], OutCaps.szPname, DEVICENAMELEN-1 );
-            out_dev_names[i][DEVICENAMELEN-1] = 0;
+            out_dev_names[i] = new char[DEVICENAME_LEN];
+            strncpy( out_dev_names[i], OutCaps.szPname, DEVICENAME_LEN-1 );
+            out_dev_names[i][DEVICENAME_LEN-1] = 0;
         }
     }
     return n_devs;

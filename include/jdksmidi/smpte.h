@@ -41,28 +41,32 @@
 namespace jdksmidi
 {
 
+/// \defgroup rates "The smpte and sample rates"
+/// These are the allowed smpte rates and sample rates allowed for SMPTE class
+//@{
+/// The smpte rates
 enum SMPTE_RATE
 {
-    SMPTE_RATE_24 = 0,
-    SMPTE_RATE_25,
-    SMPTE_RATE_2997,
-    SMPTE_RATE_2997DF,
-    SMPTE_RATE_30,
-    SMPTE_RATE_30DF
+    SMPTE_RATE_24 = 0,          ///< 24 frames/sec
+    SMPTE_RATE_25,              ///< 25 frames/sec
+    SMPTE_RATE_2997,            ///< 29.97 frames/sec
+    SMPTE_RATE_2997DF,          ///< 29.97 frames/sec drop
+    SMPTE_RATE_30,              ///< 30 frames/sec
+    SMPTE_RATE_30DF             ///< 30 frames/sec drop
 };
 
 
-
+/// The sample rates
 enum SAMPLE_RATE
 {
-    SAMPLE_32000 = 0,
-    SAMPLE_44056,
-    SAMPLE_44100,
-    SAMPLE_47952,
-    SAMPLE_48000,
-    SAMPLE_48048
+    SAMPLE_32000 = 0,           ///< 32000 samples/sec
+    SAMPLE_44056,               ///< 44056 samples/sec
+    SAMPLE_44100,               ///< 44100 samples/sec
+    SAMPLE_47952,               ///< 47952 samples/sec
+    SAMPLE_48000,               ///< 48000 samples/sec
+    SAMPLE_48048                ///< 48048 samples/sec
 };
-
+//@}
 
 
 
@@ -119,53 +123,59 @@ inline long GetSampleRateFrequencyLong ( SAMPLE_RATE r )
 
 
 
-
+///
+/// This class performs conversions between number of samples, milliseconds and smpte format
+/// (hours::minutes::seconds::frames::subframes).
+/// You can choose between several smpte formats and sample rates
+/// (see \ref rates "SMPTE and sample rates").
+///
 
 class  SMPTE
 {
 public:
+
+    /// The constructor sets the SMPTE rate to SMPTE_30 and the sample rate to SAMPLE_48000
     SMPTE (
         SMPTE_RATE smpte_rate = SMPTE_RATE_30,
         SAMPLE_RATE sample_rate = SAMPLE_48000
     );
 
+    /// The copy constructor
     SMPTE (
         const SMPTE & s
     );
 
+    /// Sets the smpte rate. See \ref rates "SMPTE and sample rates" for avalaible smpte rates
     void SetSMPTERate ( SMPTE_RATE r )
     {
         smpte_rate = r;
         sample_number_dirty = true;
     }
+
+    /// Returns the smpte rate
     SMPTE_RATE GetSMPTERate()
     {
         return smpte_rate;
     }
 
+    /// Sets the sample rate. See \ref rates "SMPTE and sample rates" for avalaible sample rates
     void SetSampleRate ( SAMPLE_RATE r )
     {
         sample_rate = r;
         sample_number_dirty = true;
     }
+
+    /// Returns the sample rate
     SAMPLE_RATE GetSampleRate()
     {
         return sample_rate;
     }
 
-    void SetSampleNumber ( ulong n )
-    {
-        sample_number = n;
-        SampleToTime();
-    }
-    ulong GetSampleNumber()
-    {
-        if ( sample_number_dirty )
-            TimeToSample();
-
-        return sample_number;
-    }
-
+    /// \name To perform a smpte-to-samples conversion.
+    /// You must first load the SMPTE with the number of of hours, minutes, seconds, frames and subframes
+    /// to convert using SetTime() (or other functions setting individual items); then you can call
+    /// GetSampleNumber() to get the corresponding number of samples.
+    //@{
     void SetTime ( uchar h, uchar m, uchar s, uchar f = 0, uchar sf = 0 )
     {
         hours = h;
@@ -174,27 +184,6 @@ public:
         frames = f;
         sub_frames = sf;
         sample_number_dirty = true;
-    }
-
-    uchar GetHours()
-    {
-        return hours;
-    }
-    uchar GetMinutes()
-    {
-        return minutes;
-    }
-    uchar GetSeconds()
-    {
-        return seconds;
-    }
-    uchar  GetFrames()
-    {
-        return frames;
-    }
-    uchar GetSubFrames()
-    {
-        return sub_frames;
     }
 
     void SetHours ( uchar h )
@@ -222,17 +211,99 @@ public:
         sub_frames = sf;
         sample_number_dirty = true;
     }
+    ulong GetSampleNumber()
+    {
+        if ( sample_number_dirty )
+            TimeToSample();
 
-    void AddHours ( char h );
-    void AddMinutes ( char m );
-    void AddSeconds ( char s );
-    void AddFrames ( char f );
-    void AddSubFrames ( char sf );
+        return sample_number;
+    }
+    //@}
+
+
+    /// \name To perform a samples-to-smpte conversion.
+    /// You must first load the SMPTE with the number of samples to convert using SetSampleNumber();
+    /// then you can call other functions to get the corresponding hours, minutes, etc.
+    //@{
+    void SetSampleNumber ( ulong n )
+    {
+        sample_number = n;
+        SampleToTime();
+    }
+    uchar GetHours()
+    {
+        return hours;
+    }
+    uchar GetMinutes()
+    {
+        return minutes;
+    }
+    uchar GetSeconds()
+    {
+        return seconds;
+    }
+    uchar  GetFrames()
+    {
+        return frames;
+    }
+    uchar GetSubFrames()
+    {
+        return sub_frames;
+    }
+    //@}
+
+
+    /// To perform a millisecond-to-smpte or millisecond-to-sample conversion.
+    /// You must first load the SMPTE with the number of milliseconds to convert using SetMilliSeconds();
+    /// then you can call GetSampleNumber or GetHours(), GetMinutes() etc.
+    void SetMilliSeconds ( ulong msecs )
+    {
+        sample_number = ( ulong ) ( msecs * GetSampleRateFrequency( sample_rate ) / 1000 );
+        SampleToTime();
+    }
+
+    /// To perform a smpte-to-millisecond or sample-to-millisecond conversion.
+    /// You must first load the SMPTE with the number of sample or with smpte items to convert using
+    /// SetSampleNumber() or SetHoure(), SetMinutes() etc. ; then you can call GetMilliSeconds() to get the
+    /// corresponding millieseconds
+    ulong GetMilliSeconds ()
+    {
+        if ( sample_number_dirty )
+            TimeToSample();
+
+        return ( ulong ) ( sample_number * 1000 / GetSampleRateFrequency( sample_rate ) );
+    }
+
+    /// \name To add, increment and decrement samples.
+    /// These functions add, increment or decrement the current sample number./ You can use them
+    /// instead of SetSampleNunber() to perform a samples-to-smpte conversion
+    //@{
     void AddSamples ( long n )
     {
         sample_number = GetSampleNumber() + n;
         SampleToTime();
     }
+
+    void IncSamples()
+    {
+        AddSamples ( 1 );
+    }
+
+    void DecSamples()
+    {
+        AddSamples ( -1 );
+    }
+    //@}
+
+    /// \name To add, increment and decrement smpte
+    /// These functions add, increment or decrement smpte time parameters./ You can use them instead of
+    /// SetTime() to perform a smpte-to-samples conversion
+    //@{
+    void AddHours ( char h );
+    void AddMinutes ( char m );
+    void AddSeconds ( char s );
+    void AddFrames ( char f );
+    void AddSubFrames ( char sf );
 
     void IncHours()
     {
@@ -253,10 +324,6 @@ public:
     void IncSubFrames()
     {
         AddSubFrames ( 1 );
-    }
-    void IncSamples()
-    {
-        AddSamples ( 1 );
     }
 
     void DecHours()
@@ -279,13 +346,11 @@ public:
     {
         AddSubFrames ( -1 );
     }
-    void DecSamples()
-    {
-        AddSamples ( -1 );
-    }
+    //@}
 
 
-
+    /// \name The operators (these compare the current time)
+    //@{
     const SMPTE & operator = ( const SMPTE & s )
     {
         Copy ( s );
@@ -326,9 +391,14 @@ public:
         Subtract ( s );
         return *this;
     }
+    //@}
 
 protected:
+
+    /// Performs samples-to-smpte conversion
     void SampleToTime();
+
+    /// Performs smpte-to-samples conversion
     void TimeToSample();
 
     void Copy ( const SMPTE & s );

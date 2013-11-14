@@ -35,6 +35,10 @@
 // www.vmgames.com vrm@vmgames.com
 //
 
+//
+// doxygen comments by N. Cassetta ncassetta@tiscali.it
+//
+
 #ifndef JDKSMIDI_FILEWRITE_H
 #define JDKSMIDI_FILEWRITE_H
 
@@ -50,20 +54,34 @@ class MIDIFileWriteStream;
 class MIDIFileWriteStreamFile;
 class MIDIFileWrite;
 
+
+/// This class is used internally for writing MIDI files. It is pure virtual and implements a stream of *char*
+/// to be be written to a MIDI file
 class MIDIFileWriteStream
 {
 public:
     MIDIFileWriteStream();
     virtual ~MIDIFileWriteStream();
 
+    /// To be overriden: sets the position of the next character to be written
     virtual long Seek ( long pos, int whence = SEEK_SET ) = 0;
+
+    /// To be overriden: writes a *char*
     virtual int WriteChar ( int c ) = 0;
 };
 
+/// This class is used internally for writing MIDI files. It inherits from pure virtual MIDIWriteStream and
+/// writes a stream of *char* to a FILE C object
+// note by NC: I think this class should be declared deprecated: it has no correspective in MIDIFileRead,
+// and its name generates confusion with MIDIFileReadStreamFile (which corresponds to it and MIDIFileWriteStreamFileName
+// TODO: fix this
 class MIDIFileWriteStreamFile : public MIDIFileWriteStream
 {
 public:
+    /// In the constructor you must specify an already opened FILE f
     MIDIFileWriteStreamFile ( FILE *f_ );
+
+    /// The destructor doesn't close the file
     virtual ~MIDIFileWriteStreamFile();
 
     long Seek ( long pos, int whence = SEEK_SET );
@@ -72,9 +90,14 @@ protected:
     FILE *f;
 };
 
+/// This class is used internally for writing MIDI files. It inherits from MIDIFileWriteStreamFile and writes
+/// a stream of *char* to a FILE C object specified by its filename
 class MIDIFileWriteStreamFileName : public MIDIFileWriteStreamFile
 {
 public:
+
+    /// In the constructor you must specify the filename.\ The constructor tries to open the FILE, you
+    /// should call IsValid() for checking if it was successful
     MIDIFileWriteStreamFileName ( const char *fname ) : MIDIFileWriteStreamFile ( fopen ( fname, "wb" ) )
     {
     }
@@ -85,11 +108,13 @@ public:
     }
 #endif
 
+    /// Returns *true* if the FILE was opened
     bool IsValid()
     {
         return f != 0;
     }
 
+    /// The destructor closes the FILE
     virtual ~MIDIFileWriteStreamFileName()
     {
         if ( f )
@@ -100,33 +125,49 @@ public:
 
 };
 
+/// This class inherits from MIDIFile and converts MIDI data into a stream of *char*,
+/// writing them to a MIDIFileWriteStream object
 class MIDIFileWrite : protected MIDIFile
 {
 public:
+    /// In the constructor you must specify the MIDIFileWriteStream.\ The stream must be alreafy opem
     MIDIFileWrite ( MIDIFileWriteStream *out_stream_ );
+
+    /// The destructor doesn't destroy or close the MIDIFileWriteStream
     virtual ~MIDIFileWrite();
 
+    /// Returns *true* if an write error occurred
     bool ErrorOccurred()
     {
         return error;
     }
+
+    /// Returns the number of *char* currently written
     unsigned long GetFileLength()
     {
         return file_length;
     }
+
+    /// Returns the number of *char* written in the current track
     unsigned long GetTrackLength()
     {
         return track_length;
     }
+
+    /// Resets track lenght to 0
     void ResetTrackLength()
     {
         track_length = 0;
     }
+
+    /// Resets track time to 0
     void ResetTrackTime()
     {
         track_time = 0;
     }
 
+    /// \name Functions to write specific messages or data chunks
+    //@{
     void WriteFileHeader ( int format, int ntrks, int division );
     void WriteTrackHeader ( unsigned long length );
 
@@ -148,7 +189,9 @@ public:
 
     void WriteEndOfTrack ( unsigned long time );
     virtual void RewriteTrackLength();
-    // false argument disable use running status in midi file (true on default)
+    //@}
+
+    /// False argument disable use running status in midi file (true on default)
     void UseRunningStatus( bool use )
     {
         use_running_status = use;

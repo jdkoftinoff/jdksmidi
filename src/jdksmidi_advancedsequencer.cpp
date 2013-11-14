@@ -27,7 +27,7 @@
 //
 
 //
-// MODIFIED by N. Cassetta
+// MODIFIED by N. Cassetta ncassetta@tiscali.it
 //
 
 
@@ -43,6 +43,7 @@
 namespace jdksmidi
 {
 
+/* NOTE by NC: unused in this file
 static void FixQuotes ( char *s_ )
 {
     unsigned char *s = ( unsigned char * ) s_;
@@ -67,51 +68,18 @@ static void FixQuotes ( char *s_ )
         s++;
     }
 }
-
-
-/* OLD
-AdvancedSequencer::AdvancedSequencer()
-    :
-    thru_processor ( 2 ),
-    thru_transposer(),
-    thru_rechannelizer(),
-    driver ( 256, stdout ),
-    tracks ( 17 ),
-    notifier ( stdout ),
-    seq ( &tracks, &notifier ),
-    mgr ( &driver, &notifier, &seq ),
-    repeat_start_measure ( 0 ),
-    repeat_end_measure ( 0 ),
-    repeat_play_mode ( false ),
-    num_warp_positions ( 0 ),
-    file_loaded ( false ),
-    chain_mode ( false )
-{
-}
-
-
-AdvancedSequencer::~AdvancedSequencer()
-{
-    Stop();
-    CloseMIDI();
-
-    for ( int i = 0; i < num_warp_positions; ++i )
-    {
-        jdks_safe_delete_object ( warp_positions[i] );
-    }
-}
 */
-/* NEW BY NC */
+
 
 AdvancedSequencer::AdvancedSequencer(MIDISequencerGUIEventNotifier *n)
-    :
-
 #ifdef WIN32
-    // driver( new MIDIDriverWin32( 256 ) ),  // OLD
+        :
     driver( new MIDIDriverWin32() ),  /* NEW BY NC: queue_size given as default parameter */
 #else
-    std:cout << "Currentky only supported WIN32\n";
+{
+    std:cerr << "Currentky only supported WIN32\n";
     exit(EXIT_FAILURE);
+}
 #endif // WIN32
 
     notifier( n ),
@@ -163,11 +131,6 @@ void AdvancedSequencer::SetOutputPort( int p)
     OpenMIDI(in_port, out_port);
 }
 
-int AdvancedSequencer::GetOutputPort() const
-{
-    return out_port;
-}
-
 
 void AdvancedSequencer::SetInputPort( int p)
 {
@@ -177,22 +140,6 @@ void AdvancedSequencer::SetInputPort( int p)
     OpenMIDI(in_port, out_port);
 }
 
-int AdvancedSequencer::GetInputPort() const
-{
-    return in_port;
-}
-
-
-
-void AdvancedSequencer::SetMIDIThruEnable ( bool f )
-{
-    driver->SetThruEnable ( f );
-}
-
-bool AdvancedSequencer::GetMIDIThruEnable() const
-{
-    return driver->GetThruEnable();
-}
 
 void AdvancedSequencer::SetMIDIThruChannel ( int chan )
 {
@@ -201,25 +148,11 @@ void AdvancedSequencer::SetMIDIThruChannel ( int chan )
 }
 
 
-int AdvancedSequencer::GetMIDIThruChannel() const
-{
-    return thru_rechannelizer.GetRechanMap ( 0 );
-}
-
-
-
 void AdvancedSequencer::SetMIDIThruTranspose ( int val )
 {
     thru_transposer.SetAllTranspose ( val );
     driver->AllNotesOff();
 }
-
-
-int AdvancedSequencer::GetMIDIThruTranspose() const
-{
-    return thru_transposer.GetTransposeChannel ( 0 );
-}
-
 
 
 bool AdvancedSequencer::Load ( const char *fname )
@@ -271,51 +204,29 @@ void AdvancedSequencer::UnLoad()    /* NEW BY NC */
     warp_positions.clear();
     num_measures = 0;
     file_loaded = false;
+    // TODO: must reset tracks clck_per_beat???
 }
 
 
 void AdvancedSequencer::Reset()
 {
     Stop();
-    // driver->AllNotesOff(); already done in Stop() !
     UnmuteAllTracks();
     UnSoloTrack();
     SetTempoScale ( 1.00 );
-    SetRepeatPlay(false, 0, 0 ); /* ADDED BY NC */
+    SetRepeatPlay(false, 0, 0 );
     seq.ResetAllTracks();
     seq.GoToZero();
-    driver->Reset();    // needed? I don't know
+    driver->Reset();    // clear queues
 }
 
-/* NEW BY NC */
-
-MIDIMultiTrack& AdvancedSequencer::GetMultiTrack()
-{
-    return tracks;
-}
-
-const MIDIMultiTrack& AdvancedSequencer::GetMultiTrack() const
-{
-    return tracks;
-}
-
-MIDIMultiTrack* AdvancedSequencer::GetMultiTrackAddress()
-{
-    return &tracks;
-}
-
-const MIDIMultiTrack* AdvancedSequencer::GetMUltiTrackAddress() const
-{
-    return &tracks;
-}
 
 void AdvancedSequencer::GoToZero() {
     Stop();
     seq.GoToMeasure(0); // NC: not GoToZero() ! this sets correct values in the MIDISequencerState and notify them
 }
-/* END OF NEW */
 
-/* NC TODO: these throws some warnings: revise it */
+
 void AdvancedSequencer::GoToTime (MIDIClockTime t) {
     if ( !file_loaded )
     {
@@ -357,22 +268,6 @@ void AdvancedSequencer::GoToTime (MIDIClockTime t) {
     }
 }
 
-/* OLD
-void AdvancedSequencer::GoToTime ( MIDIClockTime t )
-{
-    if ( mgr.IsSeqPlay() )
-    {
-        Stop();
-        seq.GoToTime ( t + 1 );
-        Play();
-    }
-
-    else
-    {
-        seq.GoToTime ( t + 1 );
-    }
-}
-*/
 
 void AdvancedSequencer::GoToMeasure ( int measure, int beat )
 {
@@ -395,28 +290,15 @@ void AdvancedSequencer::GoToMeasure ( int measure, int beat )
     if ( mgr.IsSeqPlay() )
     {
         Stop();
-
-/*
-        if ( warp_positions[warp_to_item] )
-        {
-            seq.SetState ( warp_positions[warp_to_item] );
-        }
-*/      seq.SetState ( &warp_positions[warp_to_item] );
+        seq.SetState ( &warp_positions[warp_to_item] );
         seq.GoToMeasure ( measure, beat );
         Play();
     }
 
     else
     {
-/*
-        if ( warp_positions[warp_to_item] )
-        {
-            seq.SetState ( warp_positions[warp_to_item] );
-        }
-*/
         seq.SetState ( &warp_positions[warp_to_item] );
         seq.GoToMeasure ( measure, beat );
-
         for ( int i = 0; i < seq.GetNumTracks(); ++i )
         {
             seq.GetTrackState ( i )->note_matrix.Clear();
@@ -425,7 +307,7 @@ void AdvancedSequencer::GoToMeasure ( int measure, int beat )
 }
 
 
-void AdvancedSequencer::Play ( /* int clock_offset OLD */ )
+void AdvancedSequencer::Play ()
 {
     if ( !file_loaded )
     {
@@ -433,27 +315,10 @@ void AdvancedSequencer::Play ( /* int clock_offset OLD */ )
     }
 
     Stop();
-
-/* this is already done by Stop
-    for ( int i = 0; i < seq.GetNumTracks(); ++i )
-    {
-        seq.GetTrackState ( i )->note_matrix.Clear();
-    }
-*/
     if ( repeat_play_mode )
     {
-        // seq.GoToMeasure ( repeat_start_measure ); OLD
         GoToMeasure ( repeat_start_measure );
     }
-
-/* OLD
-    MIDIClockTime cur_time = seq.GetCurrentMIDIClockTime();
-
-    if ( ( long ) cur_time > -clock_offset )
-        cur_time += clock_offset;
-
-    seq.GoToTime ( cur_time );
-*/
 
     CatchEventsBefore();
     // this intercepts any CC, SYSEX and TEMPO messages and send them to the out port
@@ -461,22 +326,9 @@ void AdvancedSequencer::Play ( /* int clock_offset OLD */ )
     // sequencer state, but it would track even CC (not difficult) and SYSEX messages
 
     mgr.SetSeqOffset ( ( unsigned long ) seq.GetCurrentTimeInMs() );
-    // mgr.SetTimeOffset ( timeGetTime() ); OLD
-    mgr.SetTimeOffset ( jdks_get_system_time_ms() ); /* NC: eliminated every WIN32 call not in a #ifdef WIN32 contest */
+    mgr.SetTimeOffset ( jdks_get_system_time_ms() );
     mgr.SeqPlay();
 }
-
-/*
-void AdvancedSequencer::Pause()
-{
-    if ( !file_loaded )
-    {
-        return;
-    }
-
-    Stop();
-}
-*/
 
 
 void AdvancedSequencer::Stop()
@@ -547,37 +399,6 @@ void AdvancedSequencer::SetRepeatPlay ( bool enable, int start_measure, int end_
  */
 
 
-/* OLD
-void AdvancedSequencer::SoloTrack ( int trk )
-{
-    if ( !file_loaded )
-    {
-        return;
-    }
-
-    if ( trk == -1 )
-    {
-        seq.SetSoloMode ( false );
-        driver->AllNotesOff();
-
-        for ( int i = 0; i < seq.GetNumTracks(); ++i )
-        {
-            seq.GetTrackState ( i )->note_matrix.Clear();
-        }
-    }
-
-    else
-    {
-        seq.SetSoloMode ( true, trk );
-        driver->AllNotesOff();
-
-        for ( int i = 0; i < seq.GetNumTracks(); ++i )
-        {
-            seq.GetTrackState ( i )->note_matrix.Clear();
-        }
-    }
-}
-*/
 /* NEW BY NC */
 void AdvancedSequencer::SoloTrack ( int trk )
 {
@@ -598,24 +419,7 @@ void AdvancedSequencer::SoloTrack ( int trk )
     }
 }
 
-/* OLD
-void AdvancedSequencer::UnSoloTrack()
-{
-    if ( !file_loaded )
-    {
-        return;
-    }
 
-    seq.SetSoloMode ( false );
-    driver->AllNotesOff();
-
-    for ( int i = 0; i < seq.GetNumTracks(); ++i )
-    {
-        seq.GetTrackState ( i )->note_matrix.Clear();
-    }
-} */
-
-/* NEW */
 void AdvancedSequencer::UnSoloTrack()  {
     if ( !file_loaded )
     {
@@ -628,24 +432,6 @@ void AdvancedSequencer::UnSoloTrack()  {
     seq.SetSoloMode (false);
 }
 
-bool AdvancedSequencer::GetTrackSolo( int trk )
-{
-    return seq.GetTrackProcessor (trk)->solo;
-}
-
-
-/* OLD
-void AdvancedSequencer::SetTrackMute ( int trk, bool f )
-{
-    if ( !file_loaded )
-    {
-        return;
-    }
-
-    seq.GetTrackProcessor ( trk )->mute = f;
-    driver->AllNotesOff();
-} */
-/* NEW */
 
 void AdvancedSequencer::SetTrackMute ( int trk, bool f )
 {
@@ -667,32 +453,7 @@ void AdvancedSequencer::SetTrackMute ( int trk, bool f )
     }
 }
 
-bool AdvancedSequencer::GetTrackMute ( int trk )
-{
-    return seq.GetTrackProcessor (trk)->mute;
-}
 
-/* OLD
-void AdvancedSequencer::UnmuteAllTracks()
-{
-    if ( !file_loaded )
-    {
-        return;
-    }
-
-    for ( int i = 0; i < seq.GetNumTracks(); ++i )
-    {
-        if ( seq.GetTrackProcessor ( i )->mute )
-        {
-            seq.GetTrackState ( i )->note_matrix.Clear();
-            seq.GetTrackProcessor ( i )->mute = false;
-        }
-    }
-
-    driver->AllNotesOff();
-} */
-
-/* NEW */
 void AdvancedSequencer::UnmuteAllTracks()
 {
     if ( !file_loaded )
@@ -715,7 +476,6 @@ void AdvancedSequencer::UnmuteAllTracks()
 }
 
 
-
 void AdvancedSequencer::SetTempoScale ( double scale )
 {
     if ( !file_loaded )
@@ -727,25 +487,14 @@ void AdvancedSequencer::SetTempoScale ( double scale )
 }
 
 
-double AdvancedSequencer::GetTempoWithoutScale() const
-{
-    return seq.GetCurrentTempo();
-}
-
-
-double AdvancedSequencer::GetTempoWithScale() const
-{
-    return seq.GetCurrentTempo() * seq.GetCurrentTempoScale();
-}
-
 unsigned long AdvancedSequencer::GetCurrentTimeInMs() const {
-// NEW: this is effective also during playback
+// NEW: this is now effective also during playback
     if ( mgr.IsSeqPlay() )
     {
-        return jdks_get_system_time_ms() + mgr.GetSeqOffset() - mgr.GetTimeOffset();
+        return mgr.GetCurrentTimeInMs();
         /* time from sequencer start
          * TODO: BY NC this should be a MIDIManager function (as stated also by Victor in TODO file)
-         * perhaps we should put specialized jdks_get_system_time_ms for every OS in the utils.h file
+         * DONE!
          */
     }
     else
@@ -754,25 +503,17 @@ unsigned long AdvancedSequencer::GetCurrentTimeInMs() const {
     }
 }
 
-
-int AdvancedSequencer::GetClksPerBeat() const
+bool AdvancedSequencer::SetClksPerBeat (unsigned int cpb)
 {
-    return tracks.GetClksPerBeat();
+    if (file_loaded)    // you can change this only when the multitrack is empty
+    {
+        return false;
+    }
+    tracks.SetClksPerBeat(cpb);
+    seq.GetState()->Reset();
+    return true;
 }
 
-int AdvancedSequencer::GetNumTracks() const
-/* NOTE BY NC: actually this always returns 17, the number of tracks of the MIDIMultiTrack
- * TODO: modify the MIDIMultiTrack class to keep track of tracks actually used and implement
- * a function GetUsedTracks()
- */
-{
-    return seq.GetNumTracks();
-}
-
-int AdvancedSequencer::GetNumMeasures() const
-{
-    return num_measures;
-}
 
 int AdvancedSequencer::GetMeasure() const
 {
@@ -780,7 +521,6 @@ int AdvancedSequencer::GetMeasure() const
     {
         return 0;
     }
-
     return seq.GetCurrentMeasure();
 }
 
@@ -791,10 +531,8 @@ int AdvancedSequencer::GetBeat() const
     {
         return 0;
     }
-
     return seq.GetCurrentBeat();
 }
-
 
 
 int AdvancedSequencer::GetTimeSigNumerator() const
@@ -803,8 +541,6 @@ int AdvancedSequencer::GetTimeSigNumerator() const
     {
         return 4;
     }
-
-    // return seq.GetTrackState ( 0 )->timesig_numerator;       OLD: see MIDISequencer class changes
     return seq.GetState ()->timesig_numerator;          /* NC */
 }
 
@@ -815,8 +551,6 @@ int AdvancedSequencer::GetTimeSigDenominator() const
     {
         return 4;
     }
-
-    // return seq.GetTrackState ( 0 )->timesig_denominator;     OLD: see MIDISequencer class changes
     return seq.GetState ()->timesig_denominator;        /* NC */
 }
 
@@ -828,12 +562,10 @@ int AdvancedSequencer::GetTrackNoteCount ( int trk ) const
     {
         return 0;
     }
-
     if ( mgr.IsSeqStop() )
     {
         return 0;
     }
-
     else
     {
         return seq.GetTrackState ( trk )->note_matrix.GetTotalCount();
@@ -847,7 +579,6 @@ const char *AdvancedSequencer::GetTrackName ( int trk ) const
     {
         return "";
     }
-
     return seq.GetTrackState ( trk )->track_name;
 }
 
@@ -858,7 +589,6 @@ int AdvancedSequencer::GetTrackVolume ( int trk ) const
     {
         return 100;
     }
-
     return seq.GetTrackState ( trk )->volume;
 }
 
@@ -869,30 +599,28 @@ int AdvancedSequencer::GetTrackProgram ( int trk ) const
     {
         return 0;
     }
-
     return seq.GetTrackState ( trk )->pg;
 }
 
 
-void AdvancedSequencer::SetTrackVelocityScale ( int trk, int scale )
+void AdvancedSequencer::SetTrackVelocityScale ( int trk, double scale )
 {
     if ( !file_loaded )
     {
         return;
     }
-
-    seq.GetTrackProcessor ( trk )->velocity_scale = scale;
+    scale *= 100;
+    seq.GetTrackProcessor ( trk )->velocity_scale = ( int ) scale;
 }
 
 
-int AdvancedSequencer::GetTrackVelocityScale ( int trk ) const
+double AdvancedSequencer::GetTrackVelocityScale ( int trk ) const
 {
     if ( !file_loaded )
     {
-        return 100;
+        return 1.0;
     }
-
-    return seq.GetTrackProcessor ( trk )->velocity_scale;
+    return seq.GetTrackProcessor ( trk )->velocity_scale * 0.01;
 }
 
 
@@ -903,7 +631,6 @@ void AdvancedSequencer::SetTrackRechannelize ( int trk, int chan )
     {
         return;
     }
-
     seq.GetTrackProcessor ( trk )->rechannel = chan;
     driver->AllNotesOff();
     seq.GetTrackState ( trk )->note_matrix.Clear();
@@ -916,7 +643,6 @@ int AdvancedSequencer::GetTrackRechannelize ( int trk ) const
     {
         return -1;
     }
-
     return seq.GetTrackProcessor ( trk )->rechannel;
 }
 
@@ -930,7 +656,6 @@ void AdvancedSequencer::SetTrackTranspose ( int trk, int trans )
     }
 
     bool was_playing = mgr.IsSeqPlay();
-
     if ( mgr.IsSeqPlay() )
     {
         was_playing = true;
@@ -944,7 +669,6 @@ void AdvancedSequencer::SetTrackTranspose ( int trk, int trans )
             seq.GetTrackProcessor ( trk )->transpose = trans;
         }
     }
-
     else
     {
         seq.GetTrackProcessor ( trk )->transpose = trans;
@@ -966,7 +690,6 @@ int AdvancedSequencer::GetTrackTranspose ( int trk ) const
     {
         return 0;
     }
-
     return seq.GetTrackProcessor ( trk )->transpose;
 }
 
@@ -1077,6 +800,10 @@ int AdvancedSequencer::GetCurrentMarker() const
 
 const char* AdvancedSequencer::GetCurrentMarker() const
 {
+    if ( !file_loaded )
+    {
+        return "";
+    }
     return seq.GetState()->marker_name;
 }
 
@@ -1100,6 +827,8 @@ bool AdvancedSequencer::OpenMIDI ( int in_port, int out_port, int timer_resoluti
 {
  #ifdef WIN32
 // TODO: (BY NC) this is a patch: it must be fixed with changes on class MIDIDriver;
+// we must eliminate every OS specific reference from this file
+
     CloseMIDI();
 
     MIDIDriverWin32 *windriver = static_cast<MIDIDriverWin32*> ( driver );
@@ -1131,6 +860,8 @@ void AdvancedSequencer::CloseMIDI()
 {
 #ifdef WIN32
 // TODO: (BY NC) this is a patch: it must be fixed with changes on class MIDIDriver;
+// we must eliminate every OS specific reference from this file
+
     MIDIDriverWin32 * windriver = static_cast<MIDIDriverWin32*> ( driver );
     Stop();
     windriver->StopTimer();
@@ -1171,7 +902,6 @@ int AdvancedSequencer::FindFirstChannelOnTrack ( int trk )
             }
         }
     }
-
     return first_channel;
 }
 
@@ -1228,14 +958,7 @@ void AdvancedSequencer::ExtractWarpPositions()
     Stop();
     // warp_positions is now a vector of objects ( not pointers ) so we can minimize memory dealloc/alloc
 
-    /*
-    for ( int i = 0; i < warp_positions.size(); ++i )
-    {
-        jdks_safe_delete_object ( warp_positions[i] );
-    }
-    */
-
-    int num_warp_positions = 0;
+    unsigned int num_warp_positions = 0;
     while ( seq.GoToMeasure ( num_warp_positions * MEASURES_PER_WARP ) )
     {
 
