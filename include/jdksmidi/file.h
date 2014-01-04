@@ -35,11 +35,6 @@
 // www.vmgames.com vrm@vmgames.com
 //
 
-//
-// doxygen comments by N. Cassetta ncassetta@tiscali.it
-//
-
-
 #ifndef JDKSMIDI_FILE_H
 #define JDKSMIDI_FILE_H
 
@@ -51,13 +46,13 @@
 namespace jdksmidi
 {
 
+//
+// The MIDIFile class contains definitions and utilities to deal with
+// reading and writing midi files.
+//
+
 const unsigned long _MThd = OSTYPE ( 'M', 'T', 'h', 'd' );
 const unsigned long _MTrk = OSTYPE ( 'M', 'T', 'r', 'k' );
-
-///
-/// This class is used internally to read/write MIDI files. It contains basic definitions
-/// and utilities, and it is overriden by MIDIFileRead and MIDIFileWrite
-///
 
 class MIDIFile
 {
@@ -79,7 +74,10 @@ public:
         short division;
     };
 
-    /// All the different meta event message types.
+    //
+    // define all the different meta event message types.
+    //
+
     enum
     {
         MF_META_SEQUENCE_NUMBER = META_SEQUENCE_NUMBER,
@@ -114,10 +112,17 @@ public:
     };
 
 
-    /// Returns the frequency of the required tempo clock
+    //
+    // ConvertTempoToFreq() returns the frequency of the required
+    // tempo clock
+    //
+
     static unsigned long ConvertTempoToFreq ( short division, MIDITempo &tempo );
 
-    /// Converts a four byte number to an unsigned long
+    //
+    // Convert a four byte number to an unsigned long.
+    //
+
     static unsigned long To32Bit ( unsigned char a, unsigned char b, unsigned char c, unsigned char d )
     {
         return ( static_cast<unsigned long> ( a ) << 24 ) |
@@ -126,17 +131,17 @@ public:
                ( static_cast<unsigned long> ( d )       );
     }
 
-    /// Converts a two byte number to an unsigned short
+    //
+    // Convert a two byte number to an unsigned short
+    //
+
     static unsigned short To16Bit ( unsigned char a, unsigned char b )
     {
         return ( static_cast<unsigned short> ( a ) << 8 ) |
                ( static_cast<unsigned short> ( b )      );
     }
 
-    /// Returns a variable lenght codified number as an ulong
     static unsigned long ReadVariableLengthNumber ( unsigned char **in );
-
-    /// Writes the number _num_ as a variable length in the buffer _out_
     static unsigned char * WriteVariableLengthNumber ( unsigned long num, unsigned char *out );
 };
 

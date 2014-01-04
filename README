@@ -1,14 +1,3 @@
-This is a fork of the JDKSMidi library by J.D. Koftinoff and other authors.
-The main changes are the development of the class AdvancedSequencer, an all-in-one object capable to load and play
-MIDI files with a single call to a class method.
-There are other features, and even improvements to the class MIDIDriver. These are shown in two new test programs,
-one of them for Windows (see the examples in the \examples\win32 folder).
-Currently the driver is only effective for Windows, but ALSA drivers have been developed by Palem Gopalakrishna and
-could be integrated soon
-Nicola Cassetta
-
-/////// ORIGINAL README //////////////////////////////////////
-
 J.D. Koftinoff Software, Ltd's C++ MIDI Library Source Code
 web: www.jdkoftinoff.com
 email: jeffk@jdkoftinoff.com

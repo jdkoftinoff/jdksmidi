@@ -35,11 +35,6 @@
 // www.vmgames.com vrm@vmgames.com
 //
 
-//
-// MODIFIED by N. Cassetta
-// (added member function GetMarkerText() to MIDIMessage
-//
-
 #ifndef JDKSMIDI_MSG_H
 #define JDKSMIDI_MSG_H
 
@@ -344,11 +339,6 @@ public:
     bool IsTrackName() const
     {
         return ( IsTextEvent() && GetMetaType() == META_TRACK_NAME );
-    }
-
-    bool IsMarkerText() const                       // new by NC //
-    {
-        return ( IsTextEvent() && GetMetaType() == META_MARKER_TEXT );
     }
 
     bool IsAllNotesOff() const;

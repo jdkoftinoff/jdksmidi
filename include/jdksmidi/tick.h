@@ -22,20 +22,11 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-//
-// doxygen comments by N. Cassetta ncassetta@tiscali.it
-//
-
 #ifndef JDKSMIDI_TICK_H
 #define JDKSMIDI_TICK_H
 
 namespace jdksmidi
 {
-
-///
-/// This is a pure virtual class designed to implement callback functions called in a separate thread at each tick
-/// of a timer.
-///
 
 class MIDITick
 {
@@ -46,7 +37,6 @@ public:
 
     virtual ~MIDITick();
 
-    /// The callback function
     virtual void TimeTick ( unsigned long sys_time ) = 0;
 };
 

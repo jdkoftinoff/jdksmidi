@@ -22,10 +22,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-//
-// Modified by N. Cassetta ncassetta@tiscali.it
-//
-
 #include "jdksmidi/world.h"
 #include "jdksmidi/manager.h"
 
@@ -50,6 +46,10 @@ MIDIManager::MIDIManager (
     repeat_end_measure ( 0 )
 {
     driver->SetTickProc ( this );
+}
+
+MIDIManager::~MIDIManager()
+{
 }
 
 
@@ -79,6 +79,39 @@ void MIDIManager::SetSeq ( MIDISequencer *seq )
     sequencer = seq;
 }
 
+
+MIDISequencer *MIDIManager::GetSeq()
+{
+    return sequencer;
+}
+
+const MIDISequencer *MIDIManager::GetSeq() const
+{
+    return sequencer;
+}
+
+
+// to set and get the system time offset
+void MIDIManager::SetTimeOffset ( unsigned long off )
+{
+    sys_time_offset = off;
+}
+
+unsigned long MIDIManager::GetTimeOffset()
+{
+    return sys_time_offset;
+}
+
+// to set and get the sequencer time offset
+void MIDIManager::SetSeqOffset ( unsigned long seqoff )
+{
+    seq_time_offset = seqoff;
+}
+
+unsigned long MIDIManager::GetSeqOffset()
+{
+    return seq_time_offset;
+}
 
 // to manage the playback of the sequencer
 void MIDIManager::SeqPlay()
@@ -128,6 +161,21 @@ void MIDIManager::SeqStop()
     }
 }
 
+// status request functions
+bool MIDIManager::IsSeqPlay() const
+{
+    return play_mode;
+}
+
+bool MIDIManager::IsSeqStop() const
+{
+    return stop_mode;
+}
+
+bool MIDIManager::IsSeqRepeat() const
+{
+    return repeat_play_mode && play_mode;
+}
 
 void MIDIManager::TimeTick ( unsigned long sys_time_ )
 {

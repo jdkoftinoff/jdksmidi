@@ -35,10 +35,6 @@
 // www.vmgames.com vrm@vmgames.com
 //
 
-//
-// doxygen comments by N. Cassetta ncassetta@tiscali.it
-//
-
 #ifndef JDKSMIDI_FILEREAD_H
 #define JDKSMIDI_FILEREAD_H
 
@@ -55,8 +51,7 @@ class MIDIFileReadStreamFile;
 class MIDIFileEvents;
 class MIDIFileRead;
 
-/// This class is used internally for reading MIDI files. It is pure virtual and implements a stream of *char*
-/// to be read from a MIDI file
+
 class MIDIFileReadStream
 {
 public:
@@ -68,20 +63,14 @@ public:
     {
     }
 
-    /// To be overriden: rewinds the read pointer
     virtual void Rewind() = 0;
 
-    /// To be overriden: reads a *char* (returning it into an *int*
     virtual int ReadChar() = 0;
 };
 
-/// This class is used internally for reading MIDI files. It inherits from MIDIFileWriteStreamFile and writes
-/// a stream of *char* to a FILE C object,
 class MIDIFileReadStreamFile : public MIDIFileReadStream
 {
 public:
-    /// In this constructor you must specify the filename.\ The constructor tries to open the FILE, you
-    /// should call IsValid() for checking if it was successful
     explicit MIDIFileReadStreamFile ( const char *fname )
     {
         f = fopen ( fname, "rb" );
@@ -94,12 +83,10 @@ public:
     }
 #endif
 
-    /// In this constructor you must specify and already open FILE object
     explicit MIDIFileReadStreamFile ( FILE *f_ ) : f ( f_ )
     {
     }
 
-    /// The destructor closes the file
     virtual ~MIDIFileReadStreamFile()
     {
         if ( f ) fclose ( f );
@@ -110,7 +97,6 @@ public:
         if ( f ) rewind ( f );
     }
 
-    /// Returns *true* if the FILE was opened
     bool IsValid()
     {
         return f != 0;
@@ -133,7 +119,6 @@ private:
     FILE *f;
 };
 
-/// This class is used internally for reading MIDI files
 class MIDIFileEvents : protected MIDIFile
 {
 public:
@@ -189,26 +174,20 @@ public:
 
 };
 
-/// This class inherits from MIDIFile and converts a stream of *char* read from a MIDIFileReadStream
-/// object into MIDI data
 class MIDIFileRead : protected MIDIFile
 {
 public:
-    /// In the constructor you must specify the MIDIFileReadStream.\ The stream must be alreafy opem
     MIDIFileRead (
         MIDIFileReadStream *input_stream_,
         MIDIFileEvents *event_handler_,
         unsigned long max_msg_len = 8192
     );
-
-    /// The destructor doesn't destroy or close the MIDIFileWriteStream
     virtual ~MIDIFileRead();
 
-    /// Returns false if not enough number of tracks or events in any track
+    // return false if not enough number of tracks or events in any track
     virtual bool Parse();
 
-    /// \name Utility functions
-    //@{
+    // read midifile header, return number of tracks
     int ReadNumTracks();
 
     int GetFormat() const
@@ -229,7 +208,6 @@ public:
     {
         return header_division;
     }
-    //@}
 
 protected:
     virtual int ReadHeader();
