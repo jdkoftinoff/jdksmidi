@@ -261,6 +261,10 @@ public:
         return seq.GetCurrentTempo() * seq.GetCurrentTempoScale();
     }
 
+    /// Returns 'now' MIDI clock time.
+    /// It is effective even during playback
+    unsigned long GetCurrentMIDIClockTime() const; /* NEW BY NC */
+
     /// Returns 'now' time in milliseconds.
     /// When playing or jumping from one time to another, you can use this to feed a SMPTE
     unsigned long GetCurrentTimeInMs() const; /* NEW BY NC */

@@ -487,6 +487,20 @@ void AdvancedSequencer::SetTempoScale ( double scale )
 }
 
 
+MIDIClockTime AdvancedSequencer::GetCurrentMIDIClockTime() const
+{   // new by NC
+    MIDIClockTime time = seq.GetCurrentMIDIClockTime();
+    if ( mgr.IsSeqPlay() )
+    {
+        double ms_offset = mgr.GetCurrentTimeInMs() - seq.GetCurrentTimeInMs();
+        double ms_per_clock = 60000.0 / (seq.GetState()->tempobpm *
+                                seq.GetCurrentTempoScale() * tracks.GetClksPerBeat());
+        time += ( MIDIClockTime )( ms_offset / ms_per_clock );
+    }
+    return time;
+}
+
+
 unsigned long AdvancedSequencer::GetCurrentTimeInMs() const {
 // NEW: this is now effective also during playback
     if ( mgr.IsSeqPlay() )
