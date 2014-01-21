@@ -1180,6 +1180,107 @@ int  MIDITimedBigMessage::CompareEvents (
     return 0;  // both are equal.
 }
 
+int  MIDITimedBigMessage::CompareEventsForInsert (
+    const MIDITimedBigMessage &m1,
+    const MIDITimedBigMessage &m2
+)
+{
+    bool n1 = m1.IsNoOp();
+    bool n2 = m2.IsNoOp();
+    // NOP's always are larger.
+
+    if ( n1 && n2 )
+        return 0; // same, do not care.
+    if ( n1 )
+        return 1; // m1 is larger
+    if ( n2 )
+        return 2; // m2 is larger
+
+    if ( m1.GetTime() > m2.GetTime() )
+        return 1; // m1 is larger
+
+    if ( m2.GetTime() > m1.GetTime() )
+        return 2; // m2 is larger
+
+    n1 = m1.IsMetaEvent();
+    n2 = m2.IsMetaEvent();
+    // Meta events go before other events
+    if (n1 && n2)
+        return 0; // same
+    if (n1)
+        return 2; // m2 is larger
+    if (n2)
+        return 1;
+    // m1 is larger
+
+    n1 = m1.IsSystemExclusive();
+    n2 = m2.IsSystemExclusive();
+    // System exclusive are larger
+    if ( n1 && n2 )
+        return 0; // same, do not care.
+    if ( n1 )
+        return 1; // m1 is larger
+    if ( n2 )
+        return 2; // m2 is larger
+
+    if ( m1.IsChannelEvent() && m2.IsChannelEvent() && ( m1.GetChannel() == m2.GetChannel() ) )
+    {
+        n1 = ! m1.IsNote();
+        n2 = ! m2.IsNote();
+        if (n1 && n2)
+            return 0; // same
+        if (n1)
+            return 2; // m2 is larger
+        if (n2)
+            return 1; // m1 is larger
+
+        n1 = m1.IsNoteOn();
+        n2 = m2.IsNoteOn();
+        if (n1 && n2)
+            return 0; // same
+        if (n1)
+            return 1; // m1 is larger
+        if (n2)
+            return 2; // m2 is larger
+    }
+
+    return 0;
+}
+
+bool  MIDITimedBigMessage::IsSameKind (
+    const MIDITimedBigMessage &m1,
+    const MIDITimedBigMessage &m2
+)
+{
+    if (m1.IsNoOp() && m2.IsNoOp())
+        return true;
+
+    if ( m1.GetTime() != m2.GetTime() )
+        return false;
+
+    if ( m1.IsChannelMsg() && m2.IsChannelMsg() &&
+         m1.GetChannel() == m2.GetChannel() )
+    {
+        if ( m1.GetType() != m2.GetType() )
+            return false;
+        if ( m1.IsNoteOn() && m2.IsNoteOn() && m1.GetNote() != m2.GetNote() )
+            return false;
+        if ( m1.IsNoteOff() && m2.IsNoteOff() && m1.GetNote() != m2.GetNote() )
+            return false;
+        if ( m1.IsControlChange() && m2.IsControlChange() && m1.GetController() != m2.GetController() )
+            return false;
+        return true;
+    }
+    if ( m1.IsMetaEvent() && m2.IsMetaEvent() && m1.GetMetaType() == m2.GetMetaType() )
+        return true;
+    if ( m1.GetStatus() == m2.GetStatus() )
+        return true;
+    return false;
+}
+
+
+
+
 //
 // Constructors
 //

@@ -139,8 +139,9 @@ public:
     ///
     void ClearAndMerge ( const MIDITrack *src1, const MIDITrack *src2 );
 
-//  bool Insert( int start_event, int num_events );
-//  bool  Delete( int start_event, int num_events);
+    bool Insert( const MIDITimedBigMessage& msg );
+    bool Replace( const MIDITimedBigMessage& msg );
+    bool Delete( const MIDITimedBigMessage& msg );
 //  void  Sort();
 
     const MIDITrack & operator = ( const MIDITrack & src );
@@ -159,6 +160,11 @@ public:
         return GetEvent( GetNumEvents() - 1 );
     }
 
+    MIDITimedBigMessage *GetLastEvent()         // NEW BY NC
+    {
+        return GetEvent( GetNumEvents() - 1 );
+    }
+
     MIDIClockTime GetLastEventTime() const
     {
         const MIDITimedBigMessage *msg = GetLastEvent();
@@ -167,14 +173,14 @@ public:
 
     bool GetEvent ( int event_num, MIDITimedBigMessage *msg ) const;
 
-    bool PutEvent ( const MIDITimedBigMessage &msg );
+    bool PutEvent ( const MIDITimedBigMessage &msg, int n = -1  );
 
     bool PutEvent ( const MIDIDeltaTimedMessage &msg )
     {
         return PutEvent ( MIDIDeltaTimedBigMessage (msg) );
     }
 
-    bool PutEvent ( const MIDIDeltaTimedBigMessage &msg );
+    bool PutEvent ( const MIDIDeltaTimedBigMessage &msg);
 
     // put event and clear msg, exclude its time, keep time unchanged!
     bool PutEvent2 ( MIDITimedBigMessage &msg );
@@ -186,6 +192,7 @@ public:
 
     bool MakeEventNoOp ( int event_num );
 
+    bool FindEventNumber( const MIDITimedBigMessage& msg, int *event_num) const;
     bool FindEventNumber ( MIDIClockTime time, int *event_num ) const;
 
     int GetBufferSize() const
@@ -206,6 +213,11 @@ public:
     {
         return num_events == 0;
     }
+
+    /* NEW BY NC */
+    bool IsTrackEnded() const;
+
+    bool SetEndTime( MIDIClockTime time );
 
     // test events temporal order, return false if events out of order
     bool EventsOrderOK() const;

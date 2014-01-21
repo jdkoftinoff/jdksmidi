@@ -816,6 +816,16 @@ public:
         const MIDITimedBigMessage &b
     );
 
+    static int CompareEventsForInsert (
+        const MIDITimedBigMessage &a,
+        const MIDITimedBigMessage &b
+    );
+
+    static bool IsSameKind (
+        const MIDITimedBigMessage &a,
+        const MIDITimedBigMessage &b
+    );
+
     friend bool operator == ( const MIDITimedBigMessage &m1, const MIDITimedBigMessage &m2 );
 
 protected:

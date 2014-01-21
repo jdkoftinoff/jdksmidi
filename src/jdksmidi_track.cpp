@@ -102,7 +102,49 @@ MIDITrack::~MIDITrack()
 void MIDITrack::Clear()
 {
     num_events = 0;
+    Shrink();                   // added by NC
 }
+
+/* NEW BY NC */
+bool MIDITrack::IsTrackEnded() const
+{
+    if ( num_events == 0 )
+    {
+        return false;
+    }
+    if ( !GetLastEvent()->IsEndOfTrack() )
+    {
+        return false;
+    }
+    return true;
+}
+
+bool MIDITrack::SetEndTime ( MIDIClockTime time )
+{
+    if ( IsTrackEnded() )
+    {
+        if ( num_events > 1 && GetEvent( num_events - 2 )->GetTime() > time )
+        {   // we are trying to insert an EOT before last event
+            return false;
+        }
+        GetLastEvent()->SetTime( time );
+    }
+    else
+    {
+        if ( num_events > 0 && GetEvent( num_events - 1 )->GetTime() > time )
+        {   // as above
+            return false;
+        }
+        MIDITimedBigMessage msg;
+        msg.SetDataEnd();
+        msg.SetTime( time );
+        PutEvent( msg );
+    }
+    return true;
+}
+
+
+/* END OF NEW */
 
 bool MIDITrack::EventsOrderOK() const
 {
@@ -200,6 +242,7 @@ const MIDITrack & MIDITrack::operator = ( const MIDITrack & src )
 
     return *this;
 }
+
 
 void MIDITrack::ClearAndMerge (
     const MIDITrack *src1,
@@ -334,12 +377,71 @@ void MIDITrack::ClearAndMerge (
     PutEvent ( dataend );
 }
 
-#if 0
-bool MIDITrack::Insert ( int start_event, int num )
+bool MIDITrack::Insert(const MIDITimedBigMessage& msg) {
+    if (msg.IsDataEnd()) return false;                  // DATA_END only auto managed
+
+    if ( !IsTrackEnded() )                              // add DATA_END if needed
+    {
+        SetEndTime( GetLastEventTime() );
+    }
+
+    if (GetLastEventTime() <= msg.GetTime()) {          // insert as last event
+        SetEndTime(msg.GetTime());                      // adjust DATA_END
+        return PutEvent(msg, num_events-1);             // insert just before DATA_END
+    }
+                                                        // binary search
+    int event_num;
+    FindEventNumber(msg.GetTime(), &event_num);         // must return true
+
+
+    while ( MIDITimedBigMessage::CompareEventsForInsert( msg, *GetEvent(event_num) ) == 1 )
+        event_num++;
+    return PutEvent( msg, event_num );
+}
+
+bool MIDITrack::Replace(const MIDITimedBigMessage& msg) {
+    if (msg.IsDataEnd()) return false;                  // DATA_END only auto managed
+
+    int event_num;
+    if ( !FindEventNumber(msg.GetTime(), &event_num) );
+        return false;
+
+    while ( GetEvent(event_num)->GetTime() == msg.GetTime() )
+    {
+        if ( MIDITimedBigMessage::IsSameKind(*GetEvent(event_num), msg) )
+        {
+            return SetEvent(event_num, msg);
+        }
+        event_num++;
+    }
+
+    return false;
+}
+
+bool MIDITrack::Delete ( const MIDITimedBigMessage& msg )
 {
-    // TO DO: Insert
+    if ( msg.IsDataEnd() )
+    {
+        return false;
+    }
+    int ind;
+    if ( !FindEventNumber( msg, &ind ) )
+    {
+        return false;
+    }
+    for ( int i = ind; i < num_events-1; i++ )
+    {
+        GetEvent(i)->Copy(*GetEvent(i+1));
+    }
+    GetEvent(num_events-1)->Clear();
+    num_events--;
+    Shrink();
     return true;
 }
+
+
+
+#if 0
 
 bool  MIDITrack::Delete ( int start_event, int num )
 {
@@ -460,6 +562,7 @@ void MIDITrack::Shrink()
     }
 }
 
+
 bool MIDITrack::Expand ( int increase_amount )
 {
     int num_chunks_to_expand = ( int ) ( ( increase_amount / MIDITrackChunkSize ) + 1 );
@@ -498,15 +601,29 @@ const MIDITimedBigMessage * MIDITrack::GetEventAddress ( int event_num ) const
                ( event_num % MIDITrackChunkSize ) );
 }
 
-bool MIDITrack::PutEvent ( const MIDITimedBigMessage &msg )
+bool MIDITrack::PutEvent ( const MIDITimedBigMessage &msg, int n )
 {
+    if ( n == -1)       // default value: put as last event
+    {
+        n = num_events;
+    }
+    if ( n > num_events || n < 0 )  // invalid value
+    {
+        return false;
+    }
     if ( num_events >= buf_size )
     {
         if ( !Expand() )
             return false;
     }
 
-    GetEventAddress ( num_events++ )->Copy ( msg );
+    for ( int i = num_events; i > n; i-- )
+    {
+        GetEventAddress( i )->Copy ( *GetEventAddress( i-1 ) );
+    }
+
+    GetEventAddress ( n )->Copy ( msg );
+    num_events++;
     return true;
 }
 
@@ -536,6 +653,8 @@ bool MIDITrack::PutEvent ( const MIDITimedMessage &msg, const MIDISystemExclusiv
     MIDITimedBigMessage m ( msg, sysex );
     return PutEvent ( m );
 }
+
+
 
 bool MIDITrack::PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length )
 {
@@ -595,23 +714,66 @@ bool MIDITrack::MakeEventNoOp ( int event_num )
     }
 }
 
-bool MIDITrack::FindEventNumber ( MIDIClockTime time, int *event_num ) const
-{
-    ENTER ( "MIDITrack::FindEventNumber( int , int * )" );
-    // TO DO: try make this a binary search
+bool MIDITrack::FindEventNumber(const MIDITimedBigMessage& msg, int* event_num) const {
+    if (num_events == 0) return false;
 
-    for ( int i = 0; i < num_events; ++i )
+    int min = 0,                                // binary search
+        max = num_events - 1,
+        mid = (max + min) / 2;
+    while (max - min > 1) {
+        if ( GetEvent(mid)->GetTime() == msg.GetTime() )
+            break;
+        else if ( GetEvent(mid)->GetTime() < msg.GetTime() )
+            min = mid;
+        else
+            max = mid;
+        mid = (max + min) / 2;
+    }
+    if (min == max - 1 && GetEvent(mid)->GetTime() < msg.GetTime()  )
+        mid++;                                  // max-min = 1; mid could be one of these
+
+    while ( mid > 0 && GetEvent(mid - 1)->GetTime() == msg.GetTime() )
+        mid--;
+
+    while ( GetEvent(mid)->GetTime() == msg.GetTime() )
     {
-        const MIDITimedBigMessage *msg = GetEventAddress ( i );
-
-        if ( msg->GetTime() >= time )
+        if (*GetEvent(mid) == msg)              // element found
         {
-            *event_num = i;
+            *event_num = mid;
             return true;
         }
+        mid++;
     }
 
-    *event_num = num_events;
+    return false;
+}
+
+
+bool MIDITrack::FindEventNumber(MIDIClockTime time, int* event_num) const {
+    if (num_events == 0 || time > GetLastEventTime()) return false;
+
+    int min = 0,                            // binary search
+        max = num_events - 1,
+        mid = (max + min) / 2;
+    while (max - min > 1) {
+        if ( GetEvent(mid)->GetTime() == time )
+            break;
+        else if ( GetEvent(mid)->GetTime() < time )
+            min = mid;
+        else
+            max = mid;
+        mid = (max + min) / 2;
+    }
+
+    if (min == max - 1 && GetEvent(mid)->GetTime() < time )
+        mid++;                                  // max-min = 1; mid could be one of these
+
+    while ( mid > 0 && GetEvent(mid - 1)->GetTime() == time )
+        mid--;
+
+    *event_num = mid;
+    if ( GetEvent(mid)->GetTime() == time )
+        return true;
     return false;
 }
 
@@ -638,5 +800,527 @@ MIDITimedBigMessage *MIDITrack::GetEvent ( int event_num )
         return GetEventAddress ( event_num );
     }
 }
+
+
+/****** FROM N. CASSETTA
+
+
+MIDITrack::MIDITrack(MIDIClockTime end) : num_events(0), buf_size(0) {
+// a track always contains at least the MIDI_END event, so num_events > 0
+    Expand();
+    MIDITimedBigMessage m;
+    m.SetDataEnd();
+    m.SetTime(end);
+    PutEvent(0, m);
+}
+
+
+
+
+bool MIDITrack::Insert(const MIDITimedBigMessage& msg) {
+    if (msg.IsDataEnd()) return false;                  // DATA_END only managed by PutEvent
+
+    if (GetEndTime() <= msg.GetTime()) {                // insert as last event
+        SetEndTime(msg.GetTime());                      // adjust DATA_END
+        return PutEvent(num_events-1, msg);             // insert just before DATA_END
+    }
+                                                        // binsearch copied from binsearch.h
+    int min = 0,
+        max = num_events - 1,
+        mid = (max + min) / 2;
+    while (max - min > 1) {
+        if (GetEvent(mid) < msg) min = mid;
+        else max = mid;
+        mid = (max + min) / 2;
+    }
+    if (min < max && GetEvent(mid) < msg)       // max-min = 1; mid could be one of these
+        mid++;
+
+// WARNING! THIS IS DIFFERENT FROM ANALOGUE IN int_track.cpp AS MIDI MESSAGES AREN'T TOTALLY
+// ORDERED (see midi_msg.operator== and midi_msg.operator< )
+
+    min = mid;                                  // dummy, for remembering
+    while (!EndOfTrack(mid) && GetEvent(mid).GetTime() == msg.GetTime()) {
+        if (GetEvent(mid) == msg)               // element found
+            return SetEvent(mid, msg);          // WARNING: I changed this (from false): review!
+        mid++;
+    }
+    return PutEvent(min, msg);
+}
+
+
+bool MIDITrack::Delete(const MIDITimedBigMessage& msg) {
+    if (msg.IsDataEnd()) return false;                  // we can't delete MIDI_END event
+    int min = 0,                                        // binsearch copied from binsearch.h
+        max = num_events - 1,
+        mid = (max + min) / 2;
+    while (max - min > 1) {
+        if (GetEvent(mid) < msg) min = mid;
+        else max = mid;
+        mid = (max + min) / 2;
+    }
+    if (min < max && GetEvent(mid) < msg)               // max-min = 1; mid could be one of these
+        mid++;
+
+    if (GetEvent(mid) == msg) {                         // mid is the place of msg
+        DelEvent(mid);                                  // delete
+        return true;
+    }
+    return false;                                       // not found
+}
+
+
+void MIDITrack::ChangeChannel(int ch) {
+    ch &= 0x0f;
+    for (int i = 0; i < num_events; i++) {
+        if (GetEventAddress(i)->IsChannelMsg())
+            GetEventAddress(i)->SetChannel(ch);
+    }
+}
+
+
+// WARNING! THESE ARE DIFFERENT FROM ANALOGUE IN int_track.cpp:
+//  1) IN A MIDI TRACK WE MUST CLOSE OPEN EVENTS WHEN COPYING OR DELETING INTERVALS
+//  2) DEALING WITH META EVENTS (timesigs, keysig, text, markers, etc) IS TOO DIFFICULT AT
+//     THIS (low) LEVEL, SO ONLY sysex DATA IS COPIED (if requested). FOR ADJUSTING META DATA
+//     IS MUCH EASIER RECOMPOSE TRACK 0 BY THE MasterTrackComposer
+
+
+
+void MIDITrack::InsertInterval(MIDIClockTime start, MIDIClockTime length, bool sysex, const MIDITrack* src) {
+    if (length == 0) return;
+
+    CloseOpenEvents(start);                         // truncate notes, pedal, bender at start
+    int start_n = FindEventNumber(start);
+    if (start_n != -1) {                            // there are events after start time
+        for (int i = start_n; i < num_events; i++)  // moves these events
+            GetEventAddress(i)->AddTime(length);
+    }
+    if(!src) return;                                // we want only move events
+
+    for(int i = 0; i < src->GetNumEvents(); i++) {  // else inserts other events
+        MIDITimedBigMessage msg(src->GetEvent(i));
+                // msg is created and destroyed every time so no memory leaks with sysex (hope!)
+        if (msg.GetTime() >= length) break;         // edit is too long
+        if (!msg.IsSysEx() || (msg.IsSysEx() && sysex)) {
+            msg.AddTime(start);
+            Insert(msg);
+        }
+    }
+    CloseOpenEvents(start + length);                // truncate at end
+}
+
+
+MIDITrack* MIDITrack::MakeInterval(MIDIClockTime start, MIDIClockTime end, MIDITrack* interval) const {
+    if (end <= start) return interval;
+    MIDIClockTime length = end - start;
+    MIDITrack edittrack(*this);      // copy original track to make edits on it;
+
+    interval->Clear();               // clear
+    interval->SetEndTime(length);
+    if (start > 0)
+        edittrack.CloseOpenEvents(start);
+                                    // truncate open events BEFORE start (so delete note off, etc
+                                    // in edit track. If start == 0, no need to truncate
+    edittrack.CloseOpenEvents(end); // truncate at end
+    int start_n = edittrack.FindEventNumber(start);
+                                    // now copy edittrack events to interval
+    if(start_n != -1) {             // there are events
+        for (int i = start_n; edittrack.GetEventAddress(i)->GetTime() < end; i++) {
+            MIDITimedBigMessage msg(edittrack.GetEvent(i));
+                                    // msg is created and destroyed every time so no memory leaks with sysex (hope!)
+            if (msg.IsDataEnd()) break;
+            if (msg.IsChannelMsg()) {
+                msg.SubTime(start); // only channel messages are copied
+                interval->Insert(msg);
+            }
+        }
+    }
+    return interval;
+}
+
+
+void MIDITrack::DeleteInterval(MIDIClockTime start, MIDIClockTime end) {
+    if (end <= start) return;
+    CloseOpenEvents(start);
+    CloseOpenEvents(end);
+    int start_n = FindEventNumber(start);   // first event with time >= start
+    if (start_n == -1) return;              // no events after start: nothing to do
+    MIDIClockTime length = end - start;
+    while (GetEvent(start_n).GetTime() < end && !GetEvent(start_n).IsDataEnd())
+                // DataEnd is not deleted by DelEvent, so we could enter in an infinite loop
+        DelEvent(start_n);                  // deletes events between start and end
+    for (int i = start_n; i < num_events; i++)
+        GetEvent(i).SubTime(length);        // shifts subsequents
+    Shrink();
+}
+
+
+void MIDITrack::ClearInterval(MIDIClockTime start, MIDIClockTime end) {
+    if (end <= start) return;
+    CloseOpenEvents(start);
+    CloseOpenEvents(end);
+    int start_n = FindEventNumber(start);
+    if (start_n == -1) return;
+    while (GetEventAddress(start_n)->GetTime() < end && !GetEventAddress(start_n)->IsDataEnd())
+                // DataEnd is not deleted by DelEvent, so we could enter in an infinite loop
+        DelEvent(start_n);
+    Shrink();
+}
+
+
+void MIDITrack::ReplaceInterval(MIDIClockTime start, MIDIClockTime length, bool sysex, const MIDITrack* src) {
+    if (length == 0) return;
+
+    ClearInterval(start, start + length);           // deletes all in the interval
+    for(int i = 0; i < src->GetNumEvents(); i++) {  // inserts events
+        MIDITimedBigMessage msg(src->GetEvent(i));
+                // msg is created and destroyed every time so no memory leaks with sysex (hope!)
+        if (msg.GetTime() >= length) break;         // edit is too long
+        msg.AddTime(start);
+        Insert(msg);
+    }
+    CloseOpenEvents(start + length);                // truncate at end
+}
+
+
+void MIDITrack::CloseOpenEvents(MIDIClockTime t) {
+    if (t == 0 || t > GetEndTime()) return;
+                                            // there aren't open events at time 0 or after INT_END
+    MIDITrackIterator iter(this);
+    char ch  = iter.GetMIDIChannel();       // assumes all channel messages with the same channel!
+    MIDITimedBigMessage* msgp;
+    MIDITimedBigMessage msg;
+
+    iter.GoToTime(t);
+    msg.SetTime(t);                         // set right time for msg
+    if (iter.NotesOn()) {                   // there are notes on at time t
+        for (int i = 0; i < 0x7f; i++) {
+            msg.SetNoteOn(ch, i, 100);
+            if (iter.IsNoteOn(i) && !iter.EventIsNow(msg)) {
+                if (iter.FindNoteOff(i, &msgp))
+                    Delete(*msgp);          // delete original note OFF
+                msg.SetNoteOff(ch, i, 0);
+                msg.SetTime(t - 1);
+                Insert(msg);            // insert a note OFF at time t-1
+                msg.SetTime(t);
+            }
+        }
+    }
+    msg.SetControlChange(ch, C_DAMPER, 127);
+    if (iter.IsPedalOn()&& !iter.EventIsNow(msg))   {               // pedal (CTRL 64) on at time t
+        iter.GoToTime(t);               // TODO: ia this necessary? I don't remember
+        if (iter.FindPedalOff(&msgp))
+            Delete(*msgp);                  // delete original pedal OFF
+        msg.SetControlChange(ch, C_DAMPER, 0);
+        msg.SetTime(t - 1);
+        Insert(msg);                    // insert a pedal OFF at time t-1
+        msg.SetTime(t);
+    }
+    msg.SetPitchBend(ch, 0);
+    if (iter.GetBender()) {                 // pitch bend not 0 at time t
+        iter.GoToTime(t);                   // updates iter
+        while (iter.GetCurEvent(&msgp)) {  // chase and delete all subsequent bender messages,
+            if (msgp->IsPitchBend()) {      // until bender == 0
+                short val = msgp->GetBenderValue(); // remember bender value
+                Delete(*msgp);
+                if (val == 0) break;
+            }
+        }
+        Insert(msg);                        // insert a new pitch bend = 0 at time t
+    }
+}
+
+
+int MIDITrack::FindEventNumber(const MIDITimedBigMessage& m) const {
+// returns -1 if not found
+    if (num_events == 0) return -1;             // binsearch copied from binsearch.h
+    int min = 0,
+        max = num_events - 1,
+        mid = (max + min) / 2;
+    while (max - min > 1) {
+        if (GetEvent(mid) < m) min = mid;
+        else max = mid;
+        mid = (max + min) / 2;
+    }
+    if (min < max && GetEvent(mid) < m)         // max-min = 1; mid could be one of these
+        mid++;
+    if (GetEvent(mid) == m)                     // element found
+        return mid;
+    return -1;
+}
+
+
+int MIDITrack::FindEventNumber(MIDIClockTime time) const {
+    if (num_events == 0 || time > GetEndTime()) return -1;
+    int min = 0,                                        // binary search
+        max = num_events - 1,
+        mid = (max + min) / 2;
+    while (max - min > 1) {
+        if (GetEvent(mid).GetTime() < time) min = mid;
+        else max = mid;
+        mid = (max + min) / 2;
+    }
+    if (GetEvent(mid).GetTime() < time)     // mid.GetTime() should be <= time
+        return ++mid;
+    while(mid && GetEvent(mid-1).GetTime() == time)
+        mid--;                              // there are former events with same time
+    return mid;
+}
+
+
+//
+// low level private functions
+//
+
+
+bool MIDITrack::PutEvent(int ev_num, const MIDITimedBigMessage& m) {
+    if (ev_num > num_events) return false;
+    if(num_events >= buf_size) {
+        if(!Expand()) return false;
+    }
+    int event_chunk = ev_num / MIDITrackChunkSize;
+    int ev_num_in_chunk = ev_num % MIDITrackChunkSize;
+    int num_chunks_alloced = buf_size / MIDITrackChunkSize;
+    for (int i = num_chunks_alloced-1; i > event_chunk; i--) {
+        chunk[i]->Insert(0);
+        MIDITrackChunk::LastToFirst(*chunk[i-1], *chunk[i]);
+    }
+    chunk[event_chunk]->Insert(ev_num_in_chunk);
+    GetEvent(ev_num) = m;
+    num_events++;
+    return true;
+}
+
+
+bool MIDITrack::DelEvent(int ev_num) {
+    if (ev_num >= num_events) return false;
+    GetEventAddress(ev_num)->Clear();       // deletes sysex
+    int event_chunk = ev_num / MIDITrackChunkSize;
+    int ev_num_in_chunk = ev_num % MIDITrackChunkSize;
+    int num_chunks_alloced = buf_size / MIDITrackChunkSize;
+    chunk[event_chunk]->Delete(ev_num_in_chunk);
+    for (int i = event_chunk; i < num_chunks_alloced-1; i++) {
+        MIDITrackChunk::FirstToLast(*chunk[i+1], *chunk[i]);
+        chunk[i+1]->Delete(0);
+    }
+    num_events--;
+    return true;
+}
+
+
+/*
+
+// SEE HEADER!!!!!!!!!!!!!!!!!
+bool	MIDITrack::PutEvent( const MIDITimedBigMessage &msg, MIDISysEx *sysex )
+  {
+    if( num_events >= buf_size )
+    {
+      if( !Expand() )
+        return false;
+    }
+
+    MIDITimedBigMessage *e = GetEventAddress( num_events );
+
+    e->Copy( msg );
+    e->SetSysEx( sysex );
+
+    ++num_events;
+
+    return true;
+  }
+
+*/
+
+/* ***********************************************************************************
+/* *                 C L A S S   M I D I T r a c k I t e r a t o r
+/* ***********************************************************************************
+
+// this is interely added by me!!!! NC
+
+MIDITrackIterator::MIDITrackIterator(MIDITrack* trk) : track(trk) {
+    FindChannel();
+    GoToZero();
+}
+
+
+void MIDITrackIterator::SetTrack(MIDITrack* trk) {
+        track = trk;
+        FindChannel();
+        GoToZero();
+}
+
+
+
+bool MIDITrackIterator::FindNoteOff(uchar note, MIDITimedBigMessage** msg) {
+    for (int i = cur_ev_num; i < track->GetNumEvents(); i ++) {
+        *msg = track->GetEventAddress(i);
+        if ((*msg)->IsNoteOff() && (*msg)->GetNote() == note)
+            return true;                //  msg is the correct note off
+    }
+    return false;
+}
+
+
+bool MIDITrackIterator::FindPedalOff(MIDITimedBigMessage** msg) {
+    for (int i = cur_ev_num; i < track->GetNumEvents(); i ++) {
+        *msg = track->GetEventAddress(i);
+        if ((*msg)->IsControlChange() && (*msg)->GetController() == 64 && (*msg)->GetControllerValue() < 64)
+            return true;                //  msg is the correct pedal off
+    }
+    return false;
+}
+
+
+bool MIDITrackIterator::GetCurEvent(MIDITimedBigMessage** msg, MIDIClockTime end ) {// = 0xffffffff
+    if (track->EndOfTrack(cur_ev_num)) return false;
+    if (end < cur_time) return false;                       // end lesser than cur_time
+    *msg = track->GetEventAddress(cur_ev_num);
+    MIDIClockTime new_time = (*msg)->GetTime();
+    if (new_time > cur_time) {                              // is new time > cur_time?
+        if (new_time > end)
+            return false;
+        cur_time = new_time;
+        ScanEventsAtThisTime();                             // update status processing all messages at this time
+    }
+    cur_ev_num++;                                           // increment message pointer
+    return true;
+}
+
+
+MIDIClockTime MIDITrackIterator::GetCurEventTime() const {
+    if (track->EndOfTrack(cur_ev_num)) return 0xffffff;     // we are at the end of track
+    return track->GetEventAddress(cur_ev_num)->GetTime();
+}
+
+
+bool MIDITrackIterator::EventIsNow(const MIDITimedBigMessage& msg) {
+    MIDITimedBigMessage msg1;
+
+    int ev_num = track->FindEventNumber(cur_time);
+    while(!track->EndOfTrack(ev_num) && (msg1 = track->GetEvent(ev_num)).GetTime() == cur_time) {
+        if (msg1 == msg) return true;
+        ev_num++;
+    }
+    return false;
+}
+
+
+
+void MIDITrackIterator::GoToZero() {
+    // go to time zero
+    cur_time = 0;
+    cur_ev_num = 0;
+
+    // reset midi status
+    program = 0xff;
+    for (int i = 0; i < 128; i++) {
+        controls[i] = 0xff;
+        notes_on[i] = 0;
+    }
+    bender_value = 0;
+    num_notes_on = 0;
+    ScanEventsAtThisTime();                                 // process all messages at this time
+}
+
+
+bool MIDITrackIterator::GoToNextEvent() {
+    if (track->EndOfTrack(cur_ev_num+1)) return false;
+    cur_ev_num++;
+    MIDITimedBigMessage* msg = track->GetEventAddress(cur_ev_num);
+    if (msg->GetTime() > cur_time) {
+        cur_time = msg->GetTime();
+        ScanEventsAtThisTime();                             // process all messages at this time
+    }
+    return true;
+}
+
+
+bool MIDITrackIterator::GoToTime(MIDIClockTime time) {
+    MIDITimedBigMessage* msg;
+
+    if (time > track->GetEndTime()) return false;
+    if (time < cur_time)
+        GoToZero();
+    while (GetCurEventTime() < time)
+        GetCurEvent(&msg);
+    cur_time = time;
+    ScanEventsAtThisTime();
+    return true;
+}
+
+
+void MIDITrackIterator::FindChannel() {
+    channel = 0xff;
+    for (int i = 0; i < track->GetNumEvents(); i ++) {
+        if (track->GetEvent(i).IsChannelMsg()) {
+            channel = track->GetEvent(i).GetChannel();
+            return;
+        }
+    }
+}
+
+
+bool MIDITrackIterator::Process(const MIDITimedBigMessage *msg) {
+
+    // is it a normal MIDI channel message?
+    if(msg->IsChannelMsg()) {
+        if (msg->GetChannel() != channel) return false;
+        switch (msg->GetType()) {
+            case NOTE_OFF :
+                if(notes_on[msg->GetNote()]) {
+                    notes_on[msg->GetNote()] = 0;
+                    num_notes_on--;
+                }
+                break;
+            case NOTE_ON :
+                if (msg->GetVelocity()) {
+                    if (!notes_on[msg->GetNote()]) {
+                        notes_on[msg->GetNote()] = msg->GetVelocity();
+                        num_notes_on++;
+                    }
+                }
+                else {
+                    if (notes_on[msg->GetNote()]) {
+                        notes_on[msg->GetNote()] = 0;
+                        num_notes_on--;
+                    }
+                }
+                break;
+            case PITCH_BEND :
+                bender_value = msg->GetBenderValue();
+                break;
+            case CONTROL_CHANGE :
+                controls[msg->GetController()] = msg->GetControllerValue();
+                break;
+            case PROGRAM_CHANGE :
+                program = msg->GetPGValue();
+                break;
+        }
+        return true;
+    }
+    return false;
+}
+
+
+void MIDITrackIterator::ScanEventsAtThisTime() {
+// process all messages up to and including this time only
+// warning: this can be used only when we reach the first event at a new time!
+
+    MIDIClockTime oldtime = cur_time;
+    int oldnum = cur_ev_num;
+    //cur_ev_num = track->FindEventNumber(cur_time);      // is it necessary? I think no
+    MIDITimedBigMessage *msg;
+
+    while(GetCurEvent(&msg, oldtime))
+        Process(msg);
+    cur_time = oldtime;
+    cur_ev_num = oldnum;
+}
+
+*********/
+
+
+
 
 }
