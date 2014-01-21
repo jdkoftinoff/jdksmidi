@@ -223,7 +223,7 @@ void AdvancedSequencer::Reset()
 
 void AdvancedSequencer::GoToZero() {
     Stop();
-    seq.GoToMeasure(0); // NC: not GoToZero() ! this sets correct values in the MIDISequencerState and notify them
+    seq.GoToZero();
 }
 
 
@@ -808,12 +808,19 @@ const char* AdvancedSequencer::GetCurrentMarker() const
 }
 
 void AdvancedSequencer::SetMltChanged()
-{
+{                   // IMPORTANT: REWRITTEN: WAS BUGGY!!!!!
+    bool was_playing = false;
     if ( IsPlay() )
     {
+        was_playing = true;
         Stop();     // however you should avoid to edit the MIDIMultiTrack during playback!
     }
+    file_loaded = true;
     ExtractWarpPositions();
+    if ( was_playing )
+    {
+        Play();
+    }
 }
 
 
@@ -958,6 +965,17 @@ void AdvancedSequencer::ExtractWarpPositions()
     Stop();
     // warp_positions is now a vector of objects ( not pointers ) so we can minimize memory dealloc/alloc
 
+    MIDIClockTime cur_time = seq.GetCurrentMIDIClockTime();
+
+    // temporarily disable the gui notifier
+    bool notifier_mode = false;
+
+    if ( notifier )
+    {
+        notifier_mode = notifier->GetEnable();
+        notifier->SetEnable ( false );
+    }
+
     unsigned int num_warp_positions = 0;
     while ( seq.GoToMeasure ( num_warp_positions * MEASURES_PER_WARP ) )
     {
@@ -986,7 +1004,15 @@ void AdvancedSequencer::ExtractWarpPositions()
         num_measures++;
     }
 
-    seq.GoToZero();
+    seq.GoToTime( cur_time );
+
+    // re-enable the gui notifier if it was enabled previously
+    if ( notifier )
+    {
+        notifier->SetEnable ( notifier_mode );
+        // cause a full gui refresh now
+        notifier->Notify ( &seq, MIDISequencerGUIEvent::GROUP_ALL );
+    }
 }
 
 

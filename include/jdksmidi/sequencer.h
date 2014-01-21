@@ -432,6 +432,7 @@ public:
     float cur_time_ms;                              ///< current time in ms
     int cur_beat;                                   ///< current beat
     int cur_measure;                                ///< current measure
+    MIDIClockTime last_beat_time;   /* NC */        ///< used internally by Process()
     MIDIClockTime next_beat_time;                   ///< used internally by Process()
     float tempobpm;                                 ///< current tempo in beats per minute
     char timesig_numerator;                         ///< numerator of current time signature
