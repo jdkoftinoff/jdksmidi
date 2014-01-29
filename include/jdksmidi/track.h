@@ -226,6 +226,8 @@ public:
     // remove events with identical time and all other data, return number of such events
     int RemoveIdenticalEvents( int max_distance_between_identical_events = 32 );
 
+    void CloseOpenEvents( MIDIClockTime t );
+
 private:
 
 // void  QSort( int left, int right );

@@ -38,6 +38,8 @@
 #include "jdksmidi/world.h"
 #include "jdksmidi/track.h"
 
+#include "jdksmidi/matrix.h"
+
 #ifndef DEBUG_MDTRACK
 # define DEBUG_MDTRACK 0
 #endif
@@ -393,7 +395,6 @@ bool MIDITrack::Insert(const MIDITimedBigMessage& msg) {
     int event_num;
     FindEventNumber(msg.GetTime(), &event_num);         // must return true
 
-
     while ( MIDITimedBigMessage::CompareEventsForInsert( msg, *GetEvent(event_num) ) == 1 )
         event_num++;
     return PutEvent( msg, event_num );
@@ -403,7 +404,7 @@ bool MIDITrack::Replace(const MIDITimedBigMessage& msg) {
     if (msg.IsDataEnd()) return false;                  // DATA_END only auto managed
 
     int event_num;
-    if ( !FindEventNumber(msg.GetTime(), &event_num) );
+    if ( !FindEventNumber(msg.GetTime(), &event_num) )
         return false;
 
     while ( GetEvent(event_num)->GetTime() == msg.GetTime() )
@@ -717,32 +718,25 @@ bool MIDITrack::MakeEventNoOp ( int event_num )
 bool MIDITrack::FindEventNumber(const MIDITimedBigMessage& msg, int* event_num) const {
     if (num_events == 0) return false;
 
-    int min = 0,                                // binary search
-        max = num_events - 1,
-        mid = (max + min) / 2;
-    while (max - min > 1) {
-        if ( GetEvent(mid)->GetTime() == msg.GetTime() )
-            break;
-        else if ( GetEvent(mid)->GetTime() < msg.GetTime() )
-            min = mid;
+    int min = 0,                                // binary search with deferred detection algorithm
+        max = num_events - 1;
+    while ( min < max )
+    {
+        unsigned int mid = min + ( max - min ) / 2;
+        if ( GetEvent(mid)->GetTime() < msg.GetTime() )
+            min = mid + 1;
         else
             max = mid;
-        mid = (max + min) / 2;
     }
-    if (min == max - 1 && GetEvent(mid)->GetTime() < msg.GetTime()  )
-        mid++;                                  // max-min = 1; mid could be one of these
-
-    while ( mid > 0 && GetEvent(mid - 1)->GetTime() == msg.GetTime() )
-        mid--;
-
-    while ( GetEvent(mid)->GetTime() == msg.GetTime() )
+                                                // the algorithm stops on 1st msg with time <= msg.GetTime()
+    while ( min < num_events && GetEvent(min)->GetTime() == msg.GetTime() )
     {
-        if (*GetEvent(mid) == msg)              // element found
+        if (*GetEvent(min) == msg)              // element found
         {
-            *event_num = mid;
+            *event_num = min;
             return true;
         }
-        mid++;
+        min++;
     }
 
     return false;
@@ -750,30 +744,27 @@ bool MIDITrack::FindEventNumber(const MIDITimedBigMessage& msg, int* event_num) 
 
 
 bool MIDITrack::FindEventNumber(MIDIClockTime time, int* event_num) const {
-    if (num_events == 0 || time > GetLastEventTime()) return false;
-
-    int min = 0,                            // binary search
-        max = num_events - 1,
-        mid = (max + min) / 2;
-    while (max - min > 1) {
-        if ( GetEvent(mid)->GetTime() == time )
-            break;
-        else if ( GetEvent(mid)->GetTime() < time )
-            min = mid;
-        else
-            max = mid;
-        mid = (max + min) / 2;
+    if (num_events == 0 || time > GetLastEventTime())
+    {
+        *event_num = -1;                        // returns -1 in event_num
+        return false;
     }
 
-    if (min == max - 1 && GetEvent(mid)->GetTime() < time )
-        mid++;                                  // max-min = 1; mid could be one of these
-
-    while ( mid > 0 && GetEvent(mid - 1)->GetTime() == time )
-        mid--;
-
-    *event_num = mid;
-    if ( GetEvent(mid)->GetTime() == time )
+    int min = 0,                                // binary search with deferred detection algorithm
+        max = num_events - 1;
+    while (min < max )
+    {
+        unsigned int mid = min + ( max - min ) / 2;
+        if ( GetEvent(mid)->GetTime() < time )
+            min = mid + 1;
+        else
+            max = mid;
+    }
+                                                // the algorithm stops on 1st msg with time <= msg.GetTime()
+    *event_num = min;                           // if event_num != -1 this is the last ev with time < t
+    if ( GetEvent(min)->GetTime() == time )
         return true;
+
     return false;
 }
 
@@ -802,72 +793,122 @@ MIDITimedBigMessage *MIDITrack::GetEvent ( int event_num )
 }
 
 
+
+void MIDITrack::CloseOpenEvents(MIDIClockTime t) {
+    if ( t == 0 ) return;                   // there aren't open events at time 0
+
+    MIDIMatrix matrix;
+    MIDITimedBigMessage msg;
+
+    int ev_num = 0;
+    while ( ev_num < num_events &&
+            ( msg = *GetEvent( ev_num ) ).GetTime() < t )
+    {
+        matrix.Process( msg );
+        ev_num++;
+    }
+    while ( ev_num < num_events &&
+            ( msg = *GetEvent( ev_num ) ).GetTime() == t )
+    {
+        if ( msg.IsNoteOff() || msg.IsPedalOff() )
+        {
+            matrix.Process ( msg );
+            ev_num++;
+        }
+    }                                           // ev_num is now the index of 1st event with timw > t
+
+    for (int ch = 0; ch < 16; ch++)            // for every channel ...
+    {
+        int note_count = matrix.GetChannelCount( ch );      // get the number of notes on of the channel
+        for ( int note = 0; note < 0x7f && note_count > 0; note++ )
+        {                                                   // search which notes are on
+            for (int i = matrix.GetNoteCount( ch, note ); i > 0; i-- )
+            {                                               // if the note is on ... (i should normally be 1)
+                msg.SetNoteOff( ch, note, 0 );
+                msg.SetTime( t );
+                Insert( msg );                              // ... insert a note off at time t
+                ev_num++;                                   // and adjust ev_num
+                for (int j = ev_num; j < num_events; j++)
+                {
+                    msg = *GetEvent( j );                   // search the corresponding note off after t ...
+                    if ( msg.IsNoteOff() &&
+                         msg.GetChannel() == ch &&
+                         msg.GetNote() == note )
+                    {
+                        Delete( msg );                      // ... and delete it
+                        break;
+                    }
+                }
+                note_count--;
+            }
+        }
+
+        if ( matrix.GetHoldPedal( ch ) )
+        {
+            msg.SetControlChange(ch, C_DAMPER, 0);
+            msg.SetTime( t );
+            Insert( msg );
+            ev_num++;
+            for (int i = ev_num; i < num_events; i++)
+            {
+                msg = *GetEvent( i );                       // search the corresponding note off after t ...
+                if ( msg.IsPedalOff() &&
+                     msg.GetChannel() == ch )
+                {
+                    Delete( msg );                          // ... and delete it
+                    break;
+                }
+            }
+        }
+    }
+}
+
+
+/*
+    if (iter.NotesOn()) {                   // there are notes on at time t
+        for (int i = 0; i < 0x7f; i++) {
+            msg.SetNoteOn(ch, i, 100);
+            if (iter.IsNoteOn(i) && !iter.EventIsNow(msg)) {
+                if (iter.FindNoteOff(i, &msgp))
+                    Delete(*msgp);          // delete original note OFF
+                msg.SetNoteOff(ch, i, 0);
+                msg.SetTime(t - 1);
+                Insert(msg);            // insert a note OFF at time t-1
+                msg.SetTime(t);
+            }
+        }
+    }
+    msg.SetControlChange(ch, C_DAMPER, 127);
+    if (iter.IsPedalOn()&& !iter.EventIsNow(msg))   {               // pedal (CTRL 64) on at time t
+        iter.GoToTime(t);               // TODO: ia this necessary? I don't remember
+        if (iter.FindPedalOff(&msgp))
+            Delete(*msgp);                  // delete original pedal OFF
+        msg.SetControlChange(ch, C_DAMPER, 0);
+        msg.SetTime(t - 1);
+        Insert(msg);                    // insert a pedal OFF at time t-1
+        msg.SetTime(t);
+    }
+    msg.SetPitchBend(ch, 0);
+    if (iter.GetBender()) {                 // pitch bend not 0 at time t
+        iter.GoToTime(t);                   // updates iter
+        while (iter.GetCurEvent(&msgp)) {  // chase and delete all subsequent bender messages,
+            if (msgp->IsPitchBend()) {      // until bender == 0
+                short val = msgp->GetBenderValue(); // remember bender value
+                Delete(*msgp);
+                if (val == 0) break;
+            }
+        }
+        Insert(msg);                        // insert a new pitch bend = 0 at time t
+    }
+}
+
+*/
+
+
+
 /****** FROM N. CASSETTA
 
 
-MIDITrack::MIDITrack(MIDIClockTime end) : num_events(0), buf_size(0) {
-// a track always contains at least the MIDI_END event, so num_events > 0
-    Expand();
-    MIDITimedBigMessage m;
-    m.SetDataEnd();
-    m.SetTime(end);
-    PutEvent(0, m);
-}
-
-
-
-
-bool MIDITrack::Insert(const MIDITimedBigMessage& msg) {
-    if (msg.IsDataEnd()) return false;                  // DATA_END only managed by PutEvent
-
-    if (GetEndTime() <= msg.GetTime()) {                // insert as last event
-        SetEndTime(msg.GetTime());                      // adjust DATA_END
-        return PutEvent(num_events-1, msg);             // insert just before DATA_END
-    }
-                                                        // binsearch copied from binsearch.h
-    int min = 0,
-        max = num_events - 1,
-        mid = (max + min) / 2;
-    while (max - min > 1) {
-        if (GetEvent(mid) < msg) min = mid;
-        else max = mid;
-        mid = (max + min) / 2;
-    }
-    if (min < max && GetEvent(mid) < msg)       // max-min = 1; mid could be one of these
-        mid++;
-
-// WARNING! THIS IS DIFFERENT FROM ANALOGUE IN int_track.cpp AS MIDI MESSAGES AREN'T TOTALLY
-// ORDERED (see midi_msg.operator== and midi_msg.operator< )
-
-    min = mid;                                  // dummy, for remembering
-    while (!EndOfTrack(mid) && GetEvent(mid).GetTime() == msg.GetTime()) {
-        if (GetEvent(mid) == msg)               // element found
-            return SetEvent(mid, msg);          // WARNING: I changed this (from false): review!
-        mid++;
-    }
-    return PutEvent(min, msg);
-}
-
-
-bool MIDITrack::Delete(const MIDITimedBigMessage& msg) {
-    if (msg.IsDataEnd()) return false;                  // we can't delete MIDI_END event
-    int min = 0,                                        // binsearch copied from binsearch.h
-        max = num_events - 1,
-        mid = (max + min) / 2;
-    while (max - min > 1) {
-        if (GetEvent(mid) < msg) min = mid;
-        else max = mid;
-        mid = (max + min) / 2;
-    }
-    if (min < max && GetEvent(mid) < msg)               // max-min = 1; mid could be one of these
-        mid++;
-
-    if (GetEvent(mid) == msg) {                         // mid is the place of msg
-        DelEvent(mid);                                  // delete
-        return true;
-    }
-    return false;                                       // not found
-}
 
 
 void MIDITrack::ChangeChannel(int ch) {
@@ -1032,105 +1073,6 @@ void MIDITrack::CloseOpenEvents(MIDIClockTime t) {
 }
 
 
-int MIDITrack::FindEventNumber(const MIDITimedBigMessage& m) const {
-// returns -1 if not found
-    if (num_events == 0) return -1;             // binsearch copied from binsearch.h
-    int min = 0,
-        max = num_events - 1,
-        mid = (max + min) / 2;
-    while (max - min > 1) {
-        if (GetEvent(mid) < m) min = mid;
-        else max = mid;
-        mid = (max + min) / 2;
-    }
-    if (min < max && GetEvent(mid) < m)         // max-min = 1; mid could be one of these
-        mid++;
-    if (GetEvent(mid) == m)                     // element found
-        return mid;
-    return -1;
-}
-
-
-int MIDITrack::FindEventNumber(MIDIClockTime time) const {
-    if (num_events == 0 || time > GetEndTime()) return -1;
-    int min = 0,                                        // binary search
-        max = num_events - 1,
-        mid = (max + min) / 2;
-    while (max - min > 1) {
-        if (GetEvent(mid).GetTime() < time) min = mid;
-        else max = mid;
-        mid = (max + min) / 2;
-    }
-    if (GetEvent(mid).GetTime() < time)     // mid.GetTime() should be <= time
-        return ++mid;
-    while(mid && GetEvent(mid-1).GetTime() == time)
-        mid--;                              // there are former events with same time
-    return mid;
-}
-
-
-//
-// low level private functions
-//
-
-
-bool MIDITrack::PutEvent(int ev_num, const MIDITimedBigMessage& m) {
-    if (ev_num > num_events) return false;
-    if(num_events >= buf_size) {
-        if(!Expand()) return false;
-    }
-    int event_chunk = ev_num / MIDITrackChunkSize;
-    int ev_num_in_chunk = ev_num % MIDITrackChunkSize;
-    int num_chunks_alloced = buf_size / MIDITrackChunkSize;
-    for (int i = num_chunks_alloced-1; i > event_chunk; i--) {
-        chunk[i]->Insert(0);
-        MIDITrackChunk::LastToFirst(*chunk[i-1], *chunk[i]);
-    }
-    chunk[event_chunk]->Insert(ev_num_in_chunk);
-    GetEvent(ev_num) = m;
-    num_events++;
-    return true;
-}
-
-
-bool MIDITrack::DelEvent(int ev_num) {
-    if (ev_num >= num_events) return false;
-    GetEventAddress(ev_num)->Clear();       // deletes sysex
-    int event_chunk = ev_num / MIDITrackChunkSize;
-    int ev_num_in_chunk = ev_num % MIDITrackChunkSize;
-    int num_chunks_alloced = buf_size / MIDITrackChunkSize;
-    chunk[event_chunk]->Delete(ev_num_in_chunk);
-    for (int i = event_chunk; i < num_chunks_alloced-1; i++) {
-        MIDITrackChunk::FirstToLast(*chunk[i+1], *chunk[i]);
-        chunk[i+1]->Delete(0);
-    }
-    num_events--;
-    return true;
-}
-
-
-/*
-
-// SEE HEADER!!!!!!!!!!!!!!!!!
-bool	MIDITrack::PutEvent( const MIDITimedBigMessage &msg, MIDISysEx *sysex )
-  {
-    if( num_events >= buf_size )
-    {
-      if( !Expand() )
-        return false;
-    }
-
-    MIDITimedBigMessage *e = GetEventAddress( num_events );
-
-    e->Copy( msg );
-    e->SetSysEx( sysex );
-
-    ++num_events;
-
-    return true;
-  }
-
-*/
 
 /* ***********************************************************************************
 /* *                 C L A S S   M I D I T r a c k I t e r a t o r

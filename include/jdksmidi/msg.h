@@ -327,7 +327,7 @@ public:
     }
 
     // volume msg /* BY NC */
-    bool IsVolumrChange() const
+    bool IsVolumeChange() const
     {
         return IsControlChange() &&
                ( GetController() == C_MAIN_VOLUME );
