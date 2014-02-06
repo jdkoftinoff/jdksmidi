@@ -35,6 +35,11 @@
 // www.vmgames.com vrm@vmgames.com
 //
 
+//
+// MODIFIED by N. Cassetta  ncassetta@tiscali.it
+//
+
+
 #ifndef JDKSMIDI_TRACK_H
 #define JDKSMIDI_TRACK_H
 
@@ -44,6 +49,28 @@
 
 namespace jdksmidi
 {
+
+
+/* NEW BY NC */
+
+enum
+{
+    INSMODE_DEFAULT,
+    INSMODE_INSERT,
+    INSMODE_REPLACE,
+    INSMODE_INSERT_OR_REPLACE,
+    INSMODE_INSERT_OR_REPLACE_BUT_NOTE
+};
+
+enum
+{
+    COMPMODE_EQUAL,
+    COMPMODE_SAMEKIND,
+    COMPMODE_TIME
+};
+
+/* END OF NEW */
+
 
 ///
 /// MIDITrackChunkSize is a constant which specifies how many events are in one MIDITrackChunk.
@@ -139,9 +166,16 @@ public:
     ///
     void ClearAndMerge ( const MIDITrack *src1, const MIDITrack *src2 );
 
-    bool Insert( const MIDITimedBigMessage& msg );
-    bool Replace( const MIDITimedBigMessage& msg );
-    bool Delete( const MIDITimedBigMessage& msg );
+    /* NEW BY NC */
+
+    static void SetInsertMode( int m );
+    bool InsertEvent( const MIDITimedBigMessage& msg, int _ins_mode = INSMODE_DEFAULT );
+    bool InsertNote( const MIDITimedBigMessage& msg, MIDIClockTime len, int _ins_mode = INSMODE_DEFAULT );
+    bool DeleteEvent( const MIDITimedBigMessage& msg );
+    bool DeleteNote( const MIDITimedBigMessage& msg );
+    /* END OF NEW */
+
+
 //  void  Sort();
 
     const MIDITrack & operator = ( const MIDITrack & src );
@@ -190,9 +224,11 @@ public:
     // put text message with known length (w/o ending NULL), or evaluate it if zero length
     bool PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length = 0 );
 
+    bool RemoveEvent ( int event_num );
+
     bool MakeEventNoOp ( int event_num );
 
-    bool FindEventNumber( const MIDITimedBigMessage& msg, int *event_num) const;
+    bool FindEventNumber( const MIDITimedBigMessage& msg, int *event_num, int _comp_mode = COMPMODE_EQUAL) const;
     bool FindEventNumber ( MIDIClockTime time, int *event_num ) const;
 
     int GetBufferSize() const
@@ -246,6 +282,8 @@ private:
             return ( t1.time < t2.time );
         }
     };
+
+    static int ins_mode;        /* NEW BY NC */
 
 };
 

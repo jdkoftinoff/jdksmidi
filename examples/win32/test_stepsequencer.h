@@ -1,3 +1,41 @@
+/*
+ *
+ * Example using the classes MIDITrack and MIDIMultiTrack for
+ * libJDKSmidi C++ MIDI Library.
+ * A simple step sequencer: you can add, remove, edit MIDI
+ * events and play and save your file (console app, no GUI!)
+ *
+ * Copyright (C) 2014 N.Cassetta
+ * ncassetta@tiscali.it
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program;
+ * if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ */
+
+
+/* This is a very basic, and not comfortable, step sequencer, made for demostrating
+   editing capabilities of the jdksmidi library. It creates an AdvancedSequencer class instance,
+   gets it MultiTrack, and allow the user to edit it.
+   You can load and save MIDI files, play them, view the file content, edit the file.
+   You can insert, delete or change these MIDI events: note, control (in particular volume and pan)
+   patch and tempo. For changing an event, insert a new event (same note, control, patch, tempo) at
+   same time position.
+*/
+
+
 #ifndef TEST_STEPSEQUENCER_H_INCLUDED
 #define TEST_STEPSEQUENCER_H_INCLUDED
 
@@ -12,26 +50,33 @@ static const char helpstring[] =
    load filename       : Loads the file into the sequencer\n\
    save filename       : Saves the file\n\
    outport port        : Sets port as current output device\n\
-                         (stops the sequencer)\n\
    play                : Starts playback from current time\n\
    stop                : Stops playback\n\
-   goto meas [beat]    : Move current time to given meas and beat\n\
-                         (numbered from 0)\n\
    dump                : Prints a dump of all midi events in the file\n\
+   dump n              : Prints a dump of track n\n\
+   goto meas [beat]    : Move current time to given meas and beat\n\
+                         (numbered from 1)\n\
    <<                  : Rewind\n\
-   <                   : Step backward\n\
-   >                   : Step forward\n\
-   t<                  : Previous track\n\
-   t>                  : Next track\n\
-   step                : Sets the step\n\
-   tempo val           : Inserts a tempo event at current position\n\
+   < [n]               : Moves current time n steps backward\n\
+                         (if omitted, one step)\n\
+   > [n]               : Moves current time n steps forward (as above)\n\
+   t<                  : Moves insert position to previous track\n\
+   t>                  : Moves insert position to next track\n\
+   step                : Sets the step length in MIDI clocks\n\
+   note n [vel len]    : Inserts a note event: n note, vel velocity, len length\n\
+                         (remembers last note vel and len, so you can omit\n\
+                          them, or only len, if they are the same)\n\
    volume val          : Inserts a volume event at current position\n\
    pan val             : Inserts a pan event at current position\n\
    control nn val      : Inserts a control nn event at current position\n\
    patch val           : Inserts a patch event at current position\n\
-   note n vel len      : Inserts a note event: n note, vel velocity, len length\n\
+   tempo val           : Inserts a tempo event at current position\n\
+   note n *, volume *, etc...\n\
+                       : Deletes the event (event must be at cur time and track)\
    help                : Prints this help screen\n\
-   quit                : Exits\n";
+   quit                : Exits\n\n\
+   NOTE: when playing, the sequencer notifier will print beat messages,\n\
+   messing up the program input prompt. You can still type your commands\n\n";
 
 
 void GetCommand();

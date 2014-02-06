@@ -35,6 +35,10 @@
 // www.vmgames.com vrm@vmgames.com
 //
 
+//
+// MODIFIED by N. Cassetta  ncassetta@tiscali.it
+//
+
 #include "jdksmidi/world.h"
 #include "jdksmidi/sysex.h"
 #include "jdksmidi/msg.h"
@@ -915,6 +919,16 @@ int  MIDITimedBigMessage::CompareEventsForInsert (
     if ( m2.GetTime() > m1.GetTime() )
         return 2; // m2 is larger
 
+    n1 = m1.IsEndOfTrack();
+    n2 = m2.IsEndOfTrack();
+    // EndOfTrack are larger
+    if ( n1 && n2 )
+        return 0; // same
+    if ( n1 )
+        return 1; // m1 is larger
+    if ( n2 )
+        return 2; // m2 is larger
+
     n1 = m1.IsMetaEvent();
     n2 = m2.IsMetaEvent();
     // Meta events go before other events
@@ -930,31 +944,37 @@ int  MIDITimedBigMessage::CompareEventsForInsert (
     n2 = m2.IsSystemExclusive();
     // System exclusive are larger
     if ( n1 && n2 )
-        return 0; // same, do not care.
+        return 0; // same
     if ( n1 )
         return 1; // m1 is larger
     if ( n2 )
         return 2; // m2 is larger
 
-    if ( m1.IsChannelEvent() && m2.IsChannelEvent() && ( m1.GetChannel() == m2.GetChannel() ) )
+    if ( m1.IsChannelEvent() && m2.IsChannelEvent() )
     {
-        n1 = ! m1.IsNote();
-        n2 = ! m2.IsNote();
-        if (n1 && n2)
-            return 0; // same
-        if (n1)
-            return 2; // m2 is larger
-        if (n2)
-            return 1; // m1 is larger
+        if ( m1.GetChannel() != m2.GetChannel() )
+            return m1.GetChannel() < m2.GetChannel();
 
-        n1 = m1.IsNoteOn();
-        n2 = m2.IsNoteOn();
-        if (n1 && n2)
-            return 0; // same
-        if (n1)
-            return 1; // m1 is larger
-        if (n2)
-            return 2; // m2 is larger
+        else
+        {
+            n1 = ! m1.IsNote();
+            n2 = ! m2.IsNote();
+            if (n1 && n2)
+                return 0; // same
+            if (n1)
+                return 2; // m2 is larger
+            if (n2)
+                return 1; // m1 is larger
+
+            n1 = m1.IsNoteOn();
+            n2 = m2.IsNoteOn();
+            if (n1 && n2)
+                return 0; // same
+            if (n1)
+                return 1; // m1 is larger
+            if (n2)
+                return 2; // m2 is larger
+        }
     }
 
     return 0;
