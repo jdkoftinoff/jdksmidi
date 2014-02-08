@@ -66,7 +66,7 @@ public:
 
     MIDITrack *GetTrack ( int track_num )
     {
-        assert( track_num < number_of_tracks );
+        // assert( track_num < number_of_tracks );
         return tracks[track_num];
     }
     const MIDITrack *GetTrack ( int track_num ) const
@@ -117,6 +117,21 @@ public:
             num_events += tracks[i]->GetNumEvents();
         return num_events;
     }
+
+    /* NEW BY NC */
+
+    bool IsValidTrackNum ( int n )
+    {
+        return ( n >= 0 && n < number_of_tracks && tracks[n] != 0 );
+        // the latter may happen if !deletable;
+    }
+
+    bool InsertEvent( int trk,  const MIDITimedBigMessage& msg, int _ins_mode = INSMODE_DEFAULT );
+    bool InsertNote( int trk, const MIDITimedBigMessage& msg, MIDIClockTime len, int _ins_mode = INSMODE_DEFAULT );
+    bool DeleteEvent( int trk,  const MIDITimedBigMessage& msg );
+    bool DeleteNote( int trk, const MIDITimedBigMessage& msg );
+
+    /* END OF NEW BY NC */
 
 protected:
 
