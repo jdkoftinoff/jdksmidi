@@ -79,13 +79,17 @@ public:
     ///@name The Constructors and Initializing methods
     //@{
 
-    MIDIMessage(); ///< Create a MIDIMessage object which holds no values.
+    /// Create a MIDIMessage object which holds no values.
+    MIDIMessage();
 
-    MIDIMessage ( const MIDIMessage &m ); ///< Copy Constructor.
+    /// Copy Constructor.
+    MIDIMessage ( const MIDIMessage &m );
 
-    const MIDIMessage & operator = ( const MIDIMessage &m ); ///< The assignment operator. Copies the MIDIMessage value.
+    /// The assignment operator. Copies the MIDIMessage value.
+    const MIDIMessage & operator = ( const MIDIMessage &m );
 
-    void Clear() ///< Set the MIDIMessage object to 0
+    /// Set the MIDIMessage object to 0
+    void Clear()
     {
         status = 0;
         byte1 = byte2 = byte3 = 0;
@@ -94,21 +98,26 @@ public:
         service_num = NOT_SERVICE;
     }
 
-    void Copy ( const MIDIMessage & m ) ///< Copy the value of the specified MIDIMessage.
+    /// Copy the value of the specified MIDIMessage.
+    void Copy ( const MIDIMessage & m )
     {
         *this = m;
     }
 
     //@}
 
-    const char * MsgToText ( char *txt ) const; ///< Create a human readable ascii string describing the message.  This is potentially unsafe as the 'txt' param must point to a buffer of at least 64 chars long.
+    /// Create a human readable ascii string describing the message.  This is potentially unsafe as the 'txt'
+    /// param must point to a buffer of at least 64 chars long.
+    const char * MsgToText ( char *txt ) const;
 
     ///@name The Query methods.
     //@{
 
+    /// Get the length in bytes of the entire message.
     int GetLengthMSG() const;
 
-    int GetLength() const ///< Get the length in bytes of the entire message.
+    /// Same ad GetLengthMSG().
+    int GetLength() const
     {
         return GetLengthMSG();
     }
@@ -131,7 +140,7 @@ public:
         return ( unsigned char ) ( status & 0xF0 );
     }
 
-    /// If the message is some sort of meta-message, then GetMetaType returns the type byte.
+    /// If the message is some sort of meta-message, then GetMetaType() returns the type byte.
     unsigned char GetMetaType() const
     {
         return byte1;
@@ -251,20 +260,22 @@ public:
         return byte4;
     }
 
-    /// If the message is a key signature meta-message, GetKeySigSharpFlats() returns to standard midi file form of the key. Negative values means that many flats, positive numbers means that many sharps.
+    /// If the message is a key signature meta-message, GetKeySigSharpFlats() returns the standard midi file form of the key. Negative values means that many flats, positive numbers means that many sharps.
     signed char GetKeySigSharpFlats() const
     {
         return ( signed char ) byte2;
     }
 
-    /// If the message is a key signature meta-message, GetKeySigMajorMinor() returns to standard midi file form of the key major/minor flag. 0 means a major key, 1 means a minor key.
+    /// If the message is a key signature meta-message, GetKeySigMajorMinor() returns the standard midi file form of the key major/minor flag. 0 means a major key, 1 means a minor key.
     unsigned char GetKeySigMajorMinor() const
     {
         return byte3;
     }
 
+    /// If the message is a pan message (control 0x0a), GetPanorama() returns the percent vslue of the panorama (-100 = left, 100 = right).
+    double GetPan() const;
 
-    // not midi message
+    /// If the message is a service message (not MIDI) IsServiceMsg() will return true.
     bool IsServiceMsg() const
     {
         return service_num != NOT_SERVICE;
@@ -297,16 +308,19 @@ public:
         return IsNoteOn() && GetVelocity() == 0;
     }
 
+    /// If the message is a note on or a note off message, IsNote() will return true. You can then call GetChannel(), GetNote() and GetVelocity() for further information.
     bool IsNote() const
     {
         return IsNoteOn() || IsNoteOff();
     }
 
+    /// If the message is a note on message and velocity != 0 (i.e. not note off), ImplicitIsNoteOn() will return true. You can then call GetChannel(), GetNote() for further information.
     bool ImplicitIsNoteOn() const
     {
         return IsNoteOn() && GetVelocity() != 0;
     }
 
+    /// If the message is a note off or a note on with velocity=0, ImplicitIsNoteOff() will return true. You can then call GetChannel(), GetNote() and GetVelocity() for further information.
     bool ImplicitIsNoteOff() const
     {
         return IsNoteOff() || IsNoteOnV0();
@@ -327,6 +341,7 @@ public:
     }
 
     // volume msg /* BY NC */
+    /// If the message is a volume change message (control = 0x07), IsVolumeChange() will return true. You can then call GetChannel() and GetControllerValue() for further information.
     bool IsVolumeChange() const
     {
         return IsControlChange() &&
@@ -334,6 +349,8 @@ public:
     }
 
     // damper msg /* BY NC */
+
+    /// If the message is a pedal on message (control = 0x40 and value >= 0x64), IsPedalOn() will return true. You can then call GetChannel() for further information.
     bool IsPedalOn() const
     {
         return IsControlChange() &&
@@ -341,6 +358,7 @@ public:
                ( GetControllerValue() & 0x40 );
     }
 
+    /// If the message is a pedal off message (control = 0x40 and value < 0x64), IsPedalOff() will return true. You can then call GetChannel() for further information.
     bool IsPedalOff() const
     {
         return IsControlChange() &&
@@ -348,7 +366,7 @@ public:
                !( GetControllerValue() & 0x40 );
     }
 
-    // panorama msg
+    /// If the message is a pan change message (control = 0x0a), IsPanChange() will return true. You can then call GetChannel() and GetControllerValue() for further information.
     bool IsPanChange() const
     {
         return IsControlChange() && GetController() == C_PAN;
@@ -420,41 +438,48 @@ public:
         return ( IsSysExN() || IsSysExA() );
     }
 
+    /// If the nessage is a Midi Time Code message, IsMtc() will return true.
     bool IsMTC() const
     {
         return ( service_num == NOT_SERVICE) &&
                ( status == MTC );
     }
 
+    /// If the nessage is a Song Position message, IsSongPosition() will return true.
     bool IsSongPosition() const
     {
         return ( service_num == NOT_SERVICE) &&
                ( status == SONG_POSITION );
     }
 
+    /// If the nessage is a Song Select message, IsSongSelect() will return true.
     bool IsSongSelect() const
     {
         return ( service_num == NOT_SERVICE) &&
                ( status == SONG_SELECT );
     }
 
+    /// If the nessage is a Tune Request message, IsTuneRequest() will return true.
     bool IsTuneRequest() const
     {
         return ( service_num == NOT_SERVICE) &&
                ( status == TUNE_REQUEST );
     }
 
+    /// If the message is a Meta Event message, IsMetaEvent() will return true. You can then call GetMetaType() and GetMetaValue() for further information.
     bool IsMetaEvent() const
     {
         return ( service_num == NOT_SERVICE) &&
                ( status == META_EVENT );
     }
 
+    /// Same as IsChannelMsg().
     bool IsChannelEvent() const
     {
         return IsChannelMsg();
     }
 
+    /// If the message is a text message (a subset of Meta events), IsTextEvent() will return true.
     bool IsTextEvent() const
     {
         return ( service_num == NOT_SERVICE) &&
@@ -462,21 +487,25 @@ public:
                ( byte1 >= 0x01 && byte1 <= 0x0F );
     }
 
+    /// If the message is a Lyric Text message, IsLyricText() will return true.
     bool IsLyricText() const
     {
         return ( IsTextEvent() && GetMetaType() == META_LYRIC_TEXT );
     }
 
+    /// If the message is a Track Name message, IsTrackName() will return true.
     bool IsTrackName() const
     {
         return ( IsTextEvent() && GetMetaType() == META_TRACK_NAME );
     }
 
+    /// If the message is a Marker Text message, IsMarkerText() will return true.
     bool IsMarkerText() const                       // new by NC //
     {
         return ( IsTextEvent() && GetMetaType() == META_MARKER_TEXT );
     }
 
+    /// If the message is an All Notes Off message, IsAllNotesOff() will return true.
     bool IsAllNotesOff() const
     {
         return ( service_num == NOT_SERVICE) &&
@@ -484,11 +513,13 @@ public:
                ( byte1 >= C_ALL_NOTES_OFF );
     }
 
+    /// If the message is a NoOp (not MIDI) message, IsNoOp() will return true.
     bool IsNoOp() const
     {
         return ( service_num == SERVICE_NO_OPERATION );
     }
 
+    /// If the message is a Channel Prefix message, IsChannelPrefix() will return true.
     bool IsChannelPrefix() const
     {
         return ( service_num == NOT_SERVICE) &&
@@ -496,6 +527,7 @@ public:
                ( byte1 == META_CHANNEL_PREFIX );
     }
 
+    /// If the message is a Tempo Change message, IsTempo will return true. You can call GetTempo32() and GetTempo() for further information.
     bool IsTempo() const
     {
         return ( service_num == NOT_SERVICE) &&
@@ -503,6 +535,7 @@ public:
                ( byte1 == META_TEMPO );
     }
 
+    /// If the message is a End Of Data message, IsDataEnd() will return true.
     bool IsDataEnd() const
     {
         return ( service_num == NOT_SERVICE) &&
@@ -510,11 +543,13 @@ public:
                ( byte1 == META_END_OF_TRACK );
     }
 
+    /// Same of IsDataEnd().
     bool IsEndOfTrack() const
     {
         return IsDataEnd();
     }
 
+    /// If the message is a Time Signature message, IsTimeSig will return true. You can call GetTimeSigNumerator(), GetTimeSigDenominator() and GetTimeSigDenominatorPower() for further information.
     bool IsTimeSig() const
     {
         return ( service_num == NOT_SERVICE) &&
@@ -522,6 +557,7 @@ public:
                ( byte1 == META_TIMESIG );
     }
 
+    /// If the message is a Key Signature message, IsKeySig() will return true. You can call GetKeySigSharpFlats() and GetKeySigMajorMinor for further information.
     bool IsKeySig() const
     {
         return ( service_num == NOT_SERVICE) &&
@@ -539,9 +575,7 @@ public:
         return ( service_num == SERVICE_USERAPP_MARKER );
     }
 
-    ///
-    /// GetTempo32() returns the tempo value in 1/32 bpm
-    ///
+    /// Returns the tempo value in 1/32 bpm
     unsigned long GetTempo32() const;
 
     // GetTempo() returns the original midifile tempo value (microseconds per beat)
@@ -563,13 +597,13 @@ public:
         status = s;
     }
 
-    /// set just the lower 4 bits of the status byte without changing the upper 4 bits
+    /// Set just the lower 4 bits of the status byte without changing the upper 4 bits
     void SetChannel ( unsigned char s )
     {
         status = ( unsigned char ) ( ( status & 0xf0 ) | s );
     }
 
-    /// set just the upper 4 bits of the status byte without changing the lower 4 bits
+    /// Set just the upper 4 bits of the status byte without changing the lower 4 bits
     void SetType ( unsigned char s )
     {
         status = ( unsigned char ) ( ( status & 0x0f ) | s );
@@ -838,6 +872,10 @@ protected:
 };
 
 
+///
+/// The MIDITimedMessage inherits from a MIDIMessage and adds the capability of storing
+/// a MIDI time clock.
+///
 
 class MIDITimedMessage : public MIDIMessage
 {
@@ -872,6 +910,7 @@ public:
     // 'Get' methods
     //
 
+    /// Returns the MIDI time clock of the message.
     MIDIClockTime GetTime() const
     {
         return time;
@@ -881,6 +920,7 @@ public:
     // 'Set' methods
     //
 
+    /// Sets the MIDI time clock of the message.
     void SetTime ( MIDIClockTime t )
     {
         time = t;
@@ -950,6 +990,13 @@ protected:
 };
 
 
+///
+/// The MIDITimedBigMessage inherits ftom a MIDIBigMessage and adds the features of a MIDITimedMessage.
+/// As said in MIDIMessage doc, Multiple Inheritance was not safe at the time the library was written,
+/// so it isn't used here (maybe in the future).
+/// This is the most used type of message, the one which is stored in MIDITrack class and is used for playing,
+/// writing and loading MIDI files.
+///
 
 class MIDITimedBigMessage : public MIDIBigMessage
 {
@@ -1015,16 +1062,40 @@ public:
     // Compare method, for sorting. Not just comparing time.
     //
 
+    /// This is the older version of the function
     static int CompareEvents (
         const MIDITimedBigMessage &a,
         const MIDITimedBigMessage &b
     );
 
+    /// This function is used by the MIDITrack::InsertEvent() and MIDITrack::InsertNote() methods for ordering
+    /// events when inserting. It compares events _a_ and _b_. _a_: the following tests are done in sequence:
+    /// + if _a_ (or _b_) is a NoOp it's larger
+    /// + if _a_ (or _b_) has lesser MIDI time it's smaller (sorts for increasing time)
+    /// + if _a_ (or _b_) is an EndOfTrack event it's larger
+    /// + if _a_ (or _b_) is a Meta event it is smaller (Meta go before channel messages)
+    /// + if _a_ (or _b_) is a SysEx it is larger (Sysex go after channel messages)
+    /// + if _a_ and _b_ are both channel messages sort for ascending channel
+    /// + if _a_ (or _b_) is not a note message it's smaller (non note go before notes)
+    /// + if _a_ (or _b_) is a Note Off it's smaller (Note Off go before Note On)
+    /// @returns **1** if _a_ < _b_ , **2** if _a_ > _b_, **0** if none of these (their order is indifferent)
     static int CompareEventsForInsert (
         const MIDITimedBigMessage &a,
         const MIDITimedBigMessage &b
     );
 
+    /// This function is used by the methods that search and insert events in the tracks to find events
+    /// that are of the same kind and would normally be incompatible.
+    /// It compares the events *a* and *b* and returns **true** if they have the same MIDI time and they are:
+    /// - both NoOp
+    /// - both Note On or Note Off with the same channel and the same note number
+    /// - both Control Change with the same channel and the same control nunber
+    /// - both channel messages (not notes or control) with the same channel and type
+    /// - both MetaEvent with the same meta type
+    /// - both non channel events (not Meta) with the same status
+    /// If the input mode is set to INSMODE_REPLACE or INSMODE_INSERT_OR_REPLACE the functions
+    /// MIDITrack::InsertEvent and MIDITrack::InsertNote search if at same MIDI time of the event to insert exists
+    /// such an event and, if they find it, they replace the event, rather than inserting it.
     static bool IsSameKind (
         const MIDITimedBigMessage &a,
         const MIDITimedBigMessage &b

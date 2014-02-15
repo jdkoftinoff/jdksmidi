@@ -341,7 +341,7 @@ void MIDIMessage::SetControlChange ( unsigned char chan, unsigned char ctrl, uns
     byte2 = val;
 }
 
-double MIDIMessage::GetPan()
+double MIDIMessage::GetPan() const
 {
     int val = GetControllerValue(); // 0 = leftmost, 64 = centre, 127 = rightmost
     if (val == 127) val = 128;
