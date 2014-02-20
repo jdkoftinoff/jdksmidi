@@ -965,6 +965,33 @@ bool MIDITrack::FindEventNumber(MIDIClockTime time, int* event_num) const {
     return false;                               // found event with time < t
 }
 
+MIDIClockTime MIDITrack::NoteLength( const MIDITimedBigMessage& msg ) const
+{
+    if ( !msg.IsNoteOn() )
+    {
+        return 0;
+    }
+    int event_num;
+    const MIDITimedBigMessage* msgp;
+    if ( !FindEventNumber( msg, &event_num, COMPMODE_EQUAL ) )
+    {
+        return 0;
+    }
+    for (int i = event_num; i < num_events; i++)
+    {
+        msgp = GetEvent( i );
+        if ( msgp->IsNoteOff() &&
+             msgp->GetChannel() == msg.GetChannel() &&
+             msgp->GetNote() == msg.GetNote()
+            )
+        {
+            return msgp->GetTime() - msg.GetTime();
+        }
+    }
+    return GetLastEventTime() - msg.GetTime();
+}
+
+
 const MIDITimedBigMessage *MIDITrack::GetEvent ( int event_num ) const
 {
     if ( !IsValidEventNum( event_num ) )

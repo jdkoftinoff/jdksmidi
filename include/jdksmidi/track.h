@@ -186,7 +186,8 @@ public:
     /// @returns **false** in some situations in which the method cannot insert:
     /// + _msg_ was an EndOfTrack (you cannot insert it)
     /// + __ins_mode_ was INSMODE_REPLACE but there is no event to replace
-    /// + a memory error occurred.
+    /// + a memory error occurred
+    /// otherwise **true**.
     bool InsertEvent( const MIDITimedBigMessage& msg, int _ins_mode = INSMODE_DEFAULT );
 
     /// Inserts a Note On and a Note Off event into the track. Use this method for inserting note messages as
@@ -202,7 +203,8 @@ public:
     /// @returns **false** in some situations in which the method cannot insert:
     /// + _msg_ was not a Note On event
     /// + _ins_mode_ was INSMODE_REPLACE but there is no event to replace
-    /// + a memory error occurred.
+    /// + a memory error occurred
+    /// otherwise **true**.
     /// @bug In the latter case the method could leave the track in an inconsistent state (a Note On without
     /// corresponding Note Off or viceversa).
     bool InsertNote( const MIDITimedBigMessage& msg, MIDIClockTime len, int _ins_mode = INSMODE_DEFAULT );
@@ -210,13 +212,13 @@ public:
     /// Deletes an event from the track. Use DeleteNote() for safe deleting both Note On and Note Off. You cannot
     /// delete the EndOfTrack event.
     /// @param msg a copy of the event to delete.
-    /// @returns **false** if an exact copy of the event was not found, or if a memory error occurred.
+    /// @returns **false** if an exact copy of the event was not found, or if a memory error occurred, otherwise **true**.
     bool DeleteEvent( const MIDITimedBigMessage& msg );
 
     /// Deletes a Note On and corresponding Note Off events from the track. Don't use DeleteEvent() for deleting
     /// notes.
     /// @param msg a copy of the Note On event to delete.
-    /// @returns **false** if an exact copy of the event was not found, or if a memory error occurred.
+    /// @returns **false** if an exact copy of the event was not found, or if a memory error occurred, otherwise **true**.
     /// @bug In the latter case the method could leave the track in an inconsistent state (a Note On without
     /// corresponding Note Off or viceversa).
     bool DeleteNote( const MIDITimedBigMessage& msg );
@@ -296,6 +298,8 @@ public:
 
     bool MakeEventNoOp ( int event_num );
 
+    /* NEW BY NC */
+
     /// Finds an event in the track matching a given event.
     /// @param[in] msg the event to look for
     /// @param[out] event_num contains the event number in the track if the event was found; otherwise it contains
@@ -314,6 +318,12 @@ public:
     /// @returns **true** if an event with given time was found, **false** otherwise.
     bool FindEventNumber ( MIDIClockTime time, int *event_num ) const;
 
+    /// Returns the length in MIDI clocks of the given note. _msg_ must be a Note On event present in the track
+    /// (otherwise the function will return 0).
+    MIDIClockTime NoteLength ( const MIDITimedBigMessage& msg ) const;
+
+    /* END OF NEW */
+
     /// Returns the buffer size (the maximum number of events that can be stored in the track.
     /// @note the size of the buffer is managed autonomally by the track, so this have no utility for the
     /// user and could become protected in the future.
@@ -328,7 +338,7 @@ public:
         return num_events;
     }
 
-    /// Returns **true** if event *event_num* exists in the track.
+    /// Returns **true** if the event *event_num* exists in the track.
     bool IsValidEventNum( int event_num ) const
     {
         return ( 0 <= event_num && event_num < num_events );
@@ -347,6 +357,7 @@ public:
     /// Sets the end time of the track. If the track is not termined by an EndOfData event inserts it. Returns
     /// **true** if the operation was succesful (you can't set end time before any non EndOfTime event).
     bool SetEndTime( MIDIClockTime time );
+    /* END OF NEW */
 
     /// Test events temporal order, return false if events out of order
     bool EventsOrderOK() const;
@@ -357,6 +368,8 @@ public:
     // remove events with identical time and all other data, return number of such events
     int RemoveIdenticalEvents( int max_distance_between_identical_events = 32 );
 
+    /// Cuts note and pedal events at the time t. All sounding notes and held pedals are truncated, the
+    /// corresponding off events are properly managed.
     void CloseOpenEvents( MIDIClockTime t );
 
 private:

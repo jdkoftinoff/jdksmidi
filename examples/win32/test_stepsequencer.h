@@ -62,8 +62,8 @@ static const char helpstring[] =
    > [n]               : Moves current time n steps forward (as above)\n\
    t<                  : Moves insert position to previous track\n\
    t>                  : Moves insert position to next track\n\
-   step                : Sets the step length in MIDI clocks\n\
-   note n [vel len]    : Inserts a note event: n note, vel velocity, len length\n\
+   step sss            : Sets the step length in MIDI clocks\n\
+   note nn [vel len]   : Inserts a note event: nn note name, vel velocity, len length\n\
                          (remembers last note vel and len, so you can omit\n\
                           them, or only len, if they are the same)\n\
    volume val          : Inserts a volume event at current position\n\
@@ -71,10 +71,12 @@ static const char helpstring[] =
    control nn val      : Inserts a control nn event at current position\n\
    patch val           : Inserts a patch event at current position\n\
    tempo val           : Inserts a tempo event at current position\n\
-   note n *, volume *, etc...\n\
+   note nn *, volume *, etc... (followed by an asterisk)\n\
                        : Deletes the event (event must be at cur time and track)\
    help                : Prints this help screen\n\
    quit                : Exits\n\n\
+   note names must be introduced as C5 (middle C), a#3, Bb6, etc.\n\
+   (the note name can be lower or upper case)\n\\n\
    NOTE: when playing, the sequencer notifier will print beat messages,\n\
    messing up the program input prompt. You can still type your commands\n\n";
 

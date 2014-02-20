@@ -110,6 +110,36 @@ void GetCommand()
 }
 
 
+unsigned char NameToValue( string s )
+// Converts a string as "C6" or "a#5" into corresponding MIDI note value
+{
+    static const unsigned char noteoffsets[7] = { 9, 11, 0, 2, 4, 5, 7,};
+
+    int p = s.find_first_not_of(" ");
+    char ch = tolower( s[p] );
+    unsigned char note;
+    unsigned char octave;
+    if ( string("abcdefg").find(ch) == string::npos)
+        return 0;
+    note = noteoffsets[ ch - 'a'];
+    p = s.find_first_not_of(" ", p+1);
+    if ( s[p] == '#')
+    {
+        note++;
+        p = s.find_first_not_of(" ", p+1);
+    }
+    else if ( s[p] == 'b' )
+    {
+        note--;
+        p = s.find_first_not_of(" ", p+1);
+    }
+    if ( string("0123456789").find(s[p]) == string::npos)
+        return 0;
+    octave = s[p] - '0';
+    return 12 * octave + note;
+}
+
+
 void DumpMIDIMultiTrack( MIDIMultiTrack *mlt, int trk = -1 )
 // shows the MIDIMultiTrack content
 {
@@ -144,6 +174,7 @@ void DumpMIDIMultiTrack( MIDIMultiTrack *mlt, int trk = -1 )
 }
 
 void PrintResolution()
+// prints info about current position and step size
 {
     cout << "MultiTrack resolution is " << multitrack->GetClksPerBeat() << " clocks per beat" << endl;
     cout << "Current step size is " << cur_pos.getstep() << " clocks" << endl;
@@ -301,7 +332,7 @@ int main( int argc, char **argv )
             {
                 int vel = ( par2.length() == 0 ? last_note_vel : atoi( par2.c_str() ) );
                 MIDIClockTime len = ( par3.length() == 0 ? last_note_length : atoi( par3.c_str() ) );
-                msg.SetNoteOn( cur_pos.gettrack()-1, atoi(par1.c_str()), vel );
+                msg.SetNoteOn( cur_pos.gettrack()-1, NameToValue( par1 ), vel );
                 trk->InsertNote (msg, len);
             }
             else
