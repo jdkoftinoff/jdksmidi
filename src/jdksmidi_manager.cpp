@@ -83,6 +83,9 @@ void MIDIManager::SetSeq ( MIDISequencer *seq )
 // to manage the playback of the sequencer
 void MIDIManager::SeqPlay()
 {
+    seq_time_offset = ( unsigned long ) sequencer->GetCurrentTimeInMs();
+    sys_time_offset = jdks_get_system_time_ms();
+
     stop_mode = false;
     play_mode = true;
 

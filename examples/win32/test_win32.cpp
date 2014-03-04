@@ -351,14 +351,14 @@ VOID LoadFile() {
  * original 1-track, modifying the midifile: be careful if you use this in contests in which you may re-save
  * the file. TODO: adding an option for saving in different MIDI formats in filewrite.h
  */
-            if (sequencer->GetMultiTrack().GetNumTracksWithEvents() == 1)   // all events in one track: format 0
+            if (sequencer->GetMultiTrack()->GetNumTracksWithEvents() == 1)   // all events in one track: format 0
             {
                 // redistributes channel events in separate tracks
-                sequencer->GetMultiTrackAddress()->AssignEventsToTracks(
-                        sequencer->GetMultiTrackAddress()->GetTrack(0) );
+                sequencer->GetMultiTrack()->AssignEventsToTracks(
+                        sequencer->GetMultiTrack()->GetTrack(0) );
 
                 // IMPORTANT: when you edit events you always must call this to update the AdvancedSequencer
-                sequencer->SetMltChanged();
+                sequencer->SetChanged();
             }
 
             // update the filename textbox
@@ -442,9 +442,10 @@ const char* GetSmpteString() {
     smpte.SetSampleNumber(samples);
 */
 
+    // Feed the smpte with msecs
     smpte.SetMilliSeconds(msecs);
 
-    // Now it qives us the hours, minutes, secs and frames corresponding to our samples
+    // Now it qives us the hours, minutes, secs and frames corresponding to our msecs
     sprintf (s, "%d:%02d:%02d:%02d", smpte.GetHours(), smpte.GetMinutes(),
                 smpte.GetSeconds(), smpte.GetFrames());
     return s;

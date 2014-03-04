@@ -197,7 +197,7 @@ protected:
     volatile bool play_mode;            ///< *true* if the sequencer is playing
     volatile bool stop_mode;            ///< *true* if the sequencer is not playing
 
-    MIDISequencerGUIEventNotifier *notifier;    ///< the notifier thar sends messages to the GUI
+    MIDISequencerGUIEventNotifier *notifier;    ///< the notifier that sends messages to the GUI
 
     volatile bool repeat_play_mode;     ///< *true* if the loop mode is on
     long repeat_start_measure;          ///< first measure of the loop

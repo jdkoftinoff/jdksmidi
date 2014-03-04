@@ -284,7 +284,7 @@ int main( int argc, char **argv )
         }
         else if ( command == "dump")                    // prints a dump of the sequencer contents
         {
-            DumpMIDIMultiTrack( sequencer.GetMultiTrackAddress() );
+            DumpMIDIMultiTrack( sequencer.GetMultiTrack() );
         }
         else if ( command == "solo")                    // soloes a track
         {
