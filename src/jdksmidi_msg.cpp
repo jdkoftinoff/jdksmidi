@@ -1004,8 +1004,14 @@ bool  MIDITimedBigMessage::IsSameKind (
             return false;
         return true;
     }
-    if ( m1.IsMetaEvent() && m2.IsMetaEvent() && m1.GetMetaType() == m2.GetMetaType() )
-        return true;
+
+    if ( m1.IsMetaEvent() && m2.IsMetaEvent() )
+    {
+        if ( m1.GetMetaType() == m2.GetMetaType() )
+            return true;
+        return false;
+    }
+
     if ( m1.GetStatus() == m2.GetStatus() )
         return true;
     return false;
