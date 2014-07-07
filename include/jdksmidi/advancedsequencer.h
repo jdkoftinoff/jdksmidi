@@ -49,8 +49,11 @@
 #include "jdksmidi/manager.h"
 #include "jdksmidi/driver.h"
 
+
 #ifdef WIN32
 #include "jdksmidi/driverwin32.h"
+#else
+#include "jdksmidi/driverdump.h"
 #endif // WIN32
 
 
@@ -75,9 +78,10 @@ namespace jdksmidi
 /// - MIDI thru: you can play along with your MIDI instrument while the sequencer is playing
 ///
 /// This class embeds many jdksmidi objects: a MIDISequencer (with its MIDIMultiTrack) for
-/// storing MIDI data, a MIDIDriver for communicating with hardware MIDI ports, a MIDIManager for
+/// storing MIDI data, a MIDIDriver to communicate with hardware MIDI ports, a MIDIManager for
 /// handling sequencer playing, some MIDIProcessor for transposing, rechannelizing, etc.
-/// At currebt time, the class is only implemented for WIN32
+/// At current time, the class can manage MIDI playback only on WIN32; for other OS it prints to
+/// the console a dump of sent messages.
 ///
 
 class AdvancedSequencer
@@ -88,7 +92,7 @@ public:
 
     /// This first form of the constructor creates autonomally all the underlying objects (MIDIMultiTrack,
     /// MIDISequencer, MIDIDriver and MIDIManager) that are owned by the class. The MIDIMultiTrack will have
-    /// 17 tracks. You can specify a notifier for communicating with the GUI (this is not owned by the class).
+    /// 17 tracks. You can specify a notifier to communicate with the GUI (this is not owned by the class).
     /// If you want to edit the MIDI events, get the MIDIMultiTrack address with the GetMultiTrack() method.
     AdvancedSequencer(MIDISequencerGUIEventNotifier *n = 0);
 
@@ -277,8 +281,8 @@ public:
     /// Set MIDI ticks per beat (quarter note).
     /// \return **true** if clocks per beat are effectively changed
     /// \note  Currently the user is allowed to change this only when the sequencer is empty; default value is
-    /// 120 clocks per quarter beat. However, LoadFile() can change this according the base
-    /// TODO: it seems that nothing reset it to 120 if the sequencer is unloaded. Check it
+    /// 120 clocks per quarter beat. However, LoadFile() can change this according to the file clock, and Unload()
+    /// resets it to 120
     bool SetClksPerBeat ( unsigned int cpb );
 
     /// Returns the base MIDI ticks per beat of the internal MIDIMultiTrack
@@ -380,14 +384,15 @@ public:
  */
 
 protected:
-    static const int MEASURES_PER_WARP = 4;
+    static const int MEASURES_PER_WARP = 4;         ///< Used internally by ExtractWarpPositions() method
+    static const int DEFAULT_CLK_PER_BEAT = 120;    ///< The default clock per beat rate
 
     /// Opens the hardware MIDI in and out ports. Currently ports are opened by the constructor
     /// and closed by the destructor, to give the ability of MIDI thru.
     /// \param in_port, out_port the internal OS id number of the port; if the port is already open
     /// the function does nothing
     /// \param timer_resolution required by the OS, you can leave default
-    bool OpenMIDI ( int in_port, int out_port, int timer_resolution = MIDIDriverWin32::DEFAULT_TIMER_RESOLUTION );
+    bool OpenMIDI ( int in_port, int out_port, int timer_resolution = MIDIDriver::DEFAULT_TIMER_RESOLUTION );
 
     /// Closes the open MIDI ports
     void CloseMIDI();
@@ -411,8 +416,6 @@ protected:
     MIDIMultiTrack* tracks;             ///< The MIDIMultiTrack that holds MIDI data
     MIDISequencer* seq;                 ///< The MIDISequencer
     MIDIManager* mgr;                   ///< The MIDIManager that handles playing
-
-    int ctor_type;
 
     MIDIMultiProcessor thru_processor;              ///< The thru processor
     MIDIProcessorTransposer thru_transposer;        ///< The thru transposer
@@ -444,6 +447,7 @@ protected:
     // NOTE BY NC: I abandoned this feature, commenting every line referring to it
 private:
     enum { CTOR_1, CTOR_2, CTOR_3 };
+    int ctor_type;
 };
 
 }

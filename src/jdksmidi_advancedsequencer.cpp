@@ -70,23 +70,38 @@ static void FixQuotes ( char *s_ )
 }
 */
 
-
-AdvancedSequencer::AdvancedSequencer(MIDISequencerGUIEventNotifier *n)
+// NOTE BY NC: this is a temporary hack: we'll use <chrono>
 #ifdef WIN32
-        :
+inline void jdks_wait( unsigned int ms )
+{
+    Sleep( ms );
+}
+#elif __linux
+#include <unistd.h>
+inline void jdks_wait( unsigned int ms )
+{
+    usleep ( ms );
+}
+#else
+inline void jdks_wait( unsigned int ms )
+{
+}
+#endif // WIN32
+
+
+
+
+AdvancedSequencer::AdvancedSequencer(MIDISequencerGUIEventNotifier *n) :
+#ifdef WIN32
     driver( new MIDIDriverWin32() ),  /* NEW BY NC: queue_size given as default parameter */
 #else
-{
-    std:cerr << "Currentky only supported WIN32\n";
-    exit(EXIT_FAILURE);
-}
+    driver( new MIDIDriverDump( 128, stdout ) ),
 #endif // WIN32
 
     notifier( n ),
     tracks ( new MIDIMultiTrack ( 17 ) ),
     seq ( new MIDISequencer ( tracks, notifier ) ),
     mgr ( new MIDIManager ( driver, notifier, seq ) ),
-    ctor_type ( CTOR_1 ),   // remembers what objects are owned
 
     thru_processor ( 2 ),
     thru_transposer(),
@@ -97,13 +112,11 @@ AdvancedSequencer::AdvancedSequencer(MIDISequencerGUIEventNotifier *n)
     repeat_end_measure ( 0 ),
     repeat_play_mode ( false ),
     file_loaded ( false ),
-#ifdef WIN32
-    in_port ( MIDI_MAPPER ),
-    out_port ( MIDI_MAPPER )
-#else
-    in_port ( 0 ),
-    out_port ( 0 )
-#endif
+
+    in_port (),
+    out_port (),
+
+    ctor_type ( CTOR_1 )    // remembers what objects are owned
 
 // chain_mode ( false ) OLD (see header)
 
@@ -113,25 +126,21 @@ AdvancedSequencer::AdvancedSequencer(MIDISequencerGUIEventNotifier *n)
  * What is better?
  */
     OpenMIDI(in_port, out_port);
+    SetClksPerBeat ( DEFAULT_CLK_PER_BEAT );
 }
 
 
-AdvancedSequencer::AdvancedSequencer(MIDIMultiTrack* mlt, MIDISequencerGUIEventNotifier *n)
+AdvancedSequencer::AdvancedSequencer(MIDIMultiTrack* mlt, MIDISequencerGUIEventNotifier *n) :
 #ifdef WIN32
-        :
     driver( new MIDIDriverWin32() ),  /* NEW BY NC: queue_size given as default parameter */
 #else
-{
-    std:cerr << "Currentky only supported WIN32\n";
-    exit(EXIT_FAILURE);
-}
+    driver( new MIDIDriverDump(128, stdout) ),
 #endif // WIN32
 
     notifier( n ),
     tracks ( mlt ),
     seq ( new MIDISequencer ( tracks, notifier ) ),
     mgr ( new MIDIManager ( driver, notifier, seq ) ),
-    ctor_type ( CTOR_2 ),
 
     thru_processor ( 2 ),
     thru_transposer(),
@@ -143,13 +152,10 @@ AdvancedSequencer::AdvancedSequencer(MIDIMultiTrack* mlt, MIDISequencerGUIEventN
     repeat_play_mode ( false ),
     file_loaded ( false ),
 
-#ifdef WIN32
-    in_port ( MIDI_MAPPER ),
-    out_port ( MIDI_MAPPER )
-#else
-    in_port ( 0 ),
-    out_port ( 0 )
-#endif
+    in_port (),
+    out_port (),
+
+    ctor_type ( CTOR_2 )    // remembers what objects are owned
 
 {
 /* NOTE BY NC: currently we open midi (and start timer) in the ctor and close it in the dtor:
@@ -160,22 +166,17 @@ AdvancedSequencer::AdvancedSequencer(MIDIMultiTrack* mlt, MIDISequencerGUIEventN
 }
 
 
-AdvancedSequencer::AdvancedSequencer(MIDIManager *mg)
+AdvancedSequencer::AdvancedSequencer(MIDIManager *mg) :
 #ifdef WIN32
-        :
     driver( new MIDIDriverWin32() ),  /* NEW BY NC: queue_size given as default parameter */
 #else
-{
-    std:cerr << "Currentky only supported WIN32\n";
-    exit(EXIT_FAILURE);
-}
+    driver( new MIDIDriverDump(128, stdout) ),
 #endif // WIN32
 
     notifier( mg->GetSeq()->GetState()->notifier ),
     tracks ( ( MIDIMultiTrack * ) ( mg->GetSeq()->GetState()->multitrack ) ),
     seq ( mgr->GetSeq() ),
     mgr ( mg ),
-    ctor_type ( CTOR_3 ),
 
     thru_processor ( 2 ),
     thru_transposer(),
@@ -187,13 +188,10 @@ AdvancedSequencer::AdvancedSequencer(MIDIManager *mg)
     repeat_play_mode ( false ),
     file_loaded ( false ),
 
-#ifdef WIN32
-    in_port ( MIDI_MAPPER ),
-    out_port ( MIDI_MAPPER )
-#else
-    in_port ( 0 ),
-    out_port ( 0 )
-#endif
+    in_port(),
+    out_port(),
+
+    ctor_type ( CTOR_3 )    // remembers what objects are owned
 
 {
 /* NOTE BY NC: currently we open midi (and start timer) in the ctor and close it in the dtor:
@@ -210,13 +208,13 @@ AdvancedSequencer::~AdvancedSequencer()
     CloseMIDI();
     if ( ctor_type != CTOR_3)
     {
-        delete mgr;
-        delete seq;
+        jdks_safe_delete_object( mgr );
+        jdks_safe_delete_object( seq );
     delete driver;
     }
     if ( ctor_type == CTOR_1 )
     {
-        delete tracks;
+        jdks_safe_delete_object( tracks );
     }
 }
 
@@ -302,7 +300,7 @@ void AdvancedSequencer::UnLoad()    /* NEW BY NC */
     warp_positions.clear();
     num_measures = 0;
     file_loaded = false;
-    // TODO: must reset tracks clck_per_beat???
+    SetClksPerBeat( DEFAULT_CLK_PER_BEAT );
 }
 
 
@@ -320,8 +318,13 @@ void AdvancedSequencer::Reset()
 
 
 void AdvancedSequencer::GoToZero() {
-    Stop();
-    seq->GoToMeasure(0); // NC: not GoToZero() ! this sets correct values in the MIDISequencerState and notify them
+    if ( !file_loaded )
+    {
+        return;
+    }
+
+    Stop();     // always stops if playing
+    seq->GoToZero();
 }
 
 
@@ -452,7 +455,8 @@ void AdvancedSequencer::OutputMessage( MIDITimedBigMessage& msg ) {
             driver->OutputMessage( msg );
             return;
         }
-        jdks_wait( 1 ); /* note by NC: this may not be accurate, however waits for a minimum period */
+        jdks_wait( 1 );
+        // note by NC: this may not be accurate, however we only want to wait for a minimum period
     }
     std::cerr << "OutputMessage failed!" << std::endl;
 }
@@ -504,7 +508,8 @@ void AdvancedSequencer::SoloTrack ( int trk )
     } // unsoloing done by UnSoloTrack()
     if (IsPlay())
     {
-        CatchEventsBefore(trk); // track could be muted before soloing: this set appropriate CC, PC, etc not previously sent
+        CatchEventsBefore(trk); // track could be muted before soloing: this set appropriate CC, PC, etc
+                                // not previously sent
     }
     seq->SetSoloMode (true, trk);
     for (int i = 0; i < seq->GetNumTracks(); ++i)
@@ -602,10 +607,6 @@ unsigned long AdvancedSequencer::GetCurrentTimeInMs() const {
     if ( mgr->IsSeqPlay() )
     {
         return mgr->GetCurrentTimeInMs();
-        /* time from sequencer start
-         * TODO: BY NC this should be a MIDIManager function (as stated also by Victor in TODO file)
-         * DONE!
-         */
     }
     else
     {
@@ -942,51 +943,32 @@ void AdvancedSequencer::SetChanged()
 
 bool AdvancedSequencer::OpenMIDI ( int in_port, int out_port, int timer_resolution )
 {
- #ifdef WIN32
-// TODO: (BY NC) this is a patch: it must be fixed with changes on class MIDIDriver;
-// we must eliminate every OS specific reference from this file
-
     CloseMIDI();
 
-    MIDIDriverWin32 *windriver = static_cast<MIDIDriverWin32*> ( driver );
-    if ( !windriver->StartTimer ( timer_resolution ) )
+    if ( !driver->StartTimer ( timer_resolution ) )
     {
         return false;
     }
 
-    if ( in_port != -1 )
-    {
-        windriver->OpenMIDIInPort ( in_port );
-    }
+    driver->OpenMIDIInPort ( in_port );     // could return false, midi thru not allowed
 
-    if ( windriver->OpenMIDIOutPort ( out_port ) )
-    {
-        return true;
-    }
-
-    else
+    if ( !driver->OpenMIDIOutPort ( out_port ) )
     {
         return false;
     }
-#endif // WIN32
 
+    return true;
 }
 
 
 void AdvancedSequencer::CloseMIDI()
 {
-#ifdef WIN32
-// TODO: (BY NC) this is a patch: it must be fixed with changes on class MIDIDriver;
-// we must eliminate every OS specific reference from this file
-
-    MIDIDriverWin32 * windriver = static_cast<MIDIDriverWin32*> ( driver );
     Stop();
-    windriver->StopTimer();
-    windriver->AllNotesOff();
-    Sleep ( 100 );
-    windriver->CloseMIDIInPort();
-    windriver->CloseMIDIOutPort();
-#endif // WIN32
+    driver->StopTimer();
+    driver->AllNotesOff();
+    jdks_wait( 100 );
+    driver->CloseMIDIInPort();
+    driver->CloseMIDIOutPort();
 }
 
 
@@ -1156,7 +1138,7 @@ void AdvancedSequencer::CatchEventsBefore()
         if ( msg.IsSystemExclusive() )  // TODO: which SysEx should we send?
         {
             OutputMessage(msg);
-            Sleep(10);
+            jdks_wait( 10 );
         }
         else
         {   // TODO: which other messages should we send???
@@ -1200,7 +1182,7 @@ void AdvancedSequencer::CatchEventsBefore(int trk) {
         if ( msg.IsSystemExclusive() )      // TODO: which SysEx should we send???
         {
             OutputMessage(msg);
-            Sleep(10);
+            jdks_wait( 10 );
         }
         else
         {   // TODO: which other messages should we send???

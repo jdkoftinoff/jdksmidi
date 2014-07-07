@@ -23,7 +23,7 @@
 */
 
 //
-// doxygen comments by N. Cassetta ncassetta@tiscali.it
+// MODIFIED by N. Cassetta ncassetta@tiscali.it
 //
 
 #ifndef JDKSMIDI_DRIVER_H
@@ -40,7 +40,7 @@ namespace jdksmidi
 {
 
 ///
-/// This is the base class for objects which communicate with the hardware MIDI ports.
+/// This is the base class for objects which communicate with hardware MIDI ports.
 /// It is a pure virtual because for effective I/O we need OS details. Currently only two specialized
 /// classes are implemented: MIDIDriverWin32 (for MS Windows) and MIDIDriverDump (a dummy driver that only writes
 /// its I/O to the screen).
@@ -96,17 +96,6 @@ public:
         return out_queue.CanPut();
     }
 
-    /// Processes the message _nsg_ with the out processor and the midi matrix and then puts it
-    /// in the out_queue. The message is effectively sent to the MIDI hardware by the TimeTick() callback
-    void OutputMessage ( MIDITimedBigMessage &msg )
-    {
-        if ( ( out_proc && out_proc->Process ( &msg ) ) || !out_proc )
-        {
-            out_matrix.Process ( msg );
-            out_queue.Put ( msg );
-        }
-    }
-
     /// Enables the MIDI thru (incoming MIDI messages are echoed to the MIDI out)
     void SetThruEnable ( bool f )
     {
@@ -146,6 +135,10 @@ public:
         tick_proc = tick;
     }
 
+    /// Processes the message _nsg_ with the out processor and the midi matrix and then puts it
+    /// in the out_queue. The message is effectively sent to the MIDI hardware by the TimeTick() callback
+    void OutputMessage ( MIDITimedBigMessage &msg );
+
     /// Sends a MIDI ALL NOTES OFF message on selected midi chanel
     void AllNotesOff ( int chan );
 
@@ -160,11 +153,38 @@ public:
     /// \see TimeTick()
     virtual bool HardwareMsgIn ( MIDITimedBigMessage &msg );
 
-    /// This function must be overriden by a subclass and it is responsible to sending the MIDI message
-    /// _msg_ to the hardware ports.
+    /* NEW BY NC:
+	 * NOTE: In order to develop MIDI driver classes for other OS than Windows I started to
+	 * integrate older MIDIDriverWin32 methods into the base class, giving them as pure virtual. So
+	 * now every subclass of a MIDIDriver must implement these.
+	 */
+
+    /// Opens the MIDI in port _id_
+    virtual bool OpenMIDIInPort ( int id ) = 0;
+
+    /// Opens the MIDI out port _id_
+    virtual bool OpenMIDIOutPort ( int id ) = 0;
+
+    /// Closes the open MIDI in port
+    virtual void CloseMIDIInPort() = 0;
+
+    /// Closes the open MIDI out port
+    virtual void CloseMIDIOutPort() = 0;
+
+    /// Resets open MIDI out port
+    virtual void ResetMIDIOut() = 0;
+
+    /// Starts the hardware timer for playing MIDI. Default time resolution is 1 ms
+    virtual bool StartTimer ( int resolution_ms ) = 0;
+
+    /// Stops the hardware timer
+    virtual void StopTimer() = 0;
+
+    /// Sends the MIDITimedBigMessage _msg_ to the open MIDI out port
     virtual bool HardwareMsgOut ( const MIDITimedBigMessage &msg ) = 0;
 
-    /// This is the TimeTick (callback) procedure inherited from MIDITick.
+    /// This is the TimeTick (callback) procedure inherited from MIDITick; when the hardware timer is started, it is
+    /// called at every timer tick.
     /// It currently runs the additional tick procedure (see SetTickProc()), then gets messages from the out queue
     /// and calls HardwareMsgOut() for them. You can use the tick procedure (or override this function) if you
     /// need to poll MIDI in hardware: your function should poll the hardware, parse the bytes, form a message,
@@ -172,6 +192,53 @@ public:
     /// \note This class gives no callback mechanism: it must be implemented in subclasses accordingly OS details
     virtual void TimeTick ( unsigned long sys_time );
 
+    /* Moreover, now the driver keeps track statically of the MIDI devices installed on the computer
+     * so, by these method, you can get them
+     */
+
+    /// Gets the nunber of MIDI in ports present on the computer.
+    /// \note Currently it's only effective for Windows.
+    static unsigned int GetNumMIDIInDevs()
+    {
+        return num_in_devs;
+    }
+
+    /// Gets the number of MIDI out ports present on the computer.
+    /// \note Currently it's only effective for Windows.
+    static unsigned int GetNumMIDIOutDevs()
+    {
+        return num_out_devs;
+    }
+
+	/// Gets the name of the MIDI in port _i_.
+	/// \note Currently it's only effective for Windows.
+	static const char* GetMIDIInDevName(unsigned int i)
+	{
+	    if ( i < num_in_devs )
+        {
+            return in_dev_names[i];
+        }
+        else
+        {
+            return "";
+        }
+	}
+
+    /// Gets the name of the MIDI out port _i_.
+    /// \note Currently it's only effective for Windows.
+	static const char* GetMIDIOutDevName(unsigned int i)
+    {
+	    if ( i < num_out_devs )
+        {
+            return out_dev_names[i];
+        }
+        else
+        {
+            return "";
+        }
+	}
+
+	 static const int DEFAULT_TIMER_RESOLUTION = 1;  // public: used by AdvancedSequencer
 
 protected:
 
@@ -187,6 +254,19 @@ protected:
     MIDITick *tick_proc;            ///< An additional TimeTick object: see SetTickProc()
 
     MIDIMatrix out_matrix;          ///< Keeps track of notes on going to MIDI out
+
+
+/* NEW BY NC
+ * these keep track of the MIDI devices present in the OS
+ * NOTE: this is only a temporary situation, probably in the future we'll use RtMidi for getting the number
+ * and names of the devices
+ */
+    static const int DEVICENAME_LEN = 80;
+
+    static char** in_dev_names;         ///< Array of char* which holds the names of MIDI in devices
+    static char** out_dev_names;        ///< Array of char* which holds the names of MIDI out devices
+    static unsigned int num_in_devs;    ///< Number of MIDI in devices installed
+    static unsigned int num_out_devs;   ///< Number of MIDI out devices installed
 };
 
 // TODO: (note to Jeff by NC) the out_matrix has no functions to get it, and it is currently unused by
