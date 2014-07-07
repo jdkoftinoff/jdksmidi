@@ -35,6 +35,10 @@
 // www.vmgames.com vrm@vmgames.com
 //
 
+//
+// MODIFIED by N. Cassetta  ncassetta@tiscali.it
+//
+
 #include "jdksmidi/world.h"
 #include "jdksmidi/sysex.h"
 #include "jdksmidi/msg.h"
@@ -233,11 +237,6 @@ MIDIMessage::MIDIMessage ( const MIDIMessage &m )
     service_num = m.service_num;
 }
 
-void MIDIMessage::Copy ( const MIDIMessage & m )
-{
-    *this = m;
-}
-
 
 //
 // The equal operator
@@ -275,215 +274,6 @@ int MIDIMessage::GetLengthMSG() const
     }
 }
 
-short MIDIMessage::GetBenderValue() const
-{
-    return ( short ) ( ( ( byte2 << 7 ) | byte1 ) - 8192 );
-}
-
-unsigned short MIDIMessage::GetMetaValue() const
-{
-    return ( unsigned short ) ( ( byte3 << 8 ) | byte2 );
-}
-
-unsigned char MIDIMessage::GetTimeSigNumerator() const
-{
-    return byte2;
-}
-
-unsigned char MIDIMessage::GetTimeSigDenominator() const
-{
-    return byte3;
-}
-
-unsigned char MIDIMessage::GetTimeSigDenominatorPower() const
-{
-    return byte4;
-}
-
-signed char MIDIMessage::GetKeySigSharpFlats() const
-{
-    return ( signed char ) byte2;
-}
-
-unsigned char MIDIMessage::GetKeySigMajorMinor() const
-{
-    return byte3;
-}
-
-bool MIDIMessage::IsNoteOn() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( ( status & 0xf0 ) == NOTE_ON );
-}
-
-bool MIDIMessage::IsNoteOff() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( ( status & 0xf0 ) == NOTE_OFF );
-}
-
-bool MIDIMessage::IsPolyPressure() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( ( status & 0xf0 ) == POLY_PRESSURE );
-}
-
-bool MIDIMessage::IsControlChange() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( ( status & 0xf0 ) == CONTROL_CHANGE );
-}
-
-bool MIDIMessage::IsProgramChange() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( ( status & 0xf0 ) == PROGRAM_CHANGE );
-}
-
-bool MIDIMessage::IsChannelPressure() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( ( status & 0xf0 ) == CHANNEL_PRESSURE );
-}
-
-bool MIDIMessage::IsPitchBend() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( ( status & 0xf0 ) == PITCH_BEND );
-}
-
-bool MIDIMessage::IsSystemMessage() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( status & 0xf0 ) == 0xf0;
-}
-
-bool MIDIMessage::IsSysExN() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( status == SYSEX_START_N );
-}
-
-bool MIDIMessage::IsSysExURT() const
-{
-    return IsSysExN() && ( byte1 == 0x7F );
-}
-
-int MIDIMessage::GetSysExURTdevID() const
-{
-    return byte2;
-}
-
-int MIDIMessage::GetSysExURTsubID() const
-{
-    return byte3;
-}
-
-bool MIDIMessage::IsSysExA() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( status == SYSEX_START_A );
-}
-
-bool MIDIMessage::IsMTC() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( status == MTC );
-}
-
-bool MIDIMessage::IsSongPosition() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( status == SONG_POSITION );
-}
-
-bool MIDIMessage::IsSongSelect() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( status == SONG_SELECT );
-}
-
-bool  MIDIMessage::IsTuneRequest() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( status == TUNE_REQUEST );
-}
-
-bool MIDIMessage::IsMetaEvent() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( status == META_EVENT );
-}
-
-bool MIDIMessage::IsChannelMsg() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( status >= 0x80 ) && ( status < 0xF0 );
-}
-
-bool MIDIMessage::IsTextEvent() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( status == META_EVENT ) &&
-           ( byte1 >= 0x01 && byte1 <= 0x0F );
-}
-
-bool MIDIMessage::IsAllNotesOff() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( ( status & 0xf0 ) == CONTROL_CHANGE )
-           && ( byte1 >= C_ALL_NOTES_OFF );
-}
-
-bool MIDIMessage::IsChannelPrefix() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( status == META_EVENT ) &&
-           ( byte1 == META_CHANNEL_PREFIX );
-}
-
-bool MIDIMessage::IsTempo() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( status == META_EVENT ) &&
-           ( byte1 == META_TEMPO );
-}
-
-bool MIDIMessage::IsDataEnd() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( status == META_EVENT ) &&
-           ( byte1 == META_END_OF_TRACK );
-}
-
-bool MIDIMessage::IsTimeSig() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( status == META_EVENT ) &&
-           ( byte1 == META_TIMESIG );
-}
-
-bool MIDIMessage::IsKeySig() const
-{
-    return ( service_num == NOT_SERVICE) &&
-           ( status == META_EVENT ) &&
-           ( byte1 == META_KEYSIG );
-}
-
-bool  MIDIMessage::IsUserAppMarker() const
-{
-    return ( service_num == SERVICE_USERAPP_MARKER );
-}
-
-bool MIDIMessage::IsBeatMarker() const
-{
-    return ( service_num == SERVICE_BEAT_MARKER );
-}
-
-unsigned long MIDIMessage::GetTempo() const
-{
-    return MIDIFile::To32Bit ( 0, byte2, byte3, byte4 );
-}
 
 unsigned long MIDIMessage::GetTempo32() const
 {
@@ -501,9 +291,9 @@ unsigned long MIDIMessage::GetTempo32() const
     return tempo_bpm_times_32;
 }
 
-unsigned short MIDIMessage::GetLoopNumber() const
+unsigned long MIDIMessage::GetTempo() const
 {
-    return GetMetaValue();
+    return MIDIFile::To32Bit ( 0, byte2, byte3, byte4 );
 }
 
 void MIDIMessage::SetBenderValue ( short v )
@@ -511,11 +301,6 @@ void MIDIMessage::SetBenderValue ( short v )
     short x = ( short ) ( v + 8192 );
     byte1 = ( unsigned char ) ( x & 0x7f );
     byte2 = ( unsigned char ) ( ( x >> 7 ) & 0x7f );
-}
-
-void MIDIMessage::SetMetaType ( unsigned char t )
-{
-    byte1 = t;
 }
 
 void MIDIMessage::SetMetaValue ( unsigned short v )
@@ -556,7 +341,7 @@ void MIDIMessage::SetControlChange ( unsigned char chan, unsigned char ctrl, uns
     byte2 = val;
 }
 
-double MIDIMessage::GetPan()
+double MIDIMessage::GetPan() const
 {
     int val = GetControllerValue(); // 0 = leftmost, 64 = centre, 127 = rightmost
     if (val == 127) val = 128;
@@ -811,29 +596,7 @@ const MIDIBigMessage &MIDIBigMessage::operator = ( const MIDIMessage &m )
     return *this;
 }
 
-void MIDIBigMessage::Copy ( const MIDIMessage &m )
-{
-    *this = m;
-}
 
-void MIDIBigMessage::Copy ( const MIDIBigMessage &m )
-{
-    *this = m;
-}
-
-//
-// 'Get' methods
-//
-
-MIDISystemExclusive *MIDIBigMessage::GetSysEx()
-{
-    return sysex;
-}
-
-const MIDISystemExclusive *MIDIBigMessage::GetSysEx() const
-{
-    return sysex;
-}
 
 //
 // 'Set' methods
@@ -891,11 +654,6 @@ void MIDITimedMessage::Clear()
     MIDIMessage::Clear();
 }
 
-void MIDITimedMessage::Copy ( const MIDITimedMessage &m )
-{
-    *this = m;
-}
-
 //
 // operator =
 //
@@ -915,22 +673,8 @@ const MIDITimedMessage &MIDITimedMessage::operator = ( const MIDIMessage & m )
 }
 
 //
-// 'Get' methods
+// Comparison functions
 //
-
-MIDIClockTime MIDITimedMessage::GetTime() const
-{
-    return time;
-}
-
-//
-// 'Set' methods
-//
-
-void MIDITimedMessage::SetTime ( MIDIClockTime t )
-{
-    time = t;
-}
 
 int  MIDITimedMessage::CompareEvents (
     const MIDITimedMessage &m1,
@@ -1084,15 +828,6 @@ void MIDITimedBigMessage::Clear()
     MIDIBigMessage::Clear();
 }
 
-void MIDITimedBigMessage::Copy ( const MIDITimedBigMessage &m )
-{
-    *this = m;
-}
-
-void MIDITimedBigMessage::Copy ( const MIDITimedMessage &m )
-{
-    *this = m;
-}
 
 //
 // operator =
@@ -1117,24 +852,6 @@ const MIDITimedBigMessage &MIDITimedBigMessage::operator = ( const MIDIMessage &
     time = 0;
     MIDIBigMessage::operator = ( m );
     return *this;
-}
-
-//
-// 'Get' methods
-//
-
-MIDIClockTime MIDITimedBigMessage::GetTime() const
-{
-    return time;
-}
-
-//
-// 'Set' methods
-//
-
-void MIDITimedBigMessage::SetTime ( MIDIClockTime t )
-{
-    time = t;
 }
 
 
@@ -1179,6 +896,129 @@ int  MIDITimedBigMessage::CompareEvents (
 
     return 0;  // both are equal.
 }
+
+int  MIDITimedBigMessage::CompareEventsForInsert (
+    const MIDITimedBigMessage &m1,
+    const MIDITimedBigMessage &m2
+)
+{
+    bool n1 = m1.IsNoOp();
+    bool n2 = m2.IsNoOp();
+    // NOP's always are larger.
+
+    if ( n1 && n2 )
+        return 0; // same, do not care.
+    if ( n1 )
+        return 1; // m1 is larger
+    if ( n2 )
+        return 2; // m2 is larger
+
+    if ( m1.GetTime() > m2.GetTime() )
+        return 1; // m1 is larger
+
+    if ( m2.GetTime() > m1.GetTime() )
+        return 2; // m2 is larger
+
+    n1 = m1.IsEndOfTrack();
+    n2 = m2.IsEndOfTrack();
+    // EndOfTrack are larger
+    if ( n1 && n2 )
+        return 0; // same
+    if ( n1 )
+        return 1; // m1 is larger
+    if ( n2 )
+        return 2; // m2 is larger
+
+    n1 = m1.IsMetaEvent();
+    n2 = m2.IsMetaEvent();
+    // Meta events go before other events
+    if (n1 && n2)
+        return 0; // same
+    if (n1)
+        return 2; // m2 is larger
+    if (n2)
+        return 1;
+    // m1 is larger
+
+    n1 = m1.IsSystemExclusive();
+    n2 = m2.IsSystemExclusive();
+    // System exclusive are larger
+    if ( n1 && n2 )
+        return 0; // same
+    if ( n1 )
+        return 1; // m1 is larger
+    if ( n2 )
+        return 2; // m2 is larger
+
+    if ( m1.IsChannelEvent() && m2.IsChannelEvent() )
+    {
+        if ( m1.GetChannel() != m2.GetChannel() )
+            return m1.GetChannel() < m2.GetChannel();
+
+        else
+        {
+            n1 = ! m1.IsNote();
+            n2 = ! m2.IsNote();
+            if (n1 && n2)
+                return 0; // same
+            if (n1)
+                return 2; // m2 is larger
+            if (n2)
+                return 1; // m1 is larger
+
+            n1 = m1.IsNoteOn();
+            n2 = m2.IsNoteOn();
+            if (n1 && n2)
+                return 0; // same
+            if (n1)
+                return 1; // m1 is larger
+            if (n2)
+                return 2; // m2 is larger
+        }
+    }
+
+    return 0;
+}
+
+bool  MIDITimedBigMessage::IsSameKind (
+    const MIDITimedBigMessage &m1,
+    const MIDITimedBigMessage &m2
+)
+{
+    if (m1.IsNoOp() && m2.IsNoOp())
+        return true;
+
+    if ( m1.GetTime() != m2.GetTime() )
+        return false;
+
+    if ( m1.IsChannelMsg() && m2.IsChannelMsg() &&
+         m1.GetChannel() == m2.GetChannel() )
+    {
+        if ( m1.GetType() != m2.GetType() )
+            return false;
+        if ( m1.IsNoteOn() && m2.IsNoteOn() && m1.GetNote() != m2.GetNote() )
+            return false;
+        if ( m1.IsNoteOff() && m2.IsNoteOff() && m1.GetNote() != m2.GetNote() )
+            return false;
+        if ( m1.IsControlChange() && m2.IsControlChange() && m1.GetController() != m2.GetController() )
+            return false;
+        return true;
+    }
+
+    if ( m1.IsMetaEvent() && m2.IsMetaEvent() )
+    {
+        if ( m1.GetMetaType() == m2.GetMetaType() )
+            return true;
+        return false;
+    }
+
+    if ( m1.GetStatus() == m2.GetStatus() )
+        return true;
+    return false;
+}
+
+
+
 
 //
 // Constructors
