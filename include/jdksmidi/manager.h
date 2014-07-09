@@ -50,7 +50,7 @@ inline unsigned long jdks_get_system_time_ms()
     return timeGetTime();
 }
 
-#elif __linux
+#elif defined(__linux__)
 #include "time.h"
 
 unsigned long jdks_get_system_time_ms()

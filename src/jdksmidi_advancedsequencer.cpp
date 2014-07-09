@@ -76,7 +76,7 @@ inline void jdks_wait( unsigned int ms )
 {
     Sleep( ms );
 }
-#elif __linux
+#elif defined(__linux__)
 #include <unistd.h>
 inline void jdks_wait( unsigned int ms )
 {
