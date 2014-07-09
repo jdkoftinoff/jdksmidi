@@ -50,7 +50,7 @@ using namespace std;
 string command_buf, command, par1, par2, par3;  // used by GetCommand() for parsing the user input
 MIDISequencerGUIEventNotifierText notifier(stdout); // a text notifier: send messages to stdout
 AdvancedSequencer sequencer(&notifier);         // an AdvancedSequencer
-MIDIMultiTrack* multitrack = sequencer.GetMultiTrackAddress();
+MIDIMultiTrack* multitrack = sequencer.GetMultiTrack();
                                                 // our multitrack which will be edited
 position cur_pos(multitrack);                   // the cursor position
 char filename[200];
@@ -266,7 +266,7 @@ int main( int argc, char **argv )
         else if ( command == "dump")                    // prints a dump of the sequencer contents
         {
             int dump_trk =  ( par1.length() == 0 ? -1 : atoi(par1.c_str()) );
-            DumpMIDIMultiTrack( sequencer.GetMultiTrackAddress(), dump_trk );
+            DumpMIDIMultiTrack( sequencer.GetMultiTrack(), dump_trk );
         }
 
         else if ( command == "goto")                    // goes to meas and beat
@@ -346,7 +346,7 @@ int main( int argc, char **argv )
                     trk->DeleteNote(msg);
                 }
             }
-            sequencer.SetMltChanged();
+            sequencer.SetChanged();
         }
 
         else if ( command == "volume")                  // inserts a volume event
@@ -368,7 +368,7 @@ int main( int argc, char **argv )
                     trk->DeleteEvent(msg);
                 }
             }
-            sequencer.SetMltChanged();
+            sequencer.SetChanged();
         }
 
         else if ( command == "pan")                     // inserts a pan event
@@ -390,7 +390,7 @@ int main( int argc, char **argv )
                     trk->DeleteEvent(msg);
                 }
             }
-            sequencer.SetMltChanged();
+            sequencer.SetChanged();
         }
 
         else if ( command == "control")                 // inserts a generic control event
@@ -412,7 +412,7 @@ int main( int argc, char **argv )
                     trk->DeleteEvent(msg);
                 }
             }
-            sequencer.SetMltChanged();
+            sequencer.SetChanged();
         }
 
         else if ( command == "patch")                   // inserts a patch event
@@ -434,7 +434,7 @@ int main( int argc, char **argv )
                     trk->DeleteEvent(msg);
                 }
             }
-            sequencer.SetMltChanged();
+            sequencer.SetChanged();
         }
 
         else if ( command == "tempo")                   // inserts a tempo event in track 0
@@ -456,7 +456,7 @@ int main( int argc, char **argv )
                     trk->DeleteEvent(msg);
                 }
             }
-            sequencer.SetMltChanged();
+            sequencer.SetChanged();
         }
 
         else if ( command == "help")                    // prints help screen

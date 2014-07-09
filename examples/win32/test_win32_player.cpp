@@ -27,11 +27,16 @@
 // ncassetta@tiscali.it
 //
 
-#include "test_win32.h"
+
+/* A GUI based midifile player for Windows. It uses an AdvancedSequencer class, a SMPTE and a
+ * MIDISequencerGUIEventNotifierWin32 updating the GUI.
+ */
+
+#include "test_win32_player.h"
 
 
 // Declare jdks objects
-static const UINT NotifierMessage = jdks_get_safe_system_msg_id();   // auto gets the msg id for the notifier
+static UINT NotifierMessage = 0;                    // the Windows message id to communicate between notifier and GUI
 AdvancedSequencer *sequencer;                       // the sequencer
 SMPTE smpte;                                        // milliseconds to smpte converter
 
@@ -104,9 +109,9 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
     // Now create the jdksmidi objects: the GUI notifier and the sequencer (to send messages to the window
     // the notifier needs its handle and the message id)
     MIDISequencerGUIEventNotifierWin32 notifier (
-        hMainWin,                       // The window handle to which send messages
-        NotifierMessage                 // The message id
+        hMainWin                        // The window handle to which send messages
         );
+    NotifierMessage = notifier.GetMsgId();
     sequencer = new AdvancedSequencer( &notifier );
 
     // Make the window visible on the screen

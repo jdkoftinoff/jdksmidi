@@ -267,14 +267,13 @@ bool AdvancedSequencer::Load ( const char *fname )
         }
     }
 
-    MIDIFileReadStreamFile mfreader_stream ( realname );
-    MIDIFileReadMultiTrack track_loader ( tracks );
-    MIDIFileRead reader ( &mfreader_stream, &track_loader );
     Stop();
     driver->AllNotesOff();
     tracks->Clear();
-    seq->ResetAllTracks();
 
+    MIDIFileReadStreamFile mfreader_stream ( realname );
+    MIDIFileReadMultiTrack track_loader ( tracks );
+    MIDIFileRead reader ( &mfreader_stream, &track_loader );
     if ( reader.Parse() )
     {
         file_loaded = true;
@@ -307,6 +306,7 @@ void AdvancedSequencer::UnLoad()    /* NEW BY NC */
 void AdvancedSequencer::Reset()
 {
     Stop();
+    jdks_wait(500);    // pauses for 0.5 sec (TROUBLE WITHOUT THIS!!!! I DON'T KNOW WHY)
     UnmuteAllTracks();
     UnSoloTrack();
     SetTempoScale ( 1.00 );
@@ -440,6 +440,7 @@ void AdvancedSequencer::Stop()
     if ( !mgr->IsSeqStop() )
     {
         mgr->SeqStop();
+        driver->Reset();
         driver->AllNotesOff();
         GoToMeasure(seq->GetState()->cur_measure, seq->GetState()->cur_beat);
         // stops on a beat (and clear midi matrix)

@@ -37,6 +37,7 @@
 
 //
 // MODIFIED by N. Cassetta  ncassetta@tiscali.it
+// search /* NC */ for modifies
 //
 
 
@@ -186,7 +187,7 @@ public:
     /// @returns **false** in some situations in which the method cannot insert:
     /// + _msg_ was an EndOfTrack (you cannot insert it)
     /// + __ins_mode_ was INSMODE_REPLACE but there is no event to replace
-    /// + a memory error occurred
+    /// + a memory error occurred.
     /// otherwise **true**.
     bool InsertEvent( const MIDITimedBigMessage& msg, int _ins_mode = INSMODE_DEFAULT );
 
@@ -286,6 +287,10 @@ public:
     // put event and clear msg, exclude its time, keep time unchanged!
     bool PutEvent2 ( MIDITimedBigMessage &msg );
     bool PutEvent ( const MIDITimedMessage &msg, const MIDISystemExclusive *sysex );
+
+    /// Changes the event *event_num* in the track to the message _msg_.
+    /// @note this is a low level function and may leave the track in an inconsistent state (for ex. with
+    /// events after the EndOfData). You shouldn't use it for safe editing.
     bool SetEvent ( int event_num, const MIDITimedBigMessage &msg );
 
     // put text message with known length (w/o ending NULL), or evaluate it if zero length

@@ -1,10 +1,14 @@
 This is a fork of the JDKSMidi library by J.D. Koftinoff and other authors.
-The main changes are the development of the class AdvancedSequencer, an all-in-one object capable to load and play
-MIDI files with a single call to a class method.
-There are other features, and even improvements to the class MIDIDriver. These are shown in two new test programs,
-one of them for Windows (see the examples in the \examples\win32 folder).
+I made some improvemsnts to it, and specifically:
+ - The development of the class AdvancedSequencer, an all-in-one object capable to load and play MIDI files with a single call to a class method.
+ - Improvements to the class MIDIDriver
+ - Added functions to the classes MIDITrack and MIDIMultiTrack to edit the MIDI content
+ - Some bug fixes
+ - Added doxygen documentation to many classes (not yet complete) 
+
+Moreover, I added some new test programs, one of them for Windows (see the examples in the \examples\win32 folder).
 Currently the driver is only effective for Windows, but ALSA drivers have been developed by Palem Gopalakrishna and
-could be integrated soon
+could be integrated soon.
 Nicola Cassetta
 
 /////// ORIGINAL README //////////////////////////////////////

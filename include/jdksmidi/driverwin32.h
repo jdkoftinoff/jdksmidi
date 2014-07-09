@@ -33,8 +33,8 @@
 #include "jdksmidi/sequencer.h"
 
 #ifdef WIN32
-#include "windows.h"
-#include "mmsystem.h"
+#include <windows.h>
+#include <mmsystem.h>
 
 namespace jdksmidi
 {
@@ -55,7 +55,7 @@ public:
     /// The first form of the constructor.
     /// \param w the windows handle to which send messages
     /// \param wmmsg the id of the message (must be a valid Windows id)
-    /// \param wparam_value optional parameter: currently unused
+    /// \param wparam_value_ optional parameter: currently unused
     MIDISequencerGUIEventNotifierWin32 (
         HWND w,
         DWORD wmmsg,
@@ -132,7 +132,10 @@ class MIDIDriverWin32 : public MIDIDriver
 
 public:
 
+    /// The constructor. The queue size should be adeguate, you can increase if you get missing events.
     MIDIDriverWin32 ( int queue_size = DEFAULT_QUEUE_SIZE );
+
+    /// The destructor
     virtual ~MIDIDriverWin32();
 
 // These are the implementations of pure virtual functions in base class

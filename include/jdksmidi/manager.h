@@ -43,7 +43,7 @@ namespace jdksmidi
 // WARNING! This is a temporary hack. In the future we will use <chrono> methods
 
 #ifdef WIN32
-#include "windows.h"
+#include <windows.h>
 
 inline unsigned long jdks_get_system_time_ms()
 {

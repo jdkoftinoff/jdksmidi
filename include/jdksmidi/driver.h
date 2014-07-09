@@ -175,7 +175,7 @@ public:
     virtual void ResetMIDIOut() = 0;
 
     /// Starts the hardware timer for playing MIDI. Default time resolution is 1 ms
-    virtual bool StartTimer ( int resolution_ms ) = 0;
+    virtual bool StartTimer ( int resolution_ms = DEFAULT_TIMER_RESOLUTION ) = 0;
 
     /// Stops the hardware timer
     virtual void StopTimer() = 0;
@@ -238,7 +238,8 @@ public:
         }
 	}
 
-	 static const int DEFAULT_TIMER_RESOLUTION = 1;  // public: used by AdvancedSequencer
+	 static const int DEFAULT_TIMER_RESOLUTION = 1; ///< The default timer resolution is 1 msec
+	 // public: used by AdvancedSequencer
 
 protected:
 
