@@ -28,6 +28,12 @@
 namespace jdksmidi
 {
 
+char **MIDIDriver::in_dev_names = 0;
+char **MIDIDriver::out_dev_names = 0;
+unsigned int MIDIDriver::num_in_devs = 0;
+unsigned int MIDIDriver::num_out_devs = 0;
+
+
 MIDIDriver::MIDIDriver ( int queue_size )
     :
     in_queue ( queue_size ),
@@ -49,6 +55,15 @@ void MIDIDriver::Reset()
     in_queue.Clear();
     out_queue.Clear();
     out_matrix.Clear();
+}
+
+void MIDIDriver::OutputMessage ( MIDITimedBigMessage &msg )
+{
+    if ( ( out_proc && out_proc->Process ( &msg ) ) || !out_proc )
+    {
+        out_matrix.Process ( msg );
+        out_queue.Put ( msg );
+    }
 }
 
 void MIDIDriver::AllNotesOff ( int chan )

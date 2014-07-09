@@ -238,7 +238,7 @@ enum
     SERVICE_BEAT_MARKER = 1,
     SERVICE_NO_OPERATION = 2,
     SERVICE_USERAPP_MARKER = 3, // this marker not used in lib, only in user app code!
-    OUT_OF_RANGE_SERVICE_NUM = 4,
+    OUT_OF_RANGE_SERVICE_NUM = 4
 };
 
 extern const int lut_msglen[16];

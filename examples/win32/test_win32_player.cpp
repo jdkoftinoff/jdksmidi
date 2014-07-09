@@ -27,11 +27,16 @@
 // ncassetta@tiscali.it
 //
 
-#include "test_win32.h"
+
+/* A GUI based midifile player for Windows. It uses an AdvancedSequencer class, a SMPTE and a
+ * MIDISequencerGUIEventNotifierWin32 updating the GUI.
+ */
+
+#include "test_win32_player.h"
 
 
 // Declare jdks objects
-static const UINT NotifierMessage = jdks_get_safe_system_msg_id();   // auto gets the msg id for the notifier
+static UINT NotifierMessage = 0;                    // the Windows message id to communicate between notifier and GUI
 AdvancedSequencer *sequencer;                       // the sequencer
 SMPTE smpte;                                        // milliseconds to smpte converter
 
@@ -104,9 +109,9 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
     // Now create the jdksmidi objects: the GUI notifier and the sequencer (to send messages to the window
     // the notifier needs its handle and the message id)
     MIDISequencerGUIEventNotifierWin32 notifier (
-        hMainWin,                       // The window handle to which send messages
-        NotifierMessage                 // The message id
+        hMainWin                        // The window handle to which send messages
         );
+    NotifierMessage = notifier.GetMsgId();
     sequencer = new AdvancedSequencer( &notifier );
 
     // Make the window visible on the screen
@@ -351,14 +356,14 @@ VOID LoadFile() {
  * original 1-track, modifying the midifile: be careful if you use this in contests in which you may re-save
  * the file. TODO: adding an option for saving in different MIDI formats in filewrite.h
  */
-            if (sequencer->GetMultiTrack().GetNumTracksWithEvents() == 1)   // all events in one track: format 0
+            if (sequencer->GetMultiTrack()->GetNumTracksWithEvents() == 1)   // all events in one track: format 0
             {
                 // redistributes channel events in separate tracks
-                sequencer->GetMultiTrackAddress()->AssignEventsToTracks(
-                        sequencer->GetMultiTrackAddress()->GetTrack(0) );
+                sequencer->GetMultiTrack()->AssignEventsToTracks(
+                        sequencer->GetMultiTrack()->GetTrack(0) );
 
                 // IMPORTANT: when you edit events you always must call this to update the AdvancedSequencer
-                sequencer->SetMltChanged();
+                sequencer->SetChanged();
             }
 
             // update the filename textbox
@@ -442,9 +447,10 @@ const char* GetSmpteString() {
     smpte.SetSampleNumber(samples);
 */
 
+    // Feed the smpte with msecs
     smpte.SetMilliSeconds(msecs);
 
-    // Now it qives us the hours, minutes, secs and frames corresponding to our samples
+    // Now it qives us the hours, minutes, secs and frames corresponding to our msecs
     sprintf (s, "%d:%02d:%02d:%02d", smpte.GetHours(), smpte.GetMinutes(),
                 smpte.GetSeconds(), smpte.GetFrames());
     return s;

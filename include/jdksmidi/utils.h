@@ -52,11 +52,11 @@ void CollapseMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst );
 void CollapseAndExpandMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst );
 
 bool ReadMidiFile(const char *file, MIDIMultiTrack &dst);
-  
+
 // write multitrack to midi file; note that src must contain right clks_per_beat value
 bool WriteMidiFile(const MIDIMultiTrack &src, const char *file, bool use_running_status = true);
 
-double GetMisicDurationInSeconds(const MIDIMultiTrack &mt);
+double GetMusicDurationInSeconds(const MIDIMultiTrack &mt);
 
 std::string MultiTrackAsText(const MIDIMultiTrack &mt);
 

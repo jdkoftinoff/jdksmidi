@@ -23,7 +23,7 @@
 */
 
 //
-// doxygen comments by N. Cassetta ncassetta@tiscali.it
+// modified by N. Cassetta ncassetta@tiscali.it
 //
 
 #ifndef JDKSMIDI_DRIVERDUMP_H
@@ -37,7 +37,9 @@ namespace jdksmidi
 ///
 /// This class inherits from the pure virtual MIDIDriver and it is designed for debugging purposes.
 /// It doesn't send messages to MIDI ports, but prints them to a FILE object as they come, so you
-/// can examine what is exactly sent the driver
+/// can examine what is exactly sent to the driver.
+/// \note As MIDIDriver has some pure virtual methods, we must here implement them as dummy functions that
+/// do nothing.
 ///
 
 class MIDIDriverDump : public MIDIDriver
@@ -45,11 +47,26 @@ class MIDIDriverDump : public MIDIDriver
 
 public:
 
-    /// The constructor
+    /// The constructor.
     MIDIDriverDump ( int queue_size, FILE *outfile );
 
-    /// The destructor
+    /// The destructor.
     virtual ~MIDIDriverDump();
+
+    /// The following must be implemented because they are pure virtual in base class. However they are dummy
+    virtual bool OpenMIDIInPort ( int id = 0 ) { return true; }
+
+    virtual bool OpenMIDIOutPort ( int id = 0 ) { return true; }
+
+    virtual void CloseMIDIInPort() {}
+
+    virtual void CloseMIDIOutPort() {}
+
+    virtual void ResetMIDIOut() {}
+
+    virtual bool StartTimer ( int res = 0 ) { return true; }
+
+    virtual void StopTimer() {}
 
     /// Prints the MIDI message _msg_ to the file
     virtual bool HardwareMsgOut ( const MIDITimedBigMessage &msg );

@@ -38,13 +38,6 @@
 namespace jdksmidi
 {
 
-unsigned int jdks_get_safe_system_msg_id()
-{
-    static UINT base = WM_APP;
-    return base++;
-}
-
-
 
 MIDISequencerGUIEventNotifierWin32::MIDISequencerGUIEventNotifierWin32 (
     HWND w,
@@ -63,7 +56,7 @@ MIDISequencerGUIEventNotifierWin32::MIDISequencerGUIEventNotifierWin32 (
 MIDISequencerGUIEventNotifierWin32::MIDISequencerGUIEventNotifierWin32 ( HWND w )
     :
     dest_window ( w ),
-    window_msg ( jdks_get_safe_system_msg_id() ),
+    window_msg ( GetSafeSystemMsgId() ),
     wparam_value ( 0 ),
     en ( true )
 {
@@ -91,10 +84,7 @@ void MIDISequencerGUIEventNotifierWin32::Notify (
 ///////////////////// MIDIDriverWin32
 //
 
-char **MIDIDriverWin32::in_dev_names = 0;
-char **MIDIDriverWin32::out_dev_names = 0;
-unsigned int MIDIDriverWin32::num_in_devs = MIDIDriverWin32::FillMIDIInDevices();
-unsigned int MIDIDriverWin32::num_out_devs = MIDIDriverWin32::FillMIDIOutDevices();
+bool MIDIDriverWin32::init_devices_flag = MIDIDriverWin32::InitDevices();
 
 
 MIDIDriverWin32::MIDIDriverWin32 ( int queue_size )
@@ -355,12 +345,12 @@ void CALLBACK MIDIDriverWin32::win32_midi_in (
 }
 
 
-unsigned int MIDIDriverWin32::FillMIDIInDevices()
+bool MIDIDriverWin32::InitDevices()
 {
     MIDIINCAPS InCaps;
-    UINT n_devs = midiInGetNumDevs();
-    in_dev_names = new char* [n_devs];
-    for(UINT i = 0; i < n_devs; i++)
+    num_in_devs = midiInGetNumDevs();
+    in_dev_names = new char* [num_in_devs];
+    for(UINT i = 0; i < num_in_devs; i++)
     {
         if ( midiInGetDevCaps( i, &InCaps, sizeof(InCaps) ) == MMSYSERR_NOERROR )
         {
@@ -369,16 +359,11 @@ unsigned int MIDIDriverWin32::FillMIDIInDevices()
             in_dev_names[i][DEVICENAME_LEN-1] = 0;
         }
     }
-    return n_devs;
-}
 
-
-unsigned int MIDIDriverWin32::FillMIDIOutDevices()
-{
     MIDIOUTCAPS OutCaps;
-    UINT n_devs = midiOutGetNumDevs();
-    out_dev_names= new char* [n_devs];
-    for(UINT i = 0; i < n_devs; i++)
+    num_out_devs = midiOutGetNumDevs();
+    out_dev_names= new char* [num_out_devs];
+    for(UINT i = 0; i < num_out_devs; i++)
     {
         if ( midiOutGetDevCaps( i, &OutCaps, sizeof(OutCaps) ) == MMSYSERR_NOERROR )
         {
@@ -387,9 +372,10 @@ unsigned int MIDIDriverWin32::FillMIDIOutDevices()
             out_dev_names[i][DEVICENAME_LEN-1] = 0;
         }
     }
-    return n_devs;
+    return true;
 }
 
 }
-#endif
+#endif      // WIN32
+
 

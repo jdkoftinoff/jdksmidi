@@ -489,6 +489,7 @@ MIDISequencerState::MIDISequencerState (
     cur_time_ms ( 0 ),
     cur_beat ( 0 ),
     cur_measure ( 0 ),
+    last_beat_time ( 0 ),                       /* NC */
     next_beat_time ( 0 ),
     tempobpm( 120.0 ),                          /* NC */
     timesig_numerator( 4 ),                     /* NC */
@@ -514,6 +515,7 @@ MIDISequencerState::MIDISequencerState ( const MIDISequencerState &s )
     cur_time_ms ( s.cur_time_ms ),
     cur_beat ( s.cur_beat ),
     cur_measure ( s.cur_measure ),
+    last_beat_time ( s.last_beat_time ),        /* NC */
     next_beat_time ( s.next_beat_time ),
     tempobpm( s.tempobpm ),                     /* NC */
     timesig_numerator( s.timesig_numerator ),   /* NC */
@@ -583,6 +585,7 @@ const MIDISequencerState & MIDISequencerState::operator = ( const MIDISequencerS
     cur_time_ms = s.cur_time_ms;
     cur_beat = s.cur_beat;
     cur_measure = s.cur_measure;
+    last_beat_time = s.last_beat_time;  /* NC */
     next_beat_time = s.next_beat_time;
     tempobpm = s.tempobpm;
     timesig_numerator = s.timesig_numerator;
@@ -606,6 +609,7 @@ void MIDISequencerState::Reset() {              /* NC */
     timesig_denominator = 4;
     keysig_sharpflat = 0;
     keysig_mode = 0;
+    last_beat_time = 0;
     next_beat_time = multitrack->GetClksPerBeat() * 4 / timesig_denominator;
     for( int i=0; i<num_tracks; ++i )
     {
@@ -699,17 +703,23 @@ bool MIDISequencerState::Process( MIDITimedBigMessage *msg ) /* NC */
     else  // is the message a beat marker?
     if ( msg->IsBeatMarker())
     {
-        // update our beat count
-        int new_beat = cur_beat + 1;
+        // NOTE BY NC: newly revised, now sends the beat marker msg even at start
+        int new_beat = cur_beat;
         int new_measure = cur_measure;
+        if ( last_beat_time != next_beat_time )
+        {   // if at start, wmust not upgrade beat count
+            // update our beat count
+            ++new_beat;
 
-        // do we need to update the measure number?
-        if( new_beat >= timesig_numerator )
-        {
-            // yup
-            new_beat=0;
-            ++new_measure;
+            // do we need to update the measure number?
+            if( new_beat >= timesig_numerator )
+            {
+                // yup
+                new_beat=0;
+                ++new_measure;
+            }
         }
+
 
         // update our next beat timetrack_state[ 0 ]->Notify
         // denom=4  (16) ---> 4/16 midi file beats per symbolic beat
@@ -718,6 +728,7 @@ bool MIDISequencerState::Process( MIDITimedBigMessage *msg ) /* NC */
         // denom=1  (2)  ---> 4/2 midi file beats per symbolic beat
         // denom=0  (1)  ---> 4/1 midi file beats per symbolic beat
 
+        last_beat_time = cur_clock; /* NC */
         next_beat_time +=
             multitrack->GetClksPerBeat() * 4 / timesig_denominator;
         cur_beat = new_beat;
@@ -832,7 +843,7 @@ void MIDISequencer::GoToZero()
 }
 
 
-
+/* NC: THESE WERE BUGGY (they stopped AFTER the first event at right time)
 bool MIDISequencer::GoToTime( MIDIClockTime time_clk ) {
     bool ret = true;
 
@@ -960,6 +971,147 @@ bool MIDISequencer::GoToTimeMs( float time_ms ) {
     return ret;
 }
 
+*/
+
+/* NEW BY NC */
+bool MIDISequencer::GoToTime( MIDIClockTime time_clk ) {
+    bool ret = true;
+
+    // temporarily disable the gui notifier
+    bool notifier_mode = false;
+
+    if ( state.notifier )
+    {
+        notifier_mode = state.notifier->GetEnable();
+        state.notifier->SetEnable ( false );
+    }
+
+    if ( time_clk < state.cur_clock || time_clk == 0 )
+    {
+        // start from zero if desired time is before where we are
+        state.Reset();
+    }
+
+    MIDIClockTime t;
+    int trk;
+    MIDITimedBigMessage ev;
+
+    while ( state.cur_clock < time_clk )
+    {
+        if ( !GetNextEventTime( &t  ))  // no other events: we can't reach time_clk and return false
+        {
+            ret = false;
+            break;
+        }
+        if ( t < time_clk )             // next event is before time_clk
+        {
+            GetNextEvent ( &trk, &ev ); // get it and continue
+        }
+        else if (t == time_clk)         // next event is at right time
+        {
+            MIDIMultiTrackIteratorState istate(state.iterator.GetState());  // save the state of the iterator
+            GetNextEvent( &trk, &ev );          // get the event
+            state.iterator.SetState( istate );  // restore the iterator state, so ev is the next event
+        }
+        else                            // next event is after time_clk : set cur_time to time_clk
+        {                               // and update cur_time_ms
+            MIDIClockTime delta_time = time_clk - state.cur_clock;
+            // calculate delta_time in milliseconds: this comes from
+            //  -true_bpm = tempobpm * tempo_scale / 100
+            //  -clocks_per_sec = true_bpm * clks_per_beat / 60
+            //  -clocks_per_ms = clocks_per_sec / 1000
+            //  -ms_per_clock = 1 / clocks_per_ms
+            float ms_per_clock = ( double )6000000.0 / (state.tempobpm *
+                                ( double )tempo_scale * state.multitrack->GetClksPerBeat());
+            state.cur_clock = time_clk;
+            state.cur_time_ms += ( ms_per_clock * delta_time );
+        }
+    }
+
+        // examine all the events at this specific time
+        // and update the track states to reflect this time
+
+    ScanEventsAtThisTime();
+
+        // re-enable the gui notifier if it was enabled previously
+    if( state.notifier )
+    {
+        state.notifier->SetEnable( notifier_mode );
+        // cause a full gui refresh now
+        state.Notify( MIDISequencerGUIEvent::GROUP_ALL );
+    }
+    return ret;
+}
+
+
+bool MIDISequencer::GoToTimeMs( float time_ms ) {
+    bool ret = true;
+
+    // temporarily disable the gui notifier
+    bool notifier_mode = false;
+
+    if ( state.notifier )
+    {
+        notifier_mode = state.notifier->GetEnable();
+        state.notifier->SetEnable( false );
+    }
+
+    if ( time_ms < state.cur_time_ms || time_ms==0.0 ) {
+        // start from zero if desired time is before where we are
+        state.Reset();
+    }
+
+    double t;
+    int trk;
+    MIDITimedBigMessage ev;
+
+    while ( state.cur_time_ms < time_ms )
+    {
+        if ( !GetNextEventTimeMs( &t ) )    // no other events: we can't reach time_clk and return false
+        {
+            ret = false;
+            break;
+        }
+        if ( t  < time_ms ) // next event is before or at right time
+        {
+            GetNextEvent ( &trk, &ev ); // get it and continue
+        }
+        else if ( abs (t-time_ms) < 0.001 )     // next event is at right time
+        {
+            MIDIMultiTrackIteratorState istate(state.iterator.GetState());  // save the state of the iterator
+            GetNextEvent( &trk, &ev );          // get the event
+            state.iterator.SetState( istate );  // restore the iterator state, so ev is the next event
+        }
+        else                            // next event is after time_ms : set correct cur_time to t
+        {
+
+            double delta_t_ms = t - time_ms;
+            double ms_per_clock = ( double )6000000.0 / ( state.cur_clock *    // see GoToTime()
+                    ( double )tempo_scale * state.multitrack->GetClksPerBeat());
+            state.cur_clock += ( MIDIClockTime )(delta_t_ms / ms_per_clock);
+            state.cur_time_ms = time_ms;
+            break;
+        }
+    }
+
+        // examine all the events at this specific time
+        // and update the track states to reflect this time
+    ScanEventsAtThisTime();
+
+        // re-enable the gui notifier if it was enabled previously
+    if( state.notifier )
+    {
+        state.notifier->SetEnable( notifier_mode );
+        // cause a full gui refresh now
+        state.Notify( MIDISequencerGUIEvent::GROUP_ALL );
+    }
+    return ret;
+}
+
+
+
+
+/* NOTE BY NC: this is simpler because every measure has as first event a beat event! */
 
 bool MIDISequencer::GoToMeasure ( int measure, int beat )
 {
@@ -973,9 +1125,9 @@ bool MIDISequencer::GoToMeasure ( int measure, int beat )
     }
 
     if ( measure < state.cur_measure ||
-        /* NC */ // ADDED FOLLOWING LINE:  this failed in the this case!!!
+        /* NC */ // ADDED FOLLOWING LINE:  this failed in this case!!!
          ( measure == state.cur_measure && beat < state.cur_beat ) ||
-         measure == 0 )
+         ( measure == 0 && beat == 0 ) )
     {
 
         state.Reset();                      /* NC */
@@ -987,18 +1139,20 @@ bool MIDISequencer::GoToMeasure ( int measure, int beat )
     // iterate thru all the events until cur-measure and cur_beat are
     // where we want them.
 
-    while (
-        GetNextEventTime ( &t )
-        && GetNextEvent ( &trk, &ev )
-        && state.cur_measure <= measure
-    )
+    if ( !(measure == 0 && beat == 0) )
     {
-        if ( state.cur_measure == measure && state.cur_beat >= beat )
+        while (
+            GetNextEventTime ( &t )
+            && GetNextEvent ( &trk, &ev )
+            && state.cur_measure <= measure
+        )
         {
-            break;
+            if ( state.cur_measure == measure && state.cur_beat >= beat )
+            {
+                break;
+            }
         }
     }
-
     // examine all the events at this specific time
     // and update the track states to reflect this time
     ScanEventsAtThisTime();
@@ -1213,6 +1367,11 @@ void MIDISequencer::ScanEventsAtThisTime()
     state.cur_time_ms = float ( orig_time_ms );
     state.cur_measure = prev_measure;
     state.cur_beat = prev_beat;
+
+    if ( state.cur_clock == state.last_beat_time )
+    {
+        state.next_beat_time = state.cur_clock;
+    }
 }
 
 

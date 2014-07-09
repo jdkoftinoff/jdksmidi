@@ -33,23 +33,11 @@
 #include "jdksmidi/sequencer.h"
 
 #ifdef WIN32
-#include "windows.h"
-#include "mmsystem.h"
+#include <windows.h>
+#include <mmsystem.h>
 
 namespace jdksmidi
 {
-
-unsigned int jdks_get_safe_system_msg_id();
-
-inline unsigned long jdks_get_system_time_ms()
-{
-    return timeGetTime();
-}
-
-inline void jdks_wait( unsigned int ms )
-{
-    Sleep( ms );
-}
 
 ///
 /// This class inherits from pure virtual MIDISequencerGUIEventNotifier and it is a specialization of the class
@@ -64,10 +52,10 @@ class MIDISequencerGUIEventNotifierWin32 :
 
 public:
 
-    /// The constructor.
+    /// The first form of the constructor.
     /// \param w the windows handle to which send messages
-    /// \param wmmsg the id of the message (must be a valid Windows id
-    /// \param wparam_value optional parameter: currently unused
+    /// \param wmmsg the id of the message (must be a valid Windows id)
+    /// \param wparam_value_ optional parameter: currently unused
     MIDISequencerGUIEventNotifierWin32 (
         HWND w,
         DWORD wmmsg,
@@ -75,9 +63,8 @@ public:
     );
 
     /* NEW BY NC = auto sets msg and wparam_value */
-    /// Other constructor.
-    /// Ad above, but needs only the windows handle and auto gets from Windows a valid message id ( you can retrieve
-    /// it by GetMsgId() and monitor it in your main WindowProc() )
+    /// The second form of the constructor only needs the windows handle and auto gets from Windows a valid
+    /// message id. You can retrieve the message id by GetMsgId() and monitor it in your main WindowProc() )
     MIDISequencerGUIEventNotifierWin32 (
         HWND w
     );
@@ -93,7 +80,7 @@ public:
     DWORD GetMsgId() const
     {
         return window_msg;
-    }
+    }   /* END OF NEW */
 
     /// Sends the MIDISequencerGUIEvent _e_ to the window
     virtual void Notify ( const MIDISequencer *seq, MIDISequencerGUIEvent e );
@@ -112,6 +99,14 @@ public:
 
 private:
 
+    /* NEW BY NC */
+    // returns a safe windows message id, so we can create the notifier without worrying about this
+    static UINT GetSafeSystemMsgId()
+    {
+        static UINT base = WM_APP;
+        return base++;
+    }   /* END OF NEW */
+
     HWND dest_window;
     DWORD window_msg;
     WPARAM wparam_value;
@@ -120,85 +115,69 @@ private:
 
 
 ///
-/// This class inherits from pure virtual MIDIDriver and it is a specialization of the class
+/// This class inherits from pure virtual MIDIDriver and is a specialization of the class
 /// for dealing with WIN32 environment.
 /// It sends and receives MIDI messages from the hardware MIDI ports; moreover, it enumerates
-/// MIDI ports and keep tracks of their names in a static array.
+/// MIDI ports and keep track of their names in a static array.
 /// Currently, only one MIDI in and MIDI out ports can be opened (no multiport allowed)
-/// \warning currently there are these limitations:
-/// - multiple instances of this class are NOT safe: one driver could close a port used by another
-/// - sysex messages are not sent
+/// \warning currently multiple instances of this class are NOT safe: one driver could close a port
+/// used by another.
 ///
 // TODO: fix the warning, implement a static control of open and closed ports. This is not simple
 // as it could seem, caused to the Windows MIDI_MAPPER seen as port -1
-// TODO: sens sysex
+
 
 class MIDIDriverWin32 : public MIDIDriver
 {
 
 public:
 
+    /// The constructor. The queue size should be adeguate, you can increase if you get missing events.
     MIDIDriverWin32 ( int queue_size = DEFAULT_QUEUE_SIZE );
+
+    /// The destructor
     virtual ~MIDIDriverWin32();
 
+// These are the implementations of pure virtual functions in base class
+
     /// Opens the MIDI in port _id_
-    bool OpenMIDIInPort ( int id );
+    virtual bool OpenMIDIInPort ( int id = DEFAULT_IN_PORT );
 
     /// Opens the MIDI out port _id_
-    bool OpenMIDIOutPort ( int id );
+    virtual bool OpenMIDIOutPort ( int id = DEFAULT_OUT_PORT );
 
     /// Closes the open MIDI in port
-    void CloseMIDIInPort();
+    virtual void CloseMIDIInPort();
 
     /// Closes the open MIDI out port
-    void CloseMIDIOutPort();
+    virtual void CloseMIDIOutPort();
 
     /// Resets open MIDI out port
-    void ResetMIDIOut();
+    virtual void ResetMIDIOut();
 
     /// Start the hardware timer for playing MIDI. Default time resolution is 1 ms
-    bool StartTimer ( int resolution_ms = DEFAULT_TIMER_RESOLUTION );
+    virtual bool StartTimer ( int resolution_ms = DEFAULT_TIMER_RESOLUTION );
 
     /// Stops the hardware timer
-    void StopTimer();
+    virtual void StopTimer();
 
     /// Sends the MIDITimedBigMessage _msg_ to the open MIDI out port
-    bool HardwareMsgOut ( const MIDITimedBigMessage &msg );
+    virtual bool HardwareMsgOut ( const MIDITimedBigMessage &msg );
 
-/* NEW BY NC: now the driver keep track statically of the MIDI devices installed on the computer
- * these functions get them
- */
-    /// Gets the nunber of MIDI in ports present on the computer
-    static unsigned int GetNumMIDIInDevs()
-    {
-        return num_in_devs;
-    }
 
-    /// Gets the number of MIDI out ports present on the computer
-    static unsigned int GetNumMIDIOutDevs()
-    {
-        return num_out_devs;
-    }
 
-    /// Gets the name of the MIDI in port _i_
-    static const char* GetMIDIInDevName(unsigned int i)
-    {
-        return in_dev_names[i];
-    }
 
-    /// Gets the name of the MIDI out port _i_
-    static const char* GetMIDIOutDevName(unsigned int i)
-    {
-        return out_dev_names[i];
-    }
-
-    static const int DEFAULT_TIMER_RESOLUTION = 1;  // public: used by AdvancedSequencer
-/* END OF NEW */
 
 protected:
 
-    static const int DEFAULT_QUEUE_SIZE = 256;          /* NEW BY NC */
-    static const int DEFAULT_SYSEX_BUFFER_SIZE = 384;   /* NEW BY NC */
+    static const int DEFAULT_IN_PORT = MIDI_MAPPER;         ///< The default in port
+	static const int DEFAULT_OUT_PORT = MIDI_MAPPER;        ///< The default out port
+    static const int DEFAULT_QUEUE_SIZE = 256;              ///< The default queue size
+    static const int DEFAULT_SYSEX_BUFFER_SIZE = 384;       ///< The default sysex buffer size
+
+    static bool InitDevices();                              ///< Ask Windows for MIDI devices name and number; used in initialization
+
+/* END OF NEW */
 
     /// The callback function called to every timer tick when playing
     static void CALLBACK win32_timer (
@@ -218,35 +197,26 @@ protected:
         DWORD dwParam2
     );
 
-    static unsigned int FillMIDIInDevices();        /* NEW BY NC */
-    static unsigned int FillMIDIOutDevices();       /* NEW BY NC */
+    HMIDIIN in_handle;              ///< Windows handle to the MIDI in port
+    HMIDIOUT out_handle;            ///< Windows handle to the MIDI out port
+    int timer_id;                   ///< Windows id of the hardware timer
+    int timer_res;                  ///< Resolution of the hardware timer
 
-    HMIDIIN in_handle;
-    HMIDIOUT out_handle;
-    int timer_id;
-    int timer_res;
+    bool in_open;                   ///< True if the MIDI in port is open
+    bool out_open;                  ///< True if the MIDI out port is open
+    bool timer_open;                ///< True if the timer is open
 
-    bool in_open;
-    bool out_open;
-    bool timer_open;
+/* NEW BY NC */     // buffer for sending sysex
 
-/* NEW BY NC
- * these keep track of the MIDI devices present in the OS
- */
-    static const int DEVICENAME_LEN = 80;
+    int sysex_buffer_size;          ///< Size of the sysex buffer
+    char* sysex_buffer;             ///< Buffer for sysex temporary storage
 
-    static char** in_dev_names;
-    static char** out_dev_names;
-    static UINT num_in_devs;
-    static UINT num_out_devs;
-
-    int sysex_buffer_size;
-    char* sysex_buffer;
-
+    static bool init_devices_flag;      // this is used only for initializing static members of MIDIDriver
 };
 
 
 }
-#endif
 
-#endif
+#endif // WIN32
+
+#endif // JDKSMIDI_DRIVERWIN32_H

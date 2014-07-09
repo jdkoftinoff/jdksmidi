@@ -292,7 +292,7 @@ bool WriteMidiFile(const MIDIMultiTrack &src, const char *file, bool use_running
     return writer.Write( tracks_number );
 }
 
-double GetMisicDurationInSeconds(const MIDIMultiTrack &mt)
+double GetMusicDurationInSeconds(const MIDIMultiTrack &mt)
 {
     MIDISequencer seq( &mt );
     return seq.GetMisicDurationInSeconds();

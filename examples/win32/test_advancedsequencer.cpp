@@ -196,25 +196,24 @@ int main( int argc, char **argv )
         }
         else if ( command == "ports")               // enumerates the midi ports
         {
-            if ( MIDIDriverWin32::GetNumMIDIInDevs() )
-            {using namespace jdksmidi;
-
+            if ( MIDIDriver::GetNumMIDIInDevs() )
+            {
                 cout << "MIDI IN PORTS:" << endl;
-                for ( unsigned int i = 0; i < MIDIDriverWin32::GetNumMIDIInDevs(); i++ )
+                for ( unsigned int i = 0; i < MIDIDriver::GetNumMIDIInDevs(); i++ )
                 {
-                    cout << i << ": " << MIDIDriverWin32::GetMIDIInDevName( i ) << endl;
+                    cout << i << ": " << MIDIDriver::GetMIDIInDevName( i ) << endl;
                 }
             }
             else
             {
                 cout << "NO MIDI IN PORTS" << endl;
             }
-            if ( MIDIDriverWin32::GetNumMIDIOutDevs() )
+            if ( MIDIDriver::GetNumMIDIOutDevs() )
             {
                 cout << "MIDI OUT PORTS:" << endl;
-                for ( unsigned int i = 0; i < MIDIDriverWin32::GetNumMIDIOutDevs(); i++ )
+                for ( unsigned int i = 0; i < MIDIDriver::GetNumMIDIOutDevs(); i++ )
                 {
-                    cout << i << ": " << MIDIDriverWin32::GetMIDIOutDevName( i ) << endl;
+                    cout << i << ": " << MIDIDriver::GetMIDIOutDevName( i ) << endl;
                 }
             }
             else
@@ -284,7 +283,7 @@ int main( int argc, char **argv )
         }
         else if ( command == "dump")                    // prints a dump of the sequencer contents
         {
-            DumpMIDIMultiTrack( sequencer.GetMultiTrackAddress() );
+            DumpMIDIMultiTrack( sequencer.GetMultiTrack() );
         }
         else if ( command == "solo")                    // soloes a track
         {

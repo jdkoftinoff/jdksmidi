@@ -49,8 +49,11 @@
 #include "jdksmidi/manager.h"
 #include "jdksmidi/driver.h"
 
+
 #ifdef WIN32
 #include "jdksmidi/driverwin32.h"
+#else
+#include "jdksmidi/driverdump.h"
 #endif // WIN32
 
 
@@ -74,10 +77,11 @@ namespace jdksmidi
 /// - Global tempo scale
 /// - MIDI thru: you can play along with your MIDI instrument while the sequencer is playing
 ///
-/// The class is the union of many jdksmidi classes: a MIDISequencer (with its MIDIMultiTrack) for
-/// storing MIDI data, a MIDIDriver for communicating with hardware MIDI ports, a MIDIManager for
-/// handle sequencer playing, some MIDIProcessor for transposing, rechannelizing, etc.
-/// At currebt time, the class is only implemented for WIN32
+/// This class embeds many jdksmidi objects: a MIDISequencer (with its MIDIMultiTrack) for
+/// storing MIDI data, a MIDIDriver to communicate with hardware MIDI ports, a MIDIManager for
+/// handling sequencer playing, some MIDIProcessor for transposing, rechannelizing, etc.
+/// At current time, the class can manage MIDI playback only on WIN32; for other OS it prints to
+/// the console a dump of sent messages.
 ///
 
 class AdvancedSequencer
@@ -86,10 +90,25 @@ public:
     // AdvancedSequencer(); OLD
     // new by NC: the user can now set his own notifier (text, GUI, or no notifier ...)
 
-    /// The constructor. You can specify a notifier for communicating with the GUI (this is not owned by the class)
+    /// This first form of the constructor creates autonomally all the underlying objects (MIDIMultiTrack,
+    /// MIDISequencer, MIDIDriver and MIDIManager) that are owned by the class. The MIDIMultiTrack will have
+    /// 17 tracks. You can specify a notifier to communicate with the GUI (this is not owned by the class).
+    /// If you want to edit the MIDI events, get the MIDIMultiTrack address with the GetMultiTrack() method.
     AdvancedSequencer(MIDISequencerGUIEventNotifier *n = 0);
 
-    /// The destructor frees all allocated memory (the notifier is not owned by the class)
+    /// The second form of the constructor lets the user specify the MIDIMultiTrack (and eventually the notifier).
+    /// Use this if you need a MIDIMultiTrack with more of 17 tracks.
+    AdvancedSequencer(MIDIMultiTrack* mlt, MIDISequencerGUIEventNotifier *n = 0);
+
+    /// The third form of the constructor allows the user to specify the underlying objects, for polimorphysm
+    /// purposes. You must create by yourself a MIDIMultiTrack, a MIDISequencer, a MIDIDriver, an (eventual)
+    /// MIDISequencerGUIEventNotifier and a MIDIManager and pass the latter address to the constructor.
+    /// It doesn't check if the MIDIManager is correctly built, so be careful with this function. Objects
+    /// will not be owned by the class, so the user is responsible for freeing them.
+    AdvancedSequencer(MIDIManager* mg);
+
+    /// The destructor frees underlying objects if they were allocated by the constructor (the notifier is
+    /// never owned by the class)
     virtual ~AdvancedSequencer();
 
     // bool OpenMIDI ( int in_port, int out_port, int timer_resolution = DEFAULT_TIMER_RESOLUTION );
@@ -149,7 +168,7 @@ public:
         return thru_transposer.GetTransposeChannel ( 0 );
     }
 
-    /// Loads a MIDI File into the sequencer. Returns *true* if loading was successful
+    /// Loads a MIDI File into the sequencer. Returns **true** if loading was successful
     bool Load ( const char *fname );
 
     /// Unloads the sequencer contents, leaving it empty
@@ -160,26 +179,16 @@ public:
 
     /* NEW BY NC */
     /// This function gives access to the internal MIDIMultiTrack, allowing the user to edit it.
-    /// When a change is done in the MIDIMultiTrack, the user must call SetMltChanged() to mantain
+    /// When a change is done in the MIDIMultiTrack, the user must call SetChanged() to mantain
     /// internal coherence.
-    MIDIMultiTrack& GetMultiTrack()
+    MIDIMultiTrack* GetMultiTrack()
     {
         return tracks;
     }
 
-    const MIDIMultiTrack& GetMultiTrack() const
+    const MIDIMultiTrack* GetMUltiTrack() const
     {
         return tracks;
-    }
-
-    MIDIMultiTrack* GetMultiTrackAddress()
-    {
-        return &tracks;
-    }
-
-    const MIDIMultiTrack* GetMUltiTrackAddress() const
-    {
-        return &tracks;
     }
 
     /// Sets the 'now' time to the beginning of the song, upgrading the internal status.
@@ -192,7 +201,7 @@ public:
 
     /// Sets the 'now' time to the MIDI time _t_, upgrading the internal status.
     /// Notifies the GUI a GROUP_ALL notifier event to signify a GUI reset
-    /// \return *true* if the time _t_ is effectively reached, *false* otherwise (if _t_ is after
+    /// \return **true** if the time _t_ is effectively reached, **false** otherwise (for ex. if _t_ is after
     /// the end of the song)
     void GoToTime ( MIDIClockTime t );
 
@@ -216,10 +225,10 @@ public:
     /// \param start_measure, end_measure first and last measures of the loop. (If start>= end disables loop)
     void SetRepeatPlay ( bool enable, int start_measure, int end_measure );
 
-    /// Returns *true* if the sequencer is playing
+    /// Returns **true** if the sequencer is playing
     bool IsPlay()
     {
-        return mgr.IsSeqPlay();
+        return mgr->IsSeqPlay();
     }
 
     /// Soloes track _trk_. Only one track at a time can be soloed
@@ -228,19 +237,19 @@ public:
     /// Unsoloes the soloed track
     void UnSoloTrack();
 
-    /// Returns *true* if track _trk_ is soloed
+    /// Returns **true** if track _trk_ is soloed
     bool GetTrackSolo( int trk )          /* NEW BY NC */
     {
-        return seq.GetTrackProcessor (trk)->solo;
+        return seq->GetTrackProcessor (trk)->solo;
     }
 
     /// Set track muting (_f_ = on/off) for track _trk_
     void SetTrackMute ( int trk, bool f );
 
-    /// Returns *true* if track _trk_ is muted
+    /// Returns **true** if track _trk_ is muted
     bool GetTrackMute( int trk )          /* NEW BY NC */
     {
-        return seq.GetTrackProcessor (trk)->mute;
+        return seq->GetTrackProcessor (trk)->mute;
     }
 
     /// Resets all tracks as not muted
@@ -252,30 +261,34 @@ public:
     /// Returns curremt tempo (BPM) without tempo scale
     double GetTempoWithoutScale() const
     {
-        return seq.GetCurrentTempo();
+        return seq->GetCurrentTempo();
     }
 
     /// Returns current tempo (BPM) with scale, i.e.\ efffective playing tempo
     double GetTempoWithScale() const
     {
-        return seq.GetCurrentTempo() * seq.GetCurrentTempoScale();
+        return seq->GetCurrentTempo() * seq->GetCurrentTempoScale();
     }
+
+    /// Returns 'now' MIDI clock time.
+    /// It is effective even during playback
+    unsigned long GetCurrentMIDIClockTime() const; /* NEW BY NC */
 
     /// Returns 'now' time in milliseconds.
     /// When playing or jumping from one time to another, you can use this to feed a SMPTE
     unsigned long GetCurrentTimeInMs() const; /* NEW BY NC */
 
     /// Set MIDI ticks per beat (quarter note).
-    /// \return *true* if clocks per beat are effectively changed
+    /// \return **true** if clocks per beat are effectively changed
     /// \note  Currently the user is allowed to change this only when the sequencer is empty; default value is
-    /// 120 clocks per quarter beat. However, LoadFile() can change this according the base
-    /// TODO: it seems that nothing reset it to 120 if the sequencer is unloaded. Check it
+    /// 120 clocks per quarter beat. However, LoadFile() can change this according to the file clock, and Unload()
+    /// resets it to 120
     bool SetClksPerBeat ( unsigned int cpb );
 
     /// Returns the base MIDI ticks per beat of the internal MIDIMultiTrack
     int GetClksPerBeat() const  /* NEW BY NC */
     {
-        return tracks.GetClksPerBeat();
+        return tracks->GetClksPerBeat();
     }
 
     /// Returns the number of tracks of the sequencer
@@ -285,7 +298,7 @@ public:
      * a function GetUsedTracks()
      */
     {
-        return seq.GetNumTracks();
+        return seq->GetNumTracks();
     }
 
     /// Returns the number of measures of currently loaded song
@@ -354,9 +367,9 @@ public:
     int FindFirstChannelOnTrack ( int trk );
 
     /// Upgrades internal status when the MIDIMultiTrack is changed.
-    /// In a composer app, you should call this every time you insert, delete or edit a MIDI message in the
-    /// MIDIMultiTrack
-    void SetMltChanged();
+    /// If you edit the MIDI content stored in the MIDIMultiTrack (insert, delete or change messages), you must
+    /// call this before calling any class method, to update internal status.
+    void SetChanged();
 
     /* NOTE BY NC: abandoned feature
     bool IsChainMode() const
@@ -371,14 +384,15 @@ public:
  */
 
 protected:
-    static const int MEASURES_PER_WARP = 4;
+    static const int MEASURES_PER_WARP = 4;         ///< Used internally by ExtractWarpPositions() method
+    static const int DEFAULT_CLK_PER_BEAT = 120;    ///< The default clock per beat rate
 
     /// Opens the hardware MIDI in and out ports. Currently ports are opened by the constructor
     /// and closed by the destructor, to give the ability of MIDI thru.
     /// \param in_port, out_port the internal OS id number of the port; if the port is already open
     /// the function does nothing
     /// \param timer_resolution required by the OS, you can leave default
-    bool OpenMIDI ( int in_port, int out_port, int timer_resolution = MIDIDriverWin32::DEFAULT_TIMER_RESOLUTION );
+    bool OpenMIDI ( int in_port, int out_port, int timer_resolution = MIDIDriver::DEFAULT_TIMER_RESOLUTION );
 
     /// Closes the open MIDI ports
     void CloseMIDI();
@@ -398,9 +412,10 @@ protected:
     MIDIDriver* driver;                 ///< The MIDIDriver that sends messages to the hardware ports
     MIDISequencerGUIEventNotifier* notifier;    ///< the MIDISequencerGUIEventNotifier (if it is 0, no notifying)
 
-    MIDIMultiTrack tracks;              ///< The MIDIMultiTrack that holds MIDI data
-    MIDISequencer seq;                  ///< The MIDISequencer
-    MIDIManager mgr;                    ///< The MIDIManager that handles playing
+    // NOTE by NC: these are now pointers to allow polimorphysm
+    MIDIMultiTrack* tracks;             ///< The MIDIMultiTrack that holds MIDI data
+    MIDISequencer* seq;                 ///< The MIDISequencer
+    MIDIManager* mgr;                   ///< The MIDIManager that handles playing
 
     MIDIMultiProcessor thru_processor;              ///< The thru processor
     MIDIProcessorTransposer thru_transposer;        ///< The thru transposer
@@ -426,10 +441,13 @@ protected:
      */
 
     int in_port;                        ///< the OS id of the open MIDI in port
-    int out_port;                       ///< tje OS id of the open MIDI out port
+    int out_port;                       ///< the OS id of the open MIDI out port
 
     // bool chain_mode; OLD
     // NOTE BY NC: I abandoned this feature, commenting every line referring to it
+private:
+    enum { CTOR_1, CTOR_2, CTOR_3 };
+    int ctor_type;
 };
 
 }

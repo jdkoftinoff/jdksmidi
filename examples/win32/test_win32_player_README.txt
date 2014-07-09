@@ -1,4 +1,6 @@
-README for test_win32.cpp by Nicola Cassetta
+README for test_win32_player.cpp by Nicola Cassetta
+
+The program is a GUI based midifile player for Windows.
 
 To maintain maximum generality I made this example using the Windows API, but you may want to use your favorite UI toolkit instead.
 The example shows the use of classes AdvancedSequencer, MIDISequencerGUIEventNotifierWin32 and SMPTE.
@@ -21,8 +23,7 @@ for linking.
 If in trouble, you must:
 
 -set the compiler paths in order to see the directory jdksemidi\include 
--set the linker to use the libraries \lib\libjdksmidi.a (after you have
- built it! : should be in the jdksmidi\lib folder) and the Windows
+-set the linker to use the libraries \lib\libjdksmidi.a (after you have built it! : should be in the jdksmidi\lib folder) and the Windows
  libraries gdi32, user32, kernel32, comctl32 winmm comdlg32.
 
 If you get an "Undefined reference to WinMain" error from the linker, I'm sorry but I can't help you:
