@@ -22,6 +22,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include <chrono>
+
 #include "jdksmidi/world.h"
 #include "jdksmidi/driver.h"
 
@@ -32,6 +34,8 @@ char **MIDIDriver::in_dev_names = 0;
 char **MIDIDriver::out_dev_names = 0;
 unsigned int MIDIDriver::num_in_devs = 0;
 unsigned int MIDIDriver::num_out_devs = 0;
+
+std::chrono::steady_clock::time_point MIDIDriver::session_start = std::chrono::steady_clock::now();;
 
 
 MIDIDriver::MIDIDriver ( int queue_size )
@@ -180,5 +184,14 @@ void MIDIDriver::TimeTick ( unsigned long sys_time )
         }
     }
 }
+
+
+unsigned long MIDIDriver::GetSystemTime() {
+    std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+    std::chrono::milliseconds dur = std::chrono::duration_cast<std::chrono::milliseconds>(now - session_start);
+    unsigned long ret = dur.count();
+    return ret;
+}
+
 
 }

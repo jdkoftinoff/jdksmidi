@@ -40,36 +40,6 @@ namespace jdksmidi
 {
 
 
-// WARNING! This is a temporary hack. In the future we will use <chrono> methods
-
-#ifdef WIN32
-#include <windows.h>
-
-inline unsigned long jdks_get_system_time_ms()
-{
-    return timeGetTime();
-}
-
-#elif __linux
-#include "time.h"
-
-unsigned long jdks_get_system_time_ms()
-{
-    static struct timespec tspec;
-    clock_gettime(CLOCK_MONOTONIC, &tspec);
-    return (unsigned long)tspec.tv_sec + (unsigned long)(tspec.tv_nsec / 1000000);
-}
-
-#else
-
-unsigned long jdks_get_system_time_ms()
-{
-    return 0;
-}
-
-#endif // WIN32
-
-
 ///
 /// This class manages MIDI playback, picking MIDI messages from a MIDISequencer and sending them to a
 /// MIDIDriver (and then to MIDI ports).
@@ -147,7 +117,7 @@ public:
     {
         if ( play_mode )
         {
-            return jdks_get_system_time_ms() + seq_time_offset - sys_time_offset;
+            return MIDIDriver::GetSystemTime() + seq_time_offset - sys_time_offset;
         }
         else
         {

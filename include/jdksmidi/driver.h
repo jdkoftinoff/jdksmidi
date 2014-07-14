@@ -29,6 +29,8 @@
 #ifndef JDKSMIDI_DRIVER_H
 #define JDKSMIDI_DRIVER_H
 
+#include <chrono>
+
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
 #include "jdksmidi/matrix.h"
@@ -238,8 +240,10 @@ public:
         }
 	}
 
-	 static const int DEFAULT_TIMER_RESOLUTION = 1; ///< The default timer resolution is 1 msec
-	 // public: used by AdvancedSequencer
+    static unsigned long GetSystemTime();
+
+    static const int DEFAULT_TIMER_RESOLUTION = 1; ///< The default timer resolution is 1 msec
+    // public: used by AdvancedSequencer
 
 protected:
 
@@ -268,6 +272,8 @@ protected:
     static char** out_dev_names;        ///< Array of char* which holds the names of MIDI out devices
     static unsigned int num_in_devs;    ///< Number of MIDI in devices installed
     static unsigned int num_out_devs;   ///< Number of MIDI out devices installed
+
+    static std::chrono::steady_clock::time_point session_start;
 };
 
 // TODO: (note to Jeff by NC) the out_matrix has no functions to get it, and it is currently unused by

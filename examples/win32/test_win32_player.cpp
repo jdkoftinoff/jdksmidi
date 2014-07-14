@@ -231,6 +231,11 @@ LRESULT CALLBACK WindowProcedure (HWND hwnd, UINT message, WPARAM wParam, LPARAM
             // For every track ...
             for (int i = 0; i < 16; i++) {
                 wchar_t s[5];
+/* NOTE BY NC: this gives an error when compiled with MINGW and the -std=c++0x flag, because this enable
+   by default also the -ansi flag and this doesn't define swprintf : to workaround this you may:
+   1) use the -std=gnu++0x instead
+   2) add the compiler option -U__STRICT_ANSI__
+*/
                 swprintf(s, L"%d", i+1);
 
                 // Track number text box

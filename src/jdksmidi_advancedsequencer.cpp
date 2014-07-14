@@ -71,7 +71,7 @@ static void FixQuotes ( char *s_ )
 */
 
 // NOTE BY NC: this is a temporary hack: we'll use <chrono>
-#ifdef WIN32
+#ifdef _WIN32
 inline void jdks_wait( unsigned int ms )
 {
     Sleep( ms );
@@ -86,17 +86,17 @@ inline void jdks_wait( unsigned int ms )
 inline void jdks_wait( unsigned int ms )
 {
 }
-#endif // WIN32
+#endif // _WIN32
 
 
 
 
 AdvancedSequencer::AdvancedSequencer(MIDISequencerGUIEventNotifier *n) :
-#ifdef WIN32
+#ifdef _WIN32
     driver( new MIDIDriverWin32() ),  /* NEW BY NC: queue_size given as default parameter */
 #else
     driver( new MIDIDriverDump( 128, stdout ) ),
-#endif // WIN32
+#endif // _WIN32
 
     notifier( n ),
     tracks ( new MIDIMultiTrack ( 17 ) ),
@@ -131,11 +131,11 @@ AdvancedSequencer::AdvancedSequencer(MIDISequencerGUIEventNotifier *n) :
 
 
 AdvancedSequencer::AdvancedSequencer(MIDIMultiTrack* mlt, MIDISequencerGUIEventNotifier *n) :
-#ifdef WIN32
+#ifdef _WIN32
     driver( new MIDIDriverWin32() ),  /* NEW BY NC: queue_size given as default parameter */
 #else
     driver( new MIDIDriverDump(128, stdout) ),
-#endif // WIN32
+#endif // _WIN32
 
     notifier( n ),
     tracks ( mlt ),
@@ -167,11 +167,11 @@ AdvancedSequencer::AdvancedSequencer(MIDIMultiTrack* mlt, MIDISequencerGUIEventN
 
 
 AdvancedSequencer::AdvancedSequencer(MIDIManager *mg) :
-#ifdef WIN32
+#ifdef _WIN32
     driver( new MIDIDriverWin32() ),  /* NEW BY NC: queue_size given as default parameter */
 #else
     driver( new MIDIDriverDump(128, stdout) ),
-#endif // WIN32
+#endif // _WIN32
 
     notifier( mg->GetSeq()->GetState()->notifier ),
     tracks ( ( MIDIMultiTrack * ) ( mg->GetSeq()->GetState()->multitrack ) ),

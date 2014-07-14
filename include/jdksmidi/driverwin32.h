@@ -32,7 +32,7 @@
 #include "jdksmidi/driver.h"
 #include "jdksmidi/sequencer.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #include <mmsystem.h>
 
@@ -217,6 +217,6 @@ protected:
 
 }
 
-#endif // WIN32
+#endif // _WIN32
 
 #endif // JDKSMIDI_DRIVERWIN32_H

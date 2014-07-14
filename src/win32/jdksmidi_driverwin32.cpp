@@ -32,7 +32,7 @@
 
 #include "jdksmidi/world.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "jdksmidi/driverwin32.h"
 
 namespace jdksmidi
@@ -320,7 +320,7 @@ void CALLBACK MIDIDriverWin32::win32_timer (
 )
 {
     MIDIDriverWin32 *self = ( MIDIDriverWin32 * ) dwUser;
-    self->TimeTick ( timeGetTime() );
+    self->TimeTick ( GetSystemTime() );
 }
 
 void CALLBACK MIDIDriverWin32::win32_midi_in (
@@ -339,7 +339,7 @@ void CALLBACK MIDIDriverWin32::win32_midi_in (
         msg.SetStatus ( ( unsigned char ) ( dwParam1 & 0xff ) );
         msg.SetByte1 ( ( unsigned char ) ( ( dwParam1 >> 8 ) & 0xff ) );
         msg.SetByte2 ( ( unsigned char ) ( ( dwParam1 >> 16 ) & 0xff ) );
-        msg.SetTime ( timeGetTime() );
+        msg.SetTime ( GetSystemTime() );
         self->HardwareMsgIn ( msg );
     }
 }
@@ -376,6 +376,6 @@ bool MIDIDriverWin32::InitDevices()
 }
 
 }
-#endif      // WIN32
+#endif      // _WIN32
 
 

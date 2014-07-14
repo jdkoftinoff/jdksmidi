@@ -84,7 +84,7 @@ void MIDIManager::SetSeq ( MIDISequencer *seq )
 void MIDIManager::SeqPlay()
 {
     seq_time_offset = ( unsigned long ) sequencer->GetCurrentTimeInMs();
-    sys_time_offset = jdks_get_system_time_ms();
+    sys_time_offset = MIDIDriver::GetSystemTime();
 
     stop_mode = false;
     play_mode = true;

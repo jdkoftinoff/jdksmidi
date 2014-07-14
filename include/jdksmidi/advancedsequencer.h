@@ -50,11 +50,11 @@
 #include "jdksmidi/driver.h"
 
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "jdksmidi/driverwin32.h"
 #else
 #include "jdksmidi/driverdump.h"
-#endif // WIN32
+#endif // _WIN32
 
 
 
