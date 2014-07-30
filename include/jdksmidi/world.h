@@ -81,7 +81,7 @@ MIDI Files easily.
 
 */
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 #pragma warning(disable: 4996) // to take away "function was declared deprecated" warnings
 #pragma warning(disable: 4355) // 'this' used in base member initializer list
 #endif

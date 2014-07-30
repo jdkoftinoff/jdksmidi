@@ -21,6 +21,19 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+/*
+	Part of this file (see AlsaDriver.h)
+	Originally developed for CFugue, adapted into jdksmidi with special permission
+
+	Copyright (C) 2009-2014 Cenacle Research India Private Limited
+
+	For links to further information, or to contact the author,
+	see <http://cfugue.sourceforge.net/>.
+
+    $LastChangedDate: 2013-12-18 10:59:57 +0530 (Wed, 18 Dec 2013) $
+    $Rev: 197 $
+    $LastChangedBy: krishnapg $
+*/
 
 //
 // MODIFIED by N. Cassetta ncassetta@tiscali.it
@@ -30,13 +43,16 @@
 #define JDKSMIDI_DRIVER_H
 
 #include <chrono>
+#include <string>
 
 #include "jdksmidi/msg.h"
-#include "jdksmidi/sysex.h"
 #include "jdksmidi/matrix.h"
 #include "jdksmidi/process.h"
 #include "jdksmidi/queue.h"
 #include "jdksmidi/tick.h"
+
+#define AVOID_TIMESTAMPING
+#include"../RtMidi/RtMidi.h"
 
 namespace jdksmidi
 {
@@ -162,16 +178,19 @@ public:
 	 */
 
     /// Opens the MIDI in port _id_
-    virtual bool OpenMIDIInPort ( int id ) = 0;
+    virtual bool OpenMIDIInPort ( int id );
 
     /// Opens the MIDI out port _id_
-    virtual bool OpenMIDIOutPort ( int id ) = 0;
+    virtual bool OpenMIDIOutPort ( int id );
 
     /// Closes the open MIDI in port
-    virtual void CloseMIDIInPort() = 0;
+    virtual void CloseMIDIInPort();
 
     /// Closes the open MIDI out port
-    virtual void CloseMIDIOutPort() = 0;
+    virtual void CloseMIDIOutPort();
+
+    /// Sends the MIDITimedBigMessage _msg_ to the open MIDI out port
+    virtual bool HardwareMsgOut ( const MIDITimedBigMessage &msg );
 
     /// Resets open MIDI out port
     virtual void ResetMIDIOut() = 0;
@@ -182,8 +201,6 @@ public:
     /// Stops the hardware timer
     virtual void StopTimer() = 0;
 
-    /// Sends the MIDITimedBigMessage _msg_ to the open MIDI out port
-    virtual bool HardwareMsgOut ( const MIDITimedBigMessage &msg ) = 0;
 
     /// This is the TimeTick (callback) procedure inherited from MIDITick; when the hardware timer is started, it is
     /// called at every timer tick.
@@ -199,53 +216,28 @@ public:
      */
 
     /// Gets the nunber of MIDI in ports present on the computer.
-    /// \note Currently it's only effective for Windows.
-    static unsigned int GetNumMIDIInDevs()
-    {
-        return num_in_devs;
-    }
+    static unsigned int GetNumMIDIInDevs();
 
     /// Gets the number of MIDI out ports present on the computer.
-    /// \note Currently it's only effective for Windows.
-    static unsigned int GetNumMIDIOutDevs()
-    {
-        return num_out_devs;
-    }
+    static unsigned int GetNumMIDIOutDevs();
 
-	/// Gets the name of the MIDI in port _i_.
-	/// \note Currently it's only effective for Windows.
-	static const char* GetMIDIInDevName(unsigned int i)
-	{
-	    if ( i < num_in_devs )
-        {
-            return in_dev_names[i];
-        }
-        else
-        {
-            return "";
-        }
-	}
+	/// Gets the name of the MIDI in port _id_.
+	static std::string GetMIDIInDevName(unsigned int id);
 
-    /// Gets the name of the MIDI out port _i_.
-    /// \note Currently it's only effective for Windows.
-	static const char* GetMIDIOutDevName(unsigned int i)
-    {
-	    if ( i < num_out_devs )
-        {
-            return out_dev_names[i];
-        }
-        else
-        {
-            return "";
-        }
-	}
+    /// Gets the name of the MIDI out port _id_.
+	static std::string GetMIDIOutDevName(unsigned int id);
 
+    /// This is used internally to get the system time in msecs, from the start of the program.
     static unsigned long GetSystemTime();
 
     static const int DEFAULT_TIMER_RESOLUTION = 1; ///< The default timer resolution is 1 msec
     // public: used by AdvancedSequencer
 
 protected:
+
+    RtMidiIn*   m_pMidiIn;          ///< The RtMidi abstraction for the MIDI in port
+    RtMidiOut*	m_pMidiOut;         ///< The RtMidi abstraction for the MIDI out port
+    std::string	 m_strClientName;   ///< Ab optional name for the MIDI driver
 
     MIDIQueue in_queue;             ///< The in queue
     MIDIQueue out_queue;            ///< The out queue
@@ -254,26 +246,21 @@ protected:
     MIDIProcessor *out_proc;        ///< The out processor
     MIDIProcessor *thru_proc;       ///< The thru processor
 
-    bool thru_enable;               ///< *true* if thru is enabled
+    bool thru_enable;               ///< **true** if thru is enabled
+
+    bool timer_open;                ///< **true** if the time has been started
 
     MIDITick *tick_proc;            ///< An additional TimeTick object: see SetTickProc()
 
     MIDIMatrix out_matrix;          ///< Keeps track of notes on going to MIDI out
 
+    static const int DEFAULT_BUFFER_SIZE = 384;
 
-/* NEW BY NC
- * these keep track of the MIDI devices present in the OS
- * NOTE: this is only a temporary situation, probably in the future we'll use RtMidi for getting the number
- * and names of the devices
- */
-    static const int DEVICENAME_LEN = 80;
-
-    static char** in_dev_names;         ///< Array of char* which holds the names of MIDI in devices
-    static char** out_dev_names;        ///< Array of char* which holds the names of MIDI out devices
-    static unsigned int num_in_devs;    ///< Number of MIDI in devices installed
-    static unsigned int num_out_devs;   ///< Number of MIDI out devices installed
+    int buffer_size;                ///< The size of the buffer
+    unsigned char* buffer;          ///< The buffer used to send MIDI bytes
 
     static std::chrono::steady_clock::time_point session_start;
+                                    ///< A time_point representing the start of the program
 };
 
 // TODO: (note to Jeff by NC) the out_matrix has no functions to get it, and it is currently unused by

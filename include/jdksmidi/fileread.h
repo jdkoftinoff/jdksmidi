@@ -47,6 +47,7 @@
 #include "jdksmidi/sysex.h"
 #include "jdksmidi/file.h"
 
+
 namespace jdksmidi
 {
 
@@ -87,7 +88,7 @@ public:
         f = fopen ( fname, "rb" );
     }
 
-#ifdef WIN32
+#if 0   // MinGW says it's not defined, even including <wchar.h>
     explicit MIDIFileReadStreamFile ( const wchar_t *fname )
     {
         f = _wfopen ( fname, L"rb" );

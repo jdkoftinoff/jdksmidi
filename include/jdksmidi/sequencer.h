@@ -594,7 +594,8 @@ public:
     /// Same as GoToTime(), but the time is given in milliseconds
     bool GoToTimeMs ( float time_ms );
 
-    /// Sets the 'now' time to the given measure and beat, upgrading the internal status.
+    /// Sets the 'now' time to the given measure and beat, upgrading the internal status. The measures and
+    /// beats start from 0.
     /// \return see GoToTime()
     bool GoToMeasure ( int measure, int beat = 0 );
 

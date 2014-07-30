@@ -32,7 +32,7 @@
 #include "jdksmidi/driver.h"
 #include "jdksmidi/sequencer.h"
 
-#ifdef _WIN32
+#if defined _WIN32 || defined WIN32
 #include <windows.h>
 #include <mmsystem.h>
 
@@ -140,6 +140,7 @@ public:
 
 // These are the implementations of pure virtual functions in base class
 
+/*
     /// Opens the MIDI in port _id_
     virtual bool OpenMIDIInPort ( int id = DEFAULT_IN_PORT );
 
@@ -151,6 +152,7 @@ public:
 
     /// Closes the open MIDI out port
     virtual void CloseMIDIOutPort();
+*/
 
     /// Resets open MIDI out port
     virtual void ResetMIDIOut();
@@ -161,8 +163,8 @@ public:
     /// Stops the hardware timer
     virtual void StopTimer();
 
-    /// Sends the MIDITimedBigMessage _msg_ to the open MIDI out port
-    virtual bool HardwareMsgOut ( const MIDITimedBigMessage &msg );
+//    /// Sends the MIDITimedBigMessage _msg_ to the open MIDI out port
+//    virtual bool HardwareMsgOut ( const MIDITimedBigMessage &msg );
 
 
 
@@ -173,11 +175,8 @@ protected:
     static const int DEFAULT_IN_PORT = MIDI_MAPPER;         ///< The default in port
 	static const int DEFAULT_OUT_PORT = MIDI_MAPPER;        ///< The default out port
     static const int DEFAULT_QUEUE_SIZE = 256;              ///< The default queue size
-    static const int DEFAULT_SYSEX_BUFFER_SIZE = 384;       ///< The default sysex buffer size
 
-    static bool InitDevices();                              ///< Ask Windows for MIDI devices name and number; used in initialization
-
-/* END OF NEW */
+    /* END OF NEW */
 
     /// The callback function called to every timer tick when playing
     static void CALLBACK win32_timer (
@@ -197,21 +196,10 @@ protected:
         DWORD dwParam2
     );
 
-    HMIDIIN in_handle;              ///< Windows handle to the MIDI in port
-    HMIDIOUT out_handle;            ///< Windows handle to the MIDI out port
+    //HMIDIIN in_handle;              ///< Windows handle to the MIDI in port
+    //HMIDIOUT out_handle;            ///< Windows handle to the MIDI out port
     int timer_id;                   ///< Windows id of the hardware timer
     int timer_res;                  ///< Resolution of the hardware timer
-
-    bool in_open;                   ///< True if the MIDI in port is open
-    bool out_open;                  ///< True if the MIDI out port is open
-    bool timer_open;                ///< True if the timer is open
-
-/* NEW BY NC */     // buffer for sending sysex
-
-    int sysex_buffer_size;          ///< Size of the sysex buffer
-    char* sysex_buffer;             ///< Buffer for sysex temporary storage
-
-    static bool init_devices_flag;      // this is used only for initializing static members of MIDIDriver
 };
 
 

@@ -50,10 +50,10 @@
 #include "jdksmidi/driver.h"
 
 
-#ifdef _WIN32
+#if defined _WIN32 || defined WIN32
 #include "jdksmidi/driverwin32.h"
 #else
-#include "jdksmidi/driverdump.h"
+#include "jdksmidi/AlsaDriver.h"
 #endif // _WIN32
 
 
@@ -65,6 +65,26 @@
 
 namespace jdksmidi
 {
+
+
+// NOTE BY NC: this is a temporary hack
+#if defined _WIN32 || defined WIN32
+inline void jdks_wait( unsigned int ms )
+{
+    Sleep( ms );
+}
+#elif __linux__
+#include <unistd.h>
+inline void jdks_wait( unsigned int ms )
+{
+    usleep ( ms );
+}
+#else
+inline void jdks_wait( unsigned int ms )
+{
+}
+#endif // _WIN32
+
 
 ///
 /// A high level, all-in-one object capable to load an play MIDI files.

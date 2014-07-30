@@ -102,7 +102,7 @@ public:
     {
     }
 
-#ifdef WIN32
+#if 0 // MinGW says it's not defined, even including <wchar.h>
     MIDIFileWriteStreamFileName ( const wchar_t *fname ) : MIDIFileWriteStreamFile ( _wfopen ( fname, L"wb" ) )
     {
     }

@@ -22,30 +22,27 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <chrono>
-
 #include "jdksmidi/world.h"
 #include "jdksmidi/driver.h"
 
 namespace jdksmidi
 {
 
-char **MIDIDriver::in_dev_names = 0;
-char **MIDIDriver::out_dev_names = 0;
-unsigned int MIDIDriver::num_in_devs = 0;
-unsigned int MIDIDriver::num_out_devs = 0;
 
-std::chrono::steady_clock::time_point MIDIDriver::session_start = std::chrono::steady_clock::now();;
+std::chrono::steady_clock::time_point MIDIDriver::session_start = std::chrono::steady_clock::now();
 
 
 MIDIDriver::MIDIDriver ( int queue_size )
     :
+    m_pMidiIn ( 0 ),
+    m_pMidiOut ( 0 ),
     in_queue ( queue_size ),
     out_queue ( queue_size ),
     in_proc ( 0 ),
     out_proc ( 0 ),
     thru_proc ( 0 ),
     thru_enable ( false ),
+    timer_open ( false ),
     tick_proc ( 0 )
 {
 }
@@ -63,6 +60,11 @@ void MIDIDriver::Reset()
 
 void MIDIDriver::OutputMessage ( MIDITimedBigMessage &msg )
 {
+    // don't send meta events and beat markers
+    if ( msg.IsServiceMsg() || msg.IsMetaEvent() )
+    {
+        return;
+    }
     if ( ( out_proc && out_proc->Process ( &msg ) ) || !out_proc )
     {
         out_matrix.Process ( msg );
@@ -72,27 +74,30 @@ void MIDIDriver::OutputMessage ( MIDITimedBigMessage &msg )
 
 void MIDIDriver::AllNotesOff ( int chan )
 {
-    MIDITimedBigMessage msg;
-    // send a note off for every note on in the out_matrix
-
-    if ( out_matrix.GetChannelCount ( chan ) > 0 )
+    if(m_pMidiOut != NULL)
     {
-        for ( int note = 0; note < 128; ++note )
+        MIDITimedBigMessage msg;
+        // send a note off for every note on in the out_matrix
+
+        if ( out_matrix.GetChannelCount ( chan ) > 0 )
         {
-            while ( out_matrix.GetNoteCount ( chan, note ) > 0 )
+            for ( int note = 0; note < 128; ++note )
             {
-                // make a note off with note on msg, velocity 0
-                msg.SetNoteOn ( ( unsigned char ) chan,
-                                ( unsigned char ) note, 0 );
-                OutputMessage ( msg );
+                while ( out_matrix.GetNoteCount ( chan, note ) > 0 )
+                {
+                    // make a note off with note on msg, velocity 0
+                    msg.SetNoteOn ( ( unsigned char ) chan,
+                                    ( unsigned char ) note, 0 );
+                    OutputMessage ( msg );
+                }
             }
         }
-    }
 
-    msg.SetControlChange ( chan, C_DAMPER, 0 );
-    OutputMessage ( msg );
-    msg.SetAllNotesOff ( ( unsigned char ) chan );
-    OutputMessage ( msg );
+        msg.SetControlChange ( chan, C_DAMPER, 0 );
+        OutputMessage ( msg );
+        msg.SetAllNotesOff ( ( unsigned char ) chan );
+        OutputMessage ( msg );
+    }
 }
 
 void MIDIDriver::AllNotesOff()
@@ -156,6 +161,149 @@ bool MIDIDriver::HardwareMsgIn ( MIDITimedBigMessage &msg )
     return true;
 }
 
+// NEW: THESE WERE MOVED HERE FROM ALSADriver.cpp by GP
+bool MIDIDriver::OpenMIDIInPort ( int id )
+{
+    if(m_pMidiIn != NULL) // close any open port
+    {
+        delete m_pMidiIn;
+        m_pMidiIn = NULL;
+    }
+    if(m_pMidiIn == NULL)
+    {
+        try
+        {
+            m_pMidiIn = new RtMidiIn(RtMidi::UNSPECIFIED, m_strClientName);
+        }
+        catch ( RtMidiError &error )
+        {
+            error.printMessage();
+            return false;
+        }
+    }
+    if(m_pMidiIn != NULL)
+    {
+        try
+        {
+            m_pMidiIn->openPort(id);
+        }
+        catch(RtMidiError& error)
+        {
+            error.printMessage();
+            return false;
+        }
+    }
+    return true;
+}
+
+bool MIDIDriver::OpenMIDIOutPort ( int id )
+{
+    if(m_pMidiOut != NULL) // close any open port
+    {
+        delete m_pMidiOut;
+        m_pMidiOut = NULL;
+    }
+    if(m_pMidiOut == NULL)
+    {
+        try
+        {
+            m_pMidiOut = new RtMidiOut(RtMidi::UNSPECIFIED, m_strClientName);
+        }
+        catch(RtMidiError &error)
+        {
+            error.printMessage();
+            return false;
+        }
+    }
+    if(m_pMidiOut != NULL)
+    {
+        try
+        {
+            m_pMidiOut->openPort(id);
+        }
+        catch(RtMidiError &error)
+        {
+            error.printMessage();
+            return false;
+        }
+    }
+    buffer_size = DEFAULT_BUFFER_SIZE;
+    buffer = new unsigned char[DEFAULT_BUFFER_SIZE];
+
+    return true;
+}
+
+void MIDIDriver::CloseMIDIInPort()
+{
+    if(m_pMidiIn != NULL)
+    {
+        m_pMidiIn->closePort();
+        delete m_pMidiIn;
+        m_pMidiIn = NULL;
+    }
+}
+
+void MIDIDriver::CloseMIDIOutPort()
+{
+    if(m_pMidiOut != NULL)
+    {
+        m_pMidiOut->closePort();
+        delete m_pMidiOut;
+        m_pMidiOut = NULL;
+        delete buffer;
+        buffer_size = 0;
+    }
+}
+
+bool MIDIDriver::HardwareMsgOut ( const MIDITimedBigMessage &msg )
+{
+    if(m_pMidiOut != NULL)
+    {
+        try {
+            if ( msg.IsChannelEvent() )
+            {
+                buffer[0] = msg.GetStatus();
+                buffer[1] = msg.GetByte1();
+                buffer[2] = msg.GetByte2();
+                std::vector<unsigned char> vec(buffer, buffer+3);
+                m_pMidiOut->sendMessage(&vec);
+            }
+
+            else if ( msg.IsSystemExclusive() )
+            {
+                if ( msg.GetSysEx()->GetLength() + 1 > buffer_size )
+                {
+                    buffer_size = msg.GetSysEx()->GetLength() + 1;
+                    delete buffer;
+                    buffer = new unsigned char [buffer_size];
+                }
+                buffer[0] = msg.GetStatus();
+                memcpy(buffer + 1, msg.GetSysEx()->GetBuf(), msg.GetSysEx()->GetLength());
+                std::vector<unsigned char> vec(buffer, buffer+buffer_size);
+                m_pMidiOut->sendMessage(&vec);
+
+                //std::cout << "Driver sent sysex message: lenght " << msg.GetSysEx()->GetLength() << "\n";
+            }
+
+            else
+            {
+                //char s[100];
+                //std::cout << "Driver skipped message " << msg.MsgToText(s) << std::endl;
+            }
+            return true;
+        }
+        catch ( RtMidiError &error )
+        {
+            error.printMessage();
+            return false;
+        }
+    }
+
+    return false;
+}
+// END OF EDITING BY NC
+
+
 void MIDIDriver::TimeTick ( unsigned long sys_time )
 {
     // run the additional tick procedure if we need to
@@ -183,6 +331,34 @@ void MIDIDriver::TimeTick ( unsigned long sys_time )
             break;
         }
     }
+}
+
+
+unsigned int MIDIDriver::GetNumMIDIInDevs()
+{
+    RtMidiIn midiin;
+    return midiin.getPortCount();
+}
+
+
+unsigned int MIDIDriver::GetNumMIDIOutDevs()
+{
+    RtMidiOut midiout;
+    return midiout.getPortCount();
+}
+
+
+std::string MIDIDriver::GetMIDIInDevName(unsigned int id)
+{
+    RtMidiIn midiin;
+    return midiin.getPortName ( id );
+}
+
+
+std::string MIDIDriver::GetMIDIOutDevName(unsigned int id)
+{
+    RtMidiOut midiout;
+    return midiout.getPortName ( id );
 }
 
 

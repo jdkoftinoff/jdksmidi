@@ -70,32 +70,12 @@ static void FixQuotes ( char *s_ )
 }
 */
 
-// NOTE BY NC: this is a temporary hack: we'll use <chrono>
-#ifdef _WIN32
-inline void jdks_wait( unsigned int ms )
-{
-    Sleep( ms );
-}
-#elif __linux
-#include <unistd.h>
-inline void jdks_wait( unsigned int ms )
-{
-    usleep ( ms );
-}
-#else
-inline void jdks_wait( unsigned int ms )
-{
-}
-#endif // _WIN32
-
-
-
 
 AdvancedSequencer::AdvancedSequencer(MIDISequencerGUIEventNotifier *n) :
-#ifdef _WIN32
+#if defined _WIN32 || defined WIN32
     driver( new MIDIDriverWin32() ),  /* NEW BY NC: queue_size given as default parameter */
 #else
-    driver( new MIDIDriverDump( 128, stdout ) ),
+    driver( new MIDIDriverAlsa() ),
 #endif // _WIN32
 
     notifier( n ),
@@ -131,10 +111,10 @@ AdvancedSequencer::AdvancedSequencer(MIDISequencerGUIEventNotifier *n) :
 
 
 AdvancedSequencer::AdvancedSequencer(MIDIMultiTrack* mlt, MIDISequencerGUIEventNotifier *n) :
-#ifdef _WIN32
+#if defined _WIN32 || defined WIN32
     driver( new MIDIDriverWin32() ),  /* NEW BY NC: queue_size given as default parameter */
 #else
-    driver( new MIDIDriverDump(128, stdout) ),
+    driver( new MIDIDriverAlsa() ),
 #endif // _WIN32
 
     notifier( n ),
@@ -167,10 +147,10 @@ AdvancedSequencer::AdvancedSequencer(MIDIMultiTrack* mlt, MIDISequencerGUIEventN
 
 
 AdvancedSequencer::AdvancedSequencer(MIDIManager *mg) :
-#ifdef _WIN32
+#if defined _WIN32 || defined WIN32
     driver( new MIDIDriverWin32() ),  /* NEW BY NC: queue_size given as default parameter */
 #else
-    driver( new MIDIDriverDump(128, stdout) ),
+    driver( new MIDIDriverAlsa() ),
 #endif // _WIN32
 
     notifier( mg->GetSeq()->GetState()->notifier ),
@@ -306,14 +286,14 @@ void AdvancedSequencer::UnLoad()    /* NEW BY NC */
 void AdvancedSequencer::Reset()
 {
     Stop();
-    jdks_wait(500);    // pauses for 0.5 sec (TROUBLE WITHOUT THIS!!!! I DON'T KNOW WHY)
     UnmuteAllTracks();
     UnSoloTrack();
     SetTempoScale ( 1.00 );
     SetRepeatPlay(false, 0, 0 );
     seq->ResetAllTracks();
     seq->GoToZero();
-    driver->Reset();    // clear queues
+    jdks_wait(100);     // allows the out queue to be emptied (previous functions call AllNotesOff()
+    driver->Reset();    // clear queues and resets the MIDI out port to default values
 }
 
 
@@ -339,16 +319,12 @@ void AdvancedSequencer::GoToTime (MIDIClockTime t) {
     // requested measure
 
     unsigned int warp_to_item = 0;
-    for ( ; warp_to_item < warp_positions.size(); warp_to_item++ )
+    for ( ; warp_to_item < warp_positions.size()-1; warp_to_item++ )
     {
-        if ( warp_positions[warp_to_item].cur_clock > t )
+        if ( warp_positions[warp_to_item+1].cur_clock > t )
         {
             break;
         }
-    }
-    if ( warp_to_item == warp_positions.size() && warp_to_item != 0 )
-    {
-        warp_to_item--;
     }
 
     if (mgr->IsSeqPlay())
@@ -380,13 +356,10 @@ void AdvancedSequencer::GoToMeasure ( int measure, int beat )
     // figure out which warp item we use
     // try warp to the last warp point BEFORE the
     // requested measure
-    int warp_to_item = ( measure - 1 ) / MEASURES_PER_WARP;
+    unsigned int warp_to_item = (unsigned int)measure / MEASURES_PER_WARP;
 
     if ( warp_to_item >= warp_positions.size() )
         warp_to_item = warp_positions.size() - 1;
-
-    if ( warp_to_item < 0 )
-        warp_to_item = 0;
 
     if ( mgr->IsSeqPlay() )
     {
@@ -515,9 +488,18 @@ void AdvancedSequencer::SoloTrack ( int trk )
     seq->SetSoloMode (true, trk);
     for (int i = 0; i < seq->GetNumTracks(); ++i)
     {
+        // we must now turn off notes on every other track
         if (i == trk) continue;
-        driver->AllNotesOff(FindFirstChannelOnTrack(i) - 1);
-        seq->GetTrackState (i)->note_matrix.Clear();
+        int channel = FindFirstChannelOnTrack(i);
+        if ( channel != -1 )    // there are channel events in the track
+        {
+            if ( seq->GetTrackProcessor(i)->rechannel != -1 )   // is the track rechannelized?
+            {
+                channel = seq->GetTrackProcessor(i)->rechannel; // set the rechannelized channel
+            }
+            driver->AllNotesOff( channel );
+            seq->GetTrackState (i)->note_matrix.Clear();
+        }
     }
 }
 
@@ -546,7 +528,16 @@ void AdvancedSequencer::SetTrackMute ( int trk, bool f )
     {
         if ( f )
         {
-            driver->AllNotesOff( FindFirstChannelOnTrack(trk) - 1 );  // TODO: tieni conto del rechannelize
+            int channel = FindFirstChannelOnTrack(trk);
+            if ( channel != -1 )    // there are channel events in the track
+            {
+                if ( seq->GetTrackProcessor(trk)->rechannel != -1 )     // is the track rechannelized?
+                {
+                    channel = seq->GetTrackProcessor(trk)->rechannel;   // set the rechannelized channel
+                }
+                driver->AllNotesOff( channel );
+                seq->GetTrackState (trk)->note_matrix.Clear();
+            }
         }
         else
         {

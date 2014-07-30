@@ -94,7 +94,8 @@ int WINAPI WinMain (HINSTANCE hThisInstance,
     hMainWin = CreateWindowEx (
            0,                           // Extended possibilites for variation
            szClassName,                 // Classname
-           "test WIN32 (C) by N. Cassetta",        // Title Text
+           "test WIN32 MIDI player (C) by N. Cassetta",
+                                        // Title Text
            WS_OVERLAPPEDWINDOW,         // Default window
            CW_USEDEFAULT,               // Windows decides the position
            CW_USEDEFAULT,               // where the window ends up on the screen
@@ -350,9 +351,9 @@ VOID LoadFile() {
         if (!sequencer->Load(szFileName)) { // Error: the sequencer could not load the file
             MessageBox(
                 NULL,
-                (LPCSTR)L"File loading failed",
+                (LPCSTR)"File loading failed",
                 NULL,
-                MB_ICONEXCLAMATION
+                MB_ICONERROR | MB_OK
             );
         }
         else {                              // File loading OK

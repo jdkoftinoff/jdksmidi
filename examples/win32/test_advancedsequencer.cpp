@@ -188,6 +188,12 @@ int main( int argc, char **argv )
             if ( sequencer.Load( par1.c_str() ))
             {
                 cout << "Loaded file " << par1 << endl;
+                // test if all events are in track 0 ...
+                if ( sequencer.GetMUltiTrack()->GetNumTracksWithEvents() == 1 )
+                {
+                    cout << "WARNING: this is a Format 0 Midi File (all events in one track)\n" <<
+                            "some commands (mute, solo ...) won't have effect on it\n";
+                }
             }
             else
             {
