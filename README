@@ -1,3 +1,22 @@
+LAST UPDATE BY N.C.
+-------------------
+
+In this branch I'm trying to integrate the MIDI ALSA Driver developed by G. Palem (see http://blogs.msdn.com/b/gpalem/archive/2011/03/17/alsa-driver-for-jdkmidi-with-rtmidi-on-linux-using-c-0x-futures.aspx)
+It has the following features:
+- uses the c++ 11 standard (<chrono>, <future> etc.) to get the asyncronous procedure which sends the MIDI data to the ports when playing
+- relies on another library, RtMidi by G. P. Schiavone, for the hardware port communication.
+ 
+My goal was to integrate all, Windows and Linux, with c++11 threads and RtMidi, into the class MIDIDriver, in order to avoid all OS dependent code in the library (mantaining it only in RtMidi), and no more
+need for dedicated subclasses MIDIDriverWin32, MIDIDriverALSA.
+Unfortunately this was not possible at this stage because MinGW 4.8.1 doesn't support Windows thread yet, so I got a compromise solution:
+- I moved all the MIDI I/O related methods (opening/closing MIDI ports, sending them messages ...) in the base class MIDIDriver, which uses RtMidi for the effective communication;
+- I left in the MIDIDriverWin32 and MIDIDriverALSA only the methods to get a dedicated thread sending the data, specific for every OS. 
+
+In particular, the test file test_advancedsequencer.cpp should now compile and work in Win32 and Linux
+
+
+///////////////////////////////////////////////////////////////
+
 This is a fork of the JDKSMidi library by J.D. Koftinoff and other authors.
 I made some improvemsnts to it, and specifically:
  - The development of the class AdvancedSequencer, an all-in-one object capable to load and play MIDI files with a single call to a class method.
