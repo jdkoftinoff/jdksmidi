@@ -27,6 +27,8 @@
 
 /* Begin PBXBuildFile section */
 		BF78EEB406646F2D0084AE2F /* libjdksmidi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BFCF4617066341C8004F42F4 /* libjdksmidi.a */; };
+		BF7A83BE19991BF1001B17A3 /* jdksmidi_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF7A83BD19991BF1001B17A3 /* jdksmidi_utils.cpp */; };
+		BF7A83C019991C01001B17A3 /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = BF7A83BF19991C01001B17A3 /* utils.h */; };
 		BFCF461B066341DF004F42F4 /* advancedsequencer.h in Headers */ = {isa = PBXBuildFile; fileRef = BFCF45D0066341AE004F42F4 /* advancedsequencer.h */; };
 		BFCF461C066341DF004F42F4 /* driver.h in Headers */ = {isa = PBXBuildFile; fileRef = BFCF45D1066341AE004F42F4 /* driver.h */; };
 		BFCF461D066341DF004F42F4 /* driverdump.h in Headers */ = {isa = PBXBuildFile; fileRef = BFCF45D2066341AE004F42F4 /* driverdump.h */; };
@@ -177,6 +179,8 @@
 
 /* Begin PBXFileReference section */
 		BF2E0C8A06646D3F0055CCAF /* libjdk_test_show */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libjdk_test_show; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF7A83BD19991BF1001B17A3 /* jdksmidi_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jdksmidi_utils.cpp; sourceTree = "<group>"; };
+		BF7A83BF19991C01001B17A3 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		BFAD14080AB5ED7600CD5BE0 /* libjdksmidi_test_parse */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libjdksmidi_test_parse; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFAD140A0AB5ED7600CD5BE0 /* libjdksmidi_test_parse */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libjdksmidi_test_parse; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFAD140C0AB5ED7600CD5BE0 /* libjdksmidi_test_parse */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libjdksmidi_test_parse; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -329,6 +333,7 @@
 		BFCF45CF066341AE004F42F4 /* jdksmidi */ = {
 			isa = PBXGroup;
 			children = (
+				BF7A83BF19991C01001B17A3 /* utils.h */,
 				BFCF45D0066341AE004F42F4 /* advancedsequencer.h */,
 				BFCF45D1066341AE004F42F4 /* driver.h */,
 				BFCF45D2066341AE004F42F4 /* driverdump.h */,
@@ -366,6 +371,7 @@
 		BFCF45EE066341AE004F42F4 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				BF7A83BD19991BF1001B17A3 /* jdksmidi_utils.cpp */,
 				BFCF45EF066341AE004F42F4 /* jdksmidi_advancedsequencer.cpp */,
 				BFCF45F0066341AE004F42F4 /* jdksmidi_driver.cpp */,
 				BFCF45F1066341AF004F42F4 /* jdksmidi_driverdump.cpp */,
@@ -437,6 +443,7 @@
 				BFCF461C066341DF004F42F4 /* driver.h in Headers */,
 				BFCF461D066341DF004F42F4 /* driverdump.h in Headers */,
 				BFCF461E066341DF004F42F4 /* driverwin32.h in Headers */,
+				BF7A83C019991C01001B17A3 /* utils.h in Headers */,
 				BFCF461F066341DF004F42F4 /* edittrack.h in Headers */,
 				BFCF4620066341DF004F42F4 /* file.h in Headers */,
 				BFCF4621066341DF004F42F4 /* fileread.h in Headers */,
@@ -640,6 +647,7 @@
 				BFCF4645066341E9004F42F4 /* jdksmidi_manager.cpp in Sources */,
 				BFCF4646066341E9004F42F4 /* jdksmidi_matrix.cpp in Sources */,
 				BFCF4647066341E9004F42F4 /* jdksmidi_midi.cpp in Sources */,
+				BF7A83BE19991BF1001B17A3 /* jdksmidi_utils.cpp in Sources */,
 				BFCF4648066341E9004F42F4 /* jdksmidi_msg.cpp in Sources */,
 				BFCF4649066341E9004F42F4 /* jdksmidi_multitrack.cpp in Sources */,
 				BFCF464A066341E9004F42F4 /* jdksmidi_parser.cpp in Sources */,
@@ -958,6 +966,7 @@
 		BF7A117309008E6500239696 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				USER_HEADER_SEARCH_PATHS = ../../include;
 			};
 			name = Development;
@@ -965,6 +974,7 @@
 		BF7A117409008E6500239696 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				USER_HEADER_SEARCH_PATHS = ../../include;
 			};
 			name = Deployment;
@@ -972,6 +982,7 @@
 		BF7A117509008E6500239696 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				USER_HEADER_SEARCH_PATHS = ../../include;
 			};
 			name = Default;
