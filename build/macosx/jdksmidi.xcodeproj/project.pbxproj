@@ -585,7 +585,7 @@
 		BFCF45C906634185004F42F4 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0600;
 			};
 			buildConfigurationList = BF7A117209008E6500239696 /* Build configuration list for PBXProject "jdksmidi" */;
 			compatibilityVersion = "Xcode 3.2";
