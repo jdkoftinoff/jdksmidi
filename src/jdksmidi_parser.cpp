@@ -39,34 +39,33 @@
 #include "jdksmidi/parser.h"
 
 #ifndef DEBUG_MDPARSER
-# define DEBUG_MDPARSER 0
+#define DEBUG_MDPARSER 0
 #endif
 
 #if DEBUG_MDPARSER
-# undef DBG
-# define DBG(a) a
+#undef DBG
+#define DBG( a ) a
 #endif
 
 namespace jdksmidi
 {
 
-MIDIParser::MIDIParser ( ushort max_sysex_size )
+MIDIParser::MIDIParser( ushort max_sysex_size )
 {
-    ENTER ( "MIDIParser::MIDIParser" );
-    sysex = new MIDISystemExclusive ( max_sysex_size );
+    ENTER( "MIDIParser::MIDIParser" );
+    sysex = new MIDISystemExclusive( max_sysex_size );
     state = FIND_STATUS;
 }
 
 MIDIParser::~MIDIParser()
 {
-    ENTER ( "MIDIParser::~MIDIParser" );
+    ENTER( "MIDIParser::~MIDIParser" );
     jdks_safe_delete_object( sysex );
 }
 
-
-bool MIDIParser::Parse ( uchar b, MIDIMessage *msg )
+bool MIDIParser::Parse( uchar b, MIDIMessage *msg )
 {
-    ENTER ( "MIDIParser::Parse()" );
+    ENTER( "MIDIParser::Parse()" );
     //
     // No matter what state we are currently in we must deal
     // with bytes with the high bit set first.
@@ -77,7 +76,7 @@ bool MIDIParser::Parse ( uchar b, MIDIMessage *msg )
         //
         // check for system messages (>=0xf0)
         //
-        uchar stat = ( uchar ) ( b & 0xf0 );
+        uchar stat = ( uchar )( b & 0xf0 );
 
         if ( stat == 0xf0 )
         {
@@ -85,7 +84,7 @@ bool MIDIParser::Parse ( uchar b, MIDIMessage *msg )
             // System messages get parsed by
             // ParseSystemByte()
             //
-            return ParseSystemByte ( b, msg );
+            return ParseSystemByte( b, msg );
         }
 
         else
@@ -93,7 +92,7 @@ bool MIDIParser::Parse ( uchar b, MIDIMessage *msg )
             //
             // Otherwise, this is a new status byte.
             //
-            ParseStatusByte ( b );
+            ParseStatusByte( b );
             return false;
         }
     }
@@ -103,16 +102,13 @@ bool MIDIParser::Parse ( uchar b, MIDIMessage *msg )
         //
         // Try to parse the data byte
         //
-        return ParseDataByte ( b, msg );
+        return ParseDataByte( b, msg );
     }
 }
 
-
-
-
-bool MIDIParser::ParseSystemByte ( uchar b, MIDIMessage *msg )
+bool MIDIParser::ParseSystemByte( uchar b, MIDIMessage *msg )
 {
-    ENTER ( "MIDIParser::ParseSystemByte" );
+    ENTER( "MIDIParser::ParseSystemByte" );
 
     switch ( b )
     {
@@ -165,7 +161,7 @@ bool MIDIParser::ParseSystemByte ( uchar b, MIDIMessage *msg )
         // so calling program can know to look at
         // the sysex buffer with GetSystemExclusive().
         //
-        msg->SetStatus ( SYSEX_START_N );
+        msg->SetStatus( SYSEX_START_N );
         return true;
     }
     case MTC:
@@ -175,7 +171,7 @@ bool MIDIParser::ParseSystemByte ( uchar b, MIDIMessage *msg )
         // this is required because MTC (F1) is not
         // allowed to be running status.
         //
-        tmp_msg.SetStatus ( MTC );
+        tmp_msg.SetStatus( MTC );
         state = FIRST_OF_ONE_NORUN;
         return false;
     }
@@ -186,7 +182,7 @@ bool MIDIParser::ParseSystemByte ( uchar b, MIDIMessage *msg )
         // FIRST_OF_TWO state.
         //
         state = FIRST_OF_TWO;
-        tmp_msg.SetStatus ( SONG_POSITION );
+        tmp_msg.SetStatus( SONG_POSITION );
         return false;
     }
     case SONG_SELECT:
@@ -196,7 +192,7 @@ bool MIDIParser::ParseSystemByte ( uchar b, MIDIMessage *msg )
         // the FIRST_OF_ONE state.
         //
         state = FIRST_OF_ONE;
-        tmp_msg.SetStatus ( SONG_SELECT );
+        tmp_msg.SetStatus( SONG_SELECT );
         return false;
     }
     //
@@ -213,7 +209,7 @@ bool MIDIParser::ParseSystemByte ( uchar b, MIDIMessage *msg )
     case STOP:
     case ACTIVE_SENSE:
     {
-        msg->SetStatus ( b );
+        msg->SetStatus( b );
         return true;
     }
     default:
@@ -231,35 +227,33 @@ bool MIDIParser::ParseSystemByte ( uchar b, MIDIMessage *msg )
     }
 }
 
-
-void MIDIParser::ParseStatusByte ( uchar b )
+void MIDIParser::ParseStatusByte( uchar b )
 {
-    ENTER ( "MIDIParser::ParseStatusByte" );
-    int len = GetMessageLength ( b );
+    ENTER( "MIDIParser::ParseStatusByte" );
+    int len = GetMessageLength( b );
 
     if ( len == 2 )
     {
         state = FIRST_OF_ONE;
-        tmp_msg.SetStatus ( b );
+        tmp_msg.SetStatus( b );
     }
 
     else if ( len == 3 )
     {
         state = FIRST_OF_TWO;
-        tmp_msg.SetStatus ( b );
+        tmp_msg.SetStatus( b );
     }
 
     else
     {
         state = FIND_STATUS;
-        tmp_msg.SetStatus ( 0 );
+        tmp_msg.SetStatus( 0 );
     }
 }
 
-
-bool MIDIParser::ParseDataByte ( uchar b, MIDIMessage *msg )
+bool MIDIParser::ParseDataByte( uchar b, MIDIMessage *msg )
 {
-    ENTER ( "MIDIParser::ParseDataByte" );
+    ENTER( "MIDIParser::ParseDataByte" );
 
     switch ( state )
     {
@@ -276,7 +270,7 @@ bool MIDIParser::ParseDataByte ( uchar b, MIDIMessage *msg )
         // this is the only data byte of a message.
         // form the message and return it.
         //
-        tmp_msg.SetByte1 ( b );
+        tmp_msg.SetByte1( b );
         *msg = tmp_msg;
         //
         // stay in this state for running status
@@ -290,7 +284,7 @@ bool MIDIParser::ParseDataByte ( uchar b, MIDIMessage *msg )
         // read it in. go to SECOND_OF_TWO state. do not
         // return anything.
         //
-        tmp_msg.SetByte1 ( b );
+        tmp_msg.SetByte1( b );
         state = SECOND_OF_TWO;
         return false;
     }
@@ -302,7 +296,7 @@ bool MIDIParser::ParseDataByte ( uchar b, MIDIMessage *msg )
         // go back to FIRST_OF_TWO state to allow
         // running status.
         //
-        tmp_msg.SetByte2 ( b );
+        tmp_msg.SetByte2( b );
         state = FIRST_OF_TWO;
         *msg = tmp_msg;
         return true;
@@ -314,7 +308,7 @@ bool MIDIParser::ParseDataByte ( uchar b, MIDIMessage *msg )
         // form the message, return it, and go to FIND_STATUS
         // state. Do not allow running status.
         //
-        tmp_msg.SetByte1 ( b );
+        tmp_msg.SetByte1( b );
         state = FIND_STATUS;
         *msg = tmp_msg;
         return true;
@@ -326,7 +320,7 @@ bool MIDIParser::ParseDataByte ( uchar b, MIDIMessage *msg )
         // in this state. Only a status byte can
         // change our state.
         //
-        sysex->PutByte ( b );
+        sysex->PutByte( b );
         return false;
     }
     default:
@@ -339,7 +333,4 @@ bool MIDIParser::ParseDataByte ( uchar b, MIDIMessage *msg )
     }
     }
 }
-
-
-
 }

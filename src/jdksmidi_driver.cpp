@@ -28,9 +28,7 @@
 namespace jdksmidi
 {
 
-
 std::chrono::steady_clock::time_point MIDIDriver::session_start = std::chrono::steady_clock::now();
-
 
 MIDIDriver::MIDIDriver ( int queue_size )
     :
@@ -58,45 +56,44 @@ void MIDIDriver::Reset()
     out_matrix.Clear();
 }
 
-void MIDIDriver::OutputMessage ( MIDITimedBigMessage &msg )
+void MIDIDriver::OutputMessage( MIDITimedBigMessage &msg )
 {
     // don't send meta events and beat markers
     if ( msg.IsServiceMsg() || msg.IsMetaEvent() )
     {
         return;
     }
-    if ( ( out_proc && out_proc->Process ( &msg ) ) || !out_proc )
+    if ( ( out_proc && out_proc->Process( &msg ) ) || !out_proc )
     {
-        out_matrix.Process ( msg );
-        out_queue.Put ( msg );
+        out_matrix.Process( msg );
+        out_queue.Put( msg );
     }
 }
 
-void MIDIDriver::AllNotesOff ( int chan )
+void MIDIDriver::AllNotesOff( int chan )
 {
-    if(m_pMidiOut != NULL)
+    if ( m_pMidiOut != NULL )
     {
         MIDITimedBigMessage msg;
         // send a note off for every note on in the out_matrix
 
-        if ( out_matrix.GetChannelCount ( chan ) > 0 )
+        if ( out_matrix.GetChannelCount( chan ) > 0 )
         {
             for ( int note = 0; note < 128; ++note )
             {
-                while ( out_matrix.GetNoteCount ( chan, note ) > 0 )
+                while ( out_matrix.GetNoteCount( chan, note ) > 0 )
                 {
                     // make a note off with note on msg, velocity 0
-                    msg.SetNoteOn ( ( unsigned char ) chan,
-                                    ( unsigned char ) note, 0 );
-                    OutputMessage ( msg );
+                    msg.SetNoteOn( (unsigned char)chan, (unsigned char)note, 0 );
+                    OutputMessage( msg );
                 }
             }
         }
 
-        msg.SetControlChange ( chan, C_DAMPER, 0 );
-        OutputMessage ( msg );
-        msg.SetAllNotesOff ( ( unsigned char ) chan );
-        OutputMessage ( msg );
+        msg.SetControlChange( chan, C_DAMPER, 0 );
+        OutputMessage( msg );
+        msg.SetAllNotesOff( (unsigned char)chan );
+        OutputMessage( msg );
     }
 }
 
@@ -104,16 +101,16 @@ void MIDIDriver::AllNotesOff()
 {
     for ( int i = 0; i < 16; ++i )
     {
-        AllNotesOff ( i );
+        AllNotesOff( i );
     }
 }
 
-bool MIDIDriver::HardwareMsgIn ( MIDITimedBigMessage &msg )
+bool MIDIDriver::HardwareMsgIn( MIDITimedBigMessage &msg )
 {
     // put input midi messages thru the in processor
     if ( in_proc )
     {
-        if ( in_proc->Process ( &msg ) == false )
+        if ( in_proc->Process( &msg ) == false )
         {
             // message was deleted, so ignore it.
             return true;
@@ -124,7 +121,7 @@ bool MIDIDriver::HardwareMsgIn ( MIDITimedBigMessage &msg )
 
     if ( in_queue.CanPut() )
     {
-        in_queue.Put ( msg );
+        in_queue.Put( msg );
     }
 
     else
@@ -136,7 +133,7 @@ bool MIDIDriver::HardwareMsgIn ( MIDITimedBigMessage &msg )
 
     if ( thru_proc )
     {
-        if ( thru_proc->Process ( &msg ) == false )
+        if ( thru_proc->Process( &msg ) == false )
         {
             // message was deleted, so ignore it.
             return true;
@@ -149,7 +146,7 @@ bool MIDIDriver::HardwareMsgIn ( MIDITimedBigMessage &msg )
         // will play it out asap
         if ( out_queue.CanPut() )
         {
-            out_queue.Put ( msg );
+            out_queue.Put( msg );
         }
 
         else
@@ -162,18 +159,18 @@ bool MIDIDriver::HardwareMsgIn ( MIDITimedBigMessage &msg )
 }
 
 // NEW: THESE WERE MOVED HERE FROM ALSADriver.cpp by GP
-bool MIDIDriver::OpenMIDIInPort ( int id )
+bool MIDIDriver::OpenMIDIInPort( int id )
 {
-    if(m_pMidiIn != NULL) // close any open port
+    if ( m_pMidiIn != NULL ) // close any open port
     {
         delete m_pMidiIn;
         m_pMidiIn = NULL;
     }
-    if(m_pMidiIn == NULL)
+    if ( m_pMidiIn == NULL )
     {
         try
         {
-            m_pMidiIn = new RtMidiIn(RtMidi::UNSPECIFIED, m_strClientName);
+            m_pMidiIn = new RtMidiIn( RtMidi::UNSPECIFIED, m_strClientName );
         }
         catch ( RtMidiError &error )
         {
@@ -181,13 +178,13 @@ bool MIDIDriver::OpenMIDIInPort ( int id )
             return false;
         }
     }
-    if(m_pMidiIn != NULL)
+    if ( m_pMidiIn != NULL )
     {
         try
         {
-            m_pMidiIn->openPort(id);
+            m_pMidiIn->openPort( id );
         }
-        catch(RtMidiError& error)
+        catch ( RtMidiError &error )
         {
             error.printMessage();
             return false;
@@ -196,32 +193,32 @@ bool MIDIDriver::OpenMIDIInPort ( int id )
     return true;
 }
 
-bool MIDIDriver::OpenMIDIOutPort ( int id )
+bool MIDIDriver::OpenMIDIOutPort( int id )
 {
-    if(m_pMidiOut != NULL) // close any open port
+    if ( m_pMidiOut != NULL ) // close any open port
     {
         delete m_pMidiOut;
         m_pMidiOut = NULL;
     }
-    if(m_pMidiOut == NULL)
+    if ( m_pMidiOut == NULL )
     {
         try
         {
-            m_pMidiOut = new RtMidiOut(RtMidi::UNSPECIFIED, m_strClientName);
+            m_pMidiOut = new RtMidiOut( RtMidi::UNSPECIFIED, m_strClientName );
         }
-        catch(RtMidiError &error)
+        catch ( RtMidiError &error )
         {
             error.printMessage();
             return false;
         }
     }
-    if(m_pMidiOut != NULL)
+    if ( m_pMidiOut != NULL )
     {
         try
         {
-            m_pMidiOut->openPort(id);
+            m_pMidiOut->openPort( id );
         }
-        catch(RtMidiError &error)
+        catch ( RtMidiError &error )
         {
             error.printMessage();
             return false;
@@ -235,7 +232,7 @@ bool MIDIDriver::OpenMIDIOutPort ( int id )
 
 void MIDIDriver::CloseMIDIInPort()
 {
-    if(m_pMidiIn != NULL)
+    if ( m_pMidiIn != NULL )
     {
         m_pMidiIn->closePort();
         delete m_pMidiIn;
@@ -245,7 +242,7 @@ void MIDIDriver::CloseMIDIInPort()
 
 void MIDIDriver::CloseMIDIOutPort()
 {
-    if(m_pMidiOut != NULL)
+    if ( m_pMidiOut != NULL )
     {
         m_pMidiOut->closePort();
         delete m_pMidiOut;
@@ -255,18 +252,19 @@ void MIDIDriver::CloseMIDIOutPort()
     }
 }
 
-bool MIDIDriver::HardwareMsgOut ( const MIDITimedBigMessage &msg )
+bool MIDIDriver::HardwareMsgOut( const MIDITimedBigMessage &msg )
 {
-    if(m_pMidiOut != NULL)
+    if ( m_pMidiOut != NULL )
     {
-        try {
+        try
+        {
             if ( msg.IsChannelEvent() )
             {
                 buffer[0] = msg.GetStatus();
                 buffer[1] = msg.GetByte1();
                 buffer[2] = msg.GetByte2();
-                std::vector<unsigned char> vec(buffer, buffer+3);
-                m_pMidiOut->sendMessage(&vec);
+                std::vector<unsigned char> vec( buffer, buffer + 3 );
+                m_pMidiOut->sendMessage( &vec );
             }
 
             else if ( msg.IsSystemExclusive() )
@@ -275,20 +273,20 @@ bool MIDIDriver::HardwareMsgOut ( const MIDITimedBigMessage &msg )
                 {
                     buffer_size = msg.GetSysEx()->GetLength() + 1;
                     delete buffer;
-                    buffer = new unsigned char [buffer_size];
+                    buffer = new unsigned char[buffer_size];
                 }
                 buffer[0] = msg.GetStatus();
-                memcpy(buffer + 1, msg.GetSysEx()->GetBuf(), msg.GetSysEx()->GetLength());
-                std::vector<unsigned char> vec(buffer, buffer+buffer_size);
-                m_pMidiOut->sendMessage(&vec);
+                memcpy( buffer + 1, msg.GetSysEx()->GetBuf(), msg.GetSysEx()->GetLength() );
+                std::vector<unsigned char> vec( buffer, buffer + buffer_size );
+                m_pMidiOut->sendMessage( &vec );
 
-                //std::cout << "Driver sent sysex message: lenght " << msg.GetSysEx()->GetLength() << "\n";
+                // std::cout << "Driver sent sysex message: lenght " << msg.GetSysEx()->GetLength() << "\n";
             }
 
             else
             {
-                //char s[100];
-                //std::cout << "Driver skipped message " << msg.MsgToText(s) << std::endl;
+                // char s[100];
+                // std::cout << "Driver skipped message " << msg.MsgToText(s) << std::endl;
             }
             return true;
         }
@@ -303,13 +301,12 @@ bool MIDIDriver::HardwareMsgOut ( const MIDITimedBigMessage &msg )
 }
 // END OF EDITING BY NC
 
-
-void MIDIDriver::TimeTick ( unsigned long sys_time )
+void MIDIDriver::TimeTick( unsigned long sys_time )
 {
     // run the additional tick procedure if we need to
     if ( tick_proc )
     {
-        tick_proc->TimeTick ( sys_time );
+        tick_proc->TimeTick( sys_time );
     }
 
     // feed as many midi messages from out_queu to the hardware out port
@@ -319,7 +316,7 @@ void MIDIDriver::TimeTick ( unsigned long sys_time )
     {
         // use the Peek() function to avoid allocating memory for
         // a duplicate sysex
-        if ( HardwareMsgOut ( * ( out_queue.Peek() ) ) == true )
+        if ( HardwareMsgOut( *( out_queue.Peek() ) ) == true )
         {
             // ok, got and sent a message - update our out_queue now
             out_queue.Next();
@@ -333,13 +330,11 @@ void MIDIDriver::TimeTick ( unsigned long sys_time )
     }
 }
 
-
 unsigned int MIDIDriver::GetNumMIDIInDevs()
 {
     RtMidiIn midiin;
     return midiin.getPortCount();
 }
-
 
 unsigned int MIDIDriver::GetNumMIDIOutDevs()
 {
@@ -347,27 +342,23 @@ unsigned int MIDIDriver::GetNumMIDIOutDevs()
     return midiout.getPortCount();
 }
 
-
-std::string MIDIDriver::GetMIDIInDevName(unsigned int id)
+std::string MIDIDriver::GetMIDIInDevName( unsigned int id )
 {
     RtMidiIn midiin;
-    return midiin.getPortName ( id );
+    return midiin.getPortName( id );
 }
 
-
-std::string MIDIDriver::GetMIDIOutDevName(unsigned int id)
+std::string MIDIDriver::GetMIDIOutDevName( unsigned int id )
 {
     RtMidiOut midiout;
-    return midiout.getPortName ( id );
+    return midiout.getPortName( id );
 }
 
-
-unsigned long MIDIDriver::GetSystemTime() {
+unsigned long MIDIDriver::GetSystemTime()
+{
     std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-    std::chrono::milliseconds dur = std::chrono::duration_cast<std::chrono::milliseconds>(now - session_start);
+    std::chrono::milliseconds dur = std::chrono::duration_cast<std::chrono::milliseconds>( now - session_start );
     unsigned long ret = dur.count();
     return ret;
 }
-
-
 }

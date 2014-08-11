@@ -39,20 +39,20 @@
 #include "jdksmidi/sysex.h"
 
 #ifndef DEBUG_MDSYSEX
-# define DEBUG_MDSYSEX 0
+#define DEBUG_MDSYSEX 0
 #endif
 
 #if DEBUG_MDSYSEX
-# undef DBG
-# define DBG(a) a
+#undef DBG
+#define DBG( a ) a
 #endif
 
 namespace jdksmidi
 {
 
-MIDISystemExclusive::MIDISystemExclusive ( int size_ )
+MIDISystemExclusive::MIDISystemExclusive( int size_ )
 {
-    ENTER ( "MIDISystemExclusive::MIDISystemExclusive" );
+    ENTER( "MIDISystemExclusive::MIDISystemExclusive" );
     buf = new uchar[size_];
 
     if ( buf )
@@ -66,9 +66,9 @@ MIDISystemExclusive::MIDISystemExclusive ( int size_ )
     deletable = true;
 }
 
-MIDISystemExclusive::MIDISystemExclusive ( const MIDISystemExclusive &e )
+MIDISystemExclusive::MIDISystemExclusive( const MIDISystemExclusive &e )
 {
-    buf = new unsigned char [e.max_len];
+    buf = new unsigned char[e.max_len];
     max_len = e.max_len;
     cur_len = e.cur_len;
     chk_sum = e.chk_sum;
@@ -82,7 +82,7 @@ MIDISystemExclusive::MIDISystemExclusive ( const MIDISystemExclusive &e )
 
 MIDISystemExclusive::~MIDISystemExclusive()
 {
-    ENTER ( "MIDISystemExclusive::~MIDISystemExclusive" );
+    ENTER( "MIDISystemExclusive::~MIDISystemExclusive" );
 
     if ( deletable )
     {
@@ -90,7 +90,7 @@ MIDISystemExclusive::~MIDISystemExclusive()
     }
 }
 
-bool operator == ( const MIDISystemExclusive &e1, const MIDISystemExclusive &e2 )
+bool operator==( const MIDISystemExclusive &e1, const MIDISystemExclusive &e2 )
 {
     if ( e1.cur_len != e2.cur_len )
         return false;
@@ -98,7 +98,6 @@ bool operator == ( const MIDISystemExclusive &e1, const MIDISystemExclusive &e2 
     if ( e1.cur_len == 0 )
         return true;
 
-    return memcmp( e1.buf, e2.buf, e1.cur_len ) == 0 ;
+    return memcmp( e1.buf, e2.buf, e1.cur_len ) == 0;
 }
-
 }

@@ -54,20 +54,19 @@ class MIDIFileWriteStream;
 class MIDIFileWriteStreamFile;
 class MIDIFileWrite;
 
-
 /// This class is used internally for writing MIDI files. It is pure virtual and implements a stream of *char*
 /// to be be written to a MIDI file
 class MIDIFileWriteStream
 {
-public:
+  public:
     MIDIFileWriteStream();
     virtual ~MIDIFileWriteStream();
 
     /// To be overriden: sets the position of the next character to be written
-    virtual long Seek ( long pos, int whence = SEEK_SET ) = 0;
+    virtual long Seek( long pos, int whence = SEEK_SET ) = 0;
 
     /// To be overriden: writes a *char*
-    virtual int WriteChar ( int c ) = 0;
+    virtual int WriteChar( int c ) = 0;
 };
 
 /// This class is used internally for writing MIDI files. It inherits from pure virtual MIDIWriteStream and
@@ -77,16 +76,17 @@ public:
 // TODO: fix this
 class MIDIFileWriteStreamFile : public MIDIFileWriteStream
 {
-public:
+  public:
     /// In the constructor you must specify an already opened FILE f
-    MIDIFileWriteStreamFile ( FILE *f_ );
+    MIDIFileWriteStreamFile( FILE *f_ );
 
     /// The destructor doesn't close the file
     virtual ~MIDIFileWriteStreamFile();
 
-    long Seek ( long pos, int whence = SEEK_SET );
-    int WriteChar ( int c );
-protected:
+    long Seek( long pos, int whence = SEEK_SET );
+    int WriteChar( int c );
+
+  protected:
     FILE *f;
 };
 
@@ -94,11 +94,11 @@ protected:
 /// a stream of *char* to a FILE C object specified by its filename
 class MIDIFileWriteStreamFileName : public MIDIFileWriteStreamFile
 {
-public:
+  public:
 
     /// In the constructor you must specify the filename.\ The constructor tries to open the FILE, you
     /// should call IsValid() for checking if it was successful
-    MIDIFileWriteStreamFileName ( const char *fname ) : MIDIFileWriteStreamFile ( fopen ( fname, "wb" ) )
+    MIDIFileWriteStreamFileName( const char *fname ) : MIDIFileWriteStreamFile( fopen( fname, "wb" ) )
     {
     }
 
@@ -119,19 +119,18 @@ public:
     {
         if ( f )
         {
-            fclose ( f );
+            fclose( f );
         }
     }
-
 };
 
 /// This class inherits from MIDIFile and converts MIDI data into a stream of *char*,
 /// writing them to a MIDIFileWriteStream object
 class MIDIFileWrite : protected MIDIFile
 {
-public:
+  public:
     /// In the constructor you must specify the MIDIFileWriteStream.\ The stream must be alreafy opem
-    MIDIFileWrite ( MIDIFileWriteStream *out_stream_ );
+    MIDIFileWrite( MIDIFileWriteStream *out_stream_ );
 
     /// The destructor doesn't destroy or close the MIDIFileWriteStream
     virtual ~MIDIFileWrite();
@@ -168,26 +167,25 @@ public:
 
     /// \name Functions to write specific messages or data chunks
     //@{
-    void WriteFileHeader ( int format, int ntrks, int division );
-    void WriteTrackHeader ( unsigned long length );
+    void WriteFileHeader( int format, int ntrks, int division );
+    void WriteTrackHeader( unsigned long length );
 
-    void WriteEvent ( const MIDITimedBigMessage &m );
+    void WriteEvent( const MIDITimedBigMessage &m );
 
-    void WriteSystemExclusiveEvent ( const MIDITimedBigMessage &m );
-    void WriteTextEvent ( unsigned long time, unsigned char type, const char *text );
-    void WriteMetaEvent ( unsigned long time, unsigned char type, const unsigned char *data, long length );
-    void WriteMetaMisc ( const MIDITimedBigMessage &m );
-    void WriteTempo ( const MIDITimedBigMessage &m );
+    void WriteSystemExclusiveEvent( const MIDITimedBigMessage &m );
+    void WriteTextEvent( unsigned long time, unsigned char type, const char *text );
+    void WriteMetaEvent( unsigned long time, unsigned char type, const unsigned char *data, long length );
+    void WriteMetaMisc( const MIDITimedBigMessage &m );
+    void WriteTempo( const MIDITimedBigMessage &m );
 
-    void WriteKeySignature ( unsigned long time, char sharp_flat, char minor );
-    void WriteTimeSignature (
-        unsigned long time,
-        unsigned char numerator = 4,
-        unsigned char denominator_power = 2,
-        unsigned char midi_clocks_per_metronome = 24,
-        unsigned char num_32nd_per_midi_quarter_note = 8 );
+    void WriteKeySignature( unsigned long time, char sharp_flat, char minor );
+    void WriteTimeSignature( unsigned long time,
+                             unsigned char numerator = 4,
+                             unsigned char denominator_power = 2,
+                             unsigned char midi_clocks_per_metronome = 24,
+                             unsigned char num_32nd_per_midi_quarter_note = 8 );
 
-    void WriteEndOfTrack ( unsigned long time );
+    void WriteEndOfTrack( unsigned long time );
     virtual void RewriteTrackLength();
     //@}
 
@@ -197,34 +195,34 @@ public:
         use_running_status = use;
     }
 
-protected:
-    virtual void Error ( const char *s );
+  protected:
+    virtual void Error( const char *s );
 
-    void WriteCharacter ( uchar c )
+    void WriteCharacter( uchar c )
     {
-        if ( out_stream->WriteChar ( c ) < 0 )
+        if ( out_stream->WriteChar( c ) < 0 )
             error = true;
     }
 
-    void Seek ( long pos )
+    void Seek( long pos )
     {
-        if ( out_stream->Seek ( pos ) < 0 )
+        if ( out_stream->Seek( pos ) < 0 )
             error = true;
     }
 
-    void IncrementCounters ( int c )
+    void IncrementCounters( int c )
     {
         track_length += c;
         file_length += c;
     }
 
-    void WriteShort ( unsigned short c );
-    void Write3Char ( long c );
-    void WriteLong ( unsigned long c );
-    int WriteVariableNum ( unsigned long n );
-    void WriteDeltaTime ( unsigned long time );
+    void WriteShort( unsigned short c );
+    void Write3Char( long c );
+    void WriteLong( unsigned long c );
+    int WriteVariableNum( unsigned long n );
+    void WriteDeltaTime( unsigned long time );
 
-private:
+  private:
     bool use_running_status; // true on default
     bool error;
     bool within_track;
@@ -239,5 +237,3 @@ private:
 }
 
 #endif
-
-

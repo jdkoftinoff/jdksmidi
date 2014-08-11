@@ -43,20 +43,14 @@
 namespace jdksmidi
 {
 
-class  MIDISystemExclusive
+class MIDISystemExclusive
 {
-public:
-    MIDISystemExclusive ( int size = 384 );
+  public:
+    MIDISystemExclusive( int size = 384 );
 
-    MIDISystemExclusive ( const MIDISystemExclusive &e );
+    MIDISystemExclusive( const MIDISystemExclusive &e );
 
-
-    MIDISystemExclusive (
-        unsigned char *buf_,
-        int max_len_,
-        int cur_len_,
-        bool deletable_
-    )
+    MIDISystemExclusive( unsigned char *buf_, int max_len_, int cur_len_, bool deletable_ )
     {
         buf = buf_;
         max_len = max_len_;
@@ -67,7 +61,7 @@ public:
 
     virtual ~MIDISystemExclusive();
 
-    friend bool operator == ( const MIDISystemExclusive &e1, const MIDISystemExclusive &e2 );
+    friend bool operator==( const MIDISystemExclusive &e1, const MIDISystemExclusive &e2 );
 
     void Clear()
     {
@@ -79,49 +73,49 @@ public:
         chk_sum = 0;
     }
 
-    void PutSysByte ( unsigned char b ) // does not add to chksum
+    void PutSysByte( unsigned char b ) // does not add to chksum
     {
         if ( cur_len < max_len )
             buf[cur_len++] = b;
     }
 
-    void PutByte ( unsigned char b )
+    void PutByte( unsigned char b )
     {
-        PutSysByte ( b );
+        PutSysByte( b );
         chk_sum += b;
     }
 
     void PutEXC()
     {
-        PutSysByte ( SYSEX_START_N );
+        PutSysByte( SYSEX_START_N );
     }
     void PutEOX()
     {
-        PutSysByte ( SYSEX_END );
+        PutSysByte( SYSEX_END );
     }
 
     // low nibble first
-    void PutNibblizedByte ( unsigned char b )
+    void PutNibblizedByte( unsigned char b )
     {
-        PutByte ( ( unsigned char ) ( b & 0xf ) );
-        PutByte ( ( unsigned char ) ( b >> 4 ) );
+        PutByte( (unsigned char)( b & 0xf ) );
+        PutByte( (unsigned char)( b >> 4 ) );
     }
 
     // high nibble first
-    void PutNibblizedByte2 ( unsigned char b )
+    void PutNibblizedByte2( unsigned char b )
     {
-        PutByte ( ( unsigned char ) ( b >> 4 ) );
-        PutByte ( ( unsigned char ) ( b & 0xf ) );
+        PutByte( (unsigned char)( b >> 4 ) );
+        PutByte( (unsigned char)( b & 0xf ) );
     }
 
     void PutChecksum()
     {
-        PutByte ( ( unsigned char ) ( chk_sum & 0x7f ) );
+        PutByte( (unsigned char)( chk_sum & 0x7f ) );
     }
 
     unsigned char GetChecksum() const
     {
-        return ( unsigned char ) ( chk_sum & 0x7f );
+        return (unsigned char)( chk_sum & 0x7f );
     }
 
     int GetLengthSE() const
@@ -134,7 +128,7 @@ public:
         return GetLengthSE();
     }
 
-    unsigned char GetData ( int i ) const
+    unsigned char GetData( int i ) const
     {
         return buf[i];
     }
@@ -154,16 +148,14 @@ public:
         return buf;
     }
 
-private:
+  private:
 
     unsigned char *buf;
     int max_len;
     int cur_len;
-    unsigned char  chk_sum;
+    unsigned char chk_sum;
     bool deletable;
 };
 }
 
 #endif
-
-

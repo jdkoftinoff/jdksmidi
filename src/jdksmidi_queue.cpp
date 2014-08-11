@@ -41,7 +41,6 @@ MIDIQueue::MIDIQueue ( int num_msgs )
 {
 }
 
-
 MIDIQueue::~MIDIQueue()
 {
     jdks_safe_delete_array( buf );
@@ -62,7 +61,4 @@ bool MIDIQueue::CanGet() const
 {
     return next_in != next_out;
 }
-
-
-
 }

@@ -25,7 +25,6 @@
  *
  */
 
-
 /* This is a very basic, and not comfortable, step sequencer, made for demostrating
    editing capabilities of the jdksmidi library. It creates an AdvancedSequencer class instance,
    gets it MultiTrack, and allow the user to edit it.
@@ -35,15 +34,11 @@
    same time position.
 */
 
-
 #ifndef TEST_STEPSEQUENCER_H_INCLUDED
 #define TEST_STEPSEQUENCER_H_INCLUDED
 
-
 #include "jdksmidi/advancedsequencer.h"
 using namespace jdksmidi;
-
-
 
 static const char helpstring[] =
 "\nAvailable commands:\n\
@@ -80,34 +75,63 @@ static const char helpstring[] =
    NOTE: when playing, the sequencer notifier will print beat messages,\n\
    messing up the program input prompt. You can still type your commands\n\n";
 
-
 void GetCommand();
 void DumpMIDIMultiTrack( MIDIMultiTrack *mlt );
 
-
-class position {
-public:
+class position
+{
+  public:
 
     position ( MIDIMultiTrack* t ) :
-        time( 0 ), track( 1 ), step ( t->GetClksPerBeat() ), tracks( t ) {}
-    MIDIClockTime gettime() const { return time; }
-    void settime(MIDIClockTime t) { time = t; }
-    int gettrack() const { return track; }
-    void setstep(MIDIClockTime s) { step = s;}
-    MIDIClockTime getstep() const { return step; }
-    void rewind()   { time = 0; }
-    void stepforward()  { time += step; }
-    void stepback() { time = ( time > step ? time - step : 0 ); }
-    void previoustrack()    { track = (track > 1 ? track - 1 : 1); }
-    void nexttrack()    { track = (track < tracks->GetNumTracks()-1 ? track+1 : track); }
+        time( 0 ), track( 1 ), step ( t->GetClksPerBeat() ), tracks( t )
+    {
+    }
+    MIDIClockTime gettime() const
+    {
+        return time;
+    }
+    void settime( MIDIClockTime t )
+    {
+        time = t;
+    }
+    int gettrack() const
+    {
+        return track;
+    }
+    void setstep( MIDIClockTime s )
+    {
+        step = s;
+    }
+    MIDIClockTime getstep() const
+    {
+        return step;
+    }
+    void rewind()
+    {
+        time = 0;
+    }
+    void stepforward()
+    {
+        time += step;
+    }
+    void stepback()
+    {
+        time = ( time > step ? time - step : 0 );
+    }
+    void previoustrack()
+    {
+        track = ( track > 1 ? track - 1 : 1 );
+    }
+    void nexttrack()
+    {
+        track = ( track < tracks->GetNumTracks() - 1 ? track + 1 : track );
+    }
 
-private:
+  private:
     MIDIClockTime time;
     int track;
     MIDIClockTime step;
-    MIDIMultiTrack* tracks;
+    MIDIMultiTrack *tracks;
 };
-
-
 
 #endif // TEST_STEPSEQUENCER_H_INCLUDED

@@ -35,10 +35,8 @@
 #include "jdksmidi/sequencer.h"
 #include "jdksmidi/tick.h"
 
-
 namespace jdksmidi
 {
-
 
 ///
 /// This class manages MIDI playback, picking MIDI messages from a MIDISequencer and sending them to a
@@ -52,18 +50,14 @@ namespace jdksmidi
 
 class MIDIManager : public MIDITick
 {
-public:
+  public:
     /// The constructor.
     /// \param drv the MIDIDriver to whom send MIDI messages
     /// \param n an optional MIDISequencerGUIEventNotifier (so the class can notify the GUI when sequencer starts or stops)
     /// \param seq_ the sequencer that provides MIDI messages. If you leave a NULL pointer (default parameter) you
     /// MUST set it to a valid pointer by SetSeq() method for playing!
     ///
-    MIDIManager (
-        MIDIDriver *drv,
-        MIDISequencerGUIEventNotifier *n = 0,
-        MIDISequencer *seq_ = 0
-    );
+    MIDIManager( MIDIDriver *drv, MIDISequencerGUIEventNotifier *n = 0, MIDISequencer *seq_ = 0 );
 
     /// The destructor doesn't free any memory
     virtual ~MIDIManager()
@@ -74,7 +68,7 @@ public:
     void Reset();
 
     /// Sets current sequencer. The notifier sends to the GUI a GROUP_ALL (reset) message
-    void SetSeq ( MIDISequencer *seq );
+    void SetSeq( MIDISequencer *seq );
 
     /// Returns current sequencer
     MIDISequencer *GetSeq()
@@ -93,14 +87,13 @@ public:
         return driver;
     }
 
-
     /// Sets the system time offset, i.e.\ the delta time between system and manager time.
     /// \param off the current system time in msecs. You can get it with the OS independent
     /// jdks_get_system_time_ms().
     /// \note In previous versions in order to start the sequencer the user had to call this, SetSeqOffset() and
     /// at last SeqPlay(). This was the only practical use of this method, so it has been integrated in SeqPlay()
     /// and now there is no matter to use this alone. See SeqPlay().
-    void SetTimeOffset ( unsigned long off )
+    void SetTimeOffset( unsigned long off )
     {
         sys_time_offset = off;
     }
@@ -125,14 +118,13 @@ public:
         }
     }
 
-
     /// Sets the sequencer time offset, i.e.\ the sequencer starting time.
     /// \param seqoff the sequencer start time in msecs. You can get it with MIDISequencer::GetCurrentTimeInMs()
     /// \note In previous versions in order to start the sequencer the user had to call this, SetTimeOffset() and
     /// at last SeqPlay(). This was the only practical use of this method, so it has been integrated in SeqPlay()
     /// and now there is no matter to use this (unless you want to start the sequencer from a different time from
     /// its 'now' time). See SeqPlay().
-    void SetSeqOffset ( unsigned long seqoff )
+    void SetSeqOffset( unsigned long seqoff )
     {
         seq_time_offset = seqoff;
     }
@@ -155,12 +147,7 @@ public:
     /// Sets internal paramenters for repeated (loop) playing.\ Doesn't starts the playback.
     /// \param flag on/off
     /// \param start_measure, end_measure first and last measures of the loop
-    void SetRepeatPlay (
-        bool flag,
-        unsigned long start_measure,
-        unsigned long end_measure
-    );
-
+    void SetRepeatPlay( bool flag, unsigned long start_measure, unsigned long end_measure );
 
     /// Returns **true** if the sequencer is playing.
     bool IsSeqPlay() const
@@ -180,39 +167,34 @@ public:
         return repeat_play_mode && play_mode;
     }
 
-
     /// This is the callback function inherited from MIDITick class. It only calls TimeTickPlayMode or TimeTickStopMode
-    virtual void TimeTick ( unsigned long sys_time );
+    virtual void TimeTick( unsigned long sys_time );
 
-protected:
+  protected:
 
     /// This is the callback function that at every timer tick picks MIDI messages from the sequencer and
     /// sends them to the driver (and then to the MIDI out port).
-    virtual void TimeTickPlayMode ( unsigned long sys_time_ );
+    virtual void TimeTickPlayMode( unsigned long sys_time_ );
 
     /// Currently this does nothing.
-    virtual void TimeTickStopMode ( unsigned long sys_time_ );
+    virtual void TimeTickStopMode( unsigned long sys_time_ );
 
-    MIDIDriver *driver;                 ///< The driver
+    MIDIDriver *driver; ///< The driver
 
-    MIDISequencer *sequencer;           ///< The sequencer
+    MIDISequencer *sequencer; ///< The sequencer
 
-    unsigned long sys_time_offset;      ///< Delta time between system and manager. Used by TimeTickPlayMode()
-    unsigned long seq_time_offset;      ///< Start time of the sequencer in msecs
+    unsigned long sys_time_offset; ///< Delta time between system and manager. Used by TimeTickPlayMode()
+    unsigned long seq_time_offset; ///< Start time of the sequencer in msecs
 
-    volatile bool play_mode;            ///< *true* if the sequencer is playing
-    volatile bool stop_mode;            ///< *true* if the sequencer is not playing
+    volatile bool play_mode; ///< *true* if the sequencer is playing
+    volatile bool stop_mode; ///< *true* if the sequencer is not playing
 
-    MIDISequencerGUIEventNotifier *notifier;    ///< the notifier that sends messages to the GUI
+    MIDISequencerGUIEventNotifier *notifier; ///< the notifier that sends messages to the GUI
 
-    volatile bool repeat_play_mode;     ///< *true* if the loop mode is on
-    long repeat_start_measure;          ///< first measure of the loop
-    long repeat_end_measure;            ///< last measure of the loop
-
-
+    volatile bool repeat_play_mode; ///< *true* if the loop mode is on
+    long repeat_start_measure;      ///< first measure of the loop
+    long repeat_end_measure;        ///< last measure of the loop
 };
-
-
 }
 
 #endif

@@ -52,7 +52,6 @@ class MIDIMultiTrack;
 class MIDIMultiTrackIteratorState;
 class MIDIMultiTrackIterator;
 
-
 ///
 /// This class holds an array of pointers to MIDITrack objects to be played simultaneously. Every track contains
 /// MIDITimedBigMessage objects representing MIDI events, and all tracks share the same timing (i.e. the events are
@@ -64,16 +63,16 @@ class MIDIMultiTrackIterator;
 
 class MIDIMultiTrack
 {
-private:
+  private:
 
     // delete old multitrack, construct new
-    bool CreateObject ( int num_tracks_, bool deletable_ );
+    bool CreateObject( int num_tracks_, bool deletable_ );
 
-public:
+  public:
 
     /// The constructor. If deletable_ = true it allocates memory for the tracks and deletes it in the destructor,
     /// otherwise the user must manually assign tracks to the array.
-    MIDIMultiTrack ( int max_num_tracks_ = 64, bool deletable_ = true );
+    MIDIMultiTrack( int max_num_tracks_ = 64, bool deletable_ = true );
 
     /// The destructor frees the track pointers if they were allocated by the constructor.
     virtual ~MIDIMultiTrack();
@@ -85,18 +84,18 @@ public:
     /// tracks already allocated.
     /// \warning This function doesn't check if the previously assigned track was allocated, and eventually
     /// doesn't free its memory.
-    void SetTrack ( int track_num, MIDITrack *track )
+    void SetTrack( int track_num, MIDITrack *track )
     {
         tracks[track_num] = track;
     }
 
     /// Returns a pointer to the track _track_num_
-    MIDITrack *GetTrack ( int track_num )
+    MIDITrack *GetTrack( int track_num )
     {
         // assert( track_num < number_of_tracks );
         return tracks[track_num];
     }
-    const MIDITrack *GetTrack ( int track_num ) const
+    const MIDITrack *GetTrack( int track_num ) const
     {
         assert( track_num < number_of_tracks );
         return tracks[track_num];
@@ -117,15 +116,15 @@ public:
     void SortEventsOrder();
 
     /// Delete all tracks and remake the MIDIMultiTrack with _num_tracks_ empty tracks.
-    bool ClearAndResize ( int num_tracks );
+    bool ClearAndResize( int num_tracks );
 
     /// This function is useful in dealing with MIDI format 0 files (with all events in an unique track). It remake
     /// the MIDIMultiTrack object with 17 tracks (src track can be a member of multitrack obiect), moves _src_
     /// track channel events to tracks 1-16 according their channel, and all other types of events to track 0
-    bool AssignEventsToTracks ( const MIDITrack *src );
+    bool AssignEventsToTracks( const MIDITrack *src );
 
     /// The same as previous, but argument is track number of multitrack object himself
-    bool AssignEventsToTracks ( int track_num = 0 )
+    bool AssignEventsToTracks( int track_num = 0 )
     {
         return AssignEventsToTracks( GetTrack( track_num ) );
     }
@@ -142,7 +141,7 @@ public:
     /// Sets the MIDI clocks per beat of all tracks (i.e.\ the number of MIDI ticks in a quarter note).
     /// \warning Currently this function only sets the multitrack internal parameter, and doesn't
     /// perform any time conversion on the MIDITrack objects: so its use is limited to an empty multitrack.
-    void SetClksPerBeat ( int cpb )
+    void SetClksPerBeat( int cpb )
     {
         clks_per_beat = cpb;
     }
@@ -159,35 +158,34 @@ public:
     /* NEW BY NC */
 
     /// Returns **true** if track _n_ is allocated.
-    bool IsValidTrackNum ( int n )
+    bool IsValidTrackNum( int n )
     {
         return ( n >= 0 && n < number_of_tracks && tracks[n] != 0 );
         // the latter may happen if !deletable;
     }
 
     /// Inserts the event _msg_ in the track _trk_. See MIDITrack::InsertEvent() for details.
-    bool InsertEvent( int trk,  const MIDITimedBigMessage& msg, int _ins_mode = INSMODE_DEFAULT );
+    bool InsertEvent( int trk, const MIDITimedBigMessage &msg, int _ins_mode = INSMODE_DEFAULT );
 
     /// Inserts a Note On and a Note Off event into the track. See MIDITrack::InsertNote() for details.
-    bool InsertNote( int trk, const MIDITimedBigMessage& msg, MIDIClockTime len, int _ins_mode = INSMODE_DEFAULT );
+    bool InsertNote( int trk, const MIDITimedBigMessage &msg, MIDIClockTime len, int _ins_mode = INSMODE_DEFAULT );
 
     /// Deletes the event _msg_ from the track _trk_. See MIDITrack::DeleteEvent() for details.
-    bool DeleteEvent( int trk,  const MIDITimedBigMessage& msg );
+    bool DeleteEvent( int trk, const MIDITimedBigMessage &msg );
 
     /// Deletes the note _msg_ (_msg_ must be a Note On) from the track _trk_. See MIDITrack::DeleteNote() for details.
-    bool DeleteNote( int trk, const MIDITimedBigMessage& msg );
+    bool DeleteNote( int trk, const MIDITimedBigMessage &msg );
 
     /* END OF NEW BY NC */
 
-protected:
+  protected:
 
-    MIDITrack **tracks;                     ///< The array of pointers to the MIDITrack objects
-    int number_of_tracks;                   ///< The number of allocated tracks
-    bool deletable;                         ///< If **true** tracks are owned by the multitrack
+    MIDITrack **tracks;   ///< The array of pointers to the MIDITrack objects
+    int number_of_tracks; ///< The number of allocated tracks
+    bool deletable;       ///< If **true** tracks are owned by the multitrack
 
-    int clks_per_beat;                      ///< The common clock per beat timing parameter
+    int clks_per_beat; ///< The common clock per beat timing parameter
 };
-
 
 /// This class is used by the MIDIMultiTrackIterator to keep track of the current state of the iterator. You
 /// usually don't need to deal with it, and the only useful thing is getting and restoring a state for faster
@@ -195,19 +193,19 @@ protected:
 
 class MIDIMultiTrackIteratorState
 {
-public:
+  public:
 
     /// The constructor creates a MIDIMultiTrackIteratorState with a given number of tracks.
-    MIDIMultiTrackIteratorState ( int num_tracks_ = 64 );
+    MIDIMultiTrackIteratorState( int num_tracks_ = 64 );
 
     /// The copy constructor.
-    MIDIMultiTrackIteratorState ( const MIDIMultiTrackIteratorState &m );
+    MIDIMultiTrackIteratorState( const MIDIMultiTrackIteratorState &m );
 
     /// The destructor.
     virtual ~MIDIMultiTrackIteratorState();
 
     /// The equal operator
-    const MIDIMultiTrackIteratorState & operator = ( const MIDIMultiTrackIteratorState &m );
+    const MIDIMultiTrackIteratorState &operator=( const MIDIMultiTrackIteratorState &m );
 
     /// Returns the numver of tracks
     int GetNumTracks() const
@@ -233,11 +231,11 @@ public:
     /// Finds the tracks of the first event. Used internally by the MIDIMultiTrackIterator
     int FindTrackOfFirstEvent();
 
-    MIDIClockTime cur_time;                     ///< The current time
-    int cur_event_track;                        ///< The track of current event
-    int num_tracks;                             ///< The number of tracks
-    int *next_event_number;                     ///< An array of integers (the number of next event in every track)
-    MIDIClockTime *next_event_time;             ///< An array of MIDIClockTime (the time of the next event in every track)
+    MIDIClockTime cur_time;         ///< The current time
+    int cur_event_track;            ///< The track of current event
+    int num_tracks;                 ///< The number of tracks
+    int *next_event_number;         ///< An array of integers (the number of next event in every track)
+    MIDIClockTime *next_event_time; ///< An array of MIDIClockTime (the time of the next event in every track)
 };
 
 ///
@@ -249,28 +247,28 @@ public:
 
 class MIDIMultiTrackIterator
 {
-public:
+  public:
 
     /// The constructor.
-    MIDIMultiTrackIterator ( const MIDIMultiTrack *mlt );
+    MIDIMultiTrackIterator( const MIDIMultiTrack *mlt );
 
     /// The destructor.
     virtual ~MIDIMultiTrackIterator();
 
     /// Sets as current the first event with time equal to _time_ (or less, if there aren't events at the
     /// given time).
-    void GoToTime ( MIDIClockTime time );
+    void GoToTime( MIDIClockTime time );
 
     /// Gets the MIDI time of the current event.
     /// \return **true** if there is effectively a current event, **false** if we are at the end of the multitrack.
-    bool GetCurEventTime ( MIDIClockTime *t ) const;
+    bool GetCurEventTime( MIDIClockTime *t ) const;
 
     /// Gets the current event, returning its track and a pointer to it.
     /// \param [out] *track the track of the current event
     /// \param [out] **msg a pointer to the current event
     /// \return **true** if there is effectively a current event, **false** if we are at the end of the multitrack
     /// \warning this function doesn't move the iterator to the next event; you must call GoToNextEvent().
-    bool GetCurEvent ( int *track, const MIDITimedBigMessage **msg ) const;
+    bool GetCurEvent( int *track, const MIDITimedBigMessage **msg ) const;
 
     /// Moves the iterator to the next event.
     /// \return **true** if the operation was successful (the current event was defined and wasn't the last
@@ -280,7 +278,7 @@ public:
     /// Moves the iterator to the next event on track _track_.
     /// \return **true** if the operation was successful (the current event was defined and wasn't the last
     /// event on the track), **false** otherwise.
-    bool GoToNextEventOnTrack ( int track );
+    bool GoToNextEventOnTrack( int track );
 
     //@{
     /// Gets the state of the iterator (see MultiTrackIteratorState).
@@ -298,25 +296,22 @@ public:
     /// Sets the state of the iterator (see MultiTrackIteratorState). If you want perform something with
     /// the iterator and then return to the initial situation you can save your state with GetState(), do
     /// what you want and then restore the saved state with this.
-    void SetState ( const MIDIMultiTrackIteratorState &s )
+    void SetState( const MIDIMultiTrackIteratorState &s )
     {
         state = s;
     }
 
     /// Gets the associated MIDIMultiTrack.
-    const MIDIMultiTrack * GetMultiTrack() const
+    const MIDIMultiTrack *GetMultiTrack() const
     {
         return multitrack;
     }
 
-protected:
+  protected:
 
-    const MIDIMultiTrack *multitrack;           ///< The associated multitrack
-    MIDIMultiTrackIteratorState state;          ///< The state of the iterator
+    const MIDIMultiTrack *multitrack;  ///< The associated multitrack
+    MIDIMultiTrackIteratorState state; ///< The state of the iterator
 };
-
 }
 
 #endif
-
-

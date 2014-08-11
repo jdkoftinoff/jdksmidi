@@ -43,10 +43,10 @@ namespace jdksmidi
 
 class MIDIQueue
 {
-public:
+  public:
 
     /// The constructor creates a queue of size _num_msgs_
-    MIDIQueue ( int num_msgs );
+    MIDIQueue( int num_msgs );
 
     /// The destructor frees allocated memory
     virtual ~MIDIQueue();
@@ -67,7 +67,7 @@ public:
     }
 
     /// Puts the MIDI message _msg_ in the queue
-    void Put ( const MIDITimedBigMessage &msg )
+    void Put( const MIDITimedBigMessage &msg )
     {
         buf[next_in] = msg;
         next_in = ( next_in + 1 ) % bufsize;
@@ -76,7 +76,7 @@ public:
     /// Get next message from the queue
     MIDITimedBigMessage Get() const
     {
-        return MIDITimedBigMessage ( buf[next_out] );
+        return MIDITimedBigMessage( buf[next_out] );
     }
 
     /// Moves the next_out pointer without getting messages
@@ -91,13 +91,12 @@ public:
         return &buf[next_out];
     }
 
-protected:
-    MIDITimedBigMessage *buf;       ///< The array of MIDI messages
-    int bufsize;                    ///< The size of the array
-    volatile int next_in;           ///< The next free index for putting messages
-    volatile int next_out;          ///< The index of the next message to get
+  protected:
+    MIDITimedBigMessage *buf; ///< The array of MIDI messages
+    int bufsize;              ///< The size of the array
+    volatile int next_in;     ///< The next free index for putting messages
+    volatile int next_out;    ///< The index of the next message to get
 };
-
 }
 
 #endif

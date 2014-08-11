@@ -39,7 +39,7 @@ namespace jdksmidi
 
 class MIDITick
 {
-public:
+  public:
     MIDITick()
     {
     }
@@ -47,9 +47,8 @@ public:
     virtual ~MIDITick();
 
     /// The callback function
-    virtual void TimeTick ( unsigned long sys_time ) = 0;
+    virtual void TimeTick( unsigned long sys_time ) = 0;
 };
-
 }
 
 #endif

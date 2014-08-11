@@ -51,16 +51,16 @@ void CollapseMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst );
 // midi channel events to tracks 1-16, and all other types of events to track 0
 void CollapseAndExpandMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst );
 
-bool ReadMidiFile(const char *file, MIDIMultiTrack &dst);
+bool ReadMidiFile( const char *file, MIDIMultiTrack &dst );
 
 // write multitrack to midi file; note that src must contain right clks_per_beat value
-bool WriteMidiFile(const MIDIMultiTrack &src, const char *file, bool use_running_status = true);
+bool WriteMidiFile( const MIDIMultiTrack &src, const char *file, bool use_running_status = true );
 
-double GetMusicDurationInSeconds(const MIDIMultiTrack &mt);
+double GetMusicDurationInSeconds( const MIDIMultiTrack &mt );
 
-std::string MultiTrackAsText(const MIDIMultiTrack &mt);
+std::string MultiTrackAsText( const MIDIMultiTrack &mt );
 
-std::string EventAsText(const MIDITimedBigMessage &ev);
+std::string EventAsText( const MIDITimedBigMessage &ev );
 
 // add ticks time to all last track events (i.e. to all events with max time value)
 void LastEventsProlongation( MIDIMultiTrack &tracks, int track_num, MIDIClockTime add_ticks );
@@ -68,23 +68,25 @@ void LastEventsProlongation( MIDIMultiTrack &tracks, int track_num, MIDIClockTim
 // add "pause" after last track event
 bool AddEndingPause( MIDIMultiTrack &tracks, int track_num, MIDIClockTime pause_ticks );
 
-template <class I> inline void jdks_safe_delete_object(I *&obj)
+template <class I>
+inline void jdks_safe_delete_object( I *&obj )
 {
     delete obj;
     obj = 0;
 }
 
-template <class I> inline void jdks_safe_delete_array(I *&arr)
+template <class I>
+inline void jdks_safe_delete_array( I *&arr )
 {
-    delete [] arr;
+    delete[] arr;
     arr = 0;
 }
 
-template <class D> inline int jdks_float2int(D d)
+template <class D>
+inline int jdks_float2int( D d )
 {
-    return int( d >= D(0.) ? ( d + D(0.5) ):( d - D(0.5) ) );
+    return int( d >= D( 0. ) ? ( d + D( 0.5 ) ) : ( d - D( 0.5 ) ) );
 }
-
 }
 
 #endif

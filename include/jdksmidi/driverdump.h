@@ -45,40 +45,56 @@ namespace jdksmidi
 class MIDIDriverDump : public MIDIDriver
 {
 
-public:
+  public:
 
     /// The constructor.
-    MIDIDriverDump ( int queue_size, FILE *outfile );
+    MIDIDriverDump( int queue_size, FILE *outfile );
 
     /// The destructor.
     virtual ~MIDIDriverDump();
 
     /// The following must be implemented because they are pure virtual in base class. However they are dummy
-    virtual bool OpenMIDIInPort ( int id = 0 ) { return true; }
+    virtual bool OpenMIDIInPort( int id = 0 )
+    {
+        return true;
+    }
 
-    virtual bool OpenMIDIOutPort ( int id = 0 ) { return true; }
+    virtual bool OpenMIDIOutPort( int id = 0 )
+    {
+        return true;
+    }
 
-    virtual void CloseMIDIInPort() {}
+    virtual void CloseMIDIInPort()
+    {
+    }
 
-    virtual void CloseMIDIOutPort() {}
+    virtual void CloseMIDIOutPort()
+    {
+    }
 
-    virtual void ResetMIDIOut() {}
+    virtual void ResetMIDIOut()
+    {
+    }
 
-    virtual bool StartTimer ( int res = 0 ) { return true; }
+    virtual bool StartTimer( int res = 0 )
+    {
+        return true;
+    }
 
-    virtual void StopTimer() {}
+    virtual void StopTimer()
+    {
+    }
 
     /// Prints the MIDI message _msg_ to the file
-    virtual bool HardwareMsgOut ( const MIDITimedBigMessage &msg );
+    virtual bool HardwareMsgOut( const MIDITimedBigMessage &msg );
 
     /// Callback function
-    virtual void TimeTick ( unsigned long sys_time );
+    virtual void TimeTick( unsigned long sys_time );
 
-protected:
+  protected:
 
-    FILE *f;            ///< The output file
+    FILE *f; ///< The output file
 };
-
 }
 
 #endif

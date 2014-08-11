@@ -41,25 +41,25 @@
 namespace jdksmidi
 {
 
-class  MIDIParser
+class MIDIParser
 {
-public:
-    MIDIParser ( ushort max_sysex_size = 384 );
-    virtual  ~MIDIParser();
+  public:
+    MIDIParser( ushort max_sysex_size = 384 );
+    virtual ~MIDIParser();
 
-    void  Clear()
+    void Clear()
     {
         state = FIND_STATUS;
     }
 
-    virtual bool Parse ( uchar b, MIDIMessage *msg );
+    virtual bool Parse( uchar b, MIDIMessage *msg );
 
     MIDISystemExclusive *GetSystemExclusive() const
     {
         return sysex;
     }
 
-protected:
+  protected:
 
     //
     // The states used for parsing messages.
@@ -67,27 +67,23 @@ protected:
 
     enum State
     {
-        FIND_STATUS,  // ignore data bytes
-        FIRST_OF_ONE,  // read first data byte of a one data byte msg
-        FIRST_OF_TWO,  // read first data byte of two data byte msg
-        SECOND_OF_TWO,  // read second data byte of two data byte msg
+        FIND_STATUS,        // ignore data bytes
+        FIRST_OF_ONE,       // read first data byte of a one data byte msg
+        FIRST_OF_TWO,       // read first data byte of two data byte msg
+        SECOND_OF_TWO,      // read second data byte of two data byte msg
         FIRST_OF_ONE_NORUN, // read one byte message, do not allow
         // running status (for MTC)
-        SYSEX_DATA  // read sysex data byte
+        SYSEX_DATA // read sysex data byte
     };
 
     MIDIMessage tmp_msg;
     MIDISystemExclusive *sysex;
-    State  state;
+    State state;
 
-    bool ParseSystemByte ( uchar b, MIDIMessage *msg );
-    bool ParseDataByte ( uchar b, MIDIMessage *msg );
-    void ParseStatusByte ( uchar b );
+    bool ParseSystemByte( uchar b, MIDIMessage *msg );
+    bool ParseDataByte( uchar b, MIDIMessage *msg );
+    void ParseStatusByte( uchar b );
 };
-
-
 }
 
 #endif
-
-

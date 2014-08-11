@@ -34,13 +34,12 @@ using namespace jdksmidi;
 #include <string>
 using namespace std;
 
-
 //
 // globals
 //
 
-string command_buf, command, par1, par2;    // used by GetCommand() for parsing the user input
-AdvancedSequencer sequencer;                // an AdvancedSequencer (without GUI notifier)
+string command_buf, command, par1, par2; // used by GetCommand() for parsing the user input
+AdvancedSequencer sequencer;             // an AdvancedSequencer (without GUI notifier)
 
 const char helpstring[] =
 "\nAvailable commands:\n\
@@ -75,7 +74,6 @@ const char helpstring[] =
    quit                : Exits\n\
 All commands can be given during playback\n";
 
-
 void GetCommand()
 // gets from the user the string command_buf, then parses it dividing it into command, par1 and par2 substrings
 {
@@ -88,36 +86,35 @@ void GetCommand()
     par1 = "";
     par2 = "";
 
-    for ( size_t i = 0; i < command_buf.size(); ++i)
+    for ( size_t i = 0; i < command_buf.size(); ++i )
     {
-        command_buf[i] = tolower( command_buf[i]);
+        command_buf[i] = tolower( command_buf[i] );
     }
 
-    pos1 = command_buf.find_first_not_of ( " ");
-    pos2 = command_buf.find_first_of (" ", pos1+1);
+    pos1 = command_buf.find_first_not_of( " " );
+    pos2 = command_buf.find_first_of( " ", pos1 + 1 );
     if ( pos1 == string::npos )
     {
         return;
     }
-    command = command_buf.substr (pos1, pos2 - pos1);
+    command = command_buf.substr( pos1, pos2 - pos1 );
 
-    pos1 = command_buf.find_first_not_of ( " ", pos2);
-    pos2 = command_buf.find_first_of (" ", pos1+1);
+    pos1 = command_buf.find_first_not_of( " ", pos2 );
+    pos2 = command_buf.find_first_of( " ", pos1 + 1 );
     if ( pos1 == string::npos )
     {
         return;
     }
-    par1 = command_buf.substr (pos1, pos2 - pos1);
+    par1 = command_buf.substr( pos1, pos2 - pos1 );
 
-    pos1 = command_buf.find_first_not_of ( " ", pos2);
-    pos2 = command_buf.find_first_of (" ", pos1+1);
+    pos1 = command_buf.find_first_not_of( " ", pos2 );
+    pos2 = command_buf.find_first_of( " ", pos1 + 1 );
     if ( pos1 == string::npos )
     {
         return;
     }
-    par2 = command_buf.substr (pos1, pos2 - pos1);
+    par2 = command_buf.substr( pos1, pos2 - pos1 );
 }
-
 
 void DumpMIDITimedBigMessage( const MIDITimedBigMessage *msg )
 {
@@ -130,69 +127,66 @@ void DumpMIDITimedBigMessage( const MIDITimedBigMessage *msg )
         // see MIDISequencer::beat_marker_msg.SetBeatMarker()
         if ( msg->IsBeatMarker() )
         {
-            fprintf ( stdout, "%8ld : %s <------------------>", msg->GetTime(), msg->MsgToText ( msgbuf ) );
+            fprintf( stdout, "%8ld : %s <------------------>", msg->GetTime(), msg->MsgToText( msgbuf ) );
         }
         else
         {
-            fprintf ( stdout, "%8ld : %s", msg->GetTime(), msg->MsgToText ( msgbuf ) );
+            fprintf( stdout, "%8ld : %s", msg->GetTime(), msg->MsgToText( msgbuf ) );
         }
 
         if ( msg->IsSystemExclusive() )
         {
-            fprintf ( stdout, "SYSEX length: %d", msg->GetSysEx()->GetLengthSE() );
+            fprintf( stdout, "SYSEX length: %d", msg->GetSysEx()->GetLengthSE() );
         }
 
-        fprintf ( stdout, "\n" );
+        fprintf( stdout, "\n" );
     }
 }
 
 void DumpMIDIMultiTrack( MIDIMultiTrack *mlt )
 {
-    MIDIMultiTrackIterator i ( mlt );
+    MIDIMultiTrackIterator i( mlt );
     const MIDITimedBigMessage *msg;
-    fprintf ( stdout , "Clocks per beat: %d\n\n", mlt->GetClksPerBeat() );
-    i.GoToTime ( 0 );
+    fprintf( stdout, "Clocks per beat: %d\n\n", mlt->GetClksPerBeat() );
+    i.GoToTime( 0 );
 
     int num_lines = 0;
     do
     {
         int trk_num;
 
-        if ( i.GetCurEvent ( &trk_num, &msg ) )
+        if ( i.GetCurEvent( &trk_num, &msg ) )
         {
-            fprintf ( stdout, "#%2d - ", trk_num );
-            DumpMIDITimedBigMessage ( msg );
+            fprintf( stdout, "#%2d - ", trk_num );
+            DumpMIDITimedBigMessage( msg );
         }
         num_lines++;
-        if (num_lines == 100)
+        if ( num_lines == 100 )
         {
-            system ("PAUSE");
+            system( "PAUSE" );
             num_lines = 0;
         }
-    }
-    while ( i.GoToNextEvent() );
+    } while ( i.GoToNextEvent() );
 }
-
-
 
 int main( int argc, char **argv )
 {
     cout << "TYPE help TO GET A LIST OF AVAILABLE COMMANDS" << endl << endl;
     sequencer.SetMIDIThruEnable( true );
-    while ( command != "quit" )                     // main loop
+    while ( command != "quit" ) // main loop
     {
-        GetCommand();                               // gets user input and parse it
+        GetCommand(); // gets user input and parse it
 
-        if( command == "load" )                     // loads a file
+        if ( command == "load" ) // loads a file
         {
-            if ( sequencer.Load( par1.c_str() ))
+            if ( sequencer.Load( par1.c_str() ) )
             {
                 cout << "Loaded file " << par1 << endl;
                 // test if all events are in track 0 ...
                 if ( sequencer.GetMUltiTrack()->GetNumTracksWithEvents() == 1 )
                 {
-                    cout << "WARNING: this is a Format 0 Midi File (all events in one track)\n" <<
-                            "some commands (mute, solo ...) won't have effect on it\n";
+                    cout << "WARNING: this is a Format 0 Midi File (all events in one track)\n"
+                         << "some commands (mute, solo ...) won't have effect on it\n";
                 }
             }
             else
@@ -200,7 +194,7 @@ int main( int argc, char **argv )
                 cout << "Error loading file" << endl;
             }
         }
-        else if ( command == "ports")               // enumerates the midi ports
+        else if ( command == "ports" ) // enumerates the midi ports
         {
             if ( MIDIDriver::GetNumMIDIInDevs() )
             {
@@ -227,86 +221,82 @@ int main( int argc, char **argv )
                 cout << "NO MIDI OUT PORTS" << endl;
             }
         }
-        else if ( command == "outport")                 // changes the midi out port
+        else if ( command == "outport" ) // changes the midi out port
         {
             int port = atoi( par1.c_str() );
             sequencer.SetOutputPort( port );
             cout << "Assigned out port n. " << sequencer.GetOutputPort();
         }
-        else if ( command == "inport" )                 // changes the midi in port
+        else if ( command == "inport" ) // changes the midi in port
         {
             int port = atoi( par1.c_str() );
             sequencer.SetInputPort( port );
             cout << "Assigned in port n. " << sequencer.GetInputPort();
         }
-        else if ( command == "play")                    // starts playback
+        else if ( command == "play" ) // starts playback
         {
             sequencer.Play();
-            cout << "Sequencer started at measure: " << sequencer.GetMeasure() << ":"
-                 << sequencer.GetBeat() << endl;
+            cout << "Sequencer started at measure: " << sequencer.GetMeasure() << ":" << sequencer.GetBeat() << endl;
         }
-        else if ( command == "loop" )                   // sets repeates play
+        else if ( command == "loop" ) // sets repeates play
         {
             int beg = atoi( par1.c_str() );
             int end = atoi( par2.c_str() );
-            if ( !(beg == 0 && end == 0) )
+            if ( !( beg == 0 && end == 0 ) )
             {
                 sequencer.SetRepeatPlay( true, beg, end );
                 cout << "Repeat play set from measure " << beg << " to measure " << end << endl;
             }
             else
             {
-                sequencer.SetRepeatPlay(false, 0, 0);
+                sequencer.SetRepeatPlay( false, 0, 0 );
                 cout << "Repeat play cleared" << endl;
             }
         }
-        else if (command == "stop")                     // stops playback
+        else if ( command == "stop" ) // stops playback
         {
             sequencer.Stop();
-            cout << "Sequencer stopped at measure: " << sequencer.GetMeasure() << ":"
-                 << sequencer.GetBeat() << endl;
+            cout << "Sequencer stopped at measure: " << sequencer.GetMeasure() << ":" << sequencer.GetBeat() << endl;
         }
-        else if ( command == "rew")                     // stops and rewind to time 0
+        else if ( command == "rew" ) // stops and rewind to time 0
         {
             sequencer.GoToZero();
             cout << "Rewind to 0:0" << endl;
         }
-        else if ( command == "goto")                    // goes to meas and beat
+        else if ( command == "goto" ) // goes to meas and beat
         {
             int measure = atoi( par1.c_str() );
-            int beat = atoi ( par2.c_str() );
-            if ( measure < 0 || measure > sequencer.GetNumMeasures() - 1)
+            int beat = atoi( par2.c_str() );
+            if ( measure < 0 || measure > sequencer.GetNumMeasures() - 1 )
             {
                 cout << "Invalid position" << endl;
             }
             else
             {
                 sequencer.GoToMeasure( measure, beat );
-                cout << "Actual position: " << sequencer.GetMeasure() << ":"
-                 << sequencer.GetBeat() << endl;
+                cout << "Actual position: " << sequencer.GetMeasure() << ":" << sequencer.GetBeat() << endl;
             }
-
         }
-        else if ( command == "dump")                    // prints a dump of the sequencer contents
+        else if ( command == "dump" ) // prints a dump of the sequencer contents
         {
             DumpMIDIMultiTrack( sequencer.GetMultiTrack() );
         }
-        else if ( command == "solo")                    // soloes a track
+        else if ( command == "solo" ) // soloes a track
         {
             int track = atoi( par1.c_str() );
             sequencer.SoloTrack( track );
             cout << "Soloed track " << track << endl;
         }
-        else if ( command == "unsolo")                  // unsoloes all tracks
+        else if ( command == "unsolo" ) // unsoloes all tracks
         {
             sequencer.UnSoloTrack();
             cout << "Unsoloed all tracks" << endl;
         }
-        else if ( command == "mute")                    // mutes a track
+        else if ( command == "mute" ) // mutes a track
         {
             int track = atoi( par1.c_str() );
-            sequencer.SetTrackMute( track, !sequencer.GetTrackMute( track ));
-            if (sequencer.GetTrackMute( track))
+            sequencer.SetTrackMute( track, !sequencer.GetTrackMute( track ) );
+            if ( sequencer.GetTrackMute( track ) )
             {
                 cout << "Muted track " << track << endl;
             }
@@ -315,70 +305,66 @@ int main( int argc, char **argv )
                 cout << "Unmuted track " << track << endl;
             }
         }
-        else if ( command == "unmute")                  // unmutes a track
+        else if ( command == "unmute" ) // unmutes a track
         {
             sequencer.UnmuteAllTracks();
             cout << "Unmuted all tracks" << endl;
         }
-        else if ( command == "tscale")                  // scales plsyback tempo
+        else if ( command == "tscale" ) // scales plsyback tempo
         {
             int scale = atoi( par1.c_str() );
             sequencer.SetTempoScale( (float)scale / 100 );
-            cout << "Tempo scale : " << scale << "%  " <<
-                    " Effective tempo: " << sequencer.GetTempoWithScale() << "bpm" << endl;
+            cout << "Tempo scale : " << scale << "%  "
+                 << " Effective tempo: " << sequencer.GetTempoWithScale() << "bpm" << endl;
         }
-        else if ( command == "vscale" )                 // scales velocity for a track
+        else if ( command == "vscale" ) // scales velocity for a track
         {
             int track = atoi( par1.c_str() );
             int scale = atoi( par2.c_str() );
             sequencer.SetTrackVelocityScale( track, scale );
             cout << "Track " << track << " velocity scale set to " << scale << "%" << endl;
         }
-        else if ( command == "trans" )                  // transposes a track
+        else if ( command == "trans" ) // transposes a track
         {
             int track = atoi( par1.c_str() );
             int amount = atoi( par2.c_str() );
             sequencer.SetTrackTranspose( track, amount );
             cout << "Track " << track << " transposed by " << amount << " semitones " << endl;
         }
-        else if ( command == "tracknames")              // prints track names
+        else if ( command == "tracknames" ) // prints track names
         {
             cout << "\nTrack Names:" << endl;
-            for (int i = 1; i < sequencer.GetNumTracks(); i++)
+            for ( int i = 1; i < sequencer.GetNumTracks(); i++ )
             {
                 cout << "Track " << i << ": " << sequencer.GetTrackName( i ) << endl;
-
             }
         }
-        else if ( command == "b")                       // goes a measure backward
+        else if ( command == "b" ) // goes a measure backward
         {
             int meas = sequencer.GetMeasure();
             if ( meas > 0 )
             {
-                sequencer.GoToMeasure(--meas);
+                sequencer.GoToMeasure( --meas );
             }
-            cout << "Actual position: " << sequencer.GetMeasure() << ":"
-                 << sequencer.GetBeat() << endl;
+            cout << "Actual position: " << sequencer.GetMeasure() << ":" << sequencer.GetBeat() << endl;
         }
-        else if ( command == "f")                       // goes a measure forward
+        else if ( command == "f" ) // goes a measure forward
         {
             int meas = sequencer.GetMeasure();
             if ( meas < sequencer.GetNumMeasures() )
             {
-                sequencer.GoToMeasure(++meas);
+                sequencer.GoToMeasure( ++meas );
             }
-            cout << "Actual position: " << sequencer.GetMeasure() << ":"
-                 << sequencer.GetBeat() << endl;
+            cout << "Actual position: " << sequencer.GetMeasure() << ":" << sequencer.GetBeat() << endl;
         }
-        else if ( command == "help")                    // prints help screen
+        else if ( command == "help" ) // prints help screen
         {
             cout << helpstring;
         }
-        else if ( command != "quit" )                   // exits
+        else if ( command != "quit" ) // exits
         {
             cout << "Unrecognized command" << endl;
         }
     }
     return EXIT_SUCCESS;
 }
-

@@ -74,7 +74,7 @@ class MIDIDeltaTimedBigMessage;
 
 class MIDIMessage
 {
-public:
+  public:
 
     ///@name The Constructors and Initializing methods
     //@{
@@ -83,10 +83,10 @@ public:
     MIDIMessage();
 
     /// Copy Constructor.
-    MIDIMessage ( const MIDIMessage &m );
+    MIDIMessage( const MIDIMessage &m );
 
     /// The assignment operator. Copies the MIDIMessage value.
-    const MIDIMessage & operator = ( const MIDIMessage &m );
+    const MIDIMessage &operator=( const MIDIMessage &m );
 
     /// Set the MIDIMessage object to 0
     void Clear()
@@ -99,7 +99,7 @@ public:
     }
 
     /// Copy the value of the specified MIDIMessage.
-    void Copy ( const MIDIMessage & m )
+    void Copy( const MIDIMessage &m )
     {
         *this = m;
     }
@@ -108,7 +108,7 @@ public:
 
     /// Create a human readable ascii string describing the message.  This is potentially unsafe as the 'txt'
     /// param must point to a buffer of at least 64 chars long.
-    const char * MsgToText ( char *txt ) const;
+    const char *MsgToText( char *txt ) const;
 
     ///@name The Query methods.
     //@{
@@ -125,19 +125,20 @@ public:
     /// Get the status byte of the message.
     unsigned char GetStatus() const
     {
-        return ( unsigned char ) status;
+        return (unsigned char)status;
     }
 
     /// If the message is a channel message, this method returns the MIDI channel (0...15) that the message is on.
     unsigned char GetChannel() const
     {
-        return ( unsigned char ) ( status & 0x0F );
+        return (unsigned char)( status & 0x0F );
     }
 
-    /// If the message is a channel message, this method returns the relevant top 4 bits which describe what type of channel message it is.
+    /// If the message is a channel message, this method returns the relevant top 4 bits which describe what type of channel
+    /// message it is.
     unsigned char GetType() const
     {
-        return ( unsigned char ) ( status & 0xF0 );
+        return (unsigned char)( status & 0xF0 );
     }
 
     /// If the message is some sort of meta-message, then GetMetaType() returns the type byte.
@@ -233,13 +234,13 @@ public:
     /// If the message is a bender message, GetBenderValue() returns the signed 14 bit bender value.
     short GetBenderValue() const
     {
-         return ( short ) ( ( ( byte2 << 7 ) | byte1 ) - 8192 );
+        return (short)( ( ( byte2 << 7 ) | byte1 ) - 8192 );
     }
 
     /// If the message is a meta-message, GetMetaValue() returns the unsigned 14 bit value attached.
     unsigned short GetMetaValue() const
     {
-        return ( unsigned short ) ( ( byte3 << 8 ) | byte2 );
+        return (unsigned short)( ( byte3 << 8 ) | byte2 );
     }
 
     /// If the message is a time signature meta-message, GetTimeSigNumerator() returns the numerator of the time signature.
@@ -254,25 +255,29 @@ public:
         return byte3;
     }
 
-    /// If the message is a time signature meta-message, GetTimeSigDenominatorPower() returns the denominator power of the time signature.
+    /// If the message is a time signature meta-message, GetTimeSigDenominatorPower() returns the denominator power of the time
+    /// signature.
     unsigned char GetTimeSigDenominatorPower() const
     {
         return byte4;
     }
 
-    /// If the message is a key signature meta-message, GetKeySigSharpFlats() returns the standard midi file form of the key. Negative values means that many flats, positive numbers means that many sharps.
+    /// If the message is a key signature meta-message, GetKeySigSharpFlats() returns the standard midi file form of the key.
+    /// Negative values means that many flats, positive numbers means that many sharps.
     signed char GetKeySigSharpFlats() const
     {
-        return ( signed char ) byte2;
+        return (signed char)byte2;
     }
 
-    /// If the message is a key signature meta-message, GetKeySigMajorMinor() returns the standard midi file form of the key major/minor flag. 0 means a major key, 1 means a minor key.
+    /// If the message is a key signature meta-message, GetKeySigMajorMinor() returns the standard midi file form of the key
+    /// major/minor flag. 0 means a major key, 1 means a minor key.
     unsigned char GetKeySigMajorMinor() const
     {
         return byte3;
     }
 
-    /// If the message is a pan message (control 0x0a), GetPanorama() returns the percent vslue of the panorama (-100 = left, 100 = right).
+    /// If the message is a pan message (control 0x0a), GetPanorama() returns the percent vslue of the panorama (-100 = left,
+    /// 100 = right).
     double GetPan() const;
 
     /// If the message is a service message (not MIDI) IsServiceMsg() will return true.
@@ -281,139 +286,138 @@ public:
         return service_num != NOT_SERVICE;
     }
 
-    /// If the message is some sort of real time channel message, IsChannelMsg() will return true. You can then call GetChannel() for more information.
+    /// If the message is some sort of real time channel message, IsChannelMsg() will return true. You can then call
+    /// GetChannel() for more information.
     bool IsChannelMsg() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( status >= 0x80 ) && ( status < 0xF0 );
+        return ( service_num == NOT_SERVICE ) && ( status >= 0x80 ) && ( status < 0xF0 );
     }
 
-    /// If the message is a note on message, IsNoteOn() will return true. You can then call GetChannel(), GetNote() and GetVelocity() for further information.
+    /// If the message is a note on message, IsNoteOn() will return true. You can then call GetChannel(), GetNote() and
+    /// GetVelocity() for further information.
     bool IsNoteOn() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( ( status & 0xf0 ) == NOTE_ON );
+        return ( service_num == NOT_SERVICE ) && ( ( status & 0xf0 ) == NOTE_ON );
     }
 
-    /// If the message is a note off message, IsNoteOff() will return true. You can then call GetChannel(), GetNote() and GetVelocity() for further information.
+    /// If the message is a note off message, IsNoteOff() will return true. You can then call GetChannel(), GetNote() and
+    /// GetVelocity() for further information.
     bool IsNoteOff() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( ( status & 0xf0 ) == NOTE_OFF );
+        return ( service_num == NOT_SERVICE ) && ( ( status & 0xf0 ) == NOTE_OFF );
     }
 
-    /// If the message is a note on message and velocity=0 (i.e. note off), IsNoteOnV0() will return true. You can then call GetChannel(), GetNote() for further information.
+    /// If the message is a note on message and velocity=0 (i.e. note off), IsNoteOnV0() will return true. You can then call
+    /// GetChannel(), GetNote() for further information.
     bool IsNoteOnV0() const
     {
         return IsNoteOn() && GetVelocity() == 0;
     }
 
-    /// If the message is a note on or a note off message, IsNote() will return true. You can then call GetChannel(), GetNote() and GetVelocity() for further information.
+    /// If the message is a note on or a note off message, IsNote() will return true. You can then call GetChannel(), GetNote()
+    /// and GetVelocity() for further information.
     bool IsNote() const
     {
         return IsNoteOn() || IsNoteOff();
     }
 
-    /// If the message is a note on message and velocity != 0 (i.e. not note off), ImplicitIsNoteOn() will return true. You can then call GetChannel(), GetNote() for further information.
+    /// If the message is a note on message and velocity != 0 (i.e. not note off), ImplicitIsNoteOn() will return true. You can
+    /// then call GetChannel(), GetNote() for further information.
     bool ImplicitIsNoteOn() const
     {
         return IsNoteOn() && GetVelocity() != 0;
     }
 
-    /// If the message is a note off or a note on with velocity=0, ImplicitIsNoteOff() will return true. You can then call GetChannel(), GetNote() and GetVelocity() for further information.
+    /// If the message is a note off or a note on with velocity=0, ImplicitIsNoteOff() will return true. You can then call
+    /// GetChannel(), GetNote() and GetVelocity() for further information.
     bool ImplicitIsNoteOff() const
     {
         return IsNoteOff() || IsNoteOnV0();
     }
 
-    /// If the message is a polyphonic pressure chanel message, IsPolyPressure() will return true. You can then call GetChannel(), GetNote() and GetVelocity() for further informtion.
+    /// If the message is a polyphonic pressure chanel message, IsPolyPressure() will return true. You can then call
+    /// GetChannel(), GetNote() and GetVelocity() for further informtion.
     bool IsPolyPressure() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( ( status & 0xf0 ) == POLY_PRESSURE );
+        return ( service_num == NOT_SERVICE ) && ( ( status & 0xf0 ) == POLY_PRESSURE );
     }
 
-    /// If the message is a control change message, IsControlChange() will return true. You can then call GetChannel(), GetController() and GetControllerValue() for further information.
+    /// If the message is a control change message, IsControlChange() will return true. You can then call GetChannel(),
+    /// GetController() and GetControllerValue() for further information.
     bool IsControlChange() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( ( status & 0xf0 ) == CONTROL_CHANGE );
+        return ( service_num == NOT_SERVICE ) && ( ( status & 0xf0 ) == CONTROL_CHANGE );
     }
 
     // volume msg /* BY NC */
-    /// If the message is a volume change message (control = 0x07), IsVolumeChange() will return true. You can then call GetChannel() and GetControllerValue() for further information.
+    /// If the message is a volume change message (control = 0x07), IsVolumeChange() will return true. You can then call
+    /// GetChannel() and GetControllerValue() for further information.
     bool IsVolumeChange() const
     {
-        return IsControlChange() &&
-               ( GetController() == C_MAIN_VOLUME );
+        return IsControlChange() && ( GetController() == C_MAIN_VOLUME );
     }
 
     // damper msg /* BY NC */
 
-    /// If the message is a pedal on message (control = 0x40 and value >= 0x64), IsPedalOn() will return true. You can then call GetChannel() for further information.
+    /// If the message is a pedal on message (control = 0x40 and value >= 0x64), IsPedalOn() will return true. You can then call
+    /// GetChannel() for further information.
     bool IsPedalOn() const
     {
-        return IsControlChange() &&
-               ( GetController() == C_DAMPER ) &&
-               ( GetControllerValue() & 0x40 );
+        return IsControlChange() && ( GetController() == C_DAMPER ) && ( GetControllerValue() & 0x40 );
     }
 
-    /// If the message is a pedal off message (control = 0x40 and value < 0x64), IsPedalOff() will return true. You can then call GetChannel() for further information.
+    /// If the message is a pedal off message (control = 0x40 and value < 0x64), IsPedalOff() will return true. You can then
+    /// call GetChannel() for further information.
     bool IsPedalOff() const
     {
-        return IsControlChange() &&
-               ( GetController() == C_DAMPER ) &&
-               !( GetControllerValue() & 0x40 );
+        return IsControlChange() && ( GetController() == C_DAMPER ) && !( GetControllerValue() & 0x40 );
     }
 
-    /// If the message is a pan change message (control = 0x0a), IsPanChange() will return true. You can then call GetChannel() and GetControllerValue() for further information.
+    /// If the message is a pan change message (control = 0x0a), IsPanChange() will return true. You can then call GetChannel()
+    /// and GetControllerValue() for further information.
     bool IsPanChange() const
     {
         return IsControlChange() && GetController() == C_PAN;
     }
 
-    /// If the message is a program change message, IsProgramChange() will return true.  You can then call GetChannel() and GetPGValue() for further information.
+    /// If the message is a program change message, IsProgramChange() will return true.  You can then call GetChannel() and
+    /// GetPGValue() for further information.
     bool IsProgramChange() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( ( status & 0xf0 ) == PROGRAM_CHANGE );
+        return ( service_num == NOT_SERVICE ) && ( ( status & 0xf0 ) == PROGRAM_CHANGE );
     }
 
-    /// If the message is a channel pressure change message, IsChannelPressure() will return true. You can then call GetChannel() and GetChannelPressure() for further information.
+    /// If the message is a channel pressure change message, IsChannelPressure() will return true. You can then call
+    /// GetChannel() and GetChannelPressure() for further information.
     bool IsChannelPressure() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( ( status & 0xf0 ) == CHANNEL_PRESSURE );
+        return ( service_num == NOT_SERVICE ) && ( ( status & 0xf0 ) == CHANNEL_PRESSURE );
     }
 
-    /// If the message is a bender message, IsPitchBend() will return true. You can then call GetChannel() and GetBenderValue() for further information
+    /// If the message is a bender message, IsPitchBend() will return true. You can then call GetChannel() and GetBenderValue()
+    /// for further information
     bool IsPitchBend() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( ( status & 0xf0 ) == PITCH_BEND );
+        return ( service_num == NOT_SERVICE ) && ( ( status & 0xf0 ) == PITCH_BEND );
     }
 
     /// If the message is a system message (the status byte is 0xf0 or higher), IsSystemMessage() will return true.
     bool IsSystemMessage() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( status & 0xf0 ) == 0xf0;
+        return ( service_num == NOT_SERVICE ) && ( status & 0xf0 ) == 0xf0;
     }
 
     /// If the message is a normal system exclusive marker, IsSysExN() will return true.
     /// \note Sysex messages are not stored in the MIDIMessage object. \see MIDIBigMessage
-    bool IsSysExN() const   // Normal SysEx Event
+    bool IsSysExN() const // Normal SysEx Event
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( status == SYSEX_START_N );
+        return ( service_num == NOT_SERVICE ) && ( status == SYSEX_START_N );
     }
-
 
     bool IsSysExURT() const // Universal Real Time System Exclusive message, URT sysex
     {
         return IsSysExN() && ( byte1 == 0x7F );
     }
-
 
     int GetSysExURTdevID() const // return Device ID code for URT sysex
     {
@@ -427,8 +431,7 @@ public:
 
     bool IsSysExA() const // Authorization SysEx Event
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( status == SYSEX_START_A );
+        return ( service_num == NOT_SERVICE ) && ( status == SYSEX_START_A );
     }
 
     // TODO@VRM note to Jeff:
@@ -441,36 +444,32 @@ public:
     /// If the nessage is a Midi Time Code message, IsMtc() will return true.
     bool IsMTC() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( status == MTC );
+        return ( service_num == NOT_SERVICE ) && ( status == MTC );
     }
 
     /// If the nessage is a Song Position message, IsSongPosition() will return true.
     bool IsSongPosition() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( status == SONG_POSITION );
+        return ( service_num == NOT_SERVICE ) && ( status == SONG_POSITION );
     }
 
     /// If the nessage is a Song Select message, IsSongSelect() will return true.
     bool IsSongSelect() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( status == SONG_SELECT );
+        return ( service_num == NOT_SERVICE ) && ( status == SONG_SELECT );
     }
 
     /// If the nessage is a Tune Request message, IsTuneRequest() will return true.
     bool IsTuneRequest() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( status == TUNE_REQUEST );
+        return ( service_num == NOT_SERVICE ) && ( status == TUNE_REQUEST );
     }
 
-    /// If the message is a Meta Event message, IsMetaEvent() will return true. You can then call GetMetaType() and GetMetaValue() for further information.
+    /// If the message is a Meta Event message, IsMetaEvent() will return true. You can then call GetMetaType() and
+    /// GetMetaValue() for further information.
     bool IsMetaEvent() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( status == META_EVENT );
+        return ( service_num == NOT_SERVICE ) && ( status == META_EVENT );
     }
 
     /// Same as IsChannelMsg().
@@ -482,9 +481,7 @@ public:
     /// If the message is a text message (a subset of Meta events), IsTextEvent() will return true.
     bool IsTextEvent() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( status == META_EVENT ) &&
-               ( byte1 >= 0x01 && byte1 <= 0x0F );
+        return ( service_num == NOT_SERVICE ) && ( status == META_EVENT ) && ( byte1 >= 0x01 && byte1 <= 0x0F );
     }
 
     /// If the message is a Lyric Text message, IsLyricText() will return true.
@@ -500,7 +497,7 @@ public:
     }
 
     /// If the message is a Marker Text message, IsMarkerText() will return true.
-    bool IsMarkerText() const                       // new by NC //
+    bool IsMarkerText() const // new by NC //
     {
         return ( IsTextEvent() && GetMetaType() == META_MARKER_TEXT );
     }
@@ -508,9 +505,7 @@ public:
     /// If the message is an All Notes Off message, IsAllNotesOff() will return true.
     bool IsAllNotesOff() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( ( status & 0xf0 ) == CONTROL_CHANGE ) &&
-               ( byte1 >= C_ALL_NOTES_OFF );
+        return ( service_num == NOT_SERVICE ) && ( ( status & 0xf0 ) == CONTROL_CHANGE ) && ( byte1 >= C_ALL_NOTES_OFF );
     }
 
     /// If the message is a NoOp (not MIDI) message, IsNoOp() will return true.
@@ -522,25 +517,20 @@ public:
     /// If the message is a Channel Prefix message, IsChannelPrefix() will return true.
     bool IsChannelPrefix() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( status == META_EVENT ) &&
-               ( byte1 == META_CHANNEL_PREFIX );
+        return ( service_num == NOT_SERVICE ) && ( status == META_EVENT ) && ( byte1 == META_CHANNEL_PREFIX );
     }
 
-    /// If the message is a Tempo Change message, IsTempo will return true. You can call GetTempo32() and GetTempo() for further information.
+    /// If the message is a Tempo Change message, IsTempo will return true. You can call GetTempo32() and GetTempo() for further
+    /// information.
     bool IsTempo() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( status == META_EVENT ) &&
-               ( byte1 == META_TEMPO );
+        return ( service_num == NOT_SERVICE ) && ( status == META_EVENT ) && ( byte1 == META_TEMPO );
     }
 
     /// If the message is a End Of Data message, IsDataEnd() will return true.
     bool IsDataEnd() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( status == META_EVENT ) &&
-               ( byte1 == META_END_OF_TRACK );
+        return ( service_num == NOT_SERVICE ) && ( status == META_EVENT ) && ( byte1 == META_END_OF_TRACK );
     }
 
     /// Same of IsDataEnd().
@@ -549,20 +539,18 @@ public:
         return IsDataEnd();
     }
 
-    /// If the message is a Time Signature message, IsTimeSig will return true. You can call GetTimeSigNumerator(), GetTimeSigDenominator() and GetTimeSigDenominatorPower() for further information.
+    /// If the message is a Time Signature message, IsTimeSig will return true. You can call GetTimeSigNumerator(),
+    /// GetTimeSigDenominator() and GetTimeSigDenominatorPower() for further information.
     bool IsTimeSig() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( status == META_EVENT ) &&
-               ( byte1 == META_TIMESIG );
+        return ( service_num == NOT_SERVICE ) && ( status == META_EVENT ) && ( byte1 == META_TIMESIG );
     }
 
-    /// If the message is a Key Signature message, IsKeySig() will return true. You can call GetKeySigSharpFlats() and GetKeySigMajorMinor for further information.
+    /// If the message is a Key Signature message, IsKeySig() will return true. You can call GetKeySigSharpFlats() and
+    /// GetKeySigMajorMinor for further information.
     bool IsKeySig() const
     {
-        return ( service_num == NOT_SERVICE) &&
-               ( status == META_EVENT ) &&
-               ( byte1 == META_KEYSIG );
+        return ( service_num == NOT_SERVICE ) && ( status == META_EVENT ) && ( byte1 == META_KEYSIG );
     }
 
     bool IsBeatMarker() const
@@ -592,143 +580,143 @@ public:
     //@{
 
     /// Set all bits of the status byte
-    void SetStatus ( unsigned char s )
+    void SetStatus( unsigned char s )
     {
         status = s;
     }
 
     /// Set just the lower 4 bits of the status byte without changing the upper 4 bits
-    void SetChannel ( unsigned char s )
+    void SetChannel( unsigned char s )
     {
-        status = ( unsigned char ) ( ( status & 0xf0 ) | s );
+        status = (unsigned char)( ( status & 0xf0 ) | s );
     }
 
     /// Set just the upper 4 bits of the status byte without changing the lower 4 bits
-    void SetType ( unsigned char s )
+    void SetType( unsigned char s )
     {
-        status = ( unsigned char ) ( ( status & 0x0f ) | s );
+        status = (unsigned char)( ( status & 0x0f ) | s );
     }
 
     /// Set the value of the data byte 1
-    void SetByte1 ( unsigned char b )
+    void SetByte1( unsigned char b )
     {
         byte1 = b;
     }
 
     /// Set the value of the data byte 2
-    void SetByte2 ( unsigned char b )
+    void SetByte2( unsigned char b )
     {
         byte2 = b;
     }
 
     /// Set the value of the data byte 3
-    void SetByte3 ( unsigned char b )
+    void SetByte3( unsigned char b )
     {
         byte3 = b;
     }
 
     /// Set the value of the data byte 4
-    void SetByte4 ( unsigned char b )
+    void SetByte4( unsigned char b )
     {
         byte4 = b;
     }
 
     /// Set the value of the data byte 5
-    void SetByte5 ( unsigned char b )
+    void SetByte5( unsigned char b )
     {
         byte5 = b;
     }
 
     /// Set the value of the data byte 6
-    void SetByte6 ( unsigned char b )
+    void SetByte6( unsigned char b )
     {
         byte6 = b;
     }
 
     /// Set the value of the data byte data_length
-    void SetDataLength ( unsigned char b )
+    void SetDataLength( unsigned char b )
     {
         data_length = b;
     }
 
     /// Set the note number for note on, note off, and polyphonic aftertouch messages
-    void SetNote ( unsigned char n )
+    void SetNote( unsigned char n )
     {
         byte1 = n;
     }
 
     /// Set the velocity of a note on or note off message
-    void SetVelocity ( unsigned char v )
+    void SetVelocity( unsigned char v )
     {
         byte2 = v;
     }
 
     /// Set the program number of a program change message
-    void SetPGValue ( unsigned char v )
+    void SetPGValue( unsigned char v )
     {
         byte1 = v;
     }
 
     /// Set the controller number of a control change message
-    void SetController ( unsigned char c )
+    void SetController( unsigned char c )
     {
         byte1 = c;
     }
 
     /// Set the 7 bit controller value of a control change message
-    void SetControllerValue ( unsigned char v )
+    void SetControllerValue( unsigned char v )
     {
         byte2 = v;
     }
 
     /// Set the signed 14 bit bender value of a pitch bend message
-    void SetBenderValue ( short v );
+    void SetBenderValue( short v );
 
-    void SetMetaType ( unsigned char t )
+    void SetMetaType( unsigned char t )
     {
         byte1 = t;
     }
 
-    void SetMetaValue ( unsigned short v );
+    void SetMetaValue( unsigned short v );
 
-    void SetNoteOn ( unsigned char chan, unsigned char note, unsigned char vel );
+    void SetNoteOn( unsigned char chan, unsigned char note, unsigned char vel );
 
-    void SetNoteOff ( unsigned char chan, unsigned char note, unsigned char vel );
+    void SetNoteOff( unsigned char chan, unsigned char note, unsigned char vel );
 
-    void SetPolyPressure ( unsigned char chan, unsigned char note, unsigned char pres );
+    void SetPolyPressure( unsigned char chan, unsigned char note, unsigned char pres );
 
-    void SetControlChange ( unsigned char chan, unsigned char ctrl, unsigned char val );
+    void SetControlChange( unsigned char chan, unsigned char ctrl, unsigned char val );
 
     // set panorama control in chan: pan = -1. for lefmost, 0. for centre, +1. for rightmost
     void SetPan( unsigned char chan, double pan );
 
     double GetPan();
 
-    void SetProgramChange ( unsigned char chan, unsigned char val );
+    void SetProgramChange( unsigned char chan, unsigned char val );
 
-    void SetChannelPressure ( unsigned char chan, unsigned char val );
+    void SetChannelPressure( unsigned char chan, unsigned char val );
 
-    void SetPitchBend ( unsigned char chan, short val );
+    void SetPitchBend( unsigned char chan, short val );
 
-    void SetPitchBend ( unsigned char chan, unsigned char low, unsigned char high );
+    void SetPitchBend( unsigned char chan, unsigned char low, unsigned char high );
 
     void SetSysEx( unsigned char type ); // type = SYSEX_START or SYSEX_START_A
 
-    void SetMTC ( unsigned char field, unsigned char v );
+    void SetMTC( unsigned char field, unsigned char v );
 
-    void SetSongPosition ( short pos );
+    void SetSongPosition( short pos );
 
-    void SetSongSelect ( unsigned char sng );
+    void SetSongSelect( unsigned char sng );
 
     void SetTuneRequest();
 
-    void SetMetaEvent ( unsigned char type, unsigned char v1, unsigned char v2 );
+    void SetMetaEvent( unsigned char type, unsigned char v1, unsigned char v2 );
 
-    void SetMetaEvent ( unsigned char type, unsigned short v );
+    void SetMetaEvent( unsigned char type, unsigned short v );
 
-    void SetAllNotesOff ( unsigned char chan, unsigned char type = C_ALL_NOTES_OFF, unsigned char mode = 0);
+    void SetAllNotesOff( unsigned char chan, unsigned char type = C_ALL_NOTES_OFF, unsigned char mode = 0 );
 
-    void SetLocal ( unsigned char chan, unsigned char v );
+    void SetLocal( unsigned char chan, unsigned char v );
 
     void SetNoOp()
     {
@@ -736,11 +724,11 @@ public:
         service_num = SERVICE_NO_OPERATION;
     }
 
-    void SetTempo ( unsigned long tempo ); // If no tempo is define, 120 beats per minute is assumed.
+    void SetTempo( unsigned long tempo ); // If no tempo is define, 120 beats per minute is assumed.
 
-    void SetTempo32 ( unsigned long tempo_times_32 );
+    void SetTempo32( unsigned long tempo_times_32 );
 
-    void SetText ( unsigned short text_num, unsigned char type = META_GENERIC_TEXT );
+    void SetText( unsigned short text_num, unsigned char type = META_GENERIC_TEXT );
 
     void SetDataEnd();
     void SetEndOfTrack()
@@ -748,40 +736,38 @@ public:
         SetDataEnd();
     }
 
-    void SetTimeSig (
-        unsigned char numerator = 4,
-        unsigned char denominator_power = 2,
-        unsigned char midi_clocks_per_metronome = 24,
-        unsigned char num_32nd_per_midi_quarter_note = 8 );
+    void SetTimeSig( unsigned char numerator = 4,
+                     unsigned char denominator_power = 2,
+                     unsigned char midi_clocks_per_metronome = 24,
+                     unsigned char num_32nd_per_midi_quarter_note = 8 );
 
-    void SetKeySig ( signed char sharp_flats, unsigned char major_minor );
+    void SetKeySig( signed char sharp_flats, unsigned char major_minor );
 
     void SetBeatMarker();
 
     void SetUserAppMarker();
 
-    friend bool operator == ( const MIDIMessage &m1, const MIDIMessage &m2 );
+    friend bool operator==( const MIDIMessage &m1, const MIDIMessage &m2 );
 
     //@}
 
-protected:
+  protected:
 
-    static const char * chan_msg_name[16]; ///< Simple ascii text strings describing each channel message type (0x8X to 0xeX)
-    static const char * sys_msg_name[16]; ///< Simple ascii text strings describing each system message type (0xf0 to 0xff)
-    static const char * service_msg_name[];
+    static const char *chan_msg_name[16]; ///< Simple ascii text strings describing each channel message type (0x8X to 0xeX)
+    static const char *sys_msg_name[16];  ///< Simple ascii text strings describing each system message type (0xf0 to 0xff)
+    static const char *service_msg_name[];
 
     unsigned int service_num; // if service_num != NOT_SERVICE than event used for internal service
 
     unsigned char status; // type of events and channel for Channel events, type of SysEx events
-    unsigned char byte1; // type of Meta events, not used for SysExURT events
-    unsigned char byte2; // Meta events or SysExURT events first data byte (#1)
+    unsigned char byte1;  // type of Meta events, not used for SysExURT events
+    unsigned char byte2;  // Meta events or SysExURT events first data byte (#1)
     unsigned char byte3;
     unsigned char byte4;
     unsigned char byte5;
-    unsigned char byte6; // Meta events or SysExURT events last data byte (#5)
+    unsigned char byte6;       // Meta events or SysExURT events last data byte (#5)
     unsigned char data_length; // number of data bytes in Meta events or SysExURT events (0...5)
 };
-
 
 ///
 /// The MIDIBigMessage inherits from a MIDIMessage and adds the capability of storing
@@ -792,43 +778,40 @@ protected:
 
 class MIDIBigMessage : public MIDIMessage
 {
-public:
+  public:
 
     ///@name Constructors/assignment operators/Copiers
     //@{
 
     MIDIBigMessage();
 
-    MIDIBigMessage ( const MIDIBigMessage &m );
+    MIDIBigMessage( const MIDIBigMessage &m );
 
-    MIDIBigMessage ( const MIDIMessage &m );
+    MIDIBigMessage( const MIDIMessage &m );
 
-    MIDIBigMessage ( const MIDIMessage &m, const MIDISystemExclusive *e );
+    MIDIBigMessage( const MIDIMessage &m, const MIDISystemExclusive *e );
 
-    const MIDIBigMessage &operator = ( const MIDIBigMessage &m );
+    const MIDIBigMessage &operator=( const MIDIBigMessage &m );
 
-    const MIDIBigMessage &operator = ( const MIDIMessage &m );
+    const MIDIBigMessage &operator=( const MIDIMessage &m );
 
-
-    void Copy ( const MIDIBigMessage &m )
+    void Copy( const MIDIBigMessage &m )
     {
         *this = m;
     }
 
-    void Copy ( const MIDIMessage &m )
+    void Copy( const MIDIMessage &m )
     {
         *this = m;
     }
 
-    void CopySysEx ( const MIDISystemExclusive *e );
+    void CopySysEx( const MIDISystemExclusive *e );
 
     //@}
-
 
     void Clear();
 
     void ClearSysEx();
-
 
     ///
     /// destructor
@@ -847,30 +830,27 @@ public:
         return sysex;
     }
 
-
     const MIDISystemExclusive *GetSysEx() const
     {
         return sysex;
     }
-
 
     std::string GetSysExString() const
     {
         const unsigned char *buf = GetSysEx()->GetBuf();
         int len = GetSysEx()->GetLengthSE();
         std::string str;
-        for (int i = 0; i < len; ++i)
-            str.push_back( (char) buf[i] );
+        for ( int i = 0; i < len; ++i )
+            str.push_back( (char)buf[i] );
         return str;
     }
 
-    friend bool operator == ( const MIDIBigMessage &m1, const MIDIBigMessage &m2 );
+    friend bool operator==( const MIDIBigMessage &m1, const MIDIBigMessage &m2 );
 
-protected:
+  protected:
 
     MIDISystemExclusive *sysex;
 };
-
 
 ///
 /// The MIDITimedMessage inherits from a MIDIMessage and adds the capability of storing
@@ -879,7 +859,7 @@ protected:
 
 class MIDITimedMessage : public MIDIMessage
 {
-public:
+  public:
 
     //
     // Constructors
@@ -887,13 +867,13 @@ public:
 
     MIDITimedMessage();
 
-    MIDITimedMessage ( const MIDITimedMessage &m );
+    MIDITimedMessage( const MIDITimedMessage &m );
 
-    MIDITimedMessage ( const MIDIMessage &m );
+    MIDITimedMessage( const MIDIMessage &m );
 
     void Clear();
 
-    void Copy ( const MIDITimedMessage &m )
+    void Copy( const MIDITimedMessage &m )
     {
         *this = m;
     }
@@ -902,9 +882,9 @@ public:
     // operator =
     //
 
-    const MIDITimedMessage &operator = ( const MIDITimedMessage & m );
+    const MIDITimedMessage &operator=( const MIDITimedMessage &m );
 
-    const MIDITimedMessage &operator = ( const MIDIMessage & m );
+    const MIDITimedMessage &operator=( const MIDIMessage &m );
 
     //
     // 'Get' methods
@@ -921,34 +901,27 @@ public:
     //
 
     /// Sets the MIDI time clock of the message.
-    void SetTime ( MIDIClockTime t )
+    void SetTime( MIDIClockTime t )
     {
         time = t;
     }
-
 
     //
     // Compare method for sorting. Not just comparing time.
     //
 
-    static int  CompareEvents (
-        const MIDITimedMessage &a,
-        const MIDITimedMessage &b
-    );
+    static int CompareEvents( const MIDITimedMessage &a, const MIDITimedMessage &b );
 
-    friend bool operator == ( const MIDITimedMessage &m1, const MIDITimedMessage &m2 );
+    friend bool operator==( const MIDITimedMessage &m1, const MIDITimedMessage &m2 );
 
-protected:
-
+  protected:
 
     MIDIClockTime time;
 };
 
-
-
 class MIDIDeltaTimedMessage : public MIDIMessage
 {
-public:
+  public:
 
     //
     // Constructors
@@ -956,21 +929,21 @@ public:
 
     MIDIDeltaTimedMessage();
 
-    MIDIDeltaTimedMessage ( const MIDIDeltaTimedMessage &m );
+    MIDIDeltaTimedMessage( const MIDIDeltaTimedMessage &m );
 
-    MIDIDeltaTimedMessage ( const MIDIMessage &m );
+    MIDIDeltaTimedMessage( const MIDIMessage &m );
 
     void Clear();
 
-    void Copy ( const MIDIDeltaTimedMessage &m );
+    void Copy( const MIDIDeltaTimedMessage &m );
 
     //
     // operator =
     //
 
-    const MIDIDeltaTimedMessage &operator = ( const MIDIDeltaTimedMessage &m );
+    const MIDIDeltaTimedMessage &operator=( const MIDIDeltaTimedMessage &m );
 
-    const MIDIDeltaTimedMessage &operator = ( const MIDIMessage &m );
+    const MIDIDeltaTimedMessage &operator=( const MIDIMessage &m );
 
     //
     // 'Get' methods
@@ -982,13 +955,11 @@ public:
     // 'Set' methods
     //
 
-    void SetDeltaTime ( MIDIClockTime t );
+    void SetDeltaTime( MIDIClockTime t );
 
-
-protected:
+  protected:
     MIDIClockTime dtime;
 };
-
 
 ///
 /// The MIDITimedBigMessage inherits ftom a MIDIBigMessage and adds the features of a MIDITimedMessage.
@@ -1000,7 +971,7 @@ protected:
 
 class MIDITimedBigMessage : public MIDIBigMessage
 {
-public:
+  public:
 
     //
     // Constructors
@@ -1008,24 +979,24 @@ public:
 
     MIDITimedBigMessage();
 
-    MIDITimedBigMessage ( const MIDITimedBigMessage &m );
+    MIDITimedBigMessage( const MIDITimedBigMessage &m );
 
-    MIDITimedBigMessage ( const MIDIBigMessage &m );
+    MIDITimedBigMessage( const MIDIBigMessage &m );
 
-    MIDITimedBigMessage ( const MIDITimedMessage &m );
+    MIDITimedBigMessage( const MIDITimedMessage &m );
 
-    MIDITimedBigMessage ( const MIDIMessage &m );
+    MIDITimedBigMessage( const MIDIMessage &m );
 
-    MIDITimedBigMessage ( const MIDITimedMessage &m, const MIDISystemExclusive *e );
+    MIDITimedBigMessage( const MIDITimedMessage &m, const MIDISystemExclusive *e );
 
     void Clear();
 
-    void Copy ( const MIDITimedBigMessage &m )
+    void Copy( const MIDITimedBigMessage &m )
     {
         *this = m;
     }
 
-    void Copy ( const MIDITimedMessage &m )
+    void Copy( const MIDITimedMessage &m )
     {
         *this = m;
     }
@@ -1034,11 +1005,11 @@ public:
     // operator =
     //
 
-    const MIDITimedBigMessage &operator = ( const MIDITimedBigMessage & m );
+    const MIDITimedBigMessage &operator=( const MIDITimedBigMessage &m );
 
-    const MIDITimedBigMessage &operator = ( const MIDITimedMessage & m );
+    const MIDITimedBigMessage &operator=( const MIDITimedMessage &m );
 
-    const MIDITimedBigMessage &operator = ( const MIDIMessage & m );
+    const MIDITimedBigMessage &operator=( const MIDIMessage &m );
 
     //
     // 'Get' methods
@@ -1053,7 +1024,7 @@ public:
     // 'Set' methods
     //
 
-    void SetTime ( MIDIClockTime t )
+    void SetTime( MIDIClockTime t )
     {
         time = t;
     }
@@ -1063,10 +1034,7 @@ public:
     //
 
     /// This is the older version of the function
-    static int CompareEvents (
-        const MIDITimedBigMessage &a,
-        const MIDITimedBigMessage &b
-    );
+    static int CompareEvents( const MIDITimedBigMessage &a, const MIDITimedBigMessage &b );
 
     /// This function is used by the MIDITrack::InsertEvent() and MIDITrack::InsertNote() methods for ordering
     /// events when inserting. It compares events _a_ and _b_. _a_: the following tests are done in sequence:
@@ -1079,10 +1047,7 @@ public:
     /// + if _a_ (or _b_) is not a note message it's smaller (non note go before notes)
     /// + if _a_ (or _b_) is a Note Off it's smaller (Note Off go before Note On)
     /// @returns **1** if _a_ < _b_ , **2** if _a_ > _b_, **0** if none of these (their order is indifferent)
-    static int CompareEventsForInsert (
-        const MIDITimedBigMessage &a,
-        const MIDITimedBigMessage &b
-    );
+    static int CompareEventsForInsert( const MIDITimedBigMessage &a, const MIDITimedBigMessage &b );
 
     /// This function is used by the methods that search and insert events in the tracks to find events
     /// that are of the same kind and would normally be incompatible.
@@ -1096,51 +1061,46 @@ public:
     /// If the input mode is set to INSMODE_REPLACE or INSMODE_INSERT_OR_REPLACE the functions
     /// MIDITrack::InsertEvent and MIDITrack::InsertNote search if at same MIDI time of the event to insert exists
     /// such an event and, if they find it, they replace the event, rather than inserting it.
-    static bool IsSameKind (
-        const MIDITimedBigMessage &a,
-        const MIDITimedBigMessage &b
-    );
+    static bool IsSameKind( const MIDITimedBigMessage &a, const MIDITimedBigMessage &b );
 
-    friend bool operator == ( const MIDITimedBigMessage &m1, const MIDITimedBigMessage &m2 );
+    friend bool operator==( const MIDITimedBigMessage &m1, const MIDITimedBigMessage &m2 );
 
-protected:
+  protected:
     MIDIClockTime time;
 };
 
-
-
 class MIDIDeltaTimedBigMessage : public MIDIBigMessage
 {
-public:
+  public:
     //
     // Constructors
     //
 
     MIDIDeltaTimedBigMessage();
 
-    MIDIDeltaTimedBigMessage ( const MIDIDeltaTimedBigMessage &m );
+    MIDIDeltaTimedBigMessage( const MIDIDeltaTimedBigMessage &m );
 
-    MIDIDeltaTimedBigMessage ( const MIDIBigMessage &m );
+    MIDIDeltaTimedBigMessage( const MIDIBigMessage &m );
 
-    MIDIDeltaTimedBigMessage ( const MIDIMessage &m );
+    MIDIDeltaTimedBigMessage( const MIDIMessage &m );
 
-    MIDIDeltaTimedBigMessage ( const MIDIDeltaTimedMessage &m );
+    MIDIDeltaTimedBigMessage( const MIDIDeltaTimedMessage &m );
 
     void Clear();
 
-    void Copy ( const MIDIDeltaTimedBigMessage &m );
+    void Copy( const MIDIDeltaTimedBigMessage &m );
 
-    void Copy ( const MIDIDeltaTimedMessage &m );
+    void Copy( const MIDIDeltaTimedMessage &m );
 
     //
     // operator =
     //
 
-    const MIDIDeltaTimedBigMessage &operator = ( const MIDIDeltaTimedBigMessage &m );
+    const MIDIDeltaTimedBigMessage &operator=( const MIDIDeltaTimedBigMessage &m );
 
-    const MIDIDeltaTimedBigMessage &operator = ( const MIDIDeltaTimedMessage &m );
+    const MIDIDeltaTimedBigMessage &operator=( const MIDIDeltaTimedMessage &m );
 
-    const MIDIDeltaTimedBigMessage &operator = ( const MIDIMessage &m );
+    const MIDIDeltaTimedBigMessage &operator=( const MIDIMessage &m );
 
     //
     // 'Get' methods
@@ -1152,15 +1112,11 @@ public:
     // 'Set' methods
     //
 
-    void SetDeltaTime ( MIDIClockTime t );
+    void SetDeltaTime( MIDIClockTime t );
 
-
-protected:
+  protected:
     MIDIClockTime dtime;
 };
-
 }
 
-
 #endif
-

@@ -26,7 +26,6 @@
 // doxygen comments by N. Cassetta ncassetta@tiscali.it
 //
 
-
 #ifndef JDKSMIDI_PROCESS_H
 #define JDKSMIDI_PROCESS_H
 
@@ -40,7 +39,6 @@ class MIDIProcessor;
 class MIDIMultiProcessor;
 class MIDIProcessorTransposer;
 
-
 ///
 /// This is the base class for objects that process MIDI messages (for ex.\ transpose,
 /// velocity scale, mute, solo etc).
@@ -52,7 +50,7 @@ class MIDIProcessorTransposer;
 
 class MIDIProcessor
 {
-public:
+  public:
     /// The constructor
     MIDIProcessor();
 
@@ -60,10 +58,8 @@ public:
     virtual ~MIDIProcessor();
 
     /// This must be overriden by your class
-    virtual bool Process ( MIDITimedBigMessage *msg ) = 0;
+    virtual bool Process( MIDITimedBigMessage *msg ) = 0;
 };
-
-
 
 ///
 /// This class inherits from pure virtual MIDIProcessor and allows the user to set a 'chain' of MIDIProcessor
@@ -73,9 +69,9 @@ public:
 
 class MIDIMultiProcessor : public MIDIProcessor
 {
-public:
+  public:
     /// The constructor.\ You must set the max number of MIDIProcessor of the chain
-    MIDIMultiProcessor ( int num_processors );
+    MIDIMultiProcessor( int num_processors );
 
     /// The destructor.\ MIDIProcessor objects given to a MIDIMultiProcessor are NOT owned by it
     virtual ~MIDIMultiProcessor();
@@ -84,18 +80,18 @@ public:
     /// \param position the position of the MIDIProcessor in the chain. You have not to worry about plugging them
     /// in adjacent positions since the processor skips unassigned positions. The range is 0 ... num_processors-1
     /// \param proc the MIDIProcessor (it is not owned by the MIDIMultiProcessor
-    void SetProcessor ( int position, MIDIProcessor *proc )
+    void SetProcessor( int position, MIDIProcessor *proc )
     {
         processors[position] = proc;
     }
 
     /// Returns a pointer to the MIDIProcessor at position _position_.\ (NULL if no processor)
-    MIDIProcessor *GetProcessor ( int position )
+    MIDIProcessor *GetProcessor( int position )
     {
         return processors[position];
     }
 
-    const MIDIProcessor *GetProcessor ( int position ) const
+    const MIDIProcessor *GetProcessor( int position ) const
     {
         return processors[position];
     }
@@ -103,21 +99,19 @@ public:
     // NEW by NC
     /// Removes the MIDIProcessor from the chain.
     /// This is equivalent to SetProcessor(_position_, 0), as the processors are not owned by the class
-    void RemoveProcessor ( int position )
+    void RemoveProcessor( int position )
     {
         processors[position] = 0;
     }
 
     /// This is the method inherited from the base class MIDIProcessor. It passes the MIDI message _msg_
     /// through the chain of processors, skipping unassigned positions
-    virtual bool Process ( MIDITimedBigMessage *msg );
+    virtual bool Process( MIDITimedBigMessage *msg );
 
-private:
-    MIDIProcessor **processors;     ///< An array of pointers to MIDIProcessor objects
-    int num_processors;             ///< The size of the array
+  private:
+    MIDIProcessor **processors; ///< An array of pointers to MIDIProcessor objects
+    int num_processors;         ///< The size of the array
 };
-
-
 
 ///
 /// This class inherits from pure virtual MIDIProcessor and transposes MIDI note messages.
@@ -127,7 +121,7 @@ private:
 
 class MIDIProcessorTransposer : public MIDIProcessor
 {
-public:
+  public:
     /// The constructor
     MIDIProcessorTransposer();
 
@@ -135,27 +129,26 @@ public:
     virtual ~MIDIProcessorTransposer();
 
     /// Set channel transposing: messages of channel _chan_ will be transposed by _trans_ semitones)
-    void SetTransposeChannel ( int chan, int trans )
+    void SetTransposeChannel( int chan, int trans )
     {
         trans_amount[chan] = trans;
     }
 
     /// Returns the transposition amount for the given channel
-    int GetTransposeChannel ( int chan ) const
+    int GetTransposeChannel( int chan ) const
     {
         return trans_amount[chan];
     }
 
     /// Set the transposition regardless of the channel
-    void SetAllTranspose ( int trans );
+    void SetAllTranspose( int trans );
 
     /// Transposes the message _msg_ (inherited from MIDIProcessor)
-    virtual bool Process ( MIDITimedBigMessage *msg );
-private:
+    virtual bool Process( MIDITimedBigMessage *msg );
+
+  private:
     int trans_amount[16];
 };
-
-
 
 ///
 /// This class inherits from pure virtual MIDIProcessor and recbannelizes MIDI channel messages.
@@ -163,7 +156,7 @@ private:
 
 class MIDIProcessorRechannelizer : public MIDIProcessor
 {
-public:
+  public:
     /// The constructor
     MIDIProcessorRechannelizer();
 
@@ -172,24 +165,24 @@ public:
 
     /// Set channel rechannelize: transposing: messages of channel _src_chan_ will be mapped into _dest_chan_
     /// (channels = 0 ... 15).
-    void SetRechanMap ( int src_chan, int dest_chan )
+    void SetRechanMap( int src_chan, int dest_chan )
     {
         rechan_map[src_chan] = dest_chan;
     }
 
     /// Returns the destination channel for _src_chan_ messages (channels = 0 ... 15)
-    int GetRechanMap ( int src_chan ) const
+    int GetRechanMap( int src_chan ) const
     {
         return rechan_map[src_chan];
     }
 
     /// Sets rechannelization for all messages to _dest_chan_ regardless of the  original channel
-    void SetAllRechan ( int dest_chan );
+    void SetAllRechan( int dest_chan );
 
     /// Rechannelizes the message _msg_ (inherited from MIDIProcessor)
-    virtual bool Process ( MIDITimedBigMessage *msg );
+    virtual bool Process( MIDITimedBigMessage *msg );
 
-private:
+  private:
 
     int rechan_map[16];
 };

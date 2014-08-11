@@ -34,13 +34,13 @@ namespace jdksmidi
 
 class MIDISong
 {
-public:
-    MIDISong ( int max_tracks );
+  public:
+    MIDISong( int max_tracks );
     virtual ~MIDISong();
 
-    bool Load ( const char *fname );
+    bool Load( const char *fname );
 
-// bool Save( const char *fname );
+    // bool Save( const char *fname );
 
     MIDIMultiTrack *GetMultiTrack()
     {
@@ -62,7 +62,7 @@ public:
         return sequencer;
     }
 
-protected:
+  protected:
 
     MIDIMultiTrack track;
     MIDISequencer seq;

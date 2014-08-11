@@ -1,10 +1,10 @@
 /*
-	Originally developed for CFugue, adapted into jdksmidi with special permission
+ Originally developed for CFugue, adapted into jdksmidi with special permission
 
-	Copyright (C) 2009-2014 Cenacle Research India Private Limited
+ Copyright (C) 2009-2014 Cenacle Research India Private Limited
 
-	For links to further information, or to contact the author,
-	see <http://cfugue.sourceforge.net/>.
+ For links to further information, or to contact the author,
+ see <http://cfugue.sourceforge.net/>.
 
     $LastChangedDate: 2013-12-18 10:59:57 +0530 (Wed, 18 Dec 2013) $
     $Rev: 197 $
@@ -18,7 +18,7 @@
 
 //#error "---- This Alsa Driver is not for Windows -----"   // Commented by NC
 
-#else	// Below code is only for non_Windows
+#else // Below code is only for non_Windows
 
 //#include "RtMidi.h"
 #include "jdksmidi/AlsaDriver.h"
@@ -26,26 +26,26 @@
 
 namespace jdksmidi
 {
-	MIDIDriverAlsa::MIDIDriverAlsa ( const char* szClientName, int queue_size )
+MIDIDriverAlsa::MIDIDriverAlsa ( const char* szClientName, int queue_size )
 		:
 		MIDIDriver ( queue_size ),
 		m_pMidiIn ( 0 ),
 		m_pMidiOut ( 0 ),
 		m_pThread ( NULL ),
 		m_strClientName(szClientName)
-	{
-		if(szClientName == NULL) // user did not supply any name for this driver client
-		{
-			m_strClientName = "Midi Driver Alsa Client"; //TODO: compute unique name based on pid
-		}
-	}
+{
+    if ( szClientName == NULL ) // user did not supply any name for this driver client
+    {
+        m_strClientName = "Midi Driver Alsa Client"; // TODO: compute unique name based on pid
+    }
+}
 
-	MIDIDriverAlsa::~MIDIDriverAlsa()
-	{
-		StopTimer();
-		CloseMIDIInPort();
-		CloseMIDIOutPort();
-	}
+MIDIDriverAlsa::~MIDIDriverAlsa()
+{
+    StopTimer();
+    CloseMIDIInPort();
+    CloseMIDIOutPort();
+}
 
 /* THESE WERE MOVED INTO MIDIDriver.cpp by NC
 
@@ -140,63 +140,64 @@ namespace jdksmidi
         return false;
     }
 
-*/  // End of NC editing
+*/ // End of NC editing
 
-    // This is thread procedure to pump MIDI events
-    // We maintain the supplied Timer Resolution by adjusting the sleep duration
-	bool AlsaDriverThreadProc(MIDIDriverAlsa* pAlsaDriver, int nTimerResMS)
-	{
-	    unsigned long nBefore, nAfter;
-	    unsigned int nElapsed, nTimeToSleep;
-	    while(true)
-	    {
-            nBefore = MidiTimer::CurrentTimeOffset();
+// This is thread procedure to pump MIDI events
+// We maintain the supplied Timer Resolution by adjusting the sleep duration
+bool AlsaDriverThreadProc( MIDIDriverAlsa *pAlsaDriver, int nTimerResMS )
+{
+    unsigned long nBefore, nAfter;
+    unsigned int nElapsed, nTimeToSleep;
+    while ( true )
+    {
+        nBefore = MidiTimer::CurrentTimeOffset();
 
-            if(pAlsaDriver->TimeTick(nBefore) == false) break;
+        if ( pAlsaDriver->TimeTick( nBefore ) == false )
+            break;
 
-            nAfter = MidiTimer::CurrentTimeOffset();
+        nAfter = MidiTimer::CurrentTimeOffset();
 
-            nElapsed = nAfter - nBefore;
+        nElapsed = nAfter - nBefore;
 
-            nTimeToSleep = (nElapsed > nTimerResMS ? 0 : nTimerResMS - nElapsed);
+        nTimeToSleep = ( nElapsed > nTimerResMS ? 0 : nTimerResMS - nElapsed );
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(nTimeToSleep));
-	    }
+        std::this_thread::sleep_for( std::chrono::milliseconds( nTimeToSleep ) );
+    }
 
-        return true;
+    return true;
 }
 
-	bool MIDIDriverAlsa::StartTimer ( int res )
-	{
-	    if(m_bgTaskResult.valid()) // Already running
-            return false;
+bool MIDIDriverAlsa::StartTimer( int res )
+{
+    if ( m_bgTaskResult.valid() ) // Already running
+        return false;
 
-        m_bgTaskResult = std::async(std::launch::async, &AlsaDriverThreadProc, this, res);
+    m_bgTaskResult = std::async( std::launch::async, &AlsaDriverThreadProc, this, res );
 
-        return m_bgTaskResult.valid();
-	}
+    return m_bgTaskResult.valid();
+}
 
-	void MIDIDriverAlsa::WaitTillDone()
-	{
-	    if(m_bgTaskResult.valid() == false) return; // if not running
+void MIDIDriverAlsa::WaitTillDone()
+{
+    if ( m_bgTaskResult.valid() == false )
+        return; // if not running
 
-        auto waitStatus = m_bgTaskResult.wait_for(std::chrono::milliseconds(0));
+    auto waitStatus = m_bgTaskResult.wait_for( std::chrono::milliseconds( 0 ) );
 
-        while(waitStatus != std::future_status::ready)
-        {
-             waitStatus = m_bgTaskResult.wait_for(std::chrono::milliseconds(500));
-        }
-	}
+    while ( waitStatus != std::future_status::ready )
+    {
+        waitStatus = m_bgTaskResult.wait_for( std::chrono::milliseconds( 500 ) );
+    }
+}
 
-	void MIDIDriverAlsa::StopTimer()
-	{
-	    // std::future requires get() to be called before it can be used again.
-	    // valid() keeps returning true till get() is called. And get() can be
-	    // called only once. Once it is called valid() becomes false again.
-	    if(m_bgTaskResult.valid())
-            m_bgTaskResult.get();
-	}
-
+void MIDIDriverAlsa::StopTimer()
+{
+    // std::future requires get() to be called before it can be used again.
+    // valid() keeps returning true till get() is called. And get() can be
+    // called only once. Once it is called valid() becomes false again.
+    if ( m_bgTaskResult.valid() )
+        m_bgTaskResult.get();
+}
 
 /* THESE WERE MOVED INTO MIDIDriver.cpp by NC
 	void MIDIDriverAlsa::CloseMIDIInPort()
@@ -218,10 +219,8 @@ namespace jdksmidi
 	        m_pMidiOut = NULL;
 	    }
 	}
-*/  // End of NC editing
+*/ // End of NC editing
 
 } // namespace jdksmidi
-
-
 
 #endif // _ifndef _Win32

@@ -62,10 +62,10 @@ bool DeleteAllTracksText( MIDIMultiTrack &tracks )
 void args_err()
 {
     cerr << "\nusage:  jdkmidi_rewrite_midifile  INFILE.mid  OUTFILE.mid  ['1' for reduce outfile size]\n";
-    cerr <<   "                                                           ['2' for delete start pause]\n\n";
+    cerr << "                                                           ['2' for delete start pause]\n\n";
 }
 
-int main ( int argc, char **argv )
+int main( int argc, char **argv )
 {
     int retcode = -1;
 
@@ -80,7 +80,7 @@ int main ( int argc, char **argv )
 
     int mode = 0;
     if ( argc > 3 )
-        mode = abs ( atol( argv[3] ) );
+        mode = abs( atol( argv[3] ) );
 
     MIDIMultiTrack tracks, tracks2;
 
@@ -90,12 +90,12 @@ int main ( int argc, char **argv )
         return retcode;
     }
 
-    if ( mode%2 == 1 ) // need to reduce outfile size
+    if ( mode % 2 == 1 ) // need to reduce outfile size
     {
         // delete all text events from all tracks
         if ( DeleteAllTracksText( tracks ) )
         {
-          cout << "\nAll midi text events deleted." << endl;
+            cout << "\nAll midi text events deleted." << endl;
         }
 
         if ( tracks.GetNumTracksWithEvents() == 1 )
@@ -116,7 +116,7 @@ int main ( int argc, char **argv )
         cout << "\nStart pause deleted (decreased)." << endl;
     }
 
-    if ( WriteMidiFile( *outtracks, outfile) )
+    if ( WriteMidiFile( *outtracks, outfile ) )
     {
         int num_tracks = outtracks->GetNumTracksWithEvents();
         cout << "\nAll OK. Number of tracks with events " << num_tracks << endl;
@@ -129,4 +129,3 @@ int main ( int argc, char **argv )
 
     return retcode;
 }
-

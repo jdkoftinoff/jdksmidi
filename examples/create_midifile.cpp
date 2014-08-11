@@ -39,20 +39,20 @@ using namespace jdksmidi;
 #include <iostream>
 using namespace std;
 
-int main ( int argc, char **argv )
+int main( int argc, char **argv )
 {
     int return_code = -1;
 
     MIDITimedBigMessage m; // the object for individual midi events
-    unsigned char chan, // internal midi channel number 0...15 (named 1...16)
+    unsigned char chan,    // internal midi channel number 0...15 (named 1...16)
         note, velocity, ctrl, val;
 
-    MIDIClockTime t; // time in midi ticks
-    MIDIClockTime dt = 100; // time interval (1 second)
+    MIDIClockTime t;         // time in midi ticks
+    MIDIClockTime dt = 100;  // time interval (1 second)
     int clks_per_beat = 100; // number of ticks in crotchet (1...32767)
-    int num_tracks = 2; // tracks 0 and 1
+    int num_tracks = 2;      // tracks 0 and 1
 
-    MIDIMultiTrack tracks( num_tracks );  // the object which will hold all the tracks
+    MIDIMultiTrack tracks( num_tracks ); // the object which will hold all the tracks
     tracks.SetClksPerBeat( clks_per_beat );
     int trk; // track number, 0 or 1
 
@@ -85,32 +85,32 @@ int main ( int argc, char **argv )
     tracks.GetTrack( trk )->PutEvent( m );
 
     int tempo = 1000000; // set tempo to 1 000 000 usec = 1 sec in crotchet
-    // with value of clks_per_beat (100) result 10 msec in 1 midi tick
-    // If no tempo is define, 120 beats per minute is assumed.
+                         // with value of clks_per_beat (100) result 10 msec in 1 midi tick
+                         // If no tempo is define, 120 beats per minute is assumed.
 
     // m.SetTime( t ); // do'nt need, because previous time is not changed
     m.SetTempo( tempo );
     tracks.GetTrack( trk )->PutEvent( m );
 
     // META_TRACK_NAME text in track 0 music notation software like Sibelius uses as headline of the music
-    tracks.GetTrack( trk )->PutTextEvent(t, META_TRACK_NAME, "LibJDKSmidi create_midifile.cpp example by VRM");
+    tracks.GetTrack( trk )->PutTextEvent( t, META_TRACK_NAME, "LibJDKSmidi create_midifile.cpp example by VRM" );
 
     // create cannal midi events and add them to a track 1
 
     trk = 1;
 
     // META_TRACK_NAME text in tracks >= 1 Sibelius uses as instrument name (left of staves)
-    tracks.GetTrack( trk )->PutTextEvent(t, META_TRACK_NAME, "Church Organ");
+    tracks.GetTrack( trk )->PutTextEvent( t, META_TRACK_NAME, "Church Organ" );
 
     // we change panorama in channels 0-2
 
-    m.SetControlChange ( chan = 0, ctrl = 0xA, val = 0 ); // channel 0 panorama = 0 at the left
+    m.SetControlChange( chan = 0, ctrl = 0xA, val = 0 ); // channel 0 panorama = 0 at the left
     tracks.GetTrack( trk )->PutEvent( m );
 
-    m.SetControlChange ( chan = 1, ctrl, val = 64 ); // channel 1 panorama = 64 at the centre
+    m.SetControlChange( chan = 1, ctrl, val = 64 ); // channel 1 panorama = 64 at the centre
     tracks.GetTrack( trk )->PutEvent( m );
 
-    m.SetControlChange ( chan = 2, ctrl, val = 127 ); // channel 2 panorama = 127 at the right
+    m.SetControlChange( chan = 2, ctrl, val = 127 ); // channel 2 panorama = 127 at the right
     tracks.GetTrack( trk )->PutEvent( m );
 
     // we change musical instrument in channels 0-2
@@ -135,7 +135,7 @@ int main ( int argc, char **argv )
     tracks.GetTrack( trk )->PutEvent( m );
 
     // after note(s) on before note(s) off: add words to music in the present situation
-    tracks.GetTrack( trk )->PutTextEvent(t, META_LYRIC_TEXT, "Left");
+    tracks.GetTrack( trk )->PutTextEvent( t, META_LYRIC_TEXT, "Left" );
 
     m.SetTime( t += dt );
     m.SetNoteOff( chan, note, velocity );
@@ -148,7 +148,7 @@ int main ( int argc, char **argv )
     m.SetNoteOn( chan = 1, note = 64, velocity );
     tracks.GetTrack( trk )->PutEvent( m );
 
-    tracks.GetTrack( trk )->PutTextEvent(t, META_LYRIC_TEXT, "Centre");
+    tracks.GetTrack( trk )->PutTextEvent( t, META_LYRIC_TEXT, "Centre" );
 
     m.SetTime( t += dt );
     m.SetNoteOff( chan, note, velocity );
@@ -159,7 +159,7 @@ int main ( int argc, char **argv )
     m.SetNoteOn( chan = 2, note = 67, velocity );
     tracks.GetTrack( trk )->PutEvent( m );
 
-    tracks.GetTrack( trk )->PutTextEvent(t, META_LYRIC_TEXT, "Right");
+    tracks.GetTrack( trk )->PutTextEvent( t, META_LYRIC_TEXT, "Right" );
 
     m.SetTime( t += dt );
     m.SetNoteOff( chan, note, velocity );
@@ -180,10 +180,10 @@ int main ( int argc, char **argv )
     m.SetNoteOn( chan = 2, note = 67, velocity );
     tracks.GetTrack( trk )->PutEvent( m );
 
-    tracks.GetTrack( trk )->PutTextEvent(t, META_LYRIC_TEXT, "Chord");
+    tracks.GetTrack( trk )->PutTextEvent( t, META_LYRIC_TEXT, "Chord" );
 
     // release
-    m.SetTime( t += (2*dt) );
+    m.SetTime( t += ( 2 * dt ) );
     m.SetNoteOff( chan = 0, note = 60, velocity );
     tracks.GetTrack( trk )->PutEvent( m );
     m.SetNoteOff( chan = 1, note = 64, velocity );
@@ -208,7 +208,7 @@ int main ( int argc, char **argv )
 
     // then output the stream like my example does, except setting num_tracks to match your data
 
-    if( out_stream.IsValid() )
+    if ( out_stream.IsValid() )
     {
         // the object which takes the midi tracks and writes the midifile to the output stream
         MIDIFileWriteMultiTrack writer( &tracks, &out_stream );
@@ -231,4 +231,3 @@ int main ( int argc, char **argv )
 
     return return_code;
 }
-

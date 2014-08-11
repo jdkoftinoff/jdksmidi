@@ -47,14 +47,14 @@ void DumpMIDIBigMessage( MIDITimedBigMessage *msg )
     if ( msg )
     {
         char msgbuf[1024];
-        fprintf ( stdout, "%s", msg->MsgToText ( msgbuf ) );
+        fprintf( stdout, "%s", msg->MsgToText( msgbuf ) );
 
         if ( msg->IsSystemExclusive() )
         {
-            fprintf ( stdout, "SYSEX length: %d", msg->GetSysEx()->GetLengthSE() );
+            fprintf( stdout, "SYSEX length: %d", msg->GetSysEx()->GetLengthSE() );
         }
 
-        fprintf ( stdout, "\n" );
+        fprintf( stdout, "\n" );
     }
 }
 
@@ -69,19 +69,19 @@ void DumpMIDITimedBigMessage( const MIDITimedBigMessage *msg )
         // see MIDISequencer::beat_marker_msg.SetBeatMarker()
         if ( msg->IsBeatMarker() )
         {
-            fprintf ( stdout, "%8ld : %s <------------------>", msg->GetTime(), msg->MsgToText ( msgbuf ) );
+            fprintf( stdout, "%8ld : %s <------------------>", msg->GetTime(), msg->MsgToText( msgbuf ) );
         }
         else
         {
-            fprintf ( stdout, "%8ld : %s", msg->GetTime(), msg->MsgToText ( msgbuf ) );
+            fprintf( stdout, "%8ld : %s", msg->GetTime(), msg->MsgToText( msgbuf ) );
         }
 
         if ( msg->IsSystemExclusive() )
         {
-            fprintf ( stdout, "SYSEX length: %d", msg->GetSysEx()->GetLengthSE() );
+            fprintf( stdout, "SYSEX length: %d", msg->GetSysEx()->GetLengthSE() );
         }
 
-        fprintf ( stdout, "\n" );
+        fprintf( stdout, "\n" );
     }
 }
 
@@ -91,44 +91,43 @@ void DumpMIDITrack( MIDITrack *t )
 
     for ( int i = 0; i < t->GetNumEvents(); ++i )
     {
-        msg = t->GetEventAddress ( i );
-        DumpMIDITimedBigMessage ( msg );
+        msg = t->GetEventAddress( i );
+        DumpMIDITimedBigMessage( msg );
     }
 }
 
 void DumpAllTracks( MIDIMultiTrack *mlt )
 {
-    fprintf ( stdout , "Clocks per beat: %d\n\n", mlt->GetClksPerBeat() );
+    fprintf( stdout, "Clocks per beat: %d\n\n", mlt->GetClksPerBeat() );
 
     for ( int i = 0; i < mlt->GetNumTracks(); ++i )
     {
-        if ( mlt->GetTrack ( i )->GetNumEvents() > 0 )
+        if ( mlt->GetTrack( i )->GetNumEvents() > 0 )
         {
-            fprintf ( stdout, "DUMP OF TRACK #%2d:\n", i );
-            DumpMIDITrack ( mlt->GetTrack ( i ) );
-            fprintf ( stdout, "\n" );
+            fprintf( stdout, "DUMP OF TRACK #%2d:\n", i );
+            DumpMIDITrack( mlt->GetTrack( i ) );
+            fprintf( stdout, "\n" );
         }
     }
 }
 
 void DumpMIDIMultiTrack( MIDIMultiTrack *mlt )
 {
-    MIDIMultiTrackIterator i ( mlt );
+    MIDIMultiTrackIterator i( mlt );
     const MIDITimedBigMessage *msg;
-    fprintf ( stdout , "Clocks per beat: %d\n\n", mlt->GetClksPerBeat() );
-    i.GoToTime ( 0 );
+    fprintf( stdout, "Clocks per beat: %d\n\n", mlt->GetClksPerBeat() );
+    i.GoToTime( 0 );
 
     do
     {
         int trk_num;
 
-        if ( i.GetCurEvent ( &trk_num, &msg ) )
+        if ( i.GetCurEvent( &trk_num, &msg ) )
         {
-            fprintf ( stdout, "#%2d - ", trk_num );
-            DumpMIDITimedBigMessage ( msg );
+            fprintf( stdout, "#%2d - ", trk_num );
+            DumpMIDITimedBigMessage( msg );
         }
-    }
-    while ( i.GoToNextEvent() );
+    } while ( i.GoToNextEvent() );
 }
 
 void PlayDumpSequencer( MIDISequencer *seq )
@@ -137,9 +136,9 @@ void PlayDumpSequencer( MIDISequencer *seq )
     float next_event_time = 0.0;
     MIDITimedBigMessage ev;
     int ev_track;
-    seq->GoToTimeMs ( pretend_clock_time );
+    seq->GoToTimeMs( pretend_clock_time );
 
-    if ( !seq->GetNextEventTimeMs ( &next_event_time ) )
+    if ( !seq->GetNextEventTimeMs( &next_event_time ) )
     {
         return;
     }
@@ -151,26 +150,24 @@ void PlayDumpSequencer( MIDISequencer *seq )
         // find all events that came before or a the current time
         while ( next_event_time <= pretend_clock_time )
         {
-            if ( seq->GetNextEvent ( &ev_track, &ev ) )
+            if ( seq->GetNextEvent( &ev_track, &ev ) )
             {
                 // found the event!
                 // show it to stdout
-                fprintf ( stdout, "tm=%06.0f : evtm=%06.0f :trk%02d : ",
-                          pretend_clock_time, next_event_time, ev_track );
-                DumpMIDITimedBigMessage ( &ev );
+                fprintf( stdout, "tm=%06.0f : evtm=%06.0f :trk%02d : ", pretend_clock_time, next_event_time, ev_track );
+                DumpMIDITimedBigMessage( &ev );
                 // now find the next message
 
-                if ( !seq->GetNextEventTimeMs ( &next_event_time ) )
+                if ( !seq->GetNextEventTimeMs( &next_event_time ) )
                 {
                     // no events left so end
-                    fprintf ( stdout, "End\n" );
+                    fprintf( stdout, "End\n" );
                     return;
                 }
             }
         }
     }
 }
-
 
 int main( int argc, char **argv )
 {
@@ -186,9 +183,9 @@ int main( int argc, char **argv )
         // set amount of tracks equal to midifile
         tracks.ClearAndResize( reader.ReadNumTracks() );
 
-//      MIDISequencerGUIEventNotifierText notifier( stdout );
-//      MIDISequencer seq( &tracks, &notifier );
-        MIDISequencer seq ( &tracks );
+        //      MIDISequencerGUIEventNotifierText notifier( stdout );
+        //      MIDISequencer seq( &tracks, &notifier );
+        MIDISequencer seq( &tracks );
 
         // load the midifile into the multitrack object
         if ( !reader.Parse() )
@@ -200,7 +197,7 @@ int main( int argc, char **argv )
         if ( argc > 2 )
         {
             cout << endl;
-            int mode = atoi ( argv[2] );
+            int mode = atoi( argv[2] );
             if ( mode == 0 )
             {
                 DumpMIDIMultiTrack( &tracks );
@@ -211,7 +208,7 @@ int main( int argc, char **argv )
             }
         }
 
-//      cout << MultiTrackAsText( tracks ); // new util fun
+        //      cout << MultiTrackAsText( tracks ); // new util fun
 
         double dt = seq.GetMisicDurationInSeconds();
 
@@ -220,10 +217,9 @@ int main( int argc, char **argv )
     else
     {
         cerr << "\nusage:\n    jdkmidi_test_sequencer FILE.mid [0 for DumpMIDIMultiTrack]\n";
-        cerr <<           "                                    [1 for PlayDumpSequencer]\n";
+        cerr << "                                    [1 for PlayDumpSequencer]\n";
         return -1;
     }
 
     return 0;
 }
-

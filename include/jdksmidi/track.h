@@ -40,7 +40,6 @@
 // search /* NC */ for modifies
 //
 
-
 #ifndef JDKSMIDI_TRACK_H
 #define JDKSMIDI_TRACK_H
 
@@ -50,7 +49,6 @@
 
 namespace jdksmidi
 {
-
 
 /* NEW BY NC */
 
@@ -64,30 +62,30 @@ namespace jdksmidi
 /// this can be overriden giving them one of the other values as last parameter.
 enum
 {
-    INSMODE_DEFAULT,    ///< follow the default behaviour (only used as default argument in methods MIDITrack::InsertEvent() and MIDITrack::InsertNote()
-    INSMODE_INSERT,     ///< always insert events, if a same kind event was found  duplicate it.
-    INSMODE_REPLACE,    ///< replace if a same kind event was found, otherwise do nothing.
-    INSMODE_INSERT_OR_REPLACE,          ///< replace if a same kind event was found, otherwise insert.
-    INSMODE_INSERT_OR_REPLACE_BUT_NOTE  ///< as above, but allow two same note events at same time (don't replace, insert a new note).
+    INSMODE_DEFAULT, ///< follow the default behaviour (only used as default argument in methods MIDITrack::InsertEvent() and
+                     ///MIDITrack::InsertNote()
+    INSMODE_INSERT,  ///< always insert events, if a same kind event was found  duplicate it.
+    INSMODE_REPLACE, ///< replace if a same kind event was found, otherwise do nothing.
+    INSMODE_INSERT_OR_REPLACE,         ///< replace if a same kind event was found, otherwise insert.
+    INSMODE_INSERT_OR_REPLACE_BUT_NOTE ///< as above, but allow two same note events at same time (don't replace, insert a new
+                                       ///note).
 };
 
 /// Defines the behaviour of the method MIDITrack::FindEventNunber() when searching events.
 enum
 {
-    COMPMODE_EQUAL,     ///< the method searches for an event matching equal operator.
-    COMPMODE_SAMEKIND,  ///< the nethod searches for an event matching the MIDITimedBigMessage::IsSameKind() method.
-    COMPMODE_TIME       ///< the method searches for the first event with time equal to the event time.
+    COMPMODE_EQUAL,    ///< the method searches for an event matching equal operator.
+    COMPMODE_SAMEKIND, ///< the nethod searches for an event matching the MIDITimedBigMessage::IsSameKind() method.
+    COMPMODE_TIME      ///< the method searches for the first event with time equal to the event time.
 };
 
 /* END OF NEW */
-
 
 ///
 /// MIDITrackChunkSize is a constant which specifies how many events are in one MIDITrackChunk.
 ///
 
 const int MIDITrackChunkSize = 512;
-
 
 ///
 /// A MIDITrack's events are allocated in these chunks in order to avoid memory fragmentation
@@ -96,23 +94,23 @@ const int MIDITrackChunkSize = 512;
 /// to these events is only done via the GetEventAddress() method.
 ///
 
-class  MIDITrackChunk
+class MIDITrackChunk
 {
-public:
+  public:
 
     /// Returns the address of the MIDITimedBigMessage referred to by *event_num*
     /// @param event_num an integer specifying an event number in the range 0 to MIDITrackChunkSize
     /// @returns The const pointer to the requested event.
-    const MIDITimedBigMessage * GetEventAddress ( int event_num ) const;
+    const MIDITimedBigMessage *GetEventAddress( int event_num ) const;
 
     /// Returns the address of the MIDITimedBigMessage referred to by *event_num*
     /// @param event_num an integer specifying an event number in the range 0 to MIDITrackChunkSize
     /// @returns The non-const pointer to the requested event.
-    MIDITimedBigMessage * GetEventAddress ( int event_num );
+    MIDITimedBigMessage *GetEventAddress( int event_num );
 
-protected:
+  protected:
 
-private:
+  private:
     MIDITimedBigMessage buf[MIDITrackChunkSize];
 };
 
@@ -124,7 +122,6 @@ private:
 
 const int MIDIChunksPerTrack = 512;
 
-
 ///
 /// The MIDITrack class is a container that manages an array of MIDIChunk objects and provides an
 /// interface to the user that is useful for managing a list of MIDITimedBigMessages. It internally
@@ -132,17 +129,17 @@ const int MIDIChunksPerTrack = 512;
 /// which is defined by MIDIChunksPerTrack * MIDITrackChunkSize.
 ///
 
-class  MIDITrack
+class MIDITrack
 {
-public:
+  public:
 
     /// Construct a MIDITrack object with the specified number of events
     /// @param size The number of events, defaults to 0
-    MIDITrack ( int size = 0 );
+    MIDITrack( int size = 0 );
 
     /// Copy Constructor for a MIDITrack object
     /// @param t The reference to the MIDITrack object to copy
-    MIDITrack ( const MIDITrack &t );
+    MIDITrack( const MIDITrack &t );
 
     /// The MIDITrack Destructor, frees all chunks and referenced MIDITimedBigMessage's
     ~MIDITrack();
@@ -160,7 +157,7 @@ public:
     /// @param src1 Pointer to first track
     /// @param src2 Pointer to second track
     /// ClearAndMerge() assumes all events in both tracks are already ordered by time.
-    void ClearAndMerge ( const MIDITrack *src1, const MIDITrack *src2 );
+    void ClearAndMerge( const MIDITrack *src1, const MIDITrack *src2 );
 
     /* NEW BY NC */
 
@@ -189,7 +186,7 @@ public:
     /// + __ins_mode_ was INSMODE_REPLACE but there is no event to replace
     /// + a memory error occurred.
     /// otherwise **true**.
-    bool InsertEvent( const MIDITimedBigMessage& msg, int _ins_mode = INSMODE_DEFAULT );
+    bool InsertEvent( const MIDITimedBigMessage &msg, int _ins_mode = INSMODE_DEFAULT );
 
     /// Inserts a Note On and a Note Off event into the track. Use this method for inserting note messages as
     /// InsertEvent() could be dangerous in some situations. It handles automatically the EndOfTrack message,
@@ -208,13 +205,13 @@ public:
     /// otherwise **true**.
     /// @bug In the latter case the method could leave the track in an inconsistent state (a Note On without
     /// corresponding Note Off or viceversa).
-    bool InsertNote( const MIDITimedBigMessage& msg, MIDIClockTime len, int _ins_mode = INSMODE_DEFAULT );
+    bool InsertNote( const MIDITimedBigMessage &msg, MIDIClockTime len, int _ins_mode = INSMODE_DEFAULT );
 
     /// Deletes an event from the track. Use DeleteNote() for safe deleting both Note On and Note Off. You cannot
     /// delete the EndOfTrack event.
     /// @param msg a copy of the event to delete.
     /// @returns **false** if an exact copy of the event was not found, or if a memory error occurred, otherwise **true**.
-    bool DeleteEvent( const MIDITimedBigMessage& msg );
+    bool DeleteEvent( const MIDITimedBigMessage &msg );
 
     /// Deletes a Note On and corresponding Note Off events from the track. Don't use DeleteEvent() for deleting
     /// notes.
@@ -222,31 +219,29 @@ public:
     /// @returns **false** if an exact copy of the event was not found, or if a memory error occurred, otherwise **true**.
     /// @bug In the latter case the method could leave the track in an inconsistent state (a Note On without
     /// corresponding Note Off or viceversa).
-    bool DeleteNote( const MIDITimedBigMessage& msg );
-
+    bool DeleteNote( const MIDITimedBigMessage &msg );
 
     /* END OF NEW */
 
-
-//  void  Sort();
+    //  void  Sort();
 
     /// The equal operator
-    const MIDITrack & operator = ( const MIDITrack & src );
+    const MIDITrack &operator=( const MIDITrack &src );
 
     /// Increase the size of the internal buffer of *increase_amount* events.
     /// @note the size of the buffer is autonomally managed by the track, so this have no utility for the
     /// user and could become protected in the future.
-    bool Expand ( int increase_amount = ( MIDITrackChunkSize ) );
+    bool Expand( int increase_amount = ( MIDITrackChunkSize ) );
 
     /// The same as GetEvent(). It's included only for compatibility with older versions and could be removed
     /// in the future.
-    MIDITimedBigMessage * GetEventAddress ( int event_num );
-    const MIDITimedBigMessage * GetEventAddress ( int event_num ) const;
+    MIDITimedBigMessage *GetEventAddress( int event_num );
+    const MIDITimedBigMessage *GetEventAddress( int event_num ) const;
 
     /// Returns a pointer to the *event_num* message stored in the track. If *event_num* is not a valid event
     /// number returns 0.
-    MIDITimedBigMessage *GetEvent ( int event_num );
-    const MIDITimedBigMessage *GetEvent ( int event_num ) const;
+    MIDITimedBigMessage *GetEvent( int event_num );
+    const MIDITimedBigMessage *GetEvent( int event_num ) const;
 
     /// Returns a pointer to the last event in the track. If the track is correctly termined it
     /// should be a EndOfData event. See IsTrackEnded().
@@ -255,7 +250,7 @@ public:
         return GetEvent( GetNumEvents() - 1 );
     }
 
-    MIDITimedBigMessage *GetLastEvent()         // NEW BY NC: there was only the const version
+    MIDITimedBigMessage *GetLastEvent() // NEW BY NC: there was only the const version
     {
         return GetEvent( GetNumEvents() - 1 );
     }
@@ -265,43 +260,43 @@ public:
     MIDIClockTime GetLastEventTime() const
     {
         const MIDITimedBigMessage *msg = GetLastEvent();
-        return ( msg == 0 )? 0 : msg->GetTime();
+        return ( msg == 0 ) ? 0 : msg->GetTime();
     }
 
     /// Copies in *msg* the *event_num* message of the track. Returns **true** if *event_num* is a valid
     /// event number (if not, *msg* will be left unchanged).
-    bool GetEvent ( int event_num, MIDITimedBigMessage *msg ) const;
+    bool GetEvent( int event_num, MIDITimedBigMessage *msg ) const;
 
     /// Copies the event *msg* at the place *n* in the track (default: as last event in the track).
     /// @note this is a low level function and may leave the track in an inconsistent state (for ex. with
     /// events after the EndOfData). You should use InsertEvent(), InsertNote() for safe editing.
-    bool PutEvent ( const MIDITimedBigMessage &msg, int n = -1  );
+    bool PutEvent( const MIDITimedBigMessage &msg, int n = -1 );
 
-    bool PutEvent ( const MIDIDeltaTimedMessage &msg )
+    bool PutEvent( const MIDIDeltaTimedMessage &msg )
     {
-        return PutEvent ( MIDIDeltaTimedBigMessage (msg) );
+        return PutEvent( MIDIDeltaTimedBigMessage( msg ) );
     }
 
-    bool PutEvent ( const MIDIDeltaTimedBigMessage &msg);
+    bool PutEvent( const MIDIDeltaTimedBigMessage &msg );
 
     // put event and clear msg, exclude its time, keep time unchanged!
-    bool PutEvent2 ( MIDITimedBigMessage &msg );
-    bool PutEvent ( const MIDITimedMessage &msg, const MIDISystemExclusive *sysex );
+    bool PutEvent2( MIDITimedBigMessage &msg );
+    bool PutEvent( const MIDITimedMessage &msg, const MIDISystemExclusive *sysex );
 
     /// Changes the event *event_num* in the track to the message _msg_.
     /// @note this is a low level function and may leave the track in an inconsistent state (for ex. with
     /// events after the EndOfData). You shouldn't use it for safe editing.
-    bool SetEvent ( int event_num, const MIDITimedBigMessage &msg );
+    bool SetEvent( int event_num, const MIDITimedBigMessage &msg );
 
     // put text message with known length (w/o ending NULL), or evaluate it if zero length
-    bool PutTextEvent ( MIDIClockTime time, int meta_event_type, const char *text, int length = 0 );
+    bool PutTextEvent( MIDIClockTime time, int meta_event_type, const char *text, int length = 0 );
 
     /// Removes the event *event_num* from the track (it does nothing if *event_num* is not a valid event number).
     /// @note this is a low level function and may leave the track in an inconsistent state (for ex. with
     /// events after the EndOfData). You should use DeleteEvent(), DeleteNote() for safe editing.
-    bool RemoveEvent ( int event_num );
+    bool RemoveEvent( int event_num );
 
-    bool MakeEventNoOp ( int event_num );
+    bool MakeEventNoOp( int event_num );
 
     /* NEW BY NC */
 
@@ -314,18 +309,18 @@ public:
     /// + @ref COMPMODE_SAMEKIND : the event is a same kind event (see MIDITimedBigMessage::IsSameKind()).
     /// + @ref COMPMODE_TIME : the behaviour is the same of FindEventNumber(time, event_num).
     /// @returns **true** if an event with given time was found, *false* otherwise.
-    bool FindEventNumber( const MIDITimedBigMessage& msg, int *event_num, int _comp_mode = COMPMODE_EQUAL) const;
+    bool FindEventNumber( const MIDITimedBigMessage &msg, int *event_num, int _comp_mode = COMPMODE_EQUAL ) const;
 
     /// Finds the first event in the track with the given time.
     /// @param[in] time the time to look for.
     /// @param[out] event_num contains the event number in the track if an event was found; otherwise it contains
     /// **-1** if *time* was invalid, or the number of the last event before *time*.
     /// @returns **true** if an event with given time was found, **false** otherwise.
-    bool FindEventNumber ( MIDIClockTime time, int *event_num ) const;
+    bool FindEventNumber( MIDIClockTime time, int *event_num ) const;
 
     /// Returns the length in MIDI clocks of the given note. _msg_ must be a Note On event present in the track
     /// (otherwise the function will return 0).
-    MIDIClockTime NoteLength ( const MIDITimedBigMessage& msg ) const;
+    MIDIClockTime NoteLength( const MIDITimedBigMessage &msg ) const;
 
     /* END OF NEW */
 
@@ -377,11 +372,11 @@ public:
     /// corresponding off events are properly managed.
     void CloseOpenEvents( MIDIClockTime t );
 
-private:
+  private:
 
-// void  QSort( int left, int right );
+    // void  QSort( int left, int right );
 
-    MIDITrackChunk * chunk[MIDIChunksPerTrack];
+    MIDITrackChunk *chunk[MIDIChunksPerTrack];
 
     int buf_size;
     int num_events;
@@ -396,11 +391,8 @@ private:
         }
     };
 
-    static int ins_mode;        /* NEW BY NC */
-
+    static int ins_mode; /* NEW BY NC */
 };
-
 }
 
 #endif
-

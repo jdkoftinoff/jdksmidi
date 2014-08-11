@@ -49,103 +49,103 @@
 namespace jdksmidi
 {
 
-class  MIDITempo
+class MIDITempo
 {
-public:
+  public:
     MIDITempo()
     {
         tempo = 120 << 8;
     }
-    MIDITempo ( int a )
+    MIDITempo( int a )
     {
-        tempo = ( unsigned long ) a << 8;
+        tempo = (unsigned long)a << 8;
     }
-    MIDITempo ( unsigned int a )
+    MIDITempo( unsigned int a )
     {
-        tempo = ( unsigned long ) a << 8;
+        tempo = (unsigned long)a << 8;
     }
-    MIDITempo ( long a )
+    MIDITempo( long a )
     {
-        tempo = ( unsigned long ) a << 8;
+        tempo = (unsigned long)a << 8;
     }
-    MIDITempo ( unsigned long a )
+    MIDITempo( unsigned long a )
     {
         tempo = a << 8;
     }
-    MIDITempo ( float a )
+    MIDITempo( float a )
     {
-        tempo = ( unsigned long ) ( a * 256.0 );
+        tempo = (unsigned long)( a * 256.0 );
     }
-    MIDITempo ( const MIDITempo &a )
+    MIDITempo( const MIDITempo &a )
     {
         tempo = a.GetFullTempo();
     }
 
-    operator short ()
+    operator short()
     {
-        return ( short ) ( ( tempo + 0x80 ) >> 8 );
+        return (short)( ( tempo + 0x80 ) >> 8 );
     }
-    operator unsigned short ()
+    operator unsigned short()
     {
-        return ( unsigned short ) ( ( tempo + 0x80 ) >> 8 );
-    }
-
-    operator int ()
-    {
-        return ( int ) ( ( tempo + 0x80 ) >> 8 );
-    }
-    operator unsigned int ()
-    {
-        return ( unsigned int ) ( ( tempo + 0x80 ) >> 8 );
-    }
-    operator long ()
-    {
-        return ( long ) ( ( tempo + 0x80 ) >> 8 );
-    }
-    operator unsigned long ()
-    {
-        return ( unsigned long ) ( ( tempo + 0x80 ) >> 8 );
-    }
-    operator float ()
-    {
-        return ( float ) tempo / 256.0f;
-    }
-    void operator = ( unsigned short a )
-    {
-        tempo = ( unsigned long ) a << 8;
-    }
-    void operator = ( short a )
-    {
-        tempo = ( unsigned long ) a << 8;
+        return (unsigned short)( ( tempo + 0x80 ) >> 8 );
     }
 
-    void operator = ( unsigned int a )
+    operator int()
     {
-        tempo = ( unsigned long ) a << 8;
+        return (int)( ( tempo + 0x80 ) >> 8 );
     }
-    void operator = ( int a )
+    operator unsigned int()
     {
-        tempo = ( unsigned long ) a << 8;
+        return (unsigned int)( ( tempo + 0x80 ) >> 8 );
     }
-    void operator = ( unsigned long a )
+    operator long()
     {
-        tempo = ( unsigned long ) a << 8;
+        return (long)( ( tempo + 0x80 ) >> 8 );
     }
-    void operator = ( long a )
+    operator unsigned long()
     {
-        tempo = ( unsigned long ) a << 8;
+        return (unsigned long)( ( tempo + 0x80 ) >> 8 );
+    }
+    operator float()
+    {
+        return (float)tempo / 256.0f;
+    }
+    void operator=( unsigned short a )
+    {
+        tempo = (unsigned long)a << 8;
+    }
+    void operator=( short a )
+    {
+        tempo = (unsigned long)a << 8;
     }
 
-    void operator = ( float a )
+    void operator=( unsigned int a )
     {
-        tempo = ( unsigned long ) ( a * 256.0 );
+        tempo = (unsigned long)a << 8;
+    }
+    void operator=( int a )
+    {
+        tempo = (unsigned long)a << 8;
+    }
+    void operator=( unsigned long a )
+    {
+        tempo = (unsigned long)a << 8;
+    }
+    void operator=( long a )
+    {
+        tempo = (unsigned long)a << 8;
+    }
+
+    void operator=( float a )
+    {
+        tempo = (unsigned long)( a * 256.0 );
     }
 
     unsigned long GetFullTempo() const
     {
         return tempo;
     }
-    void SetFullTempo ( unsigned long v )
+    void SetFullTempo( unsigned long v )
     {
         tempo = v;
     }
@@ -159,12 +159,9 @@ public:
             return ( 60000000L / 256 ) / ( 120 * 256 );
     }
 
-protected:
+  protected:
     unsigned long tempo;
 };
-
 }
 
 #endif
-
-

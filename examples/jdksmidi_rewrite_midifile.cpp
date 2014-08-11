@@ -68,7 +68,7 @@ void args_err()
     cerr << "usage:\n\tjdkmidi_rewrite_midifile  INFILE.mid  OUTFILE.mid  ['1' for reduce outfile size]\n";
 }
 
-int main ( int argc, char **argv )
+int main( int argc, char **argv )
 {
     int return_code = -1;
 
@@ -77,7 +77,7 @@ int main ( int argc, char **argv )
         const char *infile_name = argv[1];
 
         // the stream used to read the input file
-        MIDIFileReadStreamFile rs ( infile_name );
+        MIDIFileReadStreamFile rs( infile_name );
         if ( !rs.IsValid() )
         {
             cerr << "\nError opening file " << infile_name << endl;
@@ -96,10 +96,10 @@ int main ( int argc, char **argv )
         MIDIMultiTrack tracks( 1 ); // only 1 track in multitrack object - not enough for midifile format 1
 
         // the object which loads the tracks into the tracks object
-        MIDIFileReadMultiTrack track_loader ( &tracks );
+        MIDIFileReadMultiTrack track_loader( &tracks );
 
         // the object which parses the midifile and gives it to the multitrack loader
-        MIDIFileRead reader ( &rs, &track_loader );
+        MIDIFileRead reader( &rs, &track_loader );
 
         // make amount of of tracks equal to midifile_num_tracks
         int midifile_num_tracks = reader.ReadNumTracks();
@@ -125,17 +125,18 @@ int main ( int argc, char **argv )
 
             // remake multitrack object with 17 tracks and optimize new tracks content:
             // move old track 0 channal events to new tracks 1-16, and all other types of events to new track 0
-            if ( midifile_num_tracks == 1 ) tracks.AssignEventsToTracks( 0 );
+            if ( midifile_num_tracks == 1 )
+                tracks.AssignEventsToTracks( 0 );
             // this function can reduce midifile size because of increase number of events with running status
         }
 
         // create the output stream
-        MIDIFileWriteStreamFileName out_stream ( outfile_name );
+        MIDIFileWriteStreamFileName out_stream( outfile_name );
 
         if ( out_stream.IsValid() )
         {
             // the object which takes the midi tracks and writes the midifile to the output stream
-            MIDIFileWriteMultiTrack writer ( &tracks, &out_stream );
+            MIDIFileWriteMultiTrack writer( &tracks, &out_stream );
 
             // uncomment this string for output midifile without running status usage
             // writer.UseRunningStatus( false );
@@ -147,7 +148,7 @@ int main ( int argc, char **argv )
             int num_tracks = tracks.GetNumTracksWithEvents();
 
             // write the output midi file
-            if ( writer.Write ( num_tracks, division ) )
+            if ( writer.Write( num_tracks, division ) )
             {
                 cout << "\nAll OK. Number of tracks with events " << num_tracks << endl;
                 return_code = 0;
@@ -169,4 +170,3 @@ int main ( int argc, char **argv )
 
     return return_code;
 }
-

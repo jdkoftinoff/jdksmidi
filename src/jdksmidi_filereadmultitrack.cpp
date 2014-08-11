@@ -41,8 +41,9 @@
 namespace jdksmidi
 {
 
-MIDIFileReadMultiTrack::MIDIFileReadMultiTrack ( MIDIMultiTrack *mlttrk )
-    : multitrack ( mlttrk ), cur_track ( -1 )
+MIDIFileReadMultiTrack::MIDIFileReadMultiTrack( MIDIMultiTrack *mlttrk )
+    : multitrack( mlttrk )
+    , cur_track( -1 )
 {
 }
 
@@ -50,48 +51,48 @@ MIDIFileReadMultiTrack::~MIDIFileReadMultiTrack()
 {
 }
 
-void MIDIFileReadMultiTrack::mf_error ( const char * )
+void MIDIFileReadMultiTrack::mf_error( const char * )
 {
 }
 
-void MIDIFileReadMultiTrack::mf_starttrack ( int trk )
+void MIDIFileReadMultiTrack::mf_starttrack( int trk )
 {
     cur_track = trk;
 }
 
-void MIDIFileReadMultiTrack::mf_endtrack ( int trk )
+void MIDIFileReadMultiTrack::mf_endtrack( int trk )
 {
     cur_track = -1;
 }
 
-bool MIDIFileReadMultiTrack::AddEventToMultiTrack ( const MIDITimedMessage &msg, MIDISystemExclusive *sysex, int dest_track )
+bool MIDIFileReadMultiTrack::AddEventToMultiTrack( const MIDITimedMessage &msg, MIDISystemExclusive *sysex, int dest_track )
 {
     bool result = false;
 
     if ( dest_track != -1 && dest_track < multitrack->GetNumTracks() )
     {
-        MIDITrack *t = multitrack->GetTrack ( dest_track );
+        MIDITrack *t = multitrack->GetTrack( dest_track );
 
         if ( t )
         {
-            result = t->PutEvent ( msg, sysex );
+            result = t->PutEvent( msg, sysex );
         }
     }
 
     return result;
 }
 
-void MIDIFileReadMultiTrack::mf_header (int the_format_, int ntrks_, int division_ )
+void MIDIFileReadMultiTrack::mf_header( int the_format_, int ntrks_, int division_ )
 {
     the_format = the_format_;
     num_tracks = ntrks_;
     division = division_;
-    multitrack->SetClksPerBeat ( division );
+    multitrack->SetClksPerBeat( division );
 }
 
-bool MIDIFileReadMultiTrack::ChanMessage ( const MIDITimedMessage &msg )
+bool MIDIFileReadMultiTrack::ChanMessage( const MIDITimedMessage &msg )
 {
-    return AddEventToMultiTrack ( msg, 0, cur_track );
+    return AddEventToMultiTrack( msg, 0, cur_track );
 }
 
 void MIDIFileReadMultiTrack::SortEventsOrder()
@@ -99,12 +100,12 @@ void MIDIFileReadMultiTrack::SortEventsOrder()
     multitrack->SortEventsOrder();
 }
 
-bool MIDIFileReadMultiTrack::mf_metamisc ( MIDIClockTime time, int type, int len, unsigned char *data )
+bool MIDIFileReadMultiTrack::mf_metamisc( MIDIClockTime time, int type, int len, unsigned char *data )
 {
     // code for all miscellaneous meta events
 
     MIDITimedMessage msg;
-    msg.SetTime ( time );
+    msg.SetTime( time );
 
     msg.SetStatus( META_EVENT );
     msg.SetByte1( type );
@@ -129,62 +130,63 @@ bool MIDIFileReadMultiTrack::mf_metamisc ( MIDIClockTime time, int type, int len
     // else msg add to track, but do'nt write to output midifile!
 
     msg.SetDataLength( len );
-    return AddEventToMultiTrack ( msg, 0, cur_track );
+    return AddEventToMultiTrack( msg, 0, cur_track );
 }
 
-bool MIDIFileReadMultiTrack::mf_timesig ( MIDIClockTime time, int num, int den_pow, int clks_per_metro, int notated_32nd_per_quarter )
+bool MIDIFileReadMultiTrack::mf_timesig(
+    MIDIClockTime time, int num, int den_pow, int clks_per_metro, int notated_32nd_per_quarter )
 {
     MIDITimedMessage msg;
-    msg.SetTime ( time );
-    msg.SetTimeSig ( num, den_pow, clks_per_metro, notated_32nd_per_quarter );
+    msg.SetTime( time );
+    msg.SetTimeSig( num, den_pow, clks_per_metro, notated_32nd_per_quarter );
     msg.SetDataLength( 5 ); // source 4 bytes + 1 byte for denominator
-    return AddEventToMultiTrack ( msg, 0, cur_track );
+    return AddEventToMultiTrack( msg, 0, cur_track );
 }
 
-bool MIDIFileReadMultiTrack::mf_tempo ( MIDIClockTime time, unsigned char a, unsigned char b, unsigned char c )
+bool MIDIFileReadMultiTrack::mf_tempo( MIDIClockTime time, unsigned char a, unsigned char b, unsigned char c )
 {
     MIDITimedMessage msg;
-    msg.SetTime ( time );
-    msg.SetMetaEvent ( MF_META_TEMPO, a, b );
+    msg.SetTime( time );
+    msg.SetMetaEvent( MF_META_TEMPO, a, b );
     msg.SetByte4( c );
     msg.SetDataLength( 3 );
-    return AddEventToMultiTrack ( msg, 0, cur_track );
+    return AddEventToMultiTrack( msg, 0, cur_track );
 }
 
-bool MIDIFileReadMultiTrack::mf_keysig ( MIDIClockTime time, int c, int v )
+bool MIDIFileReadMultiTrack::mf_keysig( MIDIClockTime time, int c, int v )
 {
     MIDITimedMessage msg;
-    msg.SetTime ( time );
-    msg.SetKeySig ( ( unsigned char ) c, ( unsigned char ) v );
+    msg.SetTime( time );
+    msg.SetKeySig( (unsigned char)c, (unsigned char)v );
     msg.SetDataLength( 2 );
-    return AddEventToMultiTrack ( msg, 0, cur_track );
+    return AddEventToMultiTrack( msg, 0, cur_track );
 }
 
-bool MIDIFileReadMultiTrack::mf_sqspecific ( MIDIClockTime time, int len, unsigned char *s )
+bool MIDIFileReadMultiTrack::mf_sqspecific( MIDIClockTime time, int len, unsigned char *s )
 {
     // read sequencer specific message as pseudo-text message
-    return mf_text ( time, MF_META_SEQUENCER_SPECIFIC, len, s );
+    return mf_text( time, MF_META_SEQUENCER_SPECIFIC, len, s );
 }
 
-bool MIDIFileReadMultiTrack::mf_text ( MIDIClockTime time, int type, int len, unsigned char *s )
+bool MIDIFileReadMultiTrack::mf_text( MIDIClockTime time, int type, int len, unsigned char *s )
 {
     MIDITimedMessage msg;
-    msg.SetStatus ( META_EVENT );
-    msg.SetMetaType ( ( uchar ) type ); // remember - MF_META_* id codes match META_* codes
-    msg.SetTime ( time );
+    msg.SetStatus( META_EVENT );
+    msg.SetMetaType( (uchar)type ); // remember - MF_META_* id codes match META_* codes
+    msg.SetTime( time );
 
     MIDISystemExclusive sysex( len );
 
     for ( int i = 0; i < len; ++i )
     {
-        sysex.PutSysByte ( s[i] );
+        sysex.PutSysByte( s[i] );
     }
 
     msg.SetDataLength( 0 ); // variable data length don't saved to data_length
-    return AddEventToMultiTrack ( msg, &sysex, cur_track );
+    return AddEventToMultiTrack( msg, &sysex, cur_track );
 }
 
-bool MIDIFileReadMultiTrack::mf_sysex ( MIDIClockTime time, int type, int len, unsigned char *s )
+bool MIDIFileReadMultiTrack::mf_sysex( MIDIClockTime time, int type, int len, unsigned char *s )
 {
     MIDITimedMessage msg;
     msg.SetSysEx( type ); // set msg status byte (0xF0 or 0xF7)
@@ -205,26 +207,25 @@ bool MIDIFileReadMultiTrack::mf_sysex ( MIDIClockTime time, int type, int len, u
     if ( num > 4 )
         msg.SetByte6( s[4] );
 
-    msg.SetTime ( time );
+    msg.SetTime( time );
     MIDISystemExclusive sysex( len );
 
     for ( int i = 0; i < len; ++i )
     {
-        sysex.PutSysByte ( s[i] );
+        sysex.PutSysByte( s[i] );
     }
 
-   msg.SetDataLength( num );
-   return AddEventToMultiTrack ( msg, &sysex, cur_track );
+    msg.SetDataLength( num );
+    return AddEventToMultiTrack( msg, &sysex, cur_track );
 }
 
-bool MIDIFileReadMultiTrack::mf_eot ( MIDIClockTime time )
+bool MIDIFileReadMultiTrack::mf_eot( MIDIClockTime time )
 {
     MIDITimedMessage msg;
-    msg.SetStatus ( META_EVENT );
-    msg.SetMetaType ( META_END_OF_TRACK );
-    msg.SetTime ( time );
+    msg.SetStatus( META_EVENT );
+    msg.SetMetaType( META_END_OF_TRACK );
+    msg.SetTime( time );
     msg.SetDataLength( 0 );
-    return AddEventToMultiTrack ( msg, 0, cur_track );
+    return AddEventToMultiTrack( msg, 0, cur_track );
 }
-
 }

@@ -44,7 +44,7 @@ void SoloMelodyConverter( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ig
     MIDIClockTime ev_time = 0;
     MIDISequencer seq( &src );
     seq.GoToTime( 0 );
-    if ( !seq.GetNextEventTime ( &ev_time ) )
+    if ( !seq.GetNextEventTime( &ev_time ) )
         return; // empty src multitrack
 
     MIDITimedBigMessage ev;
@@ -65,7 +65,7 @@ void SoloMelodyConverter( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ig
             if ( ev.GetChannel() == ignore_channel )
                 continue;
 
-//          if ( ev.IsAllNotesOff() ) ... ; // for future work...
+            //          if ( ev.IsAllNotesOff() ) ... ; // for future work...
 
             if ( ev.IsNote() )
             {
@@ -83,7 +83,7 @@ void SoloMelodyConverter( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ig
                         // make noteoff message for previous solo note
                         solo_note_on_ev.SetTime( ev.GetTime() );
                         solo_note_on_ev.SetVelocity( 0 ); // note off
-                        dst.GetTrack(ev_track)->PutEvent( solo_note_on_ev );
+                        dst.GetTrack( ev_track )->PutEvent( solo_note_on_ev );
 
                         // make new solo note
                         solo_note_on_ev = ev;
@@ -112,15 +112,15 @@ void SoloMelodyConverter( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ig
                             else
                                 continue; // skip other note off stuff
                         }
-                        else // ( new_note > solo_note ) any other note off event
+                        else          // ( new_note > solo_note ) any other note off event
                             continue; // skip other note off stuff
                     }
-                    else // ( solo_note_on == false ) - new note off after previous silence
+                    else          // ( solo_note_on == false ) - new note off after previous silence
                         continue; // skip other note off stuff
                 }
             }
         }
-        dst.GetTrack(ev_track)->PutEvent(ev);
+        dst.GetTrack( ev_track )->PutEvent( ev );
     }
 }
 
@@ -132,7 +132,7 @@ void CopyWithoutChannel( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ign
     MIDIClockTime ev_time = 0;
     MIDISequencer seq( &src );
     seq.GoToTime( 0 );
-    if ( !seq.GetNextEventTime ( &ev_time ) )
+    if ( !seq.GetNextEventTime( &ev_time ) )
         return; // empty src multitrack
 
     MIDITimedBigMessage ev;
@@ -146,7 +146,7 @@ void CopyWithoutChannel( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ign
         if ( ev.IsChannelEvent() && ev.GetChannel() == ignore_channel )
             continue;
 
-        dst.GetTrack(ev_track)->PutEvent(ev);
+        dst.GetTrack( ev_track )->PutEvent( ev );
     }
 }
 
@@ -158,7 +158,7 @@ void CompressStartPause( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ign
     MIDIClockTime ev_time = 0;
     MIDISequencer seq( &src );
     seq.GoToTime( 0 );
-    if ( !seq.GetNextEventTime ( &ev_time ) )
+    if ( !seq.GetNextEventTime( &ev_time ) )
         return; // empty src multitrack
 
     MIDITimedBigMessage ev;
@@ -178,7 +178,7 @@ void CompressStartPause( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ign
         if ( compress )
         {
             // compress time intervals between adjacent messages to 1 tick
-            if (ev_time > old_ev_time)
+            if ( ev_time > old_ev_time )
                 ++delta_ev_time;
 
             old_ev_time = ev_time;
@@ -196,7 +196,7 @@ void CompressStartPause( const MIDIMultiTrack &src, MIDIMultiTrack &dst, int ign
             ev.SetTime( ev_time - ev_time0 );
         }
 
-        dst.GetTrack(ev_track)->PutEvent(ev);
+        dst.GetTrack( ev_track )->PutEvent( ev );
     }
 }
 
@@ -205,12 +205,12 @@ void ClipMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst, double max_
     dst.ClearAndResize( src.GetNumTracks() );
     dst.SetClksPerBeat( src.GetClksPerBeat() );
 
-    double max_event_time = 1000.*max_time_sec; // msec
-    double event_time = 0.; // msec
+    double max_event_time = 1000. * max_time_sec; // msec
+    double event_time = 0.;                       // msec
 
     MIDISequencer seq( &src );
     seq.GoToTimeMs( 0.f );
-    if ( !seq.GetNextEventTimeMs ( &event_time ) )
+    if ( !seq.GetNextEventTimeMs( &event_time ) )
         return; // empty src multitrack
 
     MIDITimedBigMessage ev;
@@ -221,7 +221,7 @@ void ClipMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst, double max_
         if ( ev.IsServiceMsg() || ev.IsNoOp() )
             continue;
 
-        dst.GetTrack(ev_track)->PutEvent(ev);
+        dst.GetTrack( ev_track )->PutEvent( ev );
 
         if ( event_time >= max_event_time )
             break; // end of max_time_sec
@@ -251,22 +251,22 @@ void CollapseMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst )
         if ( ev.IsServiceMsg() || ev.IsNoOp() )
             continue;
 
-        dst.GetTrack(0)->PutEvent(ev);
+        dst.GetTrack( 0 )->PutEvent( ev );
     }
 
     // set (single!) dst EndOfTrack message
-    MIDITimedBigMessage end(ev); // copy time of last src event
+    MIDITimedBigMessage end( ev ); // copy time of last src event
     end.SetDataEnd();
-    dst.GetTrack(0)->PutEvent(end);
+    dst.GetTrack( 0 )->PutEvent( end );
 }
 
 void CollapseAndExpandMultiTrack( const MIDIMultiTrack &src, MIDIMultiTrack &dst )
 {
-    CollapseMultiTrack(src, dst);
-    dst.AssignEventsToTracks(0);
+    CollapseMultiTrack( src, dst );
+    dst.AssignEventsToTracks( 0 );
 }
 
-bool ReadMidiFile(const char *file, MIDIMultiTrack &dst)
+bool ReadMidiFile( const char *file, MIDIMultiTrack &dst )
 {
     MIDIFileReadStreamFile rs( file );
     MIDIFileReadMultiTrack track_loader( &dst );
@@ -277,7 +277,7 @@ bool ReadMidiFile(const char *file, MIDIMultiTrack &dst)
     return reader.Parse();
 }
 
-bool WriteMidiFile(const MIDIMultiTrack &src, const char *file, bool use_running_status)
+bool WriteMidiFile( const MIDIMultiTrack &src, const char *file, bool use_running_status )
 {
     MIDIFileWriteStreamFileName out_stream( file );
     if ( !out_stream.IsValid() )
@@ -292,13 +292,13 @@ bool WriteMidiFile(const MIDIMultiTrack &src, const char *file, bool use_running
     return writer.Write( tracks_number );
 }
 
-double GetMusicDurationInSeconds(const MIDIMultiTrack &mt)
+double GetMusicDurationInSeconds( const MIDIMultiTrack &mt )
 {
     MIDISequencer seq( &mt );
     return seq.GetMisicDurationInSeconds();
 }
 
-std::string MultiTrackAsText(const MIDIMultiTrack &mt)
+std::string MultiTrackAsText( const MIDIMultiTrack &mt )
 {
     MIDISequencer seq( &mt );
     seq.GoToZero();
@@ -307,10 +307,11 @@ std::string MultiTrackAsText(const MIDIMultiTrack &mt)
     MIDITimedBigMessage ev;
 
     std::ostringstream ostr;
-    ostr << "Clocks per beat  "  << mt.GetClksPerBeat() << std::endl << std::endl;
+    ostr << "Clocks per beat  " << mt.GetClksPerBeat() << std::endl << std::endl;
     while ( seq.GetNextEvent( &track, &ev ) )
     {
-        if ( ev.IsBeatMarker() ) continue;
+        if ( ev.IsBeatMarker() )
+            continue;
 
         MIDIClockTime midi_time = seq.GetCurrentMIDIClockTime();
         double msec_time = seq.GetCurrentTimeInMs();
@@ -328,7 +329,7 @@ std::string MultiTrackAsText(const MIDIMultiTrack &mt)
     return ostr.str();
 }
 
-std::string EventAsText(const MIDITimedBigMessage &ev)
+std::string EventAsText( const MIDITimedBigMessage &ev )
 {
     char buf[256];
     ev.MsgToText( buf );
@@ -368,7 +369,4 @@ bool AddEndingPause( MIDIMultiTrack &tracks, int track_num, MIDIClockTime pause_
     msg.SetNoteOn( 0, 0, 0 );
     return tracks.GetTrack( track_num )->PutEvent( msg );
 }
-
-
 }
-

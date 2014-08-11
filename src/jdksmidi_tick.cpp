@@ -31,5 +31,4 @@ namespace jdksmidi
 MIDITick::~MIDITick()
 {
 }
-
 }

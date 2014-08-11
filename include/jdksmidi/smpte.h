@@ -47,28 +47,25 @@ namespace jdksmidi
 /// The smpte rates
 enum SMPTE_RATE
 {
-    SMPTE_RATE_24 = 0,          ///< 24 frames/sec
-    SMPTE_RATE_25,              ///< 25 frames/sec
-    SMPTE_RATE_2997,            ///< 29.97 frames/sec
-    SMPTE_RATE_2997DF,          ///< 29.97 frames/sec drop
-    SMPTE_RATE_30,              ///< 30 frames/sec
-    SMPTE_RATE_30DF             ///< 30 frames/sec drop
+    SMPTE_RATE_24 = 0, ///< 24 frames/sec
+    SMPTE_RATE_25,     ///< 25 frames/sec
+    SMPTE_RATE_2997,   ///< 29.97 frames/sec
+    SMPTE_RATE_2997DF, ///< 29.97 frames/sec drop
+    SMPTE_RATE_30,     ///< 30 frames/sec
+    SMPTE_RATE_30DF    ///< 30 frames/sec drop
 };
-
 
 /// The sample rates
 enum SAMPLE_RATE
 {
-    SAMPLE_32000 = 0,           ///< 32000 samples/sec
-    SAMPLE_44056,               ///< 44056 samples/sec
-    SAMPLE_44100,               ///< 44100 samples/sec
-    SAMPLE_47952,               ///< 47952 samples/sec
-    SAMPLE_48000,               ///< 48000 samples/sec
-    SAMPLE_48048                ///< 48048 samples/sec
+    SAMPLE_32000 = 0, ///< 32000 samples/sec
+    SAMPLE_44056,     ///< 44056 samples/sec
+    SAMPLE_44100,     ///< 44100 samples/sec
+    SAMPLE_47952,     ///< 47952 samples/sec
+    SAMPLE_48000,     ///< 48000 samples/sec
+    SAMPLE_48048      ///< 48048 samples/sec
 };
 //@}
-
-
 
 //
 // MDGetSMPTERateFrequency() converts the SMPTE_RATE enum to a double frequency.
@@ -76,11 +73,10 @@ enum SAMPLE_RATE
 
 extern const double smpte_smpte_rates[];
 
-inline double GetSMPTERateFrequency ( SMPTE_RATE r )
+inline double GetSMPTERateFrequency( SMPTE_RATE r )
 {
-    return smpte_smpte_rates[ ( int ) r];
+    return smpte_smpte_rates[(int)r];
 }
-
 
 //
 // MDGetSMPTERateFrequencyLong() convert the SMPTE_RATE enum to an int
@@ -89,11 +85,10 @@ inline double GetSMPTERateFrequency ( SMPTE_RATE r )
 
 extern const double smpte_smpte_rates_long[];
 
-inline long GetSMPTERateFrequencyLong ( SMPTE_RATE r )
+inline long GetSMPTERateFrequencyLong( SMPTE_RATE r )
 {
-    return ( long ) smpte_smpte_rates_long[ ( int ) r];
+    return (long)smpte_smpte_rates_long[(int)r];
 }
-
 
 //
 // GetSampleRateFrequency() convert the SAMPLE_RATE enum to a double frequency
@@ -101,11 +96,10 @@ inline long GetSMPTERateFrequencyLong ( SMPTE_RATE r )
 
 extern const double smpte_sample_rates[];
 
-inline  double  GetSampleRateFrequency ( SAMPLE_RATE r )
+inline double GetSampleRateFrequency( SAMPLE_RATE r )
 {
-    return smpte_sample_rates[ ( int ) r];
+    return smpte_sample_rates[(int)r];
 }
-
 
 //
 // MDGetSampleRateFrequencyLong() converts the SAMPLE_RATE enum to a long
@@ -114,14 +108,11 @@ inline  double  GetSampleRateFrequency ( SAMPLE_RATE r )
 
 extern const long smpte_sample_rates_long[];
 
-inline long GetSampleRateFrequencyLong ( SAMPLE_RATE r )
+inline long GetSampleRateFrequencyLong( SAMPLE_RATE r )
 {
     // return the sample rate as a long word of the frequency times 10.
-    return smpte_sample_rates_long[ ( int ) r];
+    return smpte_sample_rates_long[(int)r];
 }
-
-
-
 
 ///
 /// This class performs conversions between number of samples, milliseconds and smpte format
@@ -130,23 +121,18 @@ inline long GetSampleRateFrequencyLong ( SAMPLE_RATE r )
 /// (see \ref rates "SMPTE and sample rates").
 ///
 
-class  SMPTE
+class SMPTE
 {
-public:
+  public:
 
     /// The constructor sets the SMPTE rate to SMPTE_30 and the sample rate to SAMPLE_48000
-    SMPTE (
-        SMPTE_RATE smpte_rate = SMPTE_RATE_30,
-        SAMPLE_RATE sample_rate = SAMPLE_48000
-    );
+    SMPTE( SMPTE_RATE smpte_rate = SMPTE_RATE_30, SAMPLE_RATE sample_rate = SAMPLE_48000 );
 
     /// The copy constructor
-    SMPTE (
-        const SMPTE & s
-    );
+    SMPTE( const SMPTE &s );
 
     /// Sets the smpte rate. See \ref rates "SMPTE and sample rates" for avalaible smpte rates
-    void SetSMPTERate ( SMPTE_RATE r )
+    void SetSMPTERate( SMPTE_RATE r )
     {
         smpte_rate = r;
         sample_number_dirty = true;
@@ -159,7 +145,7 @@ public:
     }
 
     /// Sets the sample rate. See \ref rates "SMPTE and sample rates" for avalaible sample rates
-    void SetSampleRate ( SAMPLE_RATE r )
+    void SetSampleRate( SAMPLE_RATE r )
     {
         sample_rate = r;
         sample_number_dirty = true;
@@ -176,7 +162,7 @@ public:
     /// to convert using SetTime() (or other functions setting individual items); then you can call
     /// GetSampleNumber() to get the corresponding number of samples.
     //@{
-    void SetTime ( uchar h, uchar m, uchar s, uchar f = 0, uchar sf = 0 )
+    void SetTime( uchar h, uchar m, uchar s, uchar f = 0, uchar sf = 0 )
     {
         hours = h;
         minutes = m;
@@ -186,27 +172,27 @@ public:
         sample_number_dirty = true;
     }
 
-    void SetHours ( uchar h )
+    void SetHours( uchar h )
     {
         hours = h;
         sample_number_dirty = true;
     }
-    void SetMinutes ( uchar m )
+    void SetMinutes( uchar m )
     {
         minutes = m;
         sample_number_dirty = true;
     }
-    void SetSeconds ( uchar s )
+    void SetSeconds( uchar s )
     {
         seconds = s;
         sample_number_dirty = true;
     }
-    void SetFrames ( uchar f )
+    void SetFrames( uchar f )
     {
         frames = f;
         sample_number_dirty = true;
     }
-    void SetSubFrames ( uchar sf )
+    void SetSubFrames( uchar sf )
     {
         sub_frames = sf;
         sample_number_dirty = true;
@@ -220,12 +206,11 @@ public:
     }
     //@}
 
-
     /// \name To perform a samples-to-smpte conversion.
     /// You must first load the SMPTE with the number of samples to convert using SetSampleNumber();
     /// then you can call other functions to get the corresponding hours, minutes, etc.
     //@{
-    void SetSampleNumber ( ulong n )
+    void SetSampleNumber( ulong n )
     {
         sample_number = n;
         SampleToTime();
@@ -242,7 +227,7 @@ public:
     {
         return seconds;
     }
-    uchar  GetFrames()
+    uchar GetFrames()
     {
         return frames;
     }
@@ -252,13 +237,12 @@ public:
     }
     //@}
 
-
     /// To perform a millisecond-to-smpte or millisecond-to-sample conversion.
     /// You must first load the SMPTE with the number of milliseconds to convert using SetMilliSeconds();
     /// then you can call GetSampleNumber or GetHours(), GetMinutes() etc.
-    void SetMilliSeconds ( ulong msecs )
+    void SetMilliSeconds( ulong msecs )
     {
-        sample_number = ( ulong ) ( msecs * GetSampleRateFrequency( sample_rate ) / 1000 );
+        sample_number = ( ulong )( msecs * GetSampleRateFrequency( sample_rate ) / 1000 );
         SampleToTime();
     }
 
@@ -266,19 +250,19 @@ public:
     /// You must first load the SMPTE with the number of sample or with smpte items to convert using
     /// SetSampleNumber() or SetHoure(), SetMinutes() etc. ; then you can call GetMilliSeconds() to get the
     /// corresponding millieseconds
-    ulong GetMilliSeconds ()
+    ulong GetMilliSeconds()
     {
         if ( sample_number_dirty )
             TimeToSample();
 
-        return ( ulong ) ( sample_number * 1000 / GetSampleRateFrequency( sample_rate ) );
+        return ( ulong )( sample_number * 1000 / GetSampleRateFrequency( sample_rate ) );
     }
 
     /// \name To add, increment and decrement samples.
     /// These functions add, increment or decrement the current sample number./ You can use them
     /// instead of SetSampleNunber() to perform a samples-to-smpte conversion
     //@{
-    void AddSamples ( long n )
+    void AddSamples( long n )
     {
         sample_number = GetSampleNumber() + n;
         SampleToTime();
@@ -286,12 +270,12 @@ public:
 
     void IncSamples()
     {
-        AddSamples ( 1 );
+        AddSamples( 1 );
     }
 
     void DecSamples()
     {
-        AddSamples ( -1 );
+        AddSamples( -1 );
     }
     //@}
 
@@ -299,101 +283,100 @@ public:
     /// These functions add, increment or decrement smpte time parameters./ You can use them instead of
     /// SetTime() to perform a smpte-to-samples conversion
     //@{
-    void AddHours ( char h );
-    void AddMinutes ( char m );
-    void AddSeconds ( char s );
-    void AddFrames ( char f );
-    void AddSubFrames ( char sf );
+    void AddHours( char h );
+    void AddMinutes( char m );
+    void AddSeconds( char s );
+    void AddFrames( char f );
+    void AddSubFrames( char sf );
 
     void IncHours()
     {
-        AddHours ( 1 );
+        AddHours( 1 );
     }
     void IncMinutes()
     {
-        AddMinutes ( 1 );
+        AddMinutes( 1 );
     }
     void IncSeconds()
     {
-        AddSeconds ( 1 );
+        AddSeconds( 1 );
     }
     void IncFrames()
     {
-        AddFrames ( 1 );
+        AddFrames( 1 );
     }
     void IncSubFrames()
     {
-        AddSubFrames ( 1 );
+        AddSubFrames( 1 );
     }
 
     void DecHours()
     {
-        AddHours ( -1 );
+        AddHours( -1 );
     }
     void DecMinutes()
     {
-        AddMinutes ( -1 );
+        AddMinutes( -1 );
     }
     void DecSeconds()
     {
-        AddSeconds ( -1 );
+        AddSeconds( -1 );
     }
     void DecFrames()
     {
-        AddFrames ( -1 );
+        AddFrames( -1 );
     }
     void DecSubFrames()
     {
-        AddSubFrames ( -1 );
+        AddSubFrames( -1 );
     }
     //@}
-
 
     /// \name The operators (these compare the current time)
     //@{
-    const SMPTE & operator = ( const SMPTE & s )
+    const SMPTE &operator=( const SMPTE &s )
     {
-        Copy ( s );
+        Copy( s );
         return *this;
     }
-    bool operator == ( SMPTE & s )
+    bool operator==( SMPTE &s )
     {
-        return Compare ( s ) == 0;
+        return Compare( s ) == 0;
     }
-    bool operator != ( SMPTE & s )
+    bool operator!=( SMPTE &s )
     {
-        return Compare ( s ) != 0;
+        return Compare( s ) != 0;
     }
-    bool operator < ( SMPTE & s )
+    bool operator<( SMPTE &s )
     {
-        return Compare ( s ) < 0;
+        return Compare( s ) < 0;
     }
-    bool operator > ( SMPTE & s )
+    bool operator>( SMPTE &s )
     {
-        return Compare ( s ) > 0;
+        return Compare( s ) > 0;
     }
-    bool operator <= ( SMPTE & s )
+    bool operator<=( SMPTE &s )
     {
-        return Compare ( s ) <= 0;
+        return Compare( s ) <= 0;
     }
-    bool operator >= ( SMPTE & s )
+    bool operator>=( SMPTE &s )
     {
-        return Compare ( s ) >= 0;
+        return Compare( s ) >= 0;
     }
 
-    const SMPTE & operator += ( SMPTE & s )
+    const SMPTE &operator+=( SMPTE &s )
     {
-        Add ( s );
+        Add( s );
         return *this;
     }
-    const SMPTE & operator -= ( SMPTE & s )
+    const SMPTE &operator-=( SMPTE &s )
     {
-        Subtract ( s );
+        Subtract( s );
         return *this;
     }
     //@}
 
-protected:
+  protected:
 
     /// Performs samples-to-smpte conversion
     void SampleToTime();
@@ -401,54 +384,50 @@ protected:
     /// Performs smpte-to-samples conversion
     void TimeToSample();
 
-    void Copy ( const SMPTE & s );
-    int Compare ( SMPTE & s );
-    void Add ( SMPTE & s );
-    void Subtract ( SMPTE & s );
+    void Copy( const SMPTE &s );
+    int Compare( SMPTE &s );
+    void Add( SMPTE &s );
+    void Subtract( SMPTE &s );
 
     long GetSampleRateLong()
     {
-        return GetSampleRateFrequencyLong ( sample_rate );
+        return GetSampleRateFrequencyLong( sample_rate );
     }
 
     int GetSMPTERateLong()
     {
-        return GetSMPTERateFrequencyLong ( smpte_rate );
+        return GetSMPTERateFrequencyLong( smpte_rate );
     }
 
-private:
-    SMPTE_RATE  smpte_rate;
+  private:
+    SMPTE_RATE smpte_rate;
     SAMPLE_RATE sample_rate;
-    ulong  sample_number;
+    ulong sample_number;
 
-    uchar  hours;
-    uchar  minutes;
-    uchar  seconds;
-    uchar  frames;
-    uchar  sub_frames;
-    uchar  sample_number_dirty;
+    uchar hours;
+    uchar minutes;
+    uchar seconds;
+    uchar frames;
+    uchar sub_frames;
+    uchar sample_number_dirty;
 
-
-    friend SMPTE operator + ( SMPTE a, SMPTE b );
-    friend SMPTE operator - ( SMPTE a, SMPTE b );
+    friend SMPTE operator+( SMPTE a, SMPTE b );
+    friend SMPTE operator-( SMPTE a, SMPTE b );
 };
 
-inline SMPTE operator + ( SMPTE a, SMPTE b )
+inline SMPTE operator+( SMPTE a, SMPTE b )
 {
-    SMPTE c ( a );
+    SMPTE c( a );
     c += b;
     return c;
 }
 
-inline SMPTE operator - ( SMPTE a, SMPTE b )
+inline SMPTE operator-( SMPTE a, SMPTE b )
 {
-    SMPTE c ( a );
+    SMPTE c( a );
     c -= b;
     return c;
 }
-
 }
 
 #endif
-
-
