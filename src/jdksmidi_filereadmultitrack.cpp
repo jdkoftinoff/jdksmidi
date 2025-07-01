@@ -191,7 +191,8 @@ void MIDIFileReadMultiTrack::mf_text( MIDIClockTime time, int type, int len, uns
 {
     MIDITimedMessage msg;
     msg.SetStatus( META_EVENT );
-    msg.SetMetaType( ( uchar ) type );  // remember - MF_*_TEXT* id codes match META_*_TEXT codes
+    msg.SetMetaType(
+        ( std::uint8_t ) type );  // remember - MF_*_TEXT* id codes match META_*_TEXT codes
     msg.SetTime( time );
     MIDISystemExclusive* sysex = new MIDISystemExclusive( len );
 

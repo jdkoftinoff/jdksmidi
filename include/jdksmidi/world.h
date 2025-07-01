@@ -35,6 +35,7 @@
 #ifndef JDKSMIDI_WORLD_H
 #define JDKSMIDI_WORLD_H
 
+#include <cstdint>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -44,10 +45,7 @@
 #define DBG( a )
 #define OSTYPE( a, b, c, d ) ( ( a ) * 0x1000000 + ( b ) * 0x10000 + ( c ) * 0x100 + ( d ) )
 
-typedef unsigned char uchar;
-typedef unsigned long ulong;
 typedef unsigned int uint;
-typedef unsigned short ushort;
 
 /*! \mainpage libjdksmidi, a MIDI C++ Library
 

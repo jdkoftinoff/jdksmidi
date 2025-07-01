@@ -189,7 +189,7 @@ static int cmpmsgtime ( const void *a, const void *b )
     //
     // Compare the event times
     //
-    ulong t1, t2;
+    std::uint32_t t1, t2;
     t1 = m1->GetTime();
     t2 = m2->GetTime();
 
@@ -226,8 +226,8 @@ void EMIDITrack::Sort()
     // buffer[last_event].  Set the last event ( the data end event)
     // to the maximum time.
     //
-    ulong t1 = buffer[last_event-1].GetTime();
-    ulong t2 = buffer[last_event].GetTime();
+    std::uint32_t t1 = buffer[last_event-1].GetTime();
+    std::uint32_t t2 = buffer[last_event].GetTime();
 
     if ( t1 > t2 )
         buffer[last_event].SetTime ( t1 );
@@ -368,7 +368,7 @@ void EMIDITrack::Compress()
 }
 
 
-void EMIDITrack::Truncate ( ulong start_time )
+void EMIDITrack::Truncate ( std::uint32_t start_time )
 {
     // find the first event at start_time or greater
     // or the data end event
@@ -421,15 +421,15 @@ void EMIDITrack::FixNotes()
     // at the end of the track. Do this for each channel.
     //
 
-    for ( uchar channel = 0; channel < 16; channel++ )
+    for ( std::uint8_t channel = 0; channel < 16; channel++ )
     {
         if ( matrix->GetChannelCount ( channel ) > 0 )
         {
-            for ( uchar note = 0; note < 128; note++ )
+            for ( std::uint8_t note = 0; note < 128; note++ )
             {
-                uchar num = matrix->GetNoteCount ( channel, note );
+                std::uint8_t num = matrix->GetNoteCount ( channel, note );
 
-                for ( uchar c = 0; c < num; c++ )
+                for ( std::uint8_t c = 0; c < num; c++ )
                 {
                     m.NoteOff ( channel, note, 64 );
                     Put ( m );
@@ -530,7 +530,7 @@ void EMIDITrack::Merge ( MIDITrack *trk )
 }
 
 
-void EMIDITrack::Erase ( ulong start, ulong end, Boolean jagged )
+void EMIDITrack::Erase ( std::uint32_t start, std::uint32_t end, Boolean jagged )
 {
     //
     // This Erase method should work fine, erasing all events
@@ -578,7 +578,7 @@ void EMIDITrack::Erase ( ulong start, ulong end, Boolean jagged )
 
     for ( unsigned int ev = 0; ev < last_event; ev++ )
     {
-        ulong time = buffer[ev].GetTime();
+        std::uint32_t time = buffer[ev].GetTime();
         //
         // if the event is before our erase region,
         // then give it to the before_matrix object
@@ -659,8 +659,8 @@ void EMIDITrack::Erase ( ulong start, ulong end, Boolean jagged )
                     // ok, it was a note off event.
                     // see if it needs to be deleted.
                     //
-                    uchar channel = buffer[ev].GetChannel();
-                    uchar note = buffer[ev].GetNote();
+                    std::uint8_t channel = buffer[ev].GetChannel();
+                    std::uint8_t note = buffer[ev].GetNote();
 
                     if ( before_matrix->GetNoteCount ( channel, note ) != 0 )
                     {
@@ -731,8 +731,8 @@ void EMIDITrack::Erase ( ulong start, ulong end, Boolean jagged )
                     // was the corresponding note on
                     // deleted?
                     //
-                    uchar channel = buffer[ev].GetChannel();
-                    uchar note = buffer[ev].GetNote();
+                    std::uint8_t channel = buffer[ev].GetChannel();
+                    std::uint8_t note = buffer[ev].GetNote();
 
                     if ( during_matrix->GetNoteCount ( channel, note ) )
                     {
@@ -764,7 +764,7 @@ void EMIDITrack::Erase ( ulong start, ulong end, Boolean jagged )
     delete during_matrix;
 }
 
-void    EMIDITrack::Delete ( ulong start, ulong end, Boolean jagged )
+void    EMIDITrack::Delete ( std::uint32_t start, std::uint32_t end, Boolean jagged )
 {
     //
     // Delete is just like Erase, except afterwards
@@ -784,7 +784,7 @@ void    EMIDITrack::Delete ( ulong start, ulong end, Boolean jagged )
     // calculate the amount that we have to subtract from
     // each event time after 'end' time.
     //
-    ulong diff = end - start;
+    std::uint32_t diff = end - start;
     //
     // go through all events (including the last event, data end)
     //
@@ -794,7 +794,7 @@ void    EMIDITrack::Delete ( ulong start, ulong end, Boolean jagged )
         //
         // get the event's time.
         //
-        ulong time = buffer[ev].GetTime();
+        std::uint32_t time = buffer[ev].GetTime();
         //
         // is it after the end time?
         //
@@ -810,7 +810,7 @@ void    EMIDITrack::Delete ( ulong start, ulong end, Boolean jagged )
     }
 }
 
-void EMIDITrack::Insert ( ulong start, ulong end )
+void EMIDITrack::Insert ( std::uint32_t start, std::uint32_t end )
 {
     //
     // make sure end is after start.
@@ -821,7 +821,7 @@ void EMIDITrack::Insert ( ulong start, ulong end )
     //
     // calculate the amount of time we gotta add to the event times
     //
-    ulong diff = end - start;
+    std::uint32_t diff = end - start;
     //
     // go through all the events, including the last DATA END event.
     //
@@ -831,7 +831,7 @@ void EMIDITrack::Insert ( ulong start, ulong end )
         //
         // Get the event's time.
         //
-        ulong time = buffer[ev].GetTime();
+        std::uint32_t time = buffer[ev].GetTime();
         //
         // is it after 'start' time?
         //

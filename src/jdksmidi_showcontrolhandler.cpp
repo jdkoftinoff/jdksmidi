@@ -185,7 +185,7 @@ bool MIDISCHandle::Dispatch( const MIDIShowControlPacket& p )
 
             break;
         case MIDI_SC_FIRE:
-            e = Fire( ( uchar ) p.GetMacroNum() );
+            e = Fire( ( std::uint8_t ) p.GetMacroNum() );
             break;
         case MIDI_SC_ALL_OFF:
             e = AllOff();
@@ -410,16 +410,8 @@ bool MIDISCHandle::Resume( const MIDICue& q_number, const MIDICue& q_list, const
 }
 
 
-bool MIDISCHandle::TimedGo( uchar hr, uchar mn, uchar sc, uchar fr, uchar ff )
-{
-    bool e;
-    e = false;
-    return e;
-}
-
-
 bool MIDISCHandle::TimedGo(
-    uchar hr, uchar mn, uchar sc, uchar fr, uchar ff, const MIDICue& q_number )
+    std::uint8_t hr, std::uint8_t mn, std::uint8_t sc, std::uint8_t fr, std::uint8_t ff )
 {
     bool e;
     e = false;
@@ -427,11 +419,24 @@ bool MIDISCHandle::TimedGo(
 }
 
 
-bool MIDISCHandle::TimedGo( uchar hr,
-                            uchar mn,
-                            uchar sc,
-                            uchar fr,
-                            uchar ff,
+bool MIDISCHandle::TimedGo( std::uint8_t hr,
+                            std::uint8_t mn,
+                            std::uint8_t sc,
+                            std::uint8_t fr,
+                            std::uint8_t ff,
+                            const MIDICue& q_number )
+{
+    bool e;
+    e = false;
+    return e;
+}
+
+
+bool MIDISCHandle::TimedGo( std::uint8_t hr,
+                            std::uint8_t mn,
+                            std::uint8_t sc,
+                            std::uint8_t fr,
+                            std::uint8_t ff,
                             const MIDICue& q_number,
                             const MIDICue& q_list )
 {
@@ -441,11 +446,11 @@ bool MIDISCHandle::TimedGo( uchar hr,
 }
 
 
-bool MIDISCHandle::TimedGo( uchar hr,
-                            uchar mn,
-                            uchar sc,
-                            uchar fr,
-                            uchar ff,
+bool MIDISCHandle::TimedGo( std::uint8_t hr,
+                            std::uint8_t mn,
+                            std::uint8_t sc,
+                            std::uint8_t fr,
+                            std::uint8_t ff,
                             const MIDICue& q_number,
                             const MIDICue& q_list,
                             const MIDICue& q_path )
@@ -480,7 +485,7 @@ bool MIDISCHandle::Load( const MIDICue& q_number, const MIDICue& q_list, const M
 }
 
 
-bool MIDISCHandle::Set( ulong ctrl_num, ulong ctrl_val )
+bool MIDISCHandle::Set( std::uint32_t ctrl_num, std::uint32_t ctrl_val )
 {
     bool e;
     e = false;
@@ -488,8 +493,13 @@ bool MIDISCHandle::Set( ulong ctrl_num, ulong ctrl_val )
 }
 
 
-bool MIDISCHandle::Set(
-    ulong ctrl_num, ulong ctrl_val, uchar hr, uchar mn, uchar sc, uchar fr, uchar ff )
+bool MIDISCHandle::Set( std::uint32_t ctrl_num,
+                        std::uint32_t ctrl_val,
+                        std::uint8_t hr,
+                        std::uint8_t mn,
+                        std::uint8_t sc,
+                        std::uint8_t fr,
+                        std::uint8_t ff )
 {
     bool e;
     e = false;
@@ -497,7 +507,7 @@ bool MIDISCHandle::Set(
 }
 
 
-bool MIDISCHandle::Fire( uchar macro_num )
+bool MIDISCHandle::Fire( std::uint8_t macro_num )
 {
     bool e;
     e = false;
@@ -705,7 +715,8 @@ bool MIDISCHandle::ZeroClock( const MIDICue& q_list )
 }
 
 
-bool MIDISCHandle::SetClock( uchar hr, uchar mn, uchar sc, uchar fr, uchar ff )
+bool MIDISCHandle::SetClock(
+    std::uint8_t hr, std::uint8_t mn, std::uint8_t sc, std::uint8_t fr, std::uint8_t ff )
 {
     bool e;
     e = false;
@@ -713,8 +724,12 @@ bool MIDISCHandle::SetClock( uchar hr, uchar mn, uchar sc, uchar fr, uchar ff )
 }
 
 
-bool MIDISCHandle::SetClock(
-    uchar hr, uchar mn, uchar sc, uchar fr, uchar ff, const MIDICue& q_list )
+bool MIDISCHandle::SetClock( std::uint8_t hr,
+                             std::uint8_t mn,
+                             std::uint8_t sc,
+                             std::uint8_t fr,
+                             std::uint8_t ff,
+                             const MIDICue& q_list )
 {
     bool e;
     e = false;

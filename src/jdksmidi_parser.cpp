@@ -51,7 +51,7 @@ namespace jdksmidi
 {
 
 
-MIDIParser::MIDIParser( ushort max_sysex_size )
+MIDIParser::MIDIParser( std::uint16_t max_sysex_size )
 {
     ENTER( "MIDIParser::MIDIParser" );
     sysex = new MIDISystemExclusive( max_sysex_size );
@@ -65,7 +65,7 @@ MIDIParser::~MIDIParser()
 }
 
 
-bool MIDIParser::Parse( uchar b, MIDIMessage* msg )
+bool MIDIParser::Parse( std::uint8_t b, MIDIMessage* msg )
 {
     ENTER( "MIDIParser::Parse()" );
     //
@@ -78,7 +78,7 @@ bool MIDIParser::Parse( uchar b, MIDIMessage* msg )
         //
         // check for system messages (>=0xf0)
         //
-        uchar stat = ( uchar ) ( b & 0xf0 );
+        std::uint8_t stat = ( std::uint8_t ) ( b & 0xf0 );
 
         if ( stat == 0xf0 )
         {
@@ -109,7 +109,7 @@ bool MIDIParser::Parse( uchar b, MIDIMessage* msg )
 }
 
 
-bool MIDIParser::ParseSystemByte( uchar b, MIDIMessage* msg )
+bool MIDIParser::ParseSystemByte( std::uint8_t b, MIDIMessage* msg )
 {
     ENTER( "MIDIParser::ParseSystemByte" );
 
@@ -231,7 +231,7 @@ bool MIDIParser::ParseSystemByte( uchar b, MIDIMessage* msg )
 }
 
 
-void MIDIParser::ParseStatusByte( uchar b )
+void MIDIParser::ParseStatusByte( std::uint8_t b )
 {
     ENTER( "MIDIParser::ParseStatusByte" );
     char len = GetMessageLength( b );
@@ -256,7 +256,7 @@ void MIDIParser::ParseStatusByte( uchar b )
 }
 
 
-bool MIDIParser::ParseDataByte( uchar b, MIDIMessage* msg )
+bool MIDIParser::ParseDataByte( std::uint8_t b, MIDIMessage* msg )
 {
     ENTER( "MIDIParser::ParseDataByte" );
 

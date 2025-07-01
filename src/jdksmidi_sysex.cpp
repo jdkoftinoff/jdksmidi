@@ -52,7 +52,7 @@ namespace jdksmidi
 MIDISystemExclusive::MIDISystemExclusive( int size_ )
 {
     ENTER( "MIDISystemExclusive::MIDISystemExclusive" );
-    buf = new uchar[size_];
+    buf = new std::uint8_t[size_];
 
     if ( buf )
         max_len = size_;

@@ -25,6 +25,7 @@
 #ifndef JDKSMIDI_SHOWCONTROLHANDLER_H
 #define JDKSMIDI_SHOWCONTROLHANDLER_H
 
+#include <cstdint>
 
 #include "jdksmidi/showcontrol.h"
 
@@ -52,22 +53,27 @@ class MIDISCHandle
     virtual bool Resume( const MIDICue& q_number );
     virtual bool Resume( const MIDICue& q_number, const MIDICue& q_list );
     virtual bool Resume( const MIDICue& q_number, const MIDICue& q_list, const MIDICue& q_path );
-    virtual bool TimedGo( uchar hr, uchar mn, uchar sc, uchar fr, uchar ff );
     virtual bool TimedGo(
-        uchar hr, uchar mn, uchar sc, uchar fr, uchar ff, const MIDICue& q_number );
-    virtual bool TimedGo( uchar hr,
-                          uchar mn,
-                          uchar sc,
-                          uchar fr,
-                          uchar ff,
+        std::uint8_t hr, std::uint8_t mn, std::uint8_t sc, std::uint8_t fr, std::uint8_t ff );
+    virtual bool TimedGo( std::uint8_t hr,
+                          std::uint8_t mn,
+                          std::uint8_t sc,
+                          std::uint8_t fr,
+                          std::uint8_t ff,
+                          const MIDICue& q_number );
+    virtual bool TimedGo( std::uint8_t hr,
+                          std::uint8_t mn,
+                          std::uint8_t sc,
+                          std::uint8_t fr,
+                          std::uint8_t ff,
                           const MIDICue& q_number,
                           const MIDICue& q_list );
 
-    virtual bool TimedGo( uchar hr,
-                          uchar mn,
-                          uchar sc,
-                          uchar fr,
-                          uchar ff,
+    virtual bool TimedGo( std::uint8_t hr,
+                          std::uint8_t mn,
+                          std::uint8_t sc,
+                          std::uint8_t fr,
+                          std::uint8_t ff,
                           const MIDICue& q_number,
                           const MIDICue& q_list,
                           const MIDICue& q_path );
@@ -75,12 +81,17 @@ class MIDISCHandle
     virtual bool Load( const MIDICue& q_number );
     virtual bool Load( const MIDICue& q_number, const MIDICue& q_list );
     virtual bool Load( const MIDICue& q_number, const MIDICue& q_list, const MIDICue& q_path );
-    virtual bool Set( ulong ctrl_num, ulong ctrl_val );
+    virtual bool Set( std::uint32_t ctrl_num, std::uint32_t ctrl_val );
 
-    virtual bool Set(
-        ulong ctrl_num, ulong ctrl_val, uchar hr, uchar mn, uchar sc, uchar fr, uchar ff );
+    virtual bool Set( std::uint32_t ctrl_num,
+                      std::uint32_t ctrl_val,
+                      std::uint8_t hr,
+                      std::uint8_t mn,
+                      std::uint8_t sc,
+                      std::uint8_t fr,
+                      std::uint8_t ff );
 
-    virtual bool Fire( uchar macro_num );
+    virtual bool Fire( std::uint8_t macro_num );
     virtual bool AllOff();
     virtual bool Restore();
     virtual bool Reset();
@@ -106,9 +117,14 @@ class MIDISCHandle
     virtual bool StopClock( const MIDICue& q_list );
     virtual bool ZeroClock();
     virtual bool ZeroClock( const MIDICue& q_list );
-    virtual bool SetClock( uchar hr, uchar mn, uchar sc, uchar fr, uchar ff );
     virtual bool SetClock(
-        uchar hr, uchar mn, uchar sc, uchar fr, uchar ff, const MIDICue& q_list );
+        std::uint8_t hr, std::uint8_t mn, std::uint8_t sc, std::uint8_t fr, std::uint8_t ff );
+    virtual bool SetClock( std::uint8_t hr,
+                           std::uint8_t mn,
+                           std::uint8_t sc,
+                           std::uint8_t fr,
+                           std::uint8_t ff,
+                           const MIDICue& q_list );
     virtual bool MTCChaseOn();
     virtual bool MTCChaseOn( const MIDICue& q_list );
     virtual bool MTCChaseOff();

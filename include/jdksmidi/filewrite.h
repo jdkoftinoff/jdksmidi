@@ -34,6 +34,8 @@
 #ifndef JDKSMIDI_FILEWRITE_H
 #define JDKSMIDI_FILEWRITE_H
 
+#include <cstdint>
+
 #include "jdksmidi/file.h"
 #include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"
@@ -147,7 +149,7 @@ class MIDIFileWrite : protected MIDIFile
   protected:
     virtual void Error( char* s );
 
-    void WriteCharacter( uchar c )
+    void WriteCharacter( std::uint8_t c )
     {
         if ( out_stream->WriteChar( c ) < 0 )
             error = true;
@@ -180,7 +182,7 @@ class MIDIFileWrite : protected MIDIFile
     unsigned long track_length;
     unsigned long track_time;
     unsigned long track_position;
-    uchar running_status;
+    std::uint8_t running_status;
 
     MIDIFileWriteStream* out_stream;
 };

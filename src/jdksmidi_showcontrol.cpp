@@ -366,10 +366,10 @@ bool MIDIShowControlPacket::Parse3Param( const MIDISystemExclusive* e, int* pos 
 bool MIDIShowControlPacket::StoreSet( MIDISystemExclusive* e ) const
 {
     bool f = true;
-    e->PutByte( ( uchar ) ( GetControlNum() & 0x7f ) );
-    e->PutByte( ( uchar ) ( ( GetControlNum() >> 7 ) & 0x7f ) );
-    e->PutByte( ( uchar ) ( GetControlVal() & 0x7f ) );
-    e->PutByte( ( uchar ) ( ( GetControlVal() >> 7 ) & 0x7f ) );
+    e->PutByte( ( std::uint8_t ) ( GetControlNum() & 0x7f ) );
+    e->PutByte( ( std::uint8_t ) ( ( GetControlNum() >> 7 ) & 0x7f ) );
+    e->PutByte( ( std::uint8_t ) ( GetControlVal() & 0x7f ) );
+    e->PutByte( ( std::uint8_t ) ( ( GetControlVal() >> 7 ) & 0x7f ) );
 
     if ( HasTime )
     {
@@ -381,7 +381,7 @@ bool MIDIShowControlPacket::StoreSet( MIDISystemExclusive* e ) const
 
 bool MIDIShowControlPacket::ParseSet( const MIDISystemExclusive* e, int* pos )
 {
-    ulong v;
+    std::uint32_t v;
     v = e->GetData( ( *pos )++ );
     v += ( e->GetData( ( *pos )++ ) << 7 );
     SetControlNum( v );
@@ -402,7 +402,7 @@ bool MIDIShowControlPacket::ParseSet( const MIDISystemExclusive* e, int* pos )
 
 bool MIDIShowControlPacket::StoreFire( MIDISystemExclusive* e ) const
 {
-    e->PutByte( ( uchar ) ( GetMacroNum() ) );
+    e->PutByte( ( std::uint8_t ) ( GetMacroNum() ) );
     return true;
 }
 
@@ -523,8 +523,8 @@ bool MIDIShowControlPacket::StoreAsciiNum( MIDISystemExclusive* e, const MIDICue
 
 bool MIDIShowControlPacket::ParseAsciiNum( const MIDISystemExclusive* e, int* pos, MIDICue* num )
 {
-    ulong v;
-    uchar c;
+    std::uint32_t v;
+    std::uint8_t c;
     bool f;
     // check if there is a field
     c = e->GetData( *pos );
@@ -616,11 +616,13 @@ bool MIDIShowControlPacket::ParseAsciiNum( const MIDISystemExclusive* e, int* po
 }
 
 
-bool MIDIShowControlPacket::ParseAsciiNum( const MIDISystemExclusive* e, int* pos, ulong* num )
+bool MIDIShowControlPacket::ParseAsciiNum( const MIDISystemExclusive* e,
+                                           int* pos,
+                                           std::uint32_t* num )
 {
     bool f = true;
-    ulong v = 0;
-    uchar c = 0;
+    std::uint32_t v = 0;
+    std::uint8_t c = 0;
     //
     // Read ascii decimal digits until '.' or 0x00 or 0xf7
     //

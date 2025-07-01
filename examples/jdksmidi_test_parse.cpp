@@ -92,7 +92,7 @@ int main( int argc, char** argv )
         if ( c == EOF )
             break;
 
-        if ( p.Parse( ( uchar ) c, &m ) )
+        if ( p.Parse( ( std::uint8_t ) c, &m ) )
         {
             if ( m.IsSysEx() )
             {

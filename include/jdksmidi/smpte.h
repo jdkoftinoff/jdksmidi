@@ -34,6 +34,8 @@
 #ifndef JDKSMIDI_SMPTE_H
 #define JDKSMIDI_SMPTE_H
 
+#include <cstdint>
+
 namespace jdksmidi
 {
 
@@ -135,12 +137,12 @@ class SMPTE
         return sample_rate;
     }
 
-    void SetSampleNumber( ulong n )
+    void SetSampleNumber( std::uint32_t n )
     {
         sample_number = n;
         SampleToTime();
     }
-    ulong GetSampleNumber()
+    std::uint32_t GetSampleNumber()
     {
         if ( sample_number_dirty )
             TimeToSample();
@@ -148,7 +150,8 @@ class SMPTE
         return sample_number;
     }
 
-    void SetTime( uchar h, uchar m, uchar s, uchar f = 0, uchar sf = 0 )
+    void SetTime(
+        std::uint8_t h, std::uint8_t m, std::uint8_t s, std::uint8_t f = 0, std::uint8_t sf = 0 )
     {
         hours = h;
         minutes = m;
@@ -158,48 +161,48 @@ class SMPTE
         sample_number_dirty = true;
     }
 
-    uchar GetHours()
+    std::uint8_t GetHours()
     {
         return hours;
     }
-    uchar GetMinutes()
+    std::uint8_t GetMinutes()
     {
         return minutes;
     }
-    uchar GetSeconds()
+    std::uint8_t GetSeconds()
     {
         return seconds;
     }
-    uchar GetFrames()
+    std::uint8_t GetFrames()
     {
         return frames;
     }
-    uchar GetSubFrames()
+    std::uint8_t GetSubFrames()
     {
         return sub_frames;
     }
 
-    void SetHours( uchar h )
+    void SetHours( std::uint8_t h )
     {
         hours = h;
         sample_number_dirty = true;
     }
-    void SetMinutes( uchar m )
+    void SetMinutes( std::uint8_t m )
     {
         minutes = m;
         sample_number_dirty = true;
     }
-    void SetSeconds( uchar s )
+    void SetSeconds( std::uint8_t s )
     {
         seconds = s;
         sample_number_dirty = true;
     }
-    void SetFrames( uchar f )
+    void SetFrames( std::uint8_t f )
     {
         frames = f;
         sample_number_dirty = true;
     }
-    void SetSubFrames( uchar sf )
+    void SetSubFrames( std::uint8_t sf )
     {
         sub_frames = sf;
         sample_number_dirty = true;
@@ -330,14 +333,14 @@ class SMPTE
   private:
     SMPTE_RATE smpte_rate;
     SAMPLE_RATE sample_rate;
-    ulong sample_number;
+    std::uint32_t sample_number;
 
-    uchar hours;
-    uchar minutes;
-    uchar seconds;
-    uchar frames;
-    uchar sub_frames;
-    uchar sample_number_dirty;
+    std::uint8_t hours;
+    std::uint8_t minutes;
+    std::uint8_t seconds;
+    std::uint8_t frames;
+    std::uint8_t sub_frames;
+    std::uint8_t sample_number_dirty;
 
 
     friend SMPTE operator+( SMPTE a, SMPTE b );

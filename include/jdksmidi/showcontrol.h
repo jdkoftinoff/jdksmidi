@@ -24,6 +24,7 @@
 #ifndef JDKSMIDI_SHOWCONTROL_H
 #define JDKSMIDI_SHOWCONTROL_H
 
+#include <cstdint>
 
 #include "jdksmidi/sysex.h"
 
@@ -183,16 +184,19 @@ class MIDICue
   public:
     MIDICue( const MIDICue& c ) : v1( c.v1 ), v2( c.v2 ), v3( c.v3 ), num_values( c.num_values ) {}
     MIDICue() : v1( 0 ), num_values( 1 ) {}
-    MIDICue( ulong v1_ ) : v1( v1_ ), num_values( 1 ) {}
-    MIDICue( ulong v1_, ulong v2_ ) : v1( v1_ ), v2( v2_ ), num_values( 2 ) {}
-    MIDICue( ulong v1_, ulong v2_, ulong v3_ ) : v1( v1_ ), v2( v2_ ), v3( v3_ ), num_values( 3 ) {}
+    MIDICue( std::uint32_t v1_ ) : v1( v1_ ), num_values( 1 ) {}
+    MIDICue( std::uint32_t v1_, std::uint32_t v2_ ) : v1( v1_ ), v2( v2_ ), num_values( 2 ) {}
+    MIDICue( std::uint32_t v1_, std::uint32_t v2_, std::uint32_t v3_ )
+        : v1( v1_ ), v2( v2_ ), v3( v3_ ), num_values( 3 )
+    {
+    }
 
     void Clear()
     {
         v1 = 0;
         num_values = 1;
     }
-    operator ulong() const
+    operator std::uint32_t() const
     {
         return v1;
     }
@@ -206,68 +210,68 @@ class MIDICue
         return *this;
     }
 
-    const MIDICue& operator=( ulong v )
+    const MIDICue& operator=( std::uint32_t v )
     {
         v1 = v;
         num_values = 1;
         return *this;
     }
 
-    const bool operator==( ulong v )
+    const bool operator==( std::uint32_t v )
     {
         return v1 == v;
     }
 
     const MIDICue& operator==( const MIDICue& c );
-    const bool operator!=( ulong v )
+    const bool operator!=( std::uint32_t v )
     {
         return v1 != v;
     }
     const MIDICue& operator!=( const MIDICue& c );
 
 
-    bool operator<=( ulong v )
+    bool operator<=( std::uint32_t v )
     {
         return v1 <= v;
     }
 
-    bool operator>=( ulong v )
+    bool operator>=( std::uint32_t v )
     {
         return v1 >= v;
     }
 
-    bool operator<( ulong v )
+    bool operator<( std::uint32_t v )
     {
         return v1 < v;
     }
 
-    bool operator>( ulong v )
+    bool operator>( std::uint32_t v )
     {
         return v1 > v;
     }
 
     friend MIDICue operator-( const MIDICue& c, const MIDICue& d );
-    friend MIDICue operator-( const MIDICue& c, ulong v );
-    friend MIDICue operator-( ulong v, const MIDICue& c );
+    friend MIDICue operator-( const MIDICue& c, std::uint32_t v );
+    friend MIDICue operator-( std::uint32_t v, const MIDICue& c );
 
     friend MIDICue operator+( const MIDICue& c, const MIDICue& d );
-    friend MIDICue operator+( const MIDICue& c, ulong v );
-    friend MIDICue operator+( ulong v, const MIDICue& c );
+    friend MIDICue operator+( const MIDICue& c, std::uint32_t v );
+    friend MIDICue operator+( std::uint32_t v, const MIDICue& c );
 
 
-    ulong GetNumValues() const
+    std::uint32_t GetNumValues() const
     {
         return num_values;
     }
-    ulong GetV1() const
+    std::uint32_t GetV1() const
     {
         return v1;
     }
-    ulong GetV2() const
+    std::uint32_t GetV2() const
     {
         return v2;
     }
-    ulong GetV3() const
+    std::uint32_t GetV3() const
     {
         return v3;
     }
@@ -276,21 +280,21 @@ class MIDICue
     {
         num_values = a;
     }
-    void SetV1( ulong a )
+    void SetV1( std::uint32_t a )
     {
         v1 = a;
     }
-    void SetV2( ulong a )
+    void SetV2( std::uint32_t a )
     {
         v2 = a;
     }
-    void SetV3( ulong a )
+    void SetV3( std::uint32_t a )
     {
         v3 = a;
     }
 
   protected:
-    ulong v1, v2, v3;
+    std::uint32_t v1, v2, v3;
     int num_values;
 };
 
@@ -303,14 +307,14 @@ inline MIDICue operator-( const MIDICue& c, const MIDICue& d )
     return result;
 }
 
-inline MIDICue operator-( const MIDICue& c, ulong v )
+inline MIDICue operator-( const MIDICue& c, std::uint32_t v )
 {
     MIDICue result( c );
     result.v1 -= v;
     return result;
 }
 
-inline MIDICue operator-( ulong v, const MIDICue& c )
+inline MIDICue operator-( std::uint32_t v, const MIDICue& c )
 {
     MIDICue result( v - c.v1 );
     return result;
@@ -325,14 +329,14 @@ inline MIDICue operator+( const MIDICue& c, const MIDICue& d )
     return result;
 }
 
-inline MIDICue operator+( const MIDICue& c, ulong v )
+inline MIDICue operator+( const MIDICue& c, std::uint32_t v )
 {
     MIDICue result( c );
     result.v1 += v;
     return result;
 }
 
-inline MIDICue operator+( ulong v, const MIDICue& c )
+inline MIDICue operator+( std::uint32_t v, const MIDICue& c )
 {
     MIDICue result( v + c.v1 );
     return result;
@@ -437,7 +441,8 @@ class MIDIShowControlPacket
     }
 
 
-    void Put_TimedGo( uchar hr, uchar mn, uchar sc, uchar fr, uchar ff )
+    void Put_TimedGo(
+        std::uint8_t hr, std::uint8_t mn, std::uint8_t sc, std::uint8_t fr, std::uint8_t ff )
     {
         Put_Simple0( MIDI_SC_TIMED_GO );
         SetHours( hr );
@@ -448,7 +453,12 @@ class MIDIShowControlPacket
         SetHasTime( true );
     }
 
-    void Put_TimedGo( uchar hr, uchar mn, uchar sc, uchar fr, uchar ff, const MIDICue& q_number )
+    void Put_TimedGo( std::uint8_t hr,
+                      std::uint8_t mn,
+                      std::uint8_t sc,
+                      std::uint8_t fr,
+                      std::uint8_t ff,
+                      const MIDICue& q_number )
     {
         Put_Simple1( MIDI_SC_TIMED_GO, q_number );
         SetHours( hr );
@@ -459,11 +469,11 @@ class MIDIShowControlPacket
         SetHasTime( true );
     }
 
-    void Put_TimedGo( uchar hr,
-                      uchar mn,
-                      uchar sc,
-                      uchar fr,
-                      uchar ff,
+    void Put_TimedGo( std::uint8_t hr,
+                      std::uint8_t mn,
+                      std::uint8_t sc,
+                      std::uint8_t fr,
+                      std::uint8_t ff,
                       const MIDICue& q_number,
                       const MIDICue& q_list )
     {
@@ -476,11 +486,11 @@ class MIDIShowControlPacket
         SetHasTime( true );
     }
 
-    void Put_TimedGo( uchar hr,
-                      uchar mn,
-                      uchar sc,
-                      uchar fr,
-                      uchar ff,
+    void Put_TimedGo( std::uint8_t hr,
+                      std::uint8_t mn,
+                      std::uint8_t sc,
+                      std::uint8_t fr,
+                      std::uint8_t ff,
                       const MIDICue& q_number,
                       const MIDICue& q_list,
                       const MIDICue& q_path )
@@ -511,14 +521,20 @@ class MIDIShowControlPacket
     }
 
 
-    void Put_Set( ulong ctrl_num, ulong ctrl_val )
+    void Put_Set( std::uint32_t ctrl_num, std::uint32_t ctrl_val )
     {
         Put_Simple0( MIDI_SC_SET );
         SetControlNum( ctrl_num );
         SetControlVal( ctrl_val );
     }
 
-    void Put_Set( ulong ctrl_num, ulong ctrl_val, uchar hr, uchar mn, uchar sc, uchar fr, uchar ff )
+    void Put_Set( std::uint32_t ctrl_num,
+                  std::uint32_t ctrl_val,
+                  std::uint8_t hr,
+                  std::uint8_t mn,
+                  std::uint8_t sc,
+                  std::uint8_t fr,
+                  std::uint8_t ff )
     {
         Put_Simple0( MIDI_SC_SET );
         SetControlNum( ctrl_num );
@@ -532,7 +548,7 @@ class MIDIShowControlPacket
     }
 
 
-    void Put_Fire( uchar macro_num )
+    void Put_Fire( std::uint8_t macro_num )
     {
         Put_Simple0( MIDI_SC_ALL_OFF );
         SetMacroNum( macro_num );
@@ -677,7 +693,8 @@ class MIDIShowControlPacket
         SetHasQList( true );
     }
 
-    void Put_SetClock( uchar hr, uchar mn, uchar sc, uchar fr, uchar ff )
+    void Put_SetClock(
+        std::uint8_t hr, std::uint8_t mn, std::uint8_t sc, std::uint8_t fr, std::uint8_t ff )
     {
         Put_Simple0( MIDI_SC_SET_CLOCK );
         SetHours( hr );
@@ -688,7 +705,12 @@ class MIDIShowControlPacket
         SetHasTime( true );
     }
 
-    void Put_SetClock( uchar hr, uchar mn, uchar sc, uchar fr, uchar ff, const MIDICue& q_list )
+    void Put_SetClock( std::uint8_t hr,
+                       std::uint8_t mn,
+                       std::uint8_t sc,
+                       std::uint8_t fr,
+                       std::uint8_t ff,
+                       const MIDICue& q_list )
     {
         Put_Simple0( MIDI_SC_SET_CLOCK );
         SetHours( hr );
@@ -773,7 +795,7 @@ class MIDIShowControlPacket
 
     bool StoreAsciiNum( MIDISystemExclusive* e, const MIDICue& num ) const;
     bool ParseAsciiNum( const MIDISystemExclusive* e, int* pos, MIDICue* num );
-    bool ParseAsciiNum( const MIDISystemExclusive* e, int* pos, ulong* num );
+    bool ParseAsciiNum( const MIDISystemExclusive* e, int* pos, std::uint32_t* num );
 
     void ClearVariableStuff();
 
@@ -820,29 +842,29 @@ class MIDIShowControlPacket
     }
 
 
-    _ATTRIBUTE( uchar, DeviceId );
-    _ATTRIBUTE( uchar, CommandFmt );
+    _ATTRIBUTE( std::uint8_t, DeviceId );
+    _ATTRIBUTE( std::uint8_t, CommandFmt );
     _ATTRIBUTE( MIDIShowCommand, Command );
     _ATTRIBUTE( bool, HasTime );
     _ATTRIBUTE( bool, HasQNumber );
     _ATTRIBUTE( bool, HasQList );
     _ATTRIBUTE( bool, HasQPath );
-    _ATTRIBUTE( uchar, Hours );
-    _ATTRIBUTE( uchar, Minutes );
-    _ATTRIBUTE( uchar, Seconds );
-    _ATTRIBUTE( uchar, Frames );
-    _ATTRIBUTE( uchar, FractFrames );
+    _ATTRIBUTE( std::uint8_t, Hours );
+    _ATTRIBUTE( std::uint8_t, Minutes );
+    _ATTRIBUTE( std::uint8_t, Seconds );
+    _ATTRIBUTE( std::uint8_t, Frames );
+    _ATTRIBUTE( std::uint8_t, FractFrames );
 
     _ATTRIBUTE_REF( MIDICue, QNumber );
     _ATTRIBUTE_REF( MIDICue, QList );
     _ATTRIBUTE_REF( MIDICue, QPath );
 
-    _ATTRIBUTE( ulong, Val1 );
-    _ATTRIBUTE( ulong, Val2 );
+    _ATTRIBUTE( std::uint32_t, Val1 );
+    _ATTRIBUTE( std::uint32_t, Val2 );
 
-    _ACCESS( ulong, MacroNum, Val1 );
-    _ACCESS( ulong, ControlNum, Val1 );
-    _ACCESS( ulong, ControlVal, Val2 );
+    _ACCESS( std::uint32_t, MacroNum, Val1 );
+    _ACCESS( std::uint32_t, ControlNum, Val1 );
+    _ACCESS( std::uint32_t, ControlVal, Val2 );
 };
 
 // unlearn the brain damage

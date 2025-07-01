@@ -49,7 +49,7 @@
 namespace jdksmidi
 {
 
-const uchar smpte_max_frames[] = { 24, 25, 30, 30, 30, 30 };
+const std::uint8_t smpte_max_frames[] = { 24, 25, 30, 30, 30, 30 };
 
 const double smpte_smpte_rates[] = { 24.0, 25.0, 30.0 / 1.001, 30.0 / 1.001, 30.0, 30.0 };
 
@@ -141,7 +141,7 @@ void SMPTE::SampleToTime()
     //
     // make a temporary copy of the sample number
     //
-    ulong tmp_sample = sample_number;
+    std::uint32_t tmp_sample = sample_number;
     //
     // keep track of the actual rates in use in doubles.
     //
@@ -150,7 +150,7 @@ void SMPTE::SampleToTime()
     //
     // keep track of the maximum frame number for this smpte format.
     //
-    uchar max_frame = smpte_max_frames[smpte_rate];
+    std::uint8_t max_frame = smpte_max_frames[smpte_rate];
     //
     // Calculate the number of samples per frame.
     //
@@ -183,21 +183,21 @@ void SMPTE::SampleToTime()
         // Offset the tmp_sample number by this amount of frames.
         //
         DBG( printf( "tmp_sample before drops=%ld\n", ( long ) tmp_sample ) );
-        tmp_sample += ( ulong ) ( drops * samples_per_frame );
+        tmp_sample += ( std::uint32_t ) ( drops * samples_per_frame );
         DBG( printf( "tmp_sample after drops=%ld\n", ( long ) tmp_sample ) );
     }
 
     //
     // Calculate the time in sub frames, frames, seconds, minutes, hours
     //
-    ulong rounded_sub_frames =
-        ( ulong ) ( ( tmp_sample * the_smpte_rate * 100 ) / the_sample_rate + .5 );
+    std::uint32_t rounded_sub_frames =
+        ( std::uint32_t ) ( ( tmp_sample * the_smpte_rate * 100 ) / the_sample_rate + .5 );
     DBG( printf( "rounded_sub_frames = %ld\n", rounded_sub_frames ) );
-    sub_frames = ( uchar ) ( ( rounded_sub_frames ) % 100 );
-    frames = ( uchar ) ( ( rounded_sub_frames / 100 ) % max_frame );
-    seconds = ( uchar ) ( ( rounded_sub_frames / ( 100L * max_frame ) ) % 60 );
-    minutes = ( uchar ) ( ( rounded_sub_frames / ( 100L * 60L * max_frame ) ) % 60 );
-    hours = ( uchar ) ( ( rounded_sub_frames / ( 100L * 60L * 24L * max_frame ) ) % 24 );
+    sub_frames = ( std::uint8_t ) ( ( rounded_sub_frames ) % 100 );
+    frames = ( std::uint8_t ) ( ( rounded_sub_frames / 100 ) % max_frame );
+    seconds = ( std::uint8_t ) ( ( rounded_sub_frames / ( 100L * max_frame ) ) % 60 );
+    minutes = ( std::uint8_t ) ( ( rounded_sub_frames / ( 100L * 60L * max_frame ) ) % 60 );
+    hours = ( std::uint8_t ) ( ( rounded_sub_frames / ( 100L * 60L * 24L * max_frame ) ) % 24 );
 }
 
 
@@ -253,7 +253,7 @@ void SMPTE::TimeToSample()
     //
     // save the calculated sample number in self.
     //
-    sample_number = ( ulong ) tmp_sample;
+    sample_number = ( std::uint32_t ) tmp_sample;
 }
 
 
@@ -273,8 +273,8 @@ void SMPTE::Copy( const SMPTE& s )
 
 int SMPTE::Compare( SMPTE& s )
 {
-    ulong a = GetSampleNumber();
-    ulong b = s.GetSampleNumber();
+    std::uint32_t a = GetSampleNumber();
+    std::uint32_t b = s.GetSampleNumber();
 
     if ( a < b )
         return -1;
@@ -288,15 +288,15 @@ int SMPTE::Compare( SMPTE& s )
 
 void SMPTE::Add( SMPTE& s )
 {
-    ulong a = GetSampleNumber();
-    ulong b = s.GetSampleNumber();
+    std::uint32_t a = GetSampleNumber();
+    std::uint32_t b = s.GetSampleNumber();
     SetSampleNumber( a + b );
 }
 
 void SMPTE::Subtract( SMPTE& s )
 {
-    ulong a = GetSampleNumber();
-    ulong b = s.GetSampleNumber();
+    std::uint32_t a = GetSampleNumber();
+    std::uint32_t b = s.GetSampleNumber();
     SetSampleNumber( a - b );
 }
 
