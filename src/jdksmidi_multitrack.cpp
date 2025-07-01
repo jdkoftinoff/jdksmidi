@@ -206,7 +206,7 @@ void MIDIMultiTrackIterator::GoToTime(MIDIClockTime time)
     // multitrack object to our current state.
 
     for (int i = 0; i < multitrack->GetNumTracks(); ++i) {
-        MIDITrack* track = multitrack->GetTrack(i);
+        auto track = multitrack->GetTrack(i);
         // default: set the next_event_number for this track to -1
         // to signify end of track
         state.next_event_number[i] = -1;
@@ -214,7 +214,7 @@ void MIDIMultiTrackIterator::GoToTime(MIDIClockTime time)
         // are there any events in this track?
         if (track && track->GetNumEvents() > 0) {
             // yes, extract the time of the first event
-            MIDITimedBigMessage* msg = track->GetEventAddress(0);
+            auto msg = track->GetEventAddress(0);
 
             if (msg) {
                 // found the first message of the track. Keep track
@@ -317,7 +317,7 @@ bool MIDIMultiTrackIterator::GoToNextEvent()
 bool MIDIMultiTrackIterator::GoToNextEventOnTrack(int track_num)
 {
     // Get the track that we are dealing with
-    MIDITrack* track = multitrack->GetTrack(track_num);
+    auto track = multitrack->GetTrack(track_num);
     // Get ptr to the current event number for this track
     int* event_num = &state.next_event_number[track_num];
     // skip this track if this event number is <0 - This track has hit end already.
@@ -338,8 +338,7 @@ bool MIDIMultiTrackIterator::GoToNextEventOnTrack(int track_num)
 
     else {
         // not at end of track yet - get the time of the event
-        MIDITimedBigMessage* msg;
-        msg = track->GetEventAddress(*event_num);
+        auto msg = track->GetEventAddress(*event_num);
         state.next_event_time[track_num] = msg->GetTime();
     }
 

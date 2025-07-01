@@ -548,7 +548,7 @@ void AdvancedSequencer::ExtractMarkers(std::vector<std::string>* list)
     int clks_per_beat = tracks.GetClksPerBeat();
 
     for (int i = 0; i < t->GetNumEvents(); ++i) {
-        MIDITimedBigMessage* m = t->GetEventAddress(i);
+        auto m = t->GetEventAddress(i);
 
         if (m) {
             // how many beats have gone by since the last event?
@@ -627,7 +627,7 @@ int AdvancedSequencer::FindFirstChannelOnTrack(int trk)
         // until we find a channel message
         // and then return the channel number plus 1
         for (int i = 0; i < t->GetNumEvents(); ++i) {
-            MIDITimedBigMessage* m = t->GetEventAddress(i);
+            auto m = t->GetEventAddress(i);
 
             if (m) {
                 if (m->IsChannelMsg()) {

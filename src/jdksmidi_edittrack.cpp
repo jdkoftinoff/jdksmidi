@@ -390,7 +390,7 @@ void EMIDITrack::Truncate ( std::uint32_t start_time )
 
 void EMIDITrack::FixNotes()
 {
-    MIDIMatrix *matrix = new MIDIMatrix;
+    auto matrix = new MIDIMatrix;
     TimedMIDIMessage m;
     //
     // Go through the MIDIEvents, keeping track of all note on events.
@@ -560,8 +560,8 @@ void EMIDITrack::Erase ( std::uint32_t start, std::uint32_t end, Boolean jagged 
     // note ON's that we have deleted that have
     // note OFF's after 'end' time.
     //
-    MIDIMatrix *before_matrix = new MIDIMatrix;
-    MIDIMatrix *during_matrix = new MIDIMatrix;
+    auto before_matrix = new MIDIMatrix;
+    auto during_matrix = new MIDIMatrix;
     //
     // go through all the events and 'NOP' just the ones
     // in that time period.

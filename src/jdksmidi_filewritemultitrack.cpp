@@ -57,13 +57,13 @@ bool MIDIFileWriteMultiTrack::Write(int num_tracks, int division)
             break;
         }
 
-        MIDITrack const* t = multitrack->GetTrack(i);
+        auto t = multitrack->GetTrack(i);
 
         writer.WriteTrackHeader(0);  // will be rewritten later
 
         if (t) {
             for (int event_num = 0; event_num < t->GetNumEvents(); ++event_num) {
-                MIDITimedBigMessage const* ev = t->GetEventAddress(event_num);
+                auto ev = t->GetEventAddress(event_num);
 
                 if (ev && !ev->IsNoOp()) {
                     if (!ev->IsDataEnd()) {

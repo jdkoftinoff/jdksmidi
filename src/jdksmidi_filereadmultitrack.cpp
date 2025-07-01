@@ -65,7 +65,7 @@ void MIDIFileReadMultiTrack::AddEventToMultiTrack(
     MIDITimedMessage const& msg, MIDISystemExclusive* sysex, int dest_track)
 {
     if (dest_track != -1 && dest_track < multitrack->GetNumTracks()) {
-        MIDITrack* t = multitrack->GetTrack(dest_track);
+        auto t = multitrack->GetTrack(dest_track);
 
         if (t) {
             t->PutEvent(msg, sysex);
@@ -99,7 +99,7 @@ void MIDIFileReadMultiTrack::mf_sysex(MIDIClockTime time, MIDISystemExclusive co
     MIDITimedMessage msg;
     msg.SetSysEx();
     msg.SetTime(time);
-    MIDISystemExclusive* sysex = new MIDISystemExclusive(ex);
+    auto sysex = new MIDISystemExclusive(ex);
     AddEventToMultiTrack(msg, sysex, cur_track);
 }
 
@@ -130,7 +130,7 @@ void MIDIFileReadMultiTrack::mf_timesig(
     int denom = 1 << denom_power;
     msg.SetTimeSig((unsigned char)num, (unsigned char)denom);
     msg.SetTime(time);
-    MIDISystemExclusive* sysex = new MIDISystemExclusive(4);
+    auto sysex = new MIDISystemExclusive(4);
     sysex->PutByte((unsigned char)num);
     sysex->PutByte((unsigned char)denom_power);
     sysex->PutByte((unsigned char)clks_per_metro);
@@ -176,7 +176,7 @@ void MIDIFileReadMultiTrack::mf_text(MIDIClockTime time, int type, int len, unsi
     msg.SetStatus(META_EVENT);
     msg.SetMetaType((std::uint8_t)type);  // remember - MF_*_TEXT* id codes match META_*_TEXT codes
     msg.SetTime(time);
-    MIDISystemExclusive* sysex = new MIDISystemExclusive(len);
+    auto sysex = new MIDISystemExclusive(len);
 
     for (int i = 0; i < len; ++i) {
         sysex->PutSysByte(s[i]);

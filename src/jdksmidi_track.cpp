@@ -98,18 +98,16 @@ void MIDITrack::Clear()
 void MIDITrack::ClearAndMerge(MIDITrack const* src1, MIDITrack const* src2)
 {
     Clear();
-    MIDITimedBigMessage const* ev1;
     int cur_trk1ev = 0;
     int num_trk1ev = src1->GetNumEvents();
-    MIDITimedBigMessage const* ev2;
     int cur_trk2ev = 0;
     int num_trk2ev = src2->GetNumEvents();
     MIDIClockTime last_data_end_time = 0;
 
     while (cur_trk1ev < num_trk1ev || cur_trk2ev < num_trk2ev) {
         // skip any NOPs on track 1
-        ev1 = src1->GetEventAddress(cur_trk1ev);
-        ev2 = src2->GetEventAddress(cur_trk2ev);
+        auto ev1 = src1->GetEventAddress(cur_trk1ev);
+        auto ev2 = src2->GetEventAddress(cur_trk2ev);
         bool has_ev1 = (cur_trk1ev < num_trk1ev) && ev1;
         bool has_ev2 = (cur_trk2ev < num_trk2ev) && ev2;
 
