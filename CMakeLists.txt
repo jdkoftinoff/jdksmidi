@@ -22,11 +22,95 @@ set(JDKSMIDI_VERSION "${JDKSMIDI_VERSION_MAJOR}.${JDKSMIDI_VERSION_MINOR}.${JDKS
 option(JDKSMIDI_BUILD_EXAMPLES "Build example programs" ON)
 option(JDKSMIDI_BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
+# Analysis and debugging options
+option(JDKSMIDI_ENABLE_STATIC_ANALYSIS "Enable clang static analysis" OFF)
+option(JDKSMIDI_ENABLE_SANITIZERS "Enable clang sanitizers" OFF)
+option(JDKSMIDI_SANITIZER_ADDRESS "Enable AddressSanitizer" OFF)
+option(JDKSMIDI_SANITIZER_MEMORY "Enable MemorySanitizer" OFF)
+option(JDKSMIDI_SANITIZER_THREAD "Enable ThreadSanitizer" OFF)
+option(JDKSMIDI_SANITIZER_UNDEFINED "Enable UndefinedBehaviorSanitizer" OFF)
+
 # Set library type based on option
 if(JDKSMIDI_BUILD_SHARED_LIBS)
     set(JDKSMIDI_LIBRARY_TYPE SHARED)
 else()
     set(JDKSMIDI_LIBRARY_TYPE STATIC)
+endif()
+
+# Configure static analysis
+if(JDKSMIDI_ENABLE_STATIC_ANALYSIS)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        set(CMAKE_CXX_CLANG_TIDY clang-tidy)
+        set(CMAKE_C_CLANG_TIDY clang-tidy)
+        
+        # Set up clang static analyzer
+        set(CMAKE_CXX_COMPILER_LAUNCHER "${CMAKE_CURRENT_SOURCE_DIR}/scripts/clang-analyzer-wrapper.sh")
+        
+        # Enable additional static analysis flags
+        add_compile_options(
+            -Weverything
+            -Wno-c++98-compat
+            -Wno-c++98-compat-pedantic
+            -Wno-padded
+            -Wno-weak-vtables
+            -Wno-documentation
+            -Wno-documentation-unknown-command
+        )
+    else()
+        message(WARNING "Static analysis requested but Clang not detected. Static analysis disabled.")
+        set(JDKSMIDI_ENABLE_STATIC_ANALYSIS OFF)
+    endif()
+endif()
+
+# Configure sanitizers
+set(JDKSMIDI_SANITIZER_FLAGS "")
+if(JDKSMIDI_ENABLE_SANITIZERS OR JDKSMIDI_SANITIZER_ADDRESS OR JDKSMIDI_SANITIZER_MEMORY OR 
+   JDKSMIDI_SANITIZER_THREAD OR JDKSMIDI_SANITIZER_UNDEFINED)
+    
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+        if(JDKSMIDI_SANITIZER_ADDRESS OR JDKSMIDI_ENABLE_SANITIZERS)
+            list(APPEND JDKSMIDI_SANITIZER_FLAGS "-fsanitize=address")
+            list(APPEND JDKSMIDI_SANITIZER_FLAGS "-fno-omit-frame-pointer")
+            message(STATUS "AddressSanitizer enabled")
+        endif()
+        
+        if(JDKSMIDI_SANITIZER_MEMORY)
+            if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+                list(APPEND JDKSMIDI_SANITIZER_FLAGS "-fsanitize=memory")
+                list(APPEND JDKSMIDI_SANITIZER_FLAGS "-fno-omit-frame-pointer")
+                message(STATUS "MemorySanitizer enabled")
+            else()
+                message(WARNING "MemorySanitizer requires Clang. Skipping.")
+            endif()
+        endif()
+        
+        if(JDKSMIDI_SANITIZER_THREAD)
+            list(APPEND JDKSMIDI_SANITIZER_FLAGS "-fsanitize=thread")
+            message(STATUS "ThreadSanitizer enabled")
+        endif()
+        
+        if(JDKSMIDI_SANITIZER_UNDEFINED OR JDKSMIDI_ENABLE_SANITIZERS)
+            list(APPEND JDKSMIDI_SANITIZER_FLAGS "-fsanitize=undefined")
+            list(APPEND JDKSMIDI_SANITIZER_FLAGS "-fno-sanitize-recover=undefined")
+            message(STATUS "UndefinedBehaviorSanitizer enabled")
+        endif()
+        
+        # Check for conflicting sanitizers
+        if(JDKSMIDI_SANITIZER_ADDRESS AND JDKSMIDI_SANITIZER_MEMORY)
+            message(FATAL_ERROR "AddressSanitizer and MemorySanitizer cannot be used together")
+        endif()
+        
+        if(JDKSMIDI_SANITIZER_ADDRESS AND JDKSMIDI_SANITIZER_THREAD)
+            message(FATAL_ERROR "AddressSanitizer and ThreadSanitizer cannot be used together")
+        endif()
+        
+        if(JDKSMIDI_SANITIZER_MEMORY AND JDKSMIDI_SANITIZER_THREAD)
+            message(FATAL_ERROR "MemorySanitizer and ThreadSanitizer cannot be used together")
+        endif()
+        
+    else()
+        message(WARNING "Sanitizers requested but Clang/GCC not detected. Sanitizers disabled.")
+    endif()
 endif()
 
 # Include directories
@@ -138,6 +222,12 @@ if(MSVC)
     )
 endif()
 
+# Apply sanitizer flags
+if(JDKSMIDI_SANITIZER_FLAGS)
+    target_compile_options(jdksmidi PRIVATE ${JDKSMIDI_SANITIZER_FLAGS})
+    target_link_options(jdksmidi PRIVATE ${JDKSMIDI_SANITIZER_FLAGS})
+endif()
+
 # Include directories for the library
 target_include_directories(jdksmidi
     PUBLIC
@@ -163,6 +253,12 @@ if(JDKSMIDI_BUILD_EXAMPLES)
         add_executable(${example} examples/${example}.cpp)
         target_link_libraries(${example} PRIVATE jdksmidi)
         
+        # Apply sanitizer flags to examples
+        if(JDKSMIDI_SANITIZER_FLAGS)
+            target_compile_options(${example} PRIVATE ${JDKSMIDI_SANITIZER_FLAGS})
+            target_link_options(${example} PRIVATE ${JDKSMIDI_SANITIZER_FLAGS})
+        endif()
+        
         # Platform-specific linking for examples
         if(WIN32)
             target_link_libraries(${example} PRIVATE winmm)
@@ -173,6 +269,12 @@ if(JDKSMIDI_BUILD_EXAMPLES)
     if(WIN32)
         add_executable(jdksmidi_test_drvwin32 examples/win32/jdksmidi_test_drvwin32.cpp)
         target_link_libraries(jdksmidi_test_drvwin32 PRIVATE jdksmidi winmm)
+        
+        # Apply sanitizer flags to Windows example
+        if(JDKSMIDI_SANITIZER_FLAGS)
+            target_compile_options(jdksmidi_test_drvwin32 PRIVATE ${JDKSMIDI_SANITIZER_FLAGS})
+            target_link_options(jdksmidi_test_drvwin32 PRIVATE ${JDKSMIDI_SANITIZER_FLAGS})
+        endif()
     endif()
 endif()
 
