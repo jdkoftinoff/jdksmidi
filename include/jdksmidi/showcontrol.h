@@ -76,7 +76,7 @@ namespace jdksmidi {
 
 #define _ATTRIBUTE(TYPE, NAME)                                                                     \
   public:                                                                                          \
-    const TYPE Get##NAME() const                                                                   \
+    TYPE Get##NAME() const                                                                         \
     {                                                                                              \
         return NAME;                                                                               \
     }                                                                                              \
@@ -104,7 +104,7 @@ namespace jdksmidi {
 
 #define _ACCESS(TYPE, NAME1, NAME2)                                                                \
   public:                                                                                          \
-    const TYPE Get##NAME1() const                                                                  \
+    TYPE Get##NAME1() const                                                                        \
     {                                                                                              \
         return NAME2;                                                                              \
     }                                                                                              \
@@ -226,10 +226,10 @@ class MIDICue
         return *this;
     }
 
-    bool const operator==(std::uint32_t v) { return v1 == v; }
+    bool operator==(std::uint32_t v) { return v1 == v; }
 
     MIDICue const& operator==(MIDICue const& c);
-    bool const operator!=(std::uint32_t v) { return v1 != v; }
+    bool operator!=(std::uint32_t v) { return v1 != v; }
     MIDICue const& operator!=(MIDICue const& c);
 
     bool operator<=(std::uint32_t v) { return v1 <= v; }
