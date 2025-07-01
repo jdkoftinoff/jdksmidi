@@ -21,6 +21,7 @@ set(JDKSMIDI_VERSION "${JDKSMIDI_VERSION_MAJOR}.${JDKSMIDI_VERSION_MINOR}.${JDKS
 # Options
 option(JDKSMIDI_BUILD_EXAMPLES "Build example programs" ON)
 option(JDKSMIDI_BUILD_SHARED_LIBS "Build shared libraries" OFF)
+option(JDKSMIDI_BUILD_TESTS "Build unit tests" ON)
 
 # Analysis and debugging options
 option(JDKSMIDI_ENABLE_STATIC_ANALYSIS "Enable clang static analysis" OFF)
@@ -342,12 +343,43 @@ install(EXPORT jdksmidicTargets
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/jdksmidc
 )
 
+# Add doctest for unit testing
+if(JDKSMIDI_BUILD_TESTS)
+    # Add doctest as a subdirectory
+    add_subdirectory(third-party/doctest)
+    
+    # Create tests directory
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+    
+    # Enable testing
+    enable_testing()
+    
+    # Find all test files
+    file(GLOB TEST_SOURCES "tests/test_*.cpp")
+    
+    # Create test executable if test files exist
+    if(TEST_SOURCES)
+        add_executable(jdksmidi_tests ${TEST_SOURCES})
+        target_link_libraries(jdksmidi_tests PRIVATE jdksmidi doctest::doctest)
+        
+        # Apply sanitizer flags to tests
+        if(JDKSMIDI_SANITIZER_FLAGS)
+            target_compile_options(jdksmidi_tests PRIVATE ${JDKSMIDI_SANITIZER_FLAGS})
+            target_link_options(jdksmidi_tests PRIVATE ${JDKSMIDI_SANITIZER_FLAGS})
+        endif()
+        
+        # Add test to CTest
+        add_test(NAME jdksmidi_unit_tests COMMAND jdksmidi_tests)
+    endif()
+endif()
+
 # Display configuration summary
 message(STATUS "")
 message(STATUS "jdksmidi ${JDKSMIDI_VERSION} Configuration Summary:")
 message(STATUS "  Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "  Library type: ${JDKSMIDI_LIBRARY_TYPE}")
 message(STATUS "  Build examples: ${JDKSMIDI_BUILD_EXAMPLES}")
+message(STATUS "  Build tests: ${JDKSMIDI_BUILD_TESTS}")
 message(STATUS "  Install prefix: ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "  C++ standard: ${CMAKE_CXX_STANDARD}")
 if(WIN32)
