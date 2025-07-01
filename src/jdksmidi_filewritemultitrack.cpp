@@ -59,7 +59,6 @@ bool MIDIFileWriteMultiTrack::Write(int num_tracks, int division)
 
         MIDITrack const* t = multitrack->GetTrack(i);
 
-
         writer.WriteTrackHeader(0);  // will be rewritten later
 
         if (t) {
