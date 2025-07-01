@@ -28,6 +28,8 @@
 #include "jdksmidi/sysex.h"
 #include "jdksmidi/world.h"
 
+#include <cinttypes>
+
 using namespace jdksmidi;
 
 void PrintSysEx(FILE* f, MIDISystemExclusive* ex)
@@ -40,7 +42,7 @@ void PrintSysEx(FILE* f, MIDISystemExclusive* ex)
             fprintf(f, "\n");
         }
 
-        fprintf(f, "%02x ", (int)ex->GetData(i));
+        fprintf(f, "%02" PRIx8 " ", ex->GetData(i));
     }
 
     fprintf(f, "\n");

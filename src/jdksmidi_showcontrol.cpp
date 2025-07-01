@@ -25,6 +25,8 @@
 #include "jdksmidi/showcontrol.h"
 #include "jdksmidi/world.h"
 
+#include <cinttypes>
+
 namespace jdksmidi {
 
 MIDIShowControlPacket::MIDIShowControlPacket()
@@ -444,13 +446,13 @@ bool MIDIShowControlPacket::StoreAsciiNum(MIDISystemExclusive* e, MIDICue const&
         case 0:
             break;
         case 1:
-            sprintf(buf, "%ld", num.GetV1());
+            sprintf(buf, "%" PRIu32, num.GetV1());
             break;
         case 2:
-            sprintf(buf, "%ld.%ld", num.GetV1(), num.GetV2());
+            sprintf(buf, "%" PRIu32 ".%" PRIu32, num.GetV1(), num.GetV2());
             break;
         case 3:
-            sprintf(buf, "%ld.%ld.%ld", num.GetV1(), num.GetV2(), num.GetV3());
+            sprintf(buf, "%" PRIu32 ".%" PRIu32 ".%" PRIu32, num.GetV1(), num.GetV2(), num.GetV3());
             break;
     }
 

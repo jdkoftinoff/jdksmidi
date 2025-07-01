@@ -24,6 +24,8 @@
 #include "jdksmidi/sequencer.h"
 #include "jdksmidi/world.h"
 
+#include <cinttypes>
+
 namespace jdksmidi {
 
 static void FixQuotes(char* s_)
