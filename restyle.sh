@@ -1,1 +1,3 @@
-astyle --style=ansi -s4 --recursive ./*.cpp ./*.h ./*.hpp
+
+find . \( -name *.cpp -or -name *.h -or -name *.hpp \) -print -exec clang-format -i '{}' ';'
+
