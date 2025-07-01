@@ -24,20 +24,19 @@
 #include "jdksmidi/process.h"
 #include "jdksmidi/world.h"
 
-namespace jdksmidi
+namespace jdksmidi {
+
+MIDIProcessor::MIDIProcessor()
+{}
+
+MIDIProcessor::~MIDIProcessor()
+{}
+
+MIDIMultiProcessor::MIDIMultiProcessor(int num)
+    : processors(new MIDIProcessor*[num])
+    , num_processors(num)
 {
-
-
-MIDIProcessor::MIDIProcessor() {}
-
-MIDIProcessor::~MIDIProcessor() {}
-
-
-MIDIMultiProcessor::MIDIMultiProcessor( int num )
-    : processors( new MIDIProcessor*[num] ), num_processors( num )
-{
-    for ( int i = 0; i < num_processors; ++i )
-    {
+    for (int i = 0; i < num_processors; ++i) {
         processors[i] = 0;
     }
 }
@@ -47,15 +46,11 @@ MIDIMultiProcessor::~MIDIMultiProcessor()
     delete[] processors;
 }
 
-
-bool MIDIMultiProcessor::Process( MIDITimedBigMessage* msg )
+bool MIDIMultiProcessor::Process(MIDITimedBigMessage* msg)
 {
-    for ( int i = 0; i < num_processors; ++i )
-    {
-        if ( processors[i] )
-        {
-            if ( processors[i]->Process( msg ) == false )
-            {
+    for (int i = 0; i < num_processors; ++i) {
+        if (processors[i]) {
+            if (processors[i]->Process(msg) == false) {
                 return false;
             }
         }
@@ -64,45 +59,38 @@ bool MIDIMultiProcessor::Process( MIDITimedBigMessage* msg )
     return true;
 }
 
-
 MIDIProcessorTransposer::MIDIProcessorTransposer()
 {
-    for ( int i = 0; i < 16; ++i )
-    {
+    for (int i = 0; i < 16; ++i) {
         trans_amount[i] = 0;
     }
 }
 
-MIDIProcessorTransposer::~MIDIProcessorTransposer() {}
+MIDIProcessorTransposer::~MIDIProcessorTransposer()
+{}
 
-
-void MIDIProcessorTransposer::SetAllTranspose( int val )
+void MIDIProcessorTransposer::SetAllTranspose(int val)
 {
-    for ( int chan = 0; chan < 16; ++chan )
-    {
+    for (int chan = 0; chan < 16; ++chan) {
         trans_amount[chan] = val;
     }
 }
 
-bool MIDIProcessorTransposer::Process( MIDITimedBigMessage* msg )
+bool MIDIProcessorTransposer::Process(MIDITimedBigMessage* msg)
 {
-    if ( msg->IsChannelMsg() )
-    {
-        if ( msg->IsNoteOn() || msg->IsNoteOff() || msg->IsPolyPressure() )
-        {
+    if (msg->IsChannelMsg()) {
+        if (msg->IsNoteOn() || msg->IsNoteOff() || msg->IsPolyPressure()) {
             int trans = trans_amount[msg->GetChannel()];
-            int new_note = ( ( int ) msg->GetNote() ) + trans;
+            int new_note = ((int)msg->GetNote()) + trans;
 
-            if ( trans > 127 || trans < 0 )
-            {
+            if (trans > 127 || trans < 0) {
                 // delete event if out of range
                 return false;
             }
 
-            else
-            {
+            else {
                 // set new note number
-                msg->SetNote( ( unsigned char ) new_note );
+                msg->SetNote((unsigned char)new_note);
             }
         }
     }
@@ -110,43 +98,37 @@ bool MIDIProcessorTransposer::Process( MIDITimedBigMessage* msg )
     return true;
 }
 
-
 MIDIProcessorRechannelizer::MIDIProcessorRechannelizer()
 {
-    for ( int i = 0; i < 16; ++i )
-    {
+    for (int i = 0; i < 16; ++i) {
         rechan_map[i] = i;
     }
 }
 
-MIDIProcessorRechannelizer::~MIDIProcessorRechannelizer() {}
+MIDIProcessorRechannelizer::~MIDIProcessorRechannelizer()
+{}
 
-
-void MIDIProcessorRechannelizer::SetAllRechan( int dest_chan )
+void MIDIProcessorRechannelizer::SetAllRechan(int dest_chan)
 {
-    for ( int i = 0; i < 16; ++i )
-    {
+    for (int i = 0; i < 16; ++i) {
         rechan_map[i] = dest_chan;
     }
 }
 
-bool MIDIProcessorRechannelizer::Process( MIDITimedBigMessage* msg )
+bool MIDIProcessorRechannelizer::Process(MIDITimedBigMessage* msg)
 {
-    if ( msg->IsChannelMsg() )
-    {
+    if (msg->IsChannelMsg()) {
         int new_chan = rechan_map[msg->GetChannel()];
 
-        if ( new_chan == -1 )
-        {
+        if (new_chan == -1) {
             // this channel is to be deleted! return false
             return false;
         }
 
-        msg->SetChannel( ( unsigned char ) new_chan );
+        msg->SetChannel((unsigned char)new_chan);
     }
 
     return true;
 }
-
 
 }  // namespace jdksmidi

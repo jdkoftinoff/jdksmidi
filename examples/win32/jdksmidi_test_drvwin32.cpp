@@ -22,7 +22,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 #include "jdksmidi/driver.h"
 #include "jdksmidi/driverwin32.h"
 #include "jdksmidi/fileread.h"
@@ -36,26 +35,25 @@
 
 using namespace jdksmidi;
 
-int main( int argc, char** argv )
+int main(int argc, char** argv)
 {
 #ifdef WIN32
 
-    if ( argc > 1 )
-    {
-        MIDIFileReadStreamFile rs( argv[1] );
-        MIDIMultiTrack tracks( 64 );
-        MIDIFileReadMultiTrack track_loader( &tracks );
-        MIDIFileRead reader( &rs, &track_loader );
-        MIDISequencerGUIEventNotifierText gui( stdout );
-        MIDISequencer seq( &tracks, &gui );
-        MIDIDriverWin32 driver( 128 );
-        MIDIManager mgr( &driver, &gui );
+    if (argc > 1) {
+        MIDIFileReadStreamFile rs(argv[1]);
+        MIDIMultiTrack tracks(64);
+        MIDIFileReadMultiTrack track_loader(&tracks);
+        MIDIFileRead reader(&rs, &track_loader);
+        MIDISequencerGUIEventNotifierText gui(stdout);
+        MIDISequencer seq(&tracks, &gui);
+        MIDIDriverWin32 driver(128);
+        MIDIManager mgr(&driver, &gui);
         reader.Parse();
-        driver.StartTimer( 20 );
-        driver.OpenMIDIOutPort( MIDI_MAPPER );
+        driver.StartTimer(20);
+        driver.OpenMIDIOutPort(MIDI_MAPPER);
         seq.GoToZero();
-        mgr.SetSeq( &seq );
-        mgr.SetTimeOffset( timeGetTime() );
+        mgr.SetSeq(&seq);
+        mgr.SetTimeOffset(timeGetTime());
         mgr.SeqPlay();
         getchar();
         mgr.SeqStop();

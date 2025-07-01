@@ -27,13 +27,11 @@
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
 
-namespace jdksmidi
-{
+namespace jdksmidi {
 class MIDIProcessor;
 class MIDIMultiProcessor;
 class MIDIProcessorTransposer;
 class MIDIProcessor;
-
 
 class MIDIProcessor
 {
@@ -41,34 +39,25 @@ class MIDIProcessor
     MIDIProcessor();
     virtual ~MIDIProcessor();
 
-    virtual bool Process( MIDITimedBigMessage* msg ) = 0;
+    virtual bool Process(MIDITimedBigMessage* msg) = 0;
 };
 
 class MIDIMultiProcessor : public MIDIProcessor
 {
   public:
-    MIDIMultiProcessor( int num_processors );
+    MIDIMultiProcessor(int num_processors);
     virtual ~MIDIMultiProcessor();
 
     // MIDIProcessors given to a MIDIMultiProcessor are NOT owned
     // by MIDIMultiProcessor.
 
-    void SetProcessor( int position, MIDIProcessor* proc )
-    {
-        processors[position] = proc;
-    }
+    void SetProcessor(int position, MIDIProcessor* proc) { processors[position] = proc; }
 
-    MIDIProcessor* GetProcessor( int position )
-    {
-        return processors[position];
-    }
+    MIDIProcessor* GetProcessor(int position) { return processors[position]; }
 
-    const MIDIProcessor* GetProcessor( int position ) const
-    {
-        return processors[position];
-    }
+    MIDIProcessor const* GetProcessor(int position) const { return processors[position]; }
 
-    virtual bool Process( MIDITimedBigMessage* msg );
+    virtual bool Process(MIDITimedBigMessage* msg);
 
   private:
     MIDIProcessor** processors;
@@ -81,19 +70,13 @@ class MIDIProcessorTransposer : public MIDIProcessor
     MIDIProcessorTransposer();
     virtual ~MIDIProcessorTransposer();
 
-    void SetTransposeChannel( int chan, int trans )
-    {
-        trans_amount[chan] = trans;
-    }
+    void SetTransposeChannel(int chan, int trans) { trans_amount[chan] = trans; }
 
-    int GetTransposeChannel( int chan ) const
-    {
-        return trans_amount[chan];
-    }
+    int GetTransposeChannel(int chan) const { return trans_amount[chan]; }
 
-    void SetAllTranspose( int trans );
+    void SetAllTranspose(int trans);
 
-    virtual bool Process( MIDITimedBigMessage* msg );
+    virtual bool Process(MIDITimedBigMessage* msg);
 
   private:
     int trans_amount[16];
@@ -105,19 +88,13 @@ class MIDIProcessorRechannelizer : public MIDIProcessor
     MIDIProcessorRechannelizer();
     virtual ~MIDIProcessorRechannelizer();
 
-    void SetRechanMap( int src_chan, int dest_chan )
-    {
-        rechan_map[src_chan] = dest_chan;
-    }
+    void SetRechanMap(int src_chan, int dest_chan) { rechan_map[src_chan] = dest_chan; }
 
-    int GetRechanMap( int src_chan ) const
-    {
-        return rechan_map[src_chan];
-    }
+    int GetRechanMap(int src_chan) const { return rechan_map[src_chan]; }
 
-    void SetAllRechan( int dest_chan );
+    void SetAllRechan(int dest_chan);
 
-    virtual bool Process( MIDITimedBigMessage* msg );
+    virtual bool Process(MIDITimedBigMessage* msg);
 
   private:
     int rechan_map[16];

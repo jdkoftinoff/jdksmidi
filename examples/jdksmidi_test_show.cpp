@@ -26,13 +26,12 @@
 #include "jdksmidi/fileshow.h"
 #include "jdksmidi/world.h"
 
-int main( int argc, char** argv )
+int main(int argc, char** argv)
 {
-    if ( argc > 1 )
-    {
-        jdksmidi::MIDIFileReadStreamFile rs( argv[1] );
-        jdksmidi::MIDIFileShow shower( stdout );
-        jdksmidi::MIDIFileRead reader( &rs, &shower );
+    if (argc > 1) {
+        jdksmidi::MIDIFileReadStreamFile rs(argv[1]);
+        jdksmidi::MIDIFileShow shower(stdout);
+        jdksmidi::MIDIFileRead reader(&rs, &shower);
         reader.Parse();
     }
 

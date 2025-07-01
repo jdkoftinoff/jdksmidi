@@ -31,16 +31,12 @@
 **
 */
 
-
+#include "jdksmidi/midi.h"
 #include "jdksmidi/world.h"
 
-#include "jdksmidi/midi.h"
+namespace jdksmidi {
 
-namespace jdksmidi
-{
-
-
-const signed char lut_msglen[16] = {
+signed char const lut_msglen[16] = {
     0,
     0,
     0,
@@ -59,7 +55,7 @@ const signed char lut_msglen[16] = {
     -1  // 0xf0=other things. may vary.
 };
 
-const signed char lut_sysmsglen[16] = {
+signed char const lut_sysmsglen[16] = {
     -1,  // 0xf0=sysex start. may vary
     2,   // 0xf1=MIDI Time Code. 2 bytes
     3,   // 0xf2=MIDI Song position. 3 bytes
@@ -78,8 +74,7 @@ const signed char lut_sysmsglen[16] = {
     3    // 0xff= not reset, but a META-EVENT, which is always 3 bytes
 };
 
-
-const bool lut_is_white[12] = {
+bool const lut_is_white[12] = {
     //
     // C C#  D D#  E    F F# G G# A A# B
     //
@@ -94,7 +89,6 @@ const bool lut_is_white[12] = {
     0,
     1,
     0,
-    1 };
-
+    1};
 
 }  // namespace jdksmidi

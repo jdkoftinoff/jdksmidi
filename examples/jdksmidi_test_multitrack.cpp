@@ -23,7 +23,7 @@
  */
 
 #ifdef WIN32
-    #include <windows.h>
+#    include <windows.h>
 #endif
 
 #include "jdksmidi/fileread.h"
@@ -35,77 +35,67 @@
 
 using namespace jdksmidi;
 
-void DumpMIDITimedBigMessage( MIDITimedBigMessage* msg )
+void DumpMIDITimedBigMessage(MIDITimedBigMessage* msg)
 {
-    if ( msg )
-    {
+    if (msg) {
         char msgbuf[1024];
-        fprintf( stdout, "%8ld : %s\n", msg->GetTime(), msg->MsgToText( msgbuf ) );
+        fprintf(stdout, "%8ld : %s\n", msg->GetTime(), msg->MsgToText(msgbuf));
 
-        if ( msg->IsSysEx() )
-        {
-            fprintf( stdout, "\tSYSEX length: %d\n", msg->GetSysEx()->GetLength() );
+        if (msg->IsSysEx()) {
+            fprintf(stdout, "\tSYSEX length: %d\n", msg->GetSysEx()->GetLength());
         }
     }
 }
 
-void DumpMIDITrack( MIDITrack* t )
+void DumpMIDITrack(MIDITrack* t)
 {
     MIDITimedBigMessage* msg;
 
-    for ( int i = 0; i < t->GetNumEvents(); ++i )
-    {
-        msg = t->GetEventAddress( i );
-        DumpMIDITimedBigMessage( msg );
+    for (int i = 0; i < t->GetNumEvents(); ++i) {
+        msg = t->GetEventAddress(i);
+        DumpMIDITimedBigMessage(msg);
     }
 }
 
-void DumpAllTracks( MIDIMultiTrack* mlt )
+void DumpAllTracks(MIDIMultiTrack* mlt)
 {
-    fprintf( stdout, "Clocks per beat: %d\n\n", mlt->GetClksPerBeat() );
+    fprintf(stdout, "Clocks per beat: %d\n\n", mlt->GetClksPerBeat());
 
-    for ( int i = 0; i < mlt->GetNumTracks(); ++i )
-    {
-        if ( mlt->GetTrack( i )->GetNumEvents() > 0 )
-        {
-            fprintf( stdout, "DUMP OF TRACK #%2d:\n", i );
-            DumpMIDITrack( mlt->GetTrack( i ) );
-            fprintf( stdout, "\n" );
+    for (int i = 0; i < mlt->GetNumTracks(); ++i) {
+        if (mlt->GetTrack(i)->GetNumEvents() > 0) {
+            fprintf(stdout, "DUMP OF TRACK #%2d:\n", i);
+            DumpMIDITrack(mlt->GetTrack(i));
+            fprintf(stdout, "\n");
         }
     }
 }
 
-
-void DumpMIDIMultiTrack( MIDIMultiTrack* mlt )
+void DumpMIDIMultiTrack(MIDIMultiTrack* mlt)
 {
-    MIDIMultiTrackIterator i( mlt );
+    MIDIMultiTrackIterator i(mlt);
     MIDITimedBigMessage* msg;
-    fprintf( stdout, "Clocks per beat: %d\n\n", mlt->GetClksPerBeat() );
-    i.GoToTime( 0 );
+    fprintf(stdout, "Clocks per beat: %d\n\n", mlt->GetClksPerBeat());
+    i.GoToTime(0);
 
-    do
-    {
+    do {
         int trk_num;
 
-        if ( i.GetCurEvent( &trk_num, &msg ) )
-        {
-            fprintf( stdout, "#%2d - ", trk_num );
-            DumpMIDITimedBigMessage( msg );
+        if (i.GetCurEvent(&trk_num, &msg)) {
+            fprintf(stdout, "#%2d - ", trk_num);
+            DumpMIDITimedBigMessage(msg);
         }
-    } while ( i.GoToNextEvent() );
+    } while (i.GoToNextEvent());
 }
 
-
-int main( int argc, char** argv )
+int main(int argc, char** argv)
 {
-    if ( argc > 1 )
-    {
-        MIDIFileReadStreamFile rs( argv[1] );
+    if (argc > 1) {
+        MIDIFileReadStreamFile rs(argv[1]);
         MIDIMultiTrack tracks;
-        MIDIFileReadMultiTrack track_loader( &tracks );
-        MIDIFileRead reader( &rs, &track_loader );
+        MIDIFileReadMultiTrack track_loader(&tracks);
+        MIDIFileRead reader(&rs, &track_loader);
         reader.Parse();
-        DumpMIDIMultiTrack( &tracks );
+        DumpMIDIMultiTrack(&tracks);
     }
 
     return 0;

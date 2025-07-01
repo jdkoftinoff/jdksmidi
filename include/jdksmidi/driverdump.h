@@ -26,18 +26,17 @@
 
 #include "jdksmidi/driver.h"
 
-namespace jdksmidi
-{
+namespace jdksmidi {
 
 class MIDIDriverDump : public MIDIDriver
 {
   public:
-    MIDIDriverDump( int queue_size, FILE* outfile );
+    MIDIDriverDump(int queue_size, FILE* outfile);
     virtual ~MIDIDriverDump();
 
-    virtual bool HardwareMsgOut( const MIDITimedBigMessage& msg );
+    virtual bool HardwareMsgOut(MIDITimedBigMessage const& msg);
 
-    virtual void TimeTick( unsigned long sys_time );
+    virtual void TimeTick(unsigned long sys_time);
 
   protected:
     FILE* f;

@@ -34,12 +34,10 @@
 #ifndef JDKSMIDI_MATRIX_H
 #define JDKSMIDI_MATRIX_H
 
-
 #include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"
 
-namespace jdksmidi
-{
+namespace jdksmidi {
 
 class MIDIMatrix
 {
@@ -47,44 +45,28 @@ class MIDIMatrix
     MIDIMatrix();
     virtual ~MIDIMatrix();
 
-    virtual bool Process( const MIDIMessage& m );
+    virtual bool Process(MIDIMessage const& m);
 
     virtual void Clear();
 
-    int GetTotalCount() const
-    {
-        return total_count;
-    }
-    int GetChannelCount( int channel ) const
-    {
-        return channel_count[channel];
-    }
+    int GetTotalCount() const { return total_count; }
+    int GetChannelCount(int channel) const { return channel_count[channel]; }
 
-    int GetNoteCount( int channel, int note ) const
-    {
-        return note_on_count[channel][note];
-    }
+    int GetNoteCount(int channel, int note) const { return note_on_count[channel][note]; }
 
-    bool GetHoldPedal( int channel ) const
-    {
-        return hold_pedal[channel];
-    }
-
+    bool GetHoldPedal(int channel) const { return hold_pedal[channel]; }
 
   protected:
-    virtual void DecNoteCount( const MIDIMessage& m, int channel, int note );
-    virtual void IncNoteCount( const MIDIMessage& m, int channel, int note );
-    virtual void ClearChannel( int channel );
-    virtual void OtherMessage( const MIDIMessage& m );
+    virtual void DecNoteCount(MIDIMessage const& m, int channel, int note);
+    virtual void IncNoteCount(MIDIMessage const& m, int channel, int note);
+    virtual void ClearChannel(int channel);
+    virtual void OtherMessage(MIDIMessage const& m);
 
-    void SetNoteCount( unsigned char chan, unsigned char note, unsigned char val )
+    void SetNoteCount(unsigned char chan, unsigned char note, unsigned char val)
     {
         note_on_count[chan][note] = val;
     }
-    void SetChannelCount( unsigned char chan, int val )
-    {
-        channel_count[chan] = val;
-    }
+    void SetChannelCount(unsigned char chan, int val) { channel_count[chan] = val; }
 
   private:
     unsigned char note_on_count[16][128];
@@ -94,6 +76,5 @@ class MIDIMatrix
 };
 
 }  // namespace jdksmidi
-
 
 #endif

@@ -24,8 +24,7 @@
 #ifndef JDKSMIDI_TICK_H
 #define JDKSMIDI_TICK_H
 
-namespace jdksmidi
-{
+namespace jdksmidi {
 class MIDITick
 {
   public:
@@ -33,7 +32,7 @@ class MIDITick
 
     virtual ~MIDITick();
 
-    virtual void TimeTick( unsigned long sys_time ) = 0;
+    virtual void TimeTick(unsigned long sys_time) = 0;
 };
 }  // namespace jdksmidi
 

@@ -31,30 +31,26 @@
 **
 */
 
+#include "jdksmidi/sysex.h"
 #include "jdksmidi/world.h"
 
-#include "jdksmidi/sysex.h"
-
-
 #ifndef DEBUG_MDSYSEX
-    #define DEBUG_MDSYSEX 0
+#    define DEBUG_MDSYSEX 0
 #endif
 
 #if DEBUG_MDSYSEX
-    #undef DBG
-    #define DBG( a ) a
+#    undef DBG
+#    define DBG(a) a
 #endif
 
-namespace jdksmidi
-{
+namespace jdksmidi {
 
-
-MIDISystemExclusive::MIDISystemExclusive( int size_ )
+MIDISystemExclusive::MIDISystemExclusive(int size_)
 {
-    ENTER( "MIDISystemExclusive::MIDISystemExclusive" );
+    ENTER("MIDISystemExclusive::MIDISystemExclusive");
     buf = new std::uint8_t[size_];
 
-    if ( buf )
+    if (buf)
         max_len = size_;
 
     else
@@ -65,7 +61,7 @@ MIDISystemExclusive::MIDISystemExclusive( int size_ )
     deletable = true;
 }
 
-MIDISystemExclusive::MIDISystemExclusive( const MIDISystemExclusive& e )
+MIDISystemExclusive::MIDISystemExclusive(MIDISystemExclusive const& e)
 {
     buf = new unsigned char[e.max_len];
     max_len = e.max_len;
@@ -73,19 +69,17 @@ MIDISystemExclusive::MIDISystemExclusive( const MIDISystemExclusive& e )
     chk_sum = e.chk_sum;
     deletable = true;
 
-    for ( int i = 0; i < cur_len; ++i )
-    {
+    for (int i = 0; i < cur_len; ++i) {
         buf[i] = e.buf[i];
     }
 }
 
 MIDISystemExclusive::~MIDISystemExclusive()
 {
-    ENTER( "MIDISystemExclusive::~MIDISystemExclusive" );
+    ENTER("MIDISystemExclusive::~MIDISystemExclusive");
 
-    if ( deletable )
+    if (deletable)
         delete[] buf;
 }
-
 
 }  // namespace jdksmidi

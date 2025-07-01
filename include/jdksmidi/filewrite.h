@@ -34,15 +34,14 @@
 #ifndef JDKSMIDI_FILEWRITE_H
 #define JDKSMIDI_FILEWRITE_H
 
-#include <cstdint>
-
 #include "jdksmidi/file.h"
 #include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
 
-namespace jdksmidi
-{
+#include <cstdint>
+
+namespace jdksmidi {
 
 class MIDIFileWriteStream;
 class MIDIFileWriteStreamFile;
@@ -54,18 +53,18 @@ class MIDIFileWriteStream
     MIDIFileWriteStream();
     virtual ~MIDIFileWriteStream();
 
-    virtual long Seek( long pos, int whence = SEEK_SET ) = 0;
-    virtual int WriteChar( int c ) = 0;
+    virtual long Seek(long pos, int whence = SEEK_SET) = 0;
+    virtual int WriteChar(int c) = 0;
 };
 
 class MIDIFileWriteStreamFile : public MIDIFileWriteStream
 {
   public:
-    MIDIFileWriteStreamFile( FILE* f_ );
+    MIDIFileWriteStreamFile(FILE* f_);
     virtual ~MIDIFileWriteStreamFile();
 
-    long Seek( long pos, int whence = SEEK_SET );
-    int WriteChar( int c );
+    long Seek(long pos, int whence = SEEK_SET);
+    int WriteChar(int c);
 
   protected:
     FILE* f;
@@ -74,21 +73,16 @@ class MIDIFileWriteStreamFile : public MIDIFileWriteStream
 class MIDIFileWriteStreamFileName : public MIDIFileWriteStreamFile
 {
   public:
-    MIDIFileWriteStreamFileName( const char* fname )
-        : MIDIFileWriteStreamFile( fopen( fname, "wb" ) )
-    {
-    }
+    MIDIFileWriteStreamFileName(char const* fname)
+        : MIDIFileWriteStreamFile(fopen(fname, "wb"))
+    {}
 
-    bool IsValid()
-    {
-        return f != 0;
-    }
+    bool IsValid() { return f != 0; }
 
     virtual ~MIDIFileWriteStreamFileName()
     {
-        if ( f )
-        {
-            fclose( f );
+        if (f) {
+            fclose(f);
         }
     }
 };
@@ -96,84 +90,67 @@ class MIDIFileWriteStreamFileName : public MIDIFileWriteStreamFile
 class MIDIFileWrite : protected MIDIFile
 {
   public:
-    MIDIFileWrite( MIDIFileWriteStream* out_stream_ );
+    MIDIFileWrite(MIDIFileWriteStream* out_stream_);
     virtual ~MIDIFileWrite();
 
+    bool ErrorOccurred() { return error; }
+    unsigned long GetFileLength() { return file_length; }
+    unsigned long GetTrackLength() { return track_length; }
+    void ResetTrackLength() { track_length = 0; }
+    void ResetTrackTime() { track_time = 0; }
 
-    bool ErrorOccurred()
-    {
-        return error;
-    }
-    unsigned long GetFileLength()
-    {
-        return file_length;
-    }
-    unsigned long GetTrackLength()
-    {
-        return track_length;
-    }
-    void ResetTrackLength()
-    {
-        track_length = 0;
-    }
-    void ResetTrackTime()
-    {
-        track_time = 0;
-    }
+    void WriteFileHeader(int format, int ntrks, int division);
 
-    void WriteFileHeader( int format, int ntrks, int division );
+    void WriteTrackHeader(unsigned long length);
 
-    void WriteTrackHeader( unsigned long length );
+    void WriteEvent(MIDITimedMessage const& m);
+    void WriteEvent(unsigned long time, MIDISystemExclusive const* e);
+    void WriteEvent(unsigned long time, unsigned short text_type, char const* text);
+    void WriteEvent(MIDITimedBigMessage const& m);
 
-    void WriteEvent( const MIDITimedMessage& m );
-    void WriteEvent( unsigned long time, const MIDISystemExclusive* e );
-    void WriteEvent( unsigned long time, unsigned short text_type, const char* text );
-    void WriteEvent( const MIDITimedBigMessage& m );
+    void WriteMetaEvent(
+        unsigned long time, unsigned char type, unsigned char const* data, long length);
+    void WriteTempo(unsigned long time, long tempo);
+    void WriteKeySignature(unsigned long time, char sharp_flat, char minor);
+    void WriteTimeSignature(
+        unsigned long time,
+        char numerator = 4,
+        char denominator_power = 2,
+        char midi_clocks_per_metronome = 24,
+        char num_32nd_per_midi_quarter_note = 8);
 
-    void WriteMetaEvent( unsigned long time,
-                         unsigned char type,
-                         const unsigned char* data,
-                         long length );
-    void WriteTempo( unsigned long time, long tempo );
-    void WriteKeySignature( unsigned long time, char sharp_flat, char minor );
-    void WriteTimeSignature( unsigned long time,
-                             char numerator = 4,
-                             char denominator_power = 2,
-                             char midi_clocks_per_metronome = 24,
-                             char num_32nd_per_midi_quarter_note = 8 );
-
-    void WriteEndOfTrack( unsigned long time );
+    void WriteEndOfTrack(unsigned long time);
 
     virtual void RewriteTrackLength();
 
   protected:
-    virtual void Error( char* s );
+    virtual void Error(char* s);
 
-    void WriteCharacter( std::uint8_t c )
+    void WriteCharacter(std::uint8_t c)
     {
-        if ( out_stream->WriteChar( c ) < 0 )
+        if (out_stream->WriteChar(c) < 0)
             error = true;
     }
 
-    void Seek( long pos )
+    void Seek(long pos)
     {
-        if ( out_stream->Seek( pos ) < 0 )
+        if (out_stream->Seek(pos) < 0)
             error = true;
     }
 
-    void IncrementCounters( int c )
+    void IncrementCounters(int c)
     {
         track_length += c;
         file_length += c;
     }
 
-    void WriteShort( unsigned short c );
-    void Write3Char( long c );
-    void WriteLong( unsigned long c );
+    void WriteShort(unsigned short c);
+    void Write3Char(long c);
+    void WriteLong(unsigned long c);
 
-    int WriteVariableNum( unsigned long n );
+    int WriteVariableNum(unsigned long n);
 
-    void WriteDeltaTime( unsigned long time );
+    void WriteDeltaTime(unsigned long time);
 
   private:
     bool error;

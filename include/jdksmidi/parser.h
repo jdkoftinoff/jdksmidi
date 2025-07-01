@@ -34,32 +34,25 @@
 #ifndef JDKSMIDI_PARSER_H
 #define JDKSMIDI_PARSER_H
 
-#include <cstdint>
-
 #include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
 
-namespace jdksmidi
-{
+#include <cstdint>
+
+namespace jdksmidi {
 
 class MIDIParser
 {
   public:
-    MIDIParser( std::uint16_t max_sysex_size = 384 );
+    MIDIParser(std::uint16_t max_sysex_size = 384);
     virtual ~MIDIParser();
 
-    void Clear()
-    {
-        state = FIND_STATUS;
-    }
+    void Clear() { state = FIND_STATUS; }
 
-    virtual bool Parse( std::uint8_t b, MIDIMessage* msg );
+    virtual bool Parse(std::uint8_t b, MIDIMessage* msg);
 
-    MIDISystemExclusive* GetSystemExclusive() const
-    {
-        return sysex;
-    }
+    MIDISystemExclusive* GetSystemExclusive() const { return sysex; }
 
   protected:
     //
@@ -81,11 +74,10 @@ class MIDIParser
     MIDISystemExclusive* sysex;
     State state;
 
-    bool ParseSystemByte( std::uint8_t b, MIDIMessage* msg );
-    bool ParseDataByte( std::uint8_t b, MIDIMessage* msg );
-    void ParseStatusByte( std::uint8_t b );
+    bool ParseSystemByte(std::uint8_t b, MIDIMessage* msg);
+    bool ParseDataByte(std::uint8_t b, MIDIMessage* msg);
+    void ParseStatusByte(std::uint8_t b);
 };
-
 
 }  // namespace jdksmidi
 

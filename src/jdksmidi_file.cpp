@@ -31,77 +31,70 @@
 **
 */
 
+#include "jdksmidi/file.h"
 #include "jdksmidi/world.h"
 
-#include "jdksmidi/file.h"
-
 #if DEBUG_MDFILE
-    #undef DBG
-    #define DBG( a ) a
+#    undef DBG
+#    define DBG(a) a
 #endif
 
-namespace jdksmidi
+namespace jdksmidi {
+
+MIDIFile::MIDIFile()
+{}
+
+MIDIFile::~MIDIFile()
+{}
+
+unsigned long MIDIFile::ConvertTempoToFreq(short division, MIDITempo& tempo)
 {
-
-
-MIDIFile::MIDIFile() {}
-
-MIDIFile::~MIDIFile() {}
-
-unsigned long MIDIFile::ConvertTempoToFreq( short division, MIDITempo& tempo )
-{
-    if ( division > 0 )
-    {
-        long clocks_per_beat = ( long ) division * 1000;
+    if (division > 0) {
+        long clocks_per_beat = (long)division * 1000;
         long micro_sec_per_beat = tempo.GetMIDIFileTempo() / 1000;
-        return ( unsigned long ) clocks_per_beat / micro_sec_per_beat;
+        return (unsigned long)clocks_per_beat / micro_sec_per_beat;
     }
 
-    else
-    {
+    else {
         // TO DO: handle smpte frame rate references
         return 120;
     }
 }
 
-
-unsigned long MIDIFile::ReadVariableLengthNumber( unsigned char** in )
+unsigned long MIDIFile::ReadVariableLengthNumber(unsigned char** in)
 {
     unsigned long num = 0;
     unsigned char* t = *in;
 
-    do
-    {
+    do {
         num <<= 7;
-        num |= ( *t );
-    } while ( ( *t++ ) & 0x80 );
+        num |= (*t);
+    } while ((*t++) & 0x80);
 
     *in = t;
     return num;
 }
 
-unsigned char* MIDIFile::WriteVariableLengthNumber( unsigned long num, unsigned char* out )
+unsigned char* MIDIFile::WriteVariableLengthNumber(unsigned long num, unsigned char* out)
 {
     register unsigned long buffer;
     buffer = num & 0x7f;
 
-    while ( ( num >>= 7 ) > 0 )
-    {
+    while ((num >>= 7) > 0) {
         buffer <<= 8;
         buffer |= 0x80;
-        buffer += ( num & 0x7f );
+        buffer += (num & 0x7f);
     }
 
-    do
-    {
-        *out++ = ( unsigned char ) buffer;
+    do {
+        *out++ = (unsigned char)buffer;
 
-        if ( buffer & 0x80 )
+        if (buffer & 0x80)
             buffer >>= 8;
 
         else
             break;
-    } while ( true );
+    } while (true);
 
     return out;
 }

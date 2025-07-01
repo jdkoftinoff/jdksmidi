@@ -22,35 +22,32 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "jdksmidi/showcontrolhandler.h"
 #include "jdksmidi/world.h"
 
-#include "jdksmidi/showcontrolhandler.h"
+namespace jdksmidi {
 
-namespace jdksmidi
-{
+MIDISCHandle::MIDISCHandle()
+{}
 
+MIDISCHandle::~MIDISCHandle()
+{}
 
-MIDISCHandle::MIDISCHandle() {}
-
-MIDISCHandle::~MIDISCHandle() {}
-
-
-bool MIDISCHandle::Dispatch( const MIDIShowControlPacket& p )
+bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
 {
     bool e;
 
-    switch ( p.GetCommand() )
-    {
+    switch (p.GetCommand()) {
         case MIDI_SC_GO:
 
-            if ( p.GetHasQPath() )
-                e = Go( p.GetQNumber(), p.GetQList(), p.GetQPath() );
+            if (p.GetHasQPath())
+                e = Go(p.GetQNumber(), p.GetQList(), p.GetQPath());
 
-            else if ( p.GetHasQList() )
-                e = Go( p.GetQNumber(), p.GetQList() );
+            else if (p.GetHasQList())
+                e = Go(p.GetQNumber(), p.GetQList());
 
-            else if ( p.GetHasQNumber() )
-                e = Go( p.GetQNumber() );
+            else if (p.GetHasQNumber())
+                e = Go(p.GetQNumber());
 
             else
                 e = Go();
@@ -58,14 +55,14 @@ bool MIDISCHandle::Dispatch( const MIDIShowControlPacket& p )
             break;
         case MIDI_SC_STOP:
 
-            if ( p.GetHasQPath() )
-                e = Stop( p.GetQNumber(), p.GetQList(), p.GetQPath() );
+            if (p.GetHasQPath())
+                e = Stop(p.GetQNumber(), p.GetQList(), p.GetQPath());
 
-            else if ( p.GetHasQList() )
-                e = Stop( p.GetQNumber(), p.GetQList() );
+            else if (p.GetHasQList())
+                e = Stop(p.GetQNumber(), p.GetQList());
 
-            else if ( p.GetHasQNumber() )
-                e = Stop( p.GetQNumber() );
+            else if (p.GetHasQNumber())
+                e = Stop(p.GetQNumber());
 
             else
                 e = Stop();
@@ -73,14 +70,14 @@ bool MIDISCHandle::Dispatch( const MIDIShowControlPacket& p )
             break;
         case MIDI_SC_RESUME:
 
-            if ( p.GetHasQPath() )
-                e = Resume( p.GetQNumber(), p.GetQList(), p.GetQPath() );
+            if (p.GetHasQPath())
+                e = Resume(p.GetQNumber(), p.GetQList(), p.GetQPath());
 
-            else if ( p.GetHasQList() )
-                e = Resume( p.GetQNumber(), p.GetQList() );
+            else if (p.GetHasQList())
+                e = Resume(p.GetQNumber(), p.GetQList());
 
-            else if ( p.GetHasQNumber() )
-                e = Resume( p.GetQNumber() );
+            else if (p.GetHasQNumber())
+                e = Resume(p.GetQNumber());
 
             else
                 e = Resume();
@@ -88,26 +85,26 @@ bool MIDISCHandle::Dispatch( const MIDIShowControlPacket& p )
             break;
         case MIDI_SC_LOAD:
 
-            if ( p.GetHasQPath() )
-                e = Load( p.GetQNumber(), p.GetQList(), p.GetQPath() );
+            if (p.GetHasQPath())
+                e = Load(p.GetQNumber(), p.GetQList(), p.GetQPath());
 
-            else if ( p.GetHasQList() )
-                e = Load( p.GetQNumber(), p.GetQList() );
+            else if (p.GetHasQList())
+                e = Load(p.GetQNumber(), p.GetQList());
 
             else
-                e = Load( p.GetQNumber() );
+                e = Load(p.GetQNumber());
 
             break;
         case MIDI_SC_GO_OFF:
 
-            if ( p.GetHasQPath() )
-                e = GoOff( p.GetQNumber(), p.GetQList(), p.GetQPath() );
+            if (p.GetHasQPath())
+                e = GoOff(p.GetQNumber(), p.GetQList(), p.GetQPath());
 
-            else if ( p.GetHasQList() )
-                e = GoOff( p.GetQNumber(), p.GetQList() );
+            else if (p.GetHasQList())
+                e = GoOff(p.GetQNumber(), p.GetQList());
 
-            else if ( p.GetHasQNumber() )
-                e = GoOff( p.GetQNumber() );
+            else if (p.GetHasQNumber())
+                e = GoOff(p.GetQNumber());
 
             else
                 e = GoOff();
@@ -115,14 +112,14 @@ bool MIDISCHandle::Dispatch( const MIDIShowControlPacket& p )
             break;
         case MIDI_SC_GO_JAM:
 
-            if ( p.GetHasQPath() )
-                e = GoJam( p.GetQNumber(), p.GetQList(), p.GetQPath() );
+            if (p.GetHasQPath())
+                e = GoJam(p.GetQNumber(), p.GetQList(), p.GetQPath());
 
-            else if ( p.GetHasQList() )
-                e = GoJam( p.GetQNumber(), p.GetQList() );
+            else if (p.GetHasQList())
+                e = GoJam(p.GetQNumber(), p.GetQList());
 
-            else if ( p.GetHasQNumber() )
-                e = GoJam( p.GetQNumber() );
+            else if (p.GetHasQNumber())
+                e = GoJam(p.GetQNumber());
 
             else
                 e = GoJam();
@@ -130,62 +127,65 @@ bool MIDISCHandle::Dispatch( const MIDIShowControlPacket& p )
             break;
         case MIDI_SC_TIMED_GO:
 
-            if ( p.GetHasQPath() )
-                e = TimedGo( p.GetHours(),
-                             p.GetMinutes(),
-                             p.GetSeconds(),
-                             p.GetFrames(),
-                             p.GetFractFrames(),
-                             p.GetQNumber(),
-                             p.GetQList(),
-                             p.GetQPath() );
+            if (p.GetHasQPath())
+                e = TimedGo(
+                    p.GetHours(),
+                    p.GetMinutes(),
+                    p.GetSeconds(),
+                    p.GetFrames(),
+                    p.GetFractFrames(),
+                    p.GetQNumber(),
+                    p.GetQList(),
+                    p.GetQPath());
 
-            else if ( p.GetHasQList() )
-                e = TimedGo( p.GetHours(),
-                             p.GetMinutes(),
-                             p.GetSeconds(),
-                             p.GetFrames(),
-                             p.GetFractFrames(),
-                             p.GetQNumber(),
-                             p.GetQList() );
+            else if (p.GetHasQList())
+                e = TimedGo(
+                    p.GetHours(),
+                    p.GetMinutes(),
+                    p.GetSeconds(),
+                    p.GetFrames(),
+                    p.GetFractFrames(),
+                    p.GetQNumber(),
+                    p.GetQList());
 
-            else if ( p.GetHasQNumber() )
-                e = TimedGo( p.GetHours(),
-                             p.GetMinutes(),
-                             p.GetSeconds(),
-                             p.GetFrames(),
-                             p.GetFractFrames(),
-                             p.GetQNumber() );
+            else if (p.GetHasQNumber())
+                e = TimedGo(
+                    p.GetHours(),
+                    p.GetMinutes(),
+                    p.GetSeconds(),
+                    p.GetFrames(),
+                    p.GetFractFrames(),
+                    p.GetQNumber());
 
             else
-                e = TimedGo( p.GetHours(),
-                             p.GetMinutes(),
-                             p.GetSeconds(),
-                             p.GetFrames(),
-                             p.GetFractFrames() );
+                e = TimedGo(
+                    p.GetHours(),
+                    p.GetMinutes(),
+                    p.GetSeconds(),
+                    p.GetFrames(),
+                    p.GetFractFrames());
 
             break;
         case MIDI_SC_SET:
 
-            if ( !p.GetHasTime() )
-            {
-                e = Set( p.GetControlNum(), p.GetControlVal() );
+            if (!p.GetHasTime()) {
+                e = Set(p.GetControlNum(), p.GetControlVal());
             }
 
-            else
-            {
-                e = Set( p.GetControlNum(),
-                         p.GetControlVal(),
-                         p.GetHours(),
-                         p.GetMinutes(),
-                         p.GetSeconds(),
-                         p.GetFrames(),
-                         p.GetFractFrames() );
+            else {
+                e =
+                    Set(p.GetControlNum(),
+                        p.GetControlVal(),
+                        p.GetHours(),
+                        p.GetMinutes(),
+                        p.GetSeconds(),
+                        p.GetFrames(),
+                        p.GetFractFrames());
             }
 
             break;
         case MIDI_SC_FIRE:
-            e = Fire( ( std::uint8_t ) p.GetMacroNum() );
+            e = Fire((std::uint8_t)p.GetMacroNum());
             break;
         case MIDI_SC_ALL_OFF:
             e = AllOff();
@@ -198,8 +198,8 @@ bool MIDISCHandle::Dispatch( const MIDIShowControlPacket& p )
             break;
         case MIDI_SC_STANDBY_PLUS:
 
-            if ( p.GetHasQList() )
-                e = StandbyPlus( p.GetQList() );
+            if (p.GetHasQList())
+                e = StandbyPlus(p.GetQList());
 
             else
                 e = StandbyPlus();
@@ -207,8 +207,8 @@ bool MIDISCHandle::Dispatch( const MIDIShowControlPacket& p )
             break;
         case MIDI_SC_STANDBY_MINUS:
 
-            if ( p.GetHasQList() )
-                e = StandbyMinus( p.GetQList() );
+            if (p.GetHasQList())
+                e = StandbyMinus(p.GetQList());
 
             else
                 e = StandbyMinus();
@@ -216,8 +216,8 @@ bool MIDISCHandle::Dispatch( const MIDIShowControlPacket& p )
             break;
         case MIDI_SC_SEQUENCE_PLUS:
 
-            if ( p.GetHasQList() )
-                e = SequencePlus( p.GetQList() );
+            if (p.GetHasQList())
+                e = SequencePlus(p.GetQList());
 
             else
                 e = SequencePlus();
@@ -225,8 +225,8 @@ bool MIDISCHandle::Dispatch( const MIDIShowControlPacket& p )
             break;
         case MIDI_SC_SEQUENCE_MINUS:
 
-            if ( p.GetHasQList() )
-                e = SequenceMinus( p.GetQList() );
+            if (p.GetHasQList())
+                e = SequenceMinus(p.GetQList());
 
             else
                 e = SequenceMinus();
@@ -234,8 +234,8 @@ bool MIDISCHandle::Dispatch( const MIDIShowControlPacket& p )
             break;
         case MIDI_SC_START_CLOCK:
 
-            if ( p.GetHasQList() )
-                e = StartClock( p.GetQList() );
+            if (p.GetHasQList())
+                e = StartClock(p.GetQList());
 
             else
                 e = StartClock();
@@ -243,8 +243,8 @@ bool MIDISCHandle::Dispatch( const MIDIShowControlPacket& p )
             break;
         case MIDI_SC_STOP_CLOCK:
 
-            if ( p.GetHasQList() )
-                e = StopClock( p.GetQList() );
+            if (p.GetHasQList())
+                e = StopClock(p.GetQList());
 
             else
                 e = StopClock();
@@ -252,8 +252,8 @@ bool MIDISCHandle::Dispatch( const MIDIShowControlPacket& p )
             break;
         case MIDI_SC_ZERO_CLOCK:
 
-            if ( p.GetHasQList() )
-                e = ZeroClock( p.GetQList() );
+            if (p.GetHasQList())
+                e = ZeroClock(p.GetQList());
 
             else
                 e = ZeroClock();
@@ -261,8 +261,8 @@ bool MIDISCHandle::Dispatch( const MIDIShowControlPacket& p )
             break;
         case MIDI_SC_MTC_CHASE_ON:
 
-            if ( p.GetHasQList() )
-                e = MTCChaseOn( p.GetQList() );
+            if (p.GetHasQList())
+                e = MTCChaseOn(p.GetQList());
 
             else
                 e = MTCChaseOn();
@@ -270,8 +270,8 @@ bool MIDISCHandle::Dispatch( const MIDIShowControlPacket& p )
             break;
         case MIDI_SC_MTC_CHASE_OFF:
 
-            if ( p.GetHasQList() )
-                e = MTCChaseOff( p.GetQList() );
+            if (p.GetHasQList())
+                e = MTCChaseOff(p.GetQList());
 
             else
                 e = MTCChaseOff();
@@ -279,32 +279,34 @@ bool MIDISCHandle::Dispatch( const MIDIShowControlPacket& p )
             break;
         case MIDI_SC_SET_CLOCK:
 
-            if ( p.GetHasQList() )
-                e = SetClock( p.GetHours(),
-                              p.GetMinutes(),
-                              p.GetSeconds(),
-                              p.GetFrames(),
-                              p.GetFractFrames(),
-                              p.GetQList() );
+            if (p.GetHasQList())
+                e = SetClock(
+                    p.GetHours(),
+                    p.GetMinutes(),
+                    p.GetSeconds(),
+                    p.GetFrames(),
+                    p.GetFractFrames(),
+                    p.GetQList());
 
             else
-                e = SetClock( p.GetHours(),
-                              p.GetMinutes(),
-                              p.GetSeconds(),
-                              p.GetFrames(),
-                              p.GetFractFrames() );
+                e = SetClock(
+                    p.GetHours(),
+                    p.GetMinutes(),
+                    p.GetSeconds(),
+                    p.GetFrames(),
+                    p.GetFractFrames());
 
         case MIDI_SC_OPEN_Q_LIST:
-            e = OpenQList( p.GetQList() );
+            e = OpenQList(p.GetQList());
             break;
         case MIDI_SC_CLOSE_Q_LIST:
-            e = CloseQList( p.GetQList() );
+            e = CloseQList(p.GetQList());
             break;
         case MIDI_SC_OPEN_Q_PATH:
-            e = OpenQPath( p.GetQPath() );
+            e = OpenQPath(p.GetQPath());
             break;
         case MIDI_SC_CLOSE_Q_PATH:
-            e = CloseQPath( p.GetQPath() );
+            e = CloseQPath(p.GetQPath());
             break;
         default:
             e = false;
@@ -314,7 +316,6 @@ bool MIDISCHandle::Dispatch( const MIDIShowControlPacket& p )
     return e;
 }
 
-
 bool MIDISCHandle::Go()
 {
     bool e;
@@ -322,29 +323,26 @@ bool MIDISCHandle::Go()
     return e;
 }
 
-bool MIDISCHandle::Go( const MIDICue& q_number )
+bool MIDISCHandle::Go(MIDICue const& q_number)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::Go( const MIDICue& q_number, const MIDICue& q_list )
+bool MIDISCHandle::Go(MIDICue const& q_number, MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::Go( const MIDICue& q_number, const MIDICue& q_list, const MIDICue& q_path )
+bool MIDISCHandle::Go(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
 {
     bool e;
     e = false;
     return e;
 }
-
 
 bool MIDISCHandle::Stop()
 {
@@ -353,30 +351,26 @@ bool MIDISCHandle::Stop()
     return e;
 }
 
-
-bool MIDISCHandle::Stop( const MIDICue& q_number )
+bool MIDISCHandle::Stop(MIDICue const& q_number)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::Stop( const MIDICue& q_number, const MIDICue& q_list )
+bool MIDISCHandle::Stop(MIDICue const& q_number, MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::Stop( const MIDICue& q_number, const MIDICue& q_list, const MIDICue& q_path )
+bool MIDISCHandle::Stop(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
 {
     bool e;
     e = false;
     return e;
 }
-
 
 bool MIDISCHandle::Resume()
 {
@@ -385,135 +379,125 @@ bool MIDISCHandle::Resume()
     return e;
 }
 
-
-bool MIDISCHandle::Resume( const MIDICue& q_number )
+bool MIDISCHandle::Resume(MIDICue const& q_number)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::Resume( const MIDICue& q_number, const MIDICue& q_list )
+bool MIDISCHandle::Resume(MIDICue const& q_number, MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::Resume( const MIDICue& q_number, const MIDICue& q_list, const MIDICue& q_path )
+bool MIDISCHandle::Resume(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
 {
     bool e;
     e = false;
     return e;
 }
-
 
 bool MIDISCHandle::TimedGo(
-    std::uint8_t hr, std::uint8_t mn, std::uint8_t sc, std::uint8_t fr, std::uint8_t ff )
+    std::uint8_t hr, std::uint8_t mn, std::uint8_t sc, std::uint8_t fr, std::uint8_t ff)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::TimedGo( std::uint8_t hr,
-                            std::uint8_t mn,
-                            std::uint8_t sc,
-                            std::uint8_t fr,
-                            std::uint8_t ff,
-                            const MIDICue& q_number )
+bool MIDISCHandle::TimedGo(
+    std::uint8_t hr,
+    std::uint8_t mn,
+    std::uint8_t sc,
+    std::uint8_t fr,
+    std::uint8_t ff,
+    MIDICue const& q_number)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::TimedGo( std::uint8_t hr,
-                            std::uint8_t mn,
-                            std::uint8_t sc,
-                            std::uint8_t fr,
-                            std::uint8_t ff,
-                            const MIDICue& q_number,
-                            const MIDICue& q_list )
+bool MIDISCHandle::TimedGo(
+    std::uint8_t hr,
+    std::uint8_t mn,
+    std::uint8_t sc,
+    std::uint8_t fr,
+    std::uint8_t ff,
+    MIDICue const& q_number,
+    MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::TimedGo( std::uint8_t hr,
-                            std::uint8_t mn,
-                            std::uint8_t sc,
-                            std::uint8_t fr,
-                            std::uint8_t ff,
-                            const MIDICue& q_number,
-                            const MIDICue& q_list,
-                            const MIDICue& q_path )
+bool MIDISCHandle::TimedGo(
+    std::uint8_t hr,
+    std::uint8_t mn,
+    std::uint8_t sc,
+    std::uint8_t fr,
+    std::uint8_t ff,
+    MIDICue const& q_number,
+    MIDICue const& q_list,
+    MIDICue const& q_path)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::Load( const MIDICue& q_number )
+bool MIDISCHandle::Load(MIDICue const& q_number)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::Load( const MIDICue& q_number, const MIDICue& q_list )
+bool MIDISCHandle::Load(MIDICue const& q_number, MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::Load( const MIDICue& q_number, const MIDICue& q_list, const MIDICue& q_path )
+bool MIDISCHandle::Load(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::Set( std::uint32_t ctrl_num, std::uint32_t ctrl_val )
+bool MIDISCHandle::Set(std::uint32_t ctrl_num, std::uint32_t ctrl_val)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::Set( std::uint32_t ctrl_num,
-                        std::uint32_t ctrl_val,
-                        std::uint8_t hr,
-                        std::uint8_t mn,
-                        std::uint8_t sc,
-                        std::uint8_t fr,
-                        std::uint8_t ff )
+bool MIDISCHandle::Set(
+    std::uint32_t ctrl_num,
+    std::uint32_t ctrl_val,
+    std::uint8_t hr,
+    std::uint8_t mn,
+    std::uint8_t sc,
+    std::uint8_t fr,
+    std::uint8_t ff)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::Fire( std::uint8_t macro_num )
+bool MIDISCHandle::Fire(std::uint8_t macro_num)
 {
     bool e;
     e = false;
     return e;
 }
-
 
 bool MIDISCHandle::AllOff()
 {
@@ -522,14 +506,12 @@ bool MIDISCHandle::AllOff()
     return e;
 }
 
-
 bool MIDISCHandle::Restore()
 {
     bool e;
     e = false;
     return e;
 }
-
 
 bool MIDISCHandle::Reset()
 {
@@ -538,7 +520,6 @@ bool MIDISCHandle::Reset()
     return e;
 }
 
-
 bool MIDISCHandle::GoOff()
 {
     bool e;
@@ -546,30 +527,26 @@ bool MIDISCHandle::GoOff()
     return e;
 }
 
-
-bool MIDISCHandle::GoOff( const MIDICue& q_number )
+bool MIDISCHandle::GoOff(MIDICue const& q_number)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::GoOff( const MIDICue& q_number, const MIDICue& q_list )
+bool MIDISCHandle::GoOff(MIDICue const& q_number, MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::GoOff( const MIDICue& q_number, const MIDICue& q_list, const MIDICue& q_path )
+bool MIDISCHandle::GoOff(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
 {
     bool e;
     e = false;
     return e;
 }
-
 
 bool MIDISCHandle::GoJam()
 {
@@ -578,30 +555,26 @@ bool MIDISCHandle::GoJam()
     return e;
 }
 
-
-bool MIDISCHandle::GoJam( const MIDICue& q_number )
+bool MIDISCHandle::GoJam(MIDICue const& q_number)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::GoJam( const MIDICue& q_number, const MIDICue& q_list )
+bool MIDISCHandle::GoJam(MIDICue const& q_number, MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::GoJam( const MIDICue& q_number, const MIDICue& q_list, const MIDICue& q_path )
+bool MIDISCHandle::GoJam(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
 {
     bool e;
     e = false;
     return e;
 }
-
 
 bool MIDISCHandle::StandbyPlus()
 {
@@ -610,14 +583,12 @@ bool MIDISCHandle::StandbyPlus()
     return e;
 }
 
-
-bool MIDISCHandle::StandbyPlus( const MIDICue& q_list )
+bool MIDISCHandle::StandbyPlus(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
-
 
 bool MIDISCHandle::StandbyMinus()
 {
@@ -626,14 +597,12 @@ bool MIDISCHandle::StandbyMinus()
     return e;
 }
 
-
-bool MIDISCHandle::StandbyMinus( const MIDICue& q_list )
+bool MIDISCHandle::StandbyMinus(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
-
 
 bool MIDISCHandle::SequencePlus()
 {
@@ -642,14 +611,12 @@ bool MIDISCHandle::SequencePlus()
     return e;
 }
 
-
-bool MIDISCHandle::SequencePlus( const MIDICue& q_list )
+bool MIDISCHandle::SequencePlus(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
-
 
 bool MIDISCHandle::SequenceMinus()
 {
@@ -658,14 +625,12 @@ bool MIDISCHandle::SequenceMinus()
     return e;
 }
 
-
-bool MIDISCHandle::SequenceMinus( const MIDICue& q_list )
+bool MIDISCHandle::SequenceMinus(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
-
 
 bool MIDISCHandle::StartClock()
 {
@@ -674,14 +639,12 @@ bool MIDISCHandle::StartClock()
     return e;
 }
 
-
-bool MIDISCHandle::StartClock( const MIDICue& q_list )
+bool MIDISCHandle::StartClock(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
-
 
 bool MIDISCHandle::StopClock()
 {
@@ -690,14 +653,12 @@ bool MIDISCHandle::StopClock()
     return e;
 }
 
-
-bool MIDISCHandle::StopClock( const MIDICue& q_list )
+bool MIDISCHandle::StopClock(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
-
 
 bool MIDISCHandle::ZeroClock()
 {
@@ -706,36 +667,33 @@ bool MIDISCHandle::ZeroClock()
     return e;
 }
 
-
-bool MIDISCHandle::ZeroClock( const MIDICue& q_list )
+bool MIDISCHandle::ZeroClock(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
-
 
 bool MIDISCHandle::SetClock(
-    std::uint8_t hr, std::uint8_t mn, std::uint8_t sc, std::uint8_t fr, std::uint8_t ff )
+    std::uint8_t hr, std::uint8_t mn, std::uint8_t sc, std::uint8_t fr, std::uint8_t ff)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::SetClock( std::uint8_t hr,
-                             std::uint8_t mn,
-                             std::uint8_t sc,
-                             std::uint8_t fr,
-                             std::uint8_t ff,
-                             const MIDICue& q_list )
+bool MIDISCHandle::SetClock(
+    std::uint8_t hr,
+    std::uint8_t mn,
+    std::uint8_t sc,
+    std::uint8_t fr,
+    std::uint8_t ff,
+    MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
-
 
 bool MIDISCHandle::MTCChaseOn()
 {
@@ -744,14 +702,12 @@ bool MIDISCHandle::MTCChaseOn()
     return e;
 }
 
-
-bool MIDISCHandle::MTCChaseOn( const MIDICue& q_list )
+bool MIDISCHandle::MTCChaseOn(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
-
 
 bool MIDISCHandle::MTCChaseOff()
 {
@@ -760,45 +716,39 @@ bool MIDISCHandle::MTCChaseOff()
     return e;
 }
 
-
-bool MIDISCHandle::MTCChaseOff( const MIDICue& q_list )
+bool MIDISCHandle::MTCChaseOff(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::OpenQList( const MIDICue& q_list )
+bool MIDISCHandle::OpenQList(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::CloseQList( const MIDICue& q_list )
+bool MIDISCHandle::CloseQList(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::OpenQPath( const MIDICue& q_path )
+bool MIDISCHandle::OpenQPath(MIDICue const& q_path)
 {
     bool e;
     e = false;
     return e;
 }
 
-
-bool MIDISCHandle::CloseQPath( const MIDICue& q_path )
+bool MIDISCHandle::CloseQPath(MIDICue const& q_path)
 {
     bool e;
     e = false;
     return e;
 }
-
 
 }  // namespace jdksmidi

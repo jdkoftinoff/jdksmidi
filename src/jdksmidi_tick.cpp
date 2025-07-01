@@ -24,9 +24,9 @@
 #include "jdksmidi/tick.h"
 #include "jdksmidi/world.h"
 
-namespace jdksmidi
-{
+namespace jdksmidi {
 
-MIDITick::~MIDITick() {}
+MIDITick::~MIDITick()
+{}
 
 }  // namespace jdksmidi

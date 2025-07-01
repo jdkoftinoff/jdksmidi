@@ -28,37 +28,24 @@
 #include "jdksmidi/multitrack.h"
 #include "jdksmidi/sequencer.h"
 
-namespace jdksmidi
-{
+namespace jdksmidi {
 class MIDISong
 {
   public:
-    MIDISong( int max_tracks );
+    MIDISong(int max_tracks);
     virtual ~MIDISong();
 
-    bool Load( const char* fname );
+    bool Load(char const* fname);
 
     // bool Save( const char *fname );
 
-    MIDIMultiTrack* GetMultiTrack()
-    {
-        return multitrack;
-    }
+    MIDIMultiTrack* GetMultiTrack() { return multitrack; }
 
-    const MIDIMultiTrack* GetMultiTrack() const
-    {
-        return multitrack;
-    }
+    MIDIMultiTrack const* GetMultiTrack() const { return multitrack; }
 
-    MIDISequencer* GetSeq()
-    {
-        return sequencer;
-    }
+    MIDISequencer* GetSeq() { return sequencer; }
 
-    const MIDISequencer* GetSeq() const
-    {
-        return sequencer;
-    }
+    MIDISequencer const* GetSeq() const { return sequencer; }
 
   protected:
     MIDIMultiTrack track;

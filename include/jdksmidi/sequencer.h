@@ -30,8 +30,7 @@
 #include "jdksmidi/tempo.h"
 #include "jdksmidi/track.h"
 
-namespace jdksmidi
-{
+namespace jdksmidi {
 
 class MIDISequencerGUIEvent;
 class MIDISequencerGUIEventNotifier;
@@ -41,46 +40,33 @@ class MIDISequencer;
 class MIDISequencerGUIEvent
 {
   public:
-    MIDISequencerGUIEvent()
+    MIDISequencerGUIEvent() { bits = 0; }
+
+    MIDISequencerGUIEvent(unsigned long bits_)
+        : bits(bits_)
+    {}
+
+    MIDISequencerGUIEvent(MIDISequencerGUIEvent const& e)
+        : bits(e.bits)
+    {}
+
+    MIDISequencerGUIEvent(int group, int subgroup, int item = 0)
     {
-        bits = 0;
+        bits = ((group & 0xff) << 24) | ((subgroup & 0xfff) << 12) | ((item & 0xfff) << 0);
     }
 
-    MIDISequencerGUIEvent( unsigned long bits_ ) : bits( bits_ ) {}
+    operator unsigned long() const { return bits; }
 
-    MIDISequencerGUIEvent( const MIDISequencerGUIEvent& e ) : bits( e.bits ) {}
-
-    MIDISequencerGUIEvent( int group, int subgroup, int item = 0 )
+    void SetEvent(int group, int subgroup = 0, int item = 0)
     {
-        bits = ( ( group & 0xff ) << 24 ) | ( ( subgroup & 0xfff ) << 12 ) |
-               ( ( item & 0xfff ) << 0 );
+        bits = ((group & 0xff) << 24) | ((subgroup & 0xfff) << 12) | ((item & 0xfff) << 0);
     }
 
-    operator unsigned long() const
-    {
-        return bits;
-    }
+    int GetEventGroup() const { return (int)((bits >> 24) & 0xff); }
 
-    void SetEvent( int group, int subgroup = 0, int item = 0 )
-    {
-        bits = ( ( group & 0xff ) << 24 ) | ( ( subgroup & 0xfff ) << 12 ) |
-               ( ( item & 0xfff ) << 0 );
-    }
+    int GetEventSubGroup() const { return (int)((bits >> 12) & 0xfff); }
 
-    int GetEventGroup() const
-    {
-        return ( int ) ( ( bits >> 24 ) & 0xff );
-    }
-
-    int GetEventSubGroup() const
-    {
-        return ( int ) ( ( bits >> 12 ) & 0xfff );
-    }
-
-    int GetEventItem() const
-    {
-        return ( int ) ( ( bits >> 0 ) & 0xfff );
-    }
+    int GetEventItem() const { return (int)((bits >> 0) & 0xfff); }
 
     // main groups
     enum
@@ -123,7 +109,6 @@ class MIDISequencerGUIEvent
     unsigned long bits;
 };
 
-
 class MIDISequencerGUIEventNotifier
 {
   public:
@@ -131,22 +116,21 @@ class MIDISequencerGUIEventNotifier
 
     virtual ~MIDISequencerGUIEventNotifier();
 
-    virtual void Notify( const MIDISequencer* seq, MIDISequencerGUIEvent e ) = 0;
+    virtual void Notify(MIDISequencer const* seq, MIDISequencerGUIEvent e) = 0;
     virtual bool GetEnable() const = 0;
-    virtual void SetEnable( bool f ) = 0;
+    virtual void SetEnable(bool f) = 0;
 };
-
 
 class MIDISequencerGUIEventNotifierText : public MIDISequencerGUIEventNotifier
 {
   public:
-    MIDISequencerGUIEventNotifierText( FILE* f );
+    MIDISequencerGUIEventNotifierText(FILE* f);
 
     virtual ~MIDISequencerGUIEventNotifierText();
 
-    virtual void Notify( const MIDISequencer* seq, MIDISequencerGUIEvent e );
+    virtual void Notify(MIDISequencer const* seq, MIDISequencerGUIEvent e);
     virtual bool GetEnable() const;
-    virtual void SetEnable( bool f );
+    virtual void SetEnable(bool f);
 
   private:
     FILE* f;
@@ -156,20 +140,19 @@ class MIDISequencerGUIEventNotifierText : public MIDISequencerGUIEventNotifier
 class MIDISequencerTrackNotifier : public MIDIProcessor
 {
   public:
-    MIDISequencerTrackNotifier( MIDISequencer* seq_, int trk, MIDISequencerGUIEventNotifier* n );
+    MIDISequencerTrackNotifier(MIDISequencer* seq_, int trk, MIDISequencerGUIEventNotifier* n);
 
     virtual ~MIDISequencerTrackNotifier();
 
-    void SetNotifier( MIDISequencer* seq_, int trk, MIDISequencerGUIEventNotifier* n )
+    void SetNotifier(MIDISequencer* seq_, int trk, MIDISequencerGUIEventNotifier* n)
     {
         seq = seq_;
         track_num = trk;
         notifier = n;
     }
 
-
-    void Notify( int item );
-    void NotifyConductor( int item );
+    void Notify(int item);
+    void NotifyConductor(int item);
 
   private:
     MIDISequencer* seq;
@@ -184,7 +167,7 @@ class MIDISequencerTrackProcessor : public MIDIProcessor
     virtual ~MIDISequencerTrackProcessor();
 
     virtual void Reset();
-    virtual bool Process( MIDITimedBigMessage* msg );
+    virtual bool Process(MIDITimedBigMessage* msg);
 
     bool mute;           // track is muted
     bool solo;           // track is solod
@@ -198,12 +181,12 @@ class MIDISequencerTrackProcessor : public MIDIProcessor
 class MIDISequencerTrackState : public MIDISequencerTrackNotifier
 {
   public:
-    MIDISequencerTrackState( MIDISequencer* seq_, int trk, MIDISequencerGUIEventNotifier* n );
+    MIDISequencerTrackState(MIDISequencer* seq_, int trk, MIDISequencerGUIEventNotifier* n);
     virtual ~MIDISequencerTrackState();
 
     virtual void GoToZero();
     virtual void Reset();
-    virtual bool Process( MIDITimedBigMessage* msg );
+    virtual bool Process(MIDITimedBigMessage* msg);
 
     float tempobpm;            // current tempo in beats per minute
     int pg;                    // current program change, or -1
@@ -218,18 +201,16 @@ class MIDISequencerTrackState : public MIDISequencerTrackNotifier
     MIDIMatrix note_matrix;  // to keep track of all notes on
 };
 
-
 class MIDISequencerState
 {
   public:
-    MIDISequencerState( MIDISequencer* s,
-                        MIDIMultiTrack* multitrack_,
-                        MIDISequencerGUIEventNotifier* n );
+    MIDISequencerState(
+        MIDISequencer* s, MIDIMultiTrack* multitrack_, MIDISequencerGUIEventNotifier* n);
 
-    MIDISequencerState( const MIDISequencerState& s );
+    MIDISequencerState(MIDISequencerState const& s);
     ~MIDISequencerState();
 
-    const MIDISequencerState& operator=( const MIDISequencerState& s );
+    MIDISequencerState const& operator=(MIDISequencerState const& s);
 
     MIDISequencerGUIEventNotifier* notifier;
     MIDIMultiTrack* multitrack;
@@ -247,11 +228,11 @@ class MIDISequencerState
 class MIDISequencer
 {
   public:
-    MIDISequencer( MIDIMultiTrack* m, MIDISequencerGUIEventNotifier* n = 0 );
+    MIDISequencer(MIDIMultiTrack* m, MIDISequencerGUIEventNotifier* n = 0);
 
     virtual ~MIDISequencer();
 
-    void ResetTrack( int trk );
+    void ResetTrack(int trk);
     void ResetAllTracks();
 
     MIDIClockTime GetCurrentMIDIClockTime() const;
@@ -263,34 +244,31 @@ class MIDISequencer
     double GetCurrentTempo() const;
 
     MIDISequencerState* GetState();
-    const MIDISequencerState* GetState() const;
+    MIDISequencerState const* GetState() const;
 
-    void SetState( MIDISequencerState* );
+    void SetState(MIDISequencerState*);
 
-    MIDISequencerTrackState* GetTrackState( int trk );
-    const MIDISequencerTrackState* GetTrackState( int trk ) const;
+    MIDISequencerTrackState* GetTrackState(int trk);
+    MIDISequencerTrackState const* GetTrackState(int trk) const;
 
-    MIDISequencerTrackProcessor* GetTrackProcessor( int trk );
-    const MIDISequencerTrackProcessor* GetTrackProcessor( int trk ) const;
+    MIDISequencerTrackProcessor* GetTrackProcessor(int trk);
+    MIDISequencerTrackProcessor const* GetTrackProcessor(int trk) const;
 
-    int GetNumTracks() const
-    {
-        return state.num_tracks;
-    }
+    int GetNumTracks() const { return state.num_tracks; }
 
     bool GetSoloMode() const;
 
-    void SetCurrentTempoScale( float scale );
-    void SetSoloMode( bool m, int trk = -1 );
+    void SetCurrentTempoScale(float scale);
+    void SetSoloMode(bool m, int trk = -1);
 
     void GoToZero();
-    bool GoToTime( MIDIClockTime time_clk );
-    bool GoToTimeMs( float time_ms );
-    bool GoToMeasure( int measure, int beat = 0 );
+    bool GoToTime(MIDIClockTime time_clk);
+    bool GoToTimeMs(float time_ms);
+    bool GoToMeasure(int measure, int beat = 0);
 
-    bool GetNextEventTimeMs( float* t );
-    bool GetNextEventTime( MIDIClockTime* t );
-    bool GetNextEvent( int* tracknum, MIDITimedBigMessage* msg );
+    bool GetNextEventTimeMs(float* t);
+    bool GetNextEventTime(MIDIClockTime* t);
+    bool GetNextEvent(int* tracknum, MIDITimedBigMessage* msg);
 
     void ScanEventsAtThisTime();
 

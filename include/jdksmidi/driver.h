@@ -31,91 +31,54 @@
 #include "jdksmidi/sysex.h"
 #include "jdksmidi/tick.h"
 
-namespace jdksmidi
-{
+namespace jdksmidi {
 class MIDIDriver : public MIDITick
 {
   public:
-    MIDIDriver( int queue_size );
+    MIDIDriver(int queue_size);
     virtual ~MIDIDriver();
 
     virtual void Reset();
 
     // to get the midi in queue
-    MIDIQueue* InputQueue()
-    {
-        return &in_queue;
-    }
+    MIDIQueue* InputQueue() { return &in_queue; }
 
-    const MIDIQueue* InputQueue() const
-    {
-        return &in_queue;
-    }
+    MIDIQueue const* InputQueue() const { return &in_queue; }
 
     // to get the midi out queue
-    MIDIQueue* OutputQueue()
-    {
-        return &out_queue;
-    }
+    MIDIQueue* OutputQueue() { return &out_queue; }
 
-    const MIDIQueue* OutputQueue() const
-    {
-        return &out_queue;
-    }
-
+    MIDIQueue const* OutputQueue() const { return &out_queue; }
 
     //
     // returns true if the output queue is not full
-    bool CanOutputMessage() const
-    {
-        return out_queue.CanPut();
-    }
-
+    bool CanOutputMessage() const { return out_queue.CanPut(); }
 
     // processes message with the OutProcessor and then
     // puts the message in the out_queue
-    void OutputMessage( MIDITimedBigMessage& msg )
+    void OutputMessage(MIDITimedBigMessage& msg)
     {
-        if ( ( out_proc && out_proc->Process( &msg ) ) || !out_proc )
-        {
-            out_matrix.Process( msg );
-            out_queue.Put( msg );
+        if ((out_proc && out_proc->Process(&msg)) || !out_proc) {
+            out_matrix.Process(msg);
+            out_queue.Put(msg);
         }
     }
 
-    void SetThruEnable( bool f )
-    {
-        thru_enable = f;
-    }
+    void SetThruEnable(bool f) { thru_enable = f; }
 
-    bool GetThruEnable() const
-    {
-        return thru_enable;
-    }
+    bool GetThruEnable() const { return thru_enable; }
 
     // to set the midi processors used for thru, out, and in
-    void SetThruProcessor( MIDIProcessor* proc )
-    {
-        thru_proc = proc;
-    }
+    void SetThruProcessor(MIDIProcessor* proc) { thru_proc = proc; }
 
-    void SetOutProcessor( MIDIProcessor* proc )
-    {
-        out_proc = proc;
-    }
+    void SetOutProcessor(MIDIProcessor* proc) { out_proc = proc; }
 
-    void SetInProcessor( MIDIProcessor* proc )
-    {
-        in_proc = proc;
-    }
+    void SetInProcessor(MIDIProcessor* proc) { in_proc = proc; }
 
-    void SetTickProc( MIDITick* tick )
-    {
-        tick_proc = tick;
-    }
+    void SetTickProc(MIDITick* tick) { tick_proc = tick; }
 
     // to send all notes off on selected midi chanel
-    void AllNotesOff( int chan );
+    void AllNotesOff(int chan);
 
     // to send all notes off on all midi channels
     void AllNotesOff();
@@ -124,12 +87,12 @@ class MIDIDriver : public MIDITick
     // comes in to the system. Can be called by a callback function
     // or by your TimeTick() function.
 
-    virtual bool HardwareMsgIn( MIDITimedBigMessage& msg );
+    virtual bool HardwareMsgIn(MIDITimedBigMessage& msg);
 
     // HardwareMsgOut() must be overriden by a subclass - It must
     // take
 
-    virtual bool HardwareMsgOut( const MIDITimedBigMessage& msg ) = 0;
+    virtual bool HardwareMsgOut(MIDITimedBigMessage const& msg) = 0;
 
     // the time tick procedure:
     //  manages in/out/thru to hardware
@@ -142,8 +105,7 @@ class MIDIDriver : public MIDITick
     // resulting message to HandleMsgIn to process it and put it in
     // the in_queue.
 
-    virtual void TimeTick( unsigned long sys_time );
-
+    virtual void TimeTick(unsigned long sys_time);
 
   protected:
     // the in and out queues
@@ -165,7 +127,6 @@ class MIDIDriver : public MIDITick
 
     MIDIMatrix out_matrix;
 };
-
 
 }  // namespace jdksmidi
 

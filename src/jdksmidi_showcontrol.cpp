@@ -25,11 +25,12 @@
 #include "jdksmidi/showcontrol.h"
 #include "jdksmidi/world.h"
 
-namespace jdksmidi
-{
+namespace jdksmidi {
 
-
-MIDIShowControlPacket::MIDIShowControlPacket() : QNumber( 0 ), QList( 0 ), QPath( 0 )
+MIDIShowControlPacket::MIDIShowControlPacket()
+    : QNumber(0)
+    , QList(0)
+    , QPath(0)
 {
     DeviceId = 0;
     CommandFmt = 0;
@@ -66,55 +67,45 @@ void MIDIShowControlPacket::ClearVariableStuff()
     Val2 = 0;
 }
 
-
-bool MIDIShowControlPacket::ParseEntireSysEx( const MIDISystemExclusive* e )
+bool MIDIShowControlPacket::ParseEntireSysEx(MIDISystemExclusive const* e)
 {
     bool f = true;
     int pos = 0;
 
-    if ( e->GetData( pos++ ) != 0xf0 )
+    if (e->GetData(pos++) != 0xf0)
         return false;
 
-    if ( e->GetData( pos++ ) != 0x7f )
+    if (e->GetData(pos++) != 0x7f)
         return false;
 
     ClearVariableStuff();
-    DeviceId = e->GetData( pos++ );
+    DeviceId = e->GetData(pos++);
 
-    if ( e->GetData( pos++ ) != 0x02 )
+    if (e->GetData(pos++) != 0x02)
         return false;
 
-    CommandFmt = e->GetData( pos++ );
-    Command = ( MIDIShowCommand ) e->GetData( pos++ );
+    CommandFmt = e->GetData(pos++);
+    Command = (MIDIShowCommand)e->GetData(pos++);
 
-    switch ( Command )
-    {
+    switch (Command) {
         case MIDI_SC_GO:
         case MIDI_SC_STOP:
         case MIDI_SC_RESUME:
         case MIDI_SC_LOAD:
         case MIDI_SC_GO_OFF:
-        case MIDI_SC_GO_JAM:
-        {
-            f &= Parse3Param( e, &pos );
-        }
-        break;
-        case MIDI_SC_TIMED_GO:
-        {
-            f &= ParseTime( e, &pos );
-            f &= Parse3Param( e, &pos );
-        }
-        break;
-        case MIDI_SC_SET:
-        {
-            f &= ParseSet( e, &pos );
-        }
-        break;
-        case MIDI_SC_FIRE:
-        {
-            f &= ParseFire( e, &pos );
-        }
-        break;
+        case MIDI_SC_GO_JAM: {
+            f &= Parse3Param(e, &pos);
+        } break;
+        case MIDI_SC_TIMED_GO: {
+            f &= ParseTime(e, &pos);
+            f &= Parse3Param(e, &pos);
+        } break;
+        case MIDI_SC_SET: {
+            f &= ParseSet(e, &pos);
+        } break;
+        case MIDI_SC_FIRE: {
+            f &= ParseFire(e, &pos);
+        } break;
         case MIDI_SC_ALL_OFF:
         case MIDI_SC_RESTORE:
         case MIDI_SC_RESET:
@@ -128,84 +119,66 @@ bool MIDIShowControlPacket::ParseEntireSysEx( const MIDISystemExclusive* e )
         case MIDI_SC_STOP_CLOCK:
         case MIDI_SC_ZERO_CLOCK:
         case MIDI_SC_MTC_CHASE_ON:
-        case MIDI_SC_MTC_CHASE_OFF:
-        {
-            if ( e->GetData( pos ) != 0xf7 && e->GetData( pos ) != 0 )
-                f &= ParseQList( e, &pos );
-        }
-        break;
-        case MIDI_SC_SET_CLOCK:
-        {
-            f &= ParseTime( e, &pos );
+        case MIDI_SC_MTC_CHASE_OFF: {
+            if (e->GetData(pos) != 0xf7 && e->GetData(pos) != 0)
+                f &= ParseQList(e, &pos);
+        } break;
+        case MIDI_SC_SET_CLOCK: {
+            f &= ParseTime(e, &pos);
 
-            if ( e->GetData( pos ) != 0xf7 && e->GetData( pos ) != 0 )
-                f &= ParseQList( e, &pos );
-        }
-        break;
+            if (e->GetData(pos) != 0xf7 && e->GetData(pos) != 0)
+                f &= ParseQList(e, &pos);
+        } break;
         case MIDI_SC_OPEN_Q_LIST:
-        case MIDI_SC_CLOSE_Q_LIST:
-        {
-            f &= ParseQList( e, &pos );
-        }
-        break;
+        case MIDI_SC_CLOSE_Q_LIST: {
+            f &= ParseQList(e, &pos);
+        } break;
         case MIDI_SC_OPEN_Q_PATH:
-        case MIDI_SC_CLOSE_Q_PATH:
-        {
-            f &= ParseQPath( e, &pos );
-        }
-        break;
+        case MIDI_SC_CLOSE_Q_PATH: {
+            f &= ParseQPath(e, &pos);
+        } break;
         default:
             f = false;  // unrecognized command
             break;
     }
 
-    if ( e->GetLength() < pos )
-    {
+    if (e->GetLength() < pos) {
         return false;
     }
 
     return f;
 }
 
-bool MIDIShowControlPacket::StoreToSysEx( MIDISystemExclusive* e ) const
+bool MIDIShowControlPacket::StoreToSysEx(MIDISystemExclusive* e) const
 {
     bool f = true;
     e->Clear();
     e->PutEXC();
-    e->PutByte( 0x7f );
-    e->PutByte( DeviceId );
-    e->PutByte( 0x02 );
-    e->PutByte( CommandFmt );
-    e->PutByte( Command );
+    e->PutByte(0x7f);
+    e->PutByte(DeviceId);
+    e->PutByte(0x02);
+    e->PutByte(CommandFmt);
+    e->PutByte(Command);
 
-    switch ( Command )
-    {
+    switch (Command) {
         case MIDI_SC_GO:
         case MIDI_SC_STOP:
         case MIDI_SC_RESUME:
         case MIDI_SC_LOAD:
         case MIDI_SC_GO_OFF:
-        case MIDI_SC_GO_JAM:
-        {
-            f &= Store3Param( e );
-        }
-        break;
-        case MIDI_SC_TIMED_GO:
-        {
-            f &= StoreTime( e );
-            f &= Store3Param( e );
-        }
-        break;
-        case MIDI_SC_SET:
-        {
-            f &= StoreSet( e );
-        }
-        break;
-        case MIDI_SC_FIRE:
-        {
-            f &= StoreFire( e );
-        }
-        break;
+        case MIDI_SC_GO_JAM: {
+            f &= Store3Param(e);
+        } break;
+        case MIDI_SC_TIMED_GO: {
+            f &= StoreTime(e);
+            f &= Store3Param(e);
+        } break;
+        case MIDI_SC_SET: {
+            f &= StoreSet(e);
+        } break;
+        case MIDI_SC_FIRE: {
+            f &= StoreFire(e);
+        } break;
         case MIDI_SC_ALL_OFF:
         case MIDI_SC_RESTORE:
         case MIDI_SC_RESET:
@@ -219,32 +192,24 @@ bool MIDIShowControlPacket::StoreToSysEx( MIDISystemExclusive* e ) const
         case MIDI_SC_STOP_CLOCK:
         case MIDI_SC_ZERO_CLOCK:
         case MIDI_SC_MTC_CHASE_ON:
-        case MIDI_SC_MTC_CHASE_OFF:
-        {
-            if ( HasQList )
-                f &= StoreQList( e );
-        }
-        break;
-        case MIDI_SC_SET_CLOCK:
-        {
-            f &= StoreTime( e );
+        case MIDI_SC_MTC_CHASE_OFF: {
+            if (HasQList)
+                f &= StoreQList(e);
+        } break;
+        case MIDI_SC_SET_CLOCK: {
+            f &= StoreTime(e);
 
-            if ( HasQList )
-                f &= StoreQList( e );
-        }
-        break;
+            if (HasQList)
+                f &= StoreQList(e);
+        } break;
         case MIDI_SC_OPEN_Q_LIST:
-        case MIDI_SC_CLOSE_Q_LIST:
-        {
-            f &= StoreQList( e );
-        }
-        break;
+        case MIDI_SC_CLOSE_Q_LIST: {
+            f &= StoreQList(e);
+        } break;
         case MIDI_SC_OPEN_Q_PATH:
-        case MIDI_SC_CLOSE_Q_PATH:
-        {
-            f &= StoreQPath( e );
-        }
-        break;
+        case MIDI_SC_CLOSE_Q_PATH: {
+            f &= StoreQPath(e);
+        } break;
         default:
             f = false;  // unrecognized command
             break;
@@ -252,59 +217,52 @@ bool MIDIShowControlPacket::StoreToSysEx( MIDISystemExclusive* e ) const
 
     e->PutEOX();
 
-    if ( e->IsFull() )
+    if (e->IsFull())
         return false;
 
     return f;
 }
 
-
-bool MIDIShowControlPacket::StoreTime( MIDISystemExclusive* e ) const
+bool MIDIShowControlPacket::StoreTime(MIDISystemExclusive* e) const
 {
-    if ( HasTime )
-    {
-        e->PutByte( Hours );
-        e->PutByte( Minutes );
-        e->PutByte( Seconds );
-        e->PutByte( Frames );
-        e->PutByte( FractFrames );
+    if (HasTime) {
+        e->PutByte(Hours);
+        e->PutByte(Minutes);
+        e->PutByte(Seconds);
+        e->PutByte(Frames);
+        e->PutByte(FractFrames);
         return true;
     }
 
-    else
-    {
+    else {
         return false;
     }
 }
 
-bool MIDIShowControlPacket::ParseTime( const MIDISystemExclusive* e, int* pos )
+bool MIDIShowControlPacket::ParseTime(MIDISystemExclusive const* e, int* pos)
 {
-    Hours = e->GetData( ( *pos )++ );
-    Minutes = e->GetData( ( *pos )++ );
-    Seconds = e->GetData( ( *pos )++ );
-    Frames = e->GetData( ( *pos )++ );
-    FractFrames = e->GetData( ( *pos )++ );
+    Hours = e->GetData((*pos)++);
+    Minutes = e->GetData((*pos)++);
+    Seconds = e->GetData((*pos)++);
+    Frames = e->GetData((*pos)++);
+    FractFrames = e->GetData((*pos)++);
     return true;
 }
 
-
-bool MIDIShowControlPacket::Store3Param( MIDISystemExclusive* e ) const
+bool MIDIShowControlPacket::Store3Param(MIDISystemExclusive* e) const
 {
     bool f = true;
 
-    if ( HasQNumber )
-    {
-        f &= StoreAsciiNum( e, GetQNumber() );
+    if (HasQNumber) {
+        f &= StoreAsciiNum(e, GetQNumber());
 
-        if ( HasQList )
-        {
-            e->PutByte( 0 );
-            f &= StoreAsciiNum( e, GetQList() );
+        if (HasQList) {
+            e->PutByte(0);
+            f &= StoreAsciiNum(e, GetQList());
 
-            if ( HasQPath )
-            {
-                e->PutByte( 0 );
-                f &= StoreAsciiNum( e, GetQPath() );
+            if (HasQPath) {
+                e->PutByte(0);
+                f &= StoreAsciiNum(e, GetQPath());
             }
         }
     }
@@ -312,46 +270,40 @@ bool MIDIShowControlPacket::Store3Param( MIDISystemExclusive* e ) const
     return f;
 }
 
-bool MIDIShowControlPacket::Parse3Param( const MIDISystemExclusive* e, int* pos )
+bool MIDIShowControlPacket::Parse3Param(MIDISystemExclusive const* e, int* pos)
 {
     bool f = true;
     MIDICue v;
 
-    if ( e->GetData( *pos ) != 0xf7 )
-    {
+    if (e->GetData(*pos) != 0xf7) {
         //
         // Read the Q number
         //
-        f = ParseAsciiNum( e, pos, &v );
+        f = ParseAsciiNum(e, pos, &v);
 
-        if ( f )
-        {
+        if (f) {
             HasQNumber = true;
-            SetQNumber( v );
+            SetQNumber(v);
 
-            if ( *pos < e->GetLength() )
-            {
+            if (*pos < e->GetLength()) {
                 //
                 // read the q list
                 //
-                f = ParseAsciiNum( e, pos, &v );
+                f = ParseAsciiNum(e, pos, &v);
 
-                if ( f )
-                {
+                if (f) {
                     HasQList = true;
-                    SetQList( v );
+                    SetQList(v);
 
-                    if ( *pos < e->GetLength() )
-                    {
+                    if (*pos < e->GetLength()) {
                         //
                         // read the q path
                         //
-                        f = ParseAsciiNum( e, pos, &v );
+                        f = ParseAsciiNum(e, pos, &v);
 
-                        if ( f )
-                        {
+                        if (f) {
                             HasQPath = true;
-                            SetQPath( v );
+                            SetQPath(v);
                         }
                     }
                 }
@@ -362,263 +314,236 @@ bool MIDIShowControlPacket::Parse3Param( const MIDISystemExclusive* e, int* pos 
     return f;
 }
 
-
-bool MIDIShowControlPacket::StoreSet( MIDISystemExclusive* e ) const
+bool MIDIShowControlPacket::StoreSet(MIDISystemExclusive* e) const
 {
     bool f = true;
-    e->PutByte( ( std::uint8_t ) ( GetControlNum() & 0x7f ) );
-    e->PutByte( ( std::uint8_t ) ( ( GetControlNum() >> 7 ) & 0x7f ) );
-    e->PutByte( ( std::uint8_t ) ( GetControlVal() & 0x7f ) );
-    e->PutByte( ( std::uint8_t ) ( ( GetControlVal() >> 7 ) & 0x7f ) );
+    e->PutByte((std::uint8_t)(GetControlNum() & 0x7f));
+    e->PutByte((std::uint8_t)((GetControlNum() >> 7) & 0x7f));
+    e->PutByte((std::uint8_t)(GetControlVal() & 0x7f));
+    e->PutByte((std::uint8_t)((GetControlVal() >> 7) & 0x7f));
 
-    if ( HasTime )
-    {
-        f = StoreTime( e );
+    if (HasTime) {
+        f = StoreTime(e);
     }
 
     return f;
 }
 
-bool MIDIShowControlPacket::ParseSet( const MIDISystemExclusive* e, int* pos )
+bool MIDIShowControlPacket::ParseSet(MIDISystemExclusive const* e, int* pos)
 {
     std::uint32_t v;
-    v = e->GetData( ( *pos )++ );
-    v += ( e->GetData( ( *pos )++ ) << 7 );
-    SetControlNum( v );
-    v = e->GetData( ( *pos )++ );
-    v += ( e->GetData( ( *pos )++ ) << 7 );
-    SetControlVal( v );
+    v = e->GetData((*pos)++);
+    v += (e->GetData((*pos)++) << 7);
+    SetControlNum(v);
+    v = e->GetData((*pos)++);
+    v += (e->GetData((*pos)++) << 7);
+    SetControlVal(v);
 
-    if ( e->GetData( *pos ) != 0xf7 )
-    {
-        return ParseTime( e, pos );
+    if (e->GetData(*pos) != 0xf7) {
+        return ParseTime(e, pos);
     }
 
-    else
-    {
+    else {
         return true;
     }
 }
 
-bool MIDIShowControlPacket::StoreFire( MIDISystemExclusive* e ) const
+bool MIDIShowControlPacket::StoreFire(MIDISystemExclusive* e) const
 {
-    e->PutByte( ( std::uint8_t ) ( GetMacroNum() ) );
+    e->PutByte((std::uint8_t)(GetMacroNum()));
     return true;
 }
 
-bool MIDIShowControlPacket::ParseFire( const MIDISystemExclusive* e, int* pos )
+bool MIDIShowControlPacket::ParseFire(MIDISystemExclusive const* e, int* pos)
 {
     int v;
-    v = e->GetData( ( *pos )++ );
-    SetMacroNum( v );
+    v = e->GetData((*pos)++);
+    SetMacroNum(v);
     return true;
 }
 
-bool MIDIShowControlPacket::StoreQPath( MIDISystemExclusive* e ) const
+bool MIDIShowControlPacket::StoreQPath(MIDISystemExclusive* e) const
 {
-    if ( HasQPath )
-    {
-        return StoreAsciiNum( e, GetQPath() );
+    if (HasQPath) {
+        return StoreAsciiNum(e, GetQPath());
     }
 
-    else
-    {
+    else {
         return false;
     }
 }
 
-bool MIDIShowControlPacket::ParseQPath( const MIDISystemExclusive* e, int* pos )
+bool MIDIShowControlPacket::ParseQPath(MIDISystemExclusive const* e, int* pos)
 {
     bool f = true;
     MIDICue v;
 
-    if ( e->GetData( *pos ) != 0xf7 )
-    {
+    if (e->GetData(*pos) != 0xf7) {
         //
         // Read the Q Path
         //
-        f = ParseAsciiNum( e, pos, &v );
-        SetQPath( v );
+        f = ParseAsciiNum(e, pos, &v);
+        SetQPath(v);
         HasQPath = true;
         return f;
     }
 
-    else
-    {
+    else {
         return false;
     }
 }
 
-bool MIDIShowControlPacket::StoreQList( MIDISystemExclusive* e ) const
+bool MIDIShowControlPacket::StoreQList(MIDISystemExclusive* e) const
 {
-    if ( HasQList )
-    {
-        return StoreAsciiNum( e, GetQList() );
+    if (HasQList) {
+        return StoreAsciiNum(e, GetQList());
     }
 
-    else
-    {
+    else {
         return false;
     }
 }
 
-bool MIDIShowControlPacket::ParseQList( const MIDISystemExclusive* e, int* pos )
+bool MIDIShowControlPacket::ParseQList(MIDISystemExclusive const* e, int* pos)
 {
     bool f = true;
     MIDICue v;
 
-    if ( e->GetData( *pos ) != 0xf7 )
-    {
+    if (e->GetData(*pos) != 0xf7) {
         //
         // Read the Q list
         //
-        f = ParseAsciiNum( e, pos, &v );
-        SetQList( v );
+        f = ParseAsciiNum(e, pos, &v);
+        SetQList(v);
         HasQList = true;
         return f;
     }
 
-    else
-    {
+    else {
         return false;
     }
 }
 
-bool MIDIShowControlPacket::StoreAscii( MIDISystemExclusive* e, const char* str ) const
+bool MIDIShowControlPacket::StoreAscii(MIDISystemExclusive* e, char const* str) const
 {
-    while ( *str )
-    {
-        e->PutByte( *str++ );
+    while (*str) {
+        e->PutByte(*str++);
     }
 
     return true;
 }
 
-
-bool MIDIShowControlPacket::StoreAsciiNum( MIDISystemExclusive* e, const MIDICue& num ) const
+bool MIDIShowControlPacket::StoreAsciiNum(MIDISystemExclusive* e, MIDICue const& num) const
 {
     char buf[32];
     bool f = false;
     *buf = '\0';
 
-    switch ( num.GetNumValues() )
-    {
+    switch (num.GetNumValues()) {
         default:
         case 0:
             break;
         case 1:
-            sprintf( buf, "%ld", num.GetV1() );
+            sprintf(buf, "%ld", num.GetV1());
             break;
         case 2:
-            sprintf( buf, "%ld.%ld", num.GetV1(), num.GetV2() );
+            sprintf(buf, "%ld.%ld", num.GetV1(), num.GetV2());
             break;
         case 3:
-            sprintf( buf, "%ld.%ld.%ld", num.GetV1(), num.GetV2(), num.GetV3() );
+            sprintf(buf, "%ld.%ld.%ld", num.GetV1(), num.GetV2(), num.GetV3());
             break;
     }
 
-    f = StoreAscii( e, buf );
+    f = StoreAscii(e, buf);
     return f;
 }
 
-bool MIDIShowControlPacket::ParseAsciiNum( const MIDISystemExclusive* e, int* pos, MIDICue* num )
+bool MIDIShowControlPacket::ParseAsciiNum(MIDISystemExclusive const* e, int* pos, MIDICue* num)
 {
     std::uint32_t v;
     std::uint8_t c;
     bool f;
     // check if there is a field
-    c = e->GetData( *pos );
+    c = e->GetData(*pos);
 
-    if ( c == 0xf7 )
-    {
+    if (c == 0xf7) {
         // no field
         return false;
     }
 
-    f = ParseAsciiNum( e, pos, &v );
+    f = ParseAsciiNum(e, pos, &v);
 
-    if ( f )
-    {
-        num->SetNumValues( 1 );
-        num->SetV1( v );
+    if (f) {
+        num->SetNumValues(1);
+        num->SetV1(v);
     }
 
     //
     // Is there another field?
     //
-    c = e->GetData( *pos );
+    c = e->GetData(*pos);
 
-    if ( c == '.' )
-    {
+    if (c == '.') {
         //
         // yes read it
         //
-        ( *pos )++;
-        f = ParseAsciiNum( e, pos, &v );
+        (*pos)++;
+        f = ParseAsciiNum(e, pos, &v);
 
-        if ( f )
-        {
-            num->SetNumValues( 2 );
-            num->SetV2( v );
+        if (f) {
+            num->SetNumValues(2);
+            num->SetV2(v);
         }
 
         //
         // Is there another field?
         //
-        c = e->GetData( *pos );
+        c = e->GetData(*pos);
 
-        if ( c == '.' )
-        {
+        if (c == '.') {
             //
             // yes read it
             //
-            ( *pos )++;
-            f = ParseAsciiNum( e, pos, &v );
+            (*pos)++;
+            f = ParseAsciiNum(e, pos, &v);
 
-            if ( f )
-            {
-                num->SetNumValues( 2 );
-                num->SetV3( v );
+            if (f) {
+                num->SetNumValues(2);
+                num->SetV3(v);
             }
 
             //
             // Is there more fields?
             //
-            c = e->GetData( *pos );
+            c = e->GetData(*pos);
 
-            if ( c == '.' )
-            {
+            if (c == '.') {
                 //
                 // Yes, skip them
                 //
-                while ( *pos < e->GetLength() )
-                {
-                    c = e->GetData( ( *pos ) );
+                while (*pos < e->GetLength()) {
+                    c = e->GetData((*pos));
 
-                    if ( c == 0xf7 || c == 0x00 )
-                    {
+                    if (c == 0xf7 || c == 0x00) {
                         break;
                     }
 
-                    ( *pos )++;
+                    (*pos)++;
                 }
             }
         }
     }
 
-    while ( ++( *pos ) < e->GetLength() )
-    {
-        if ( e->GetData( *pos ) != 0 )
+    while (++(*pos) < e->GetLength()) {
+        if (e->GetData(*pos) != 0)
             break;
     }
 
     return f;
 }
 
-
-bool MIDIShowControlPacket::ParseAsciiNum( const MIDISystemExclusive* e,
-                                           int* pos,
-                                           std::uint32_t* num )
+bool MIDIShowControlPacket::ParseAsciiNum(
+    MIDISystemExclusive const* e, int* pos, std::uint32_t* num)
 {
     bool f = true;
     std::uint32_t v = 0;
@@ -627,12 +552,10 @@ bool MIDIShowControlPacket::ParseAsciiNum( const MIDISystemExclusive* e,
     // Read ascii decimal digits until '.' or 0x00 or 0xf7
     //
 
-    while ( *pos < e->GetLength() )
-    {
-        c = e->GetData( ( *pos ) );
+    while (*pos < e->GetLength()) {
+        c = e->GetData((*pos));
 
-        if ( c >= '0' && c <= '9' )
-        {
+        if (c >= '0' && c <= '9') {
             //
             // If the character is ascii number then shift our current value and
             // add the digit
@@ -641,8 +564,7 @@ bool MIDIShowControlPacket::ParseAsciiNum( const MIDISystemExclusive* e,
             v += c - '0';
         }
 
-        else if ( c == 0x00 || c == 0xf7 || c == '.' )
-        {
+        else if (c == 0x00 || c == 0xf7 || c == '.') {
             //
             // If the character is 0 or EOX or . then this field is over
             //
@@ -650,12 +572,11 @@ bool MIDIShowControlPacket::ParseAsciiNum( const MIDISystemExclusive* e,
             return f;
         }
 
-        ( *pos )++;
+        (*pos)++;
     }
 
     *num = v;
     return false;
 }
-
 
 }  // namespace jdksmidi

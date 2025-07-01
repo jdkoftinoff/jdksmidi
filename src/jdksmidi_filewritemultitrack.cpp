@@ -24,61 +24,52 @@
 #include "jdksmidi/filewritemultitrack.h"
 #include "jdksmidi/world.h"
 
-namespace jdksmidi
-{
+namespace jdksmidi {
 
+MIDIFileWriteMultiTrack::MIDIFileWriteMultiTrack(
+    MIDIMultiTrack const* mlt_, MIDIFileWriteStream* strm_)
+    : multitrack(mlt_)
+    , writer(strm_)
+{}
 
-MIDIFileWriteMultiTrack::MIDIFileWriteMultiTrack( const MIDIMultiTrack* mlt_,
-                                                  MIDIFileWriteStream* strm_ )
-    : multitrack( mlt_ ), writer( strm_ )
-{
-}
+MIDIFileWriteMultiTrack::~MIDIFileWriteMultiTrack()
+{}
 
-MIDIFileWriteMultiTrack::~MIDIFileWriteMultiTrack() {}
-
-bool MIDIFileWriteMultiTrack::Write( int num_tracks, int division )
+bool MIDIFileWriteMultiTrack::Write(int num_tracks, int division)
 {
     bool f = true;
 
-    if ( !PreWrite() )
-    {
+    if (!PreWrite()) {
         return false;
     }
 
     // first, write the header.
-    writer.WriteFileHeader( ( num_tracks > 0 ), num_tracks, division );
+    writer.WriteFileHeader((num_tracks > 0), num_tracks, division);
     // now write each track
 
-    for ( int i = 0; i < num_tracks; ++i )
-    {
-        if ( writer.ErrorOccurred() )
-        {
+    for (int i = 0; i < num_tracks; ++i) {
+        if (writer.ErrorOccurred()) {
             f = false;
             break;
         }
 
-        const MIDITrack* t = multitrack->GetTrack( i );
+        MIDITrack const* t = multitrack->GetTrack(i);
 
         MIDIClockTime last_event_time = 0;
 
-        writer.WriteTrackHeader( 0 );  // will be rewritten later
+        writer.WriteTrackHeader(0);  // will be rewritten later
 
-        if ( t )
-        {
-            for ( int event_num = 0; event_num < t->GetNumEvents(); ++event_num )
-            {
-                const MIDITimedBigMessage* ev = t->GetEventAddress( event_num );
+        if (t) {
+            for (int event_num = 0; event_num < t->GetNumEvents(); ++event_num) {
+                MIDITimedBigMessage const* ev = t->GetEventAddress(event_num);
 
-                if ( ev && !ev->IsNoOp() )
-                {
+                if (ev && !ev->IsNoOp()) {
                     last_event_time = ev->GetTime();
 
-                    if ( !ev->IsDataEnd() )
-                    {
-                        writer.WriteEvent( *ev );
+                    if (!ev->IsDataEnd()) {
+                        writer.WriteEvent(*ev);
 
-                        if ( writer.ErrorOccurred() )
-                        {
+                        if (writer.ErrorOccurred()) {
                             f = false;
                             break;
                         }
@@ -87,18 +78,16 @@ bool MIDIFileWriteMultiTrack::Write( int num_tracks, int division )
             }
         }
 
-        writer.WriteEndOfTrack( 0 );
+        writer.WriteEndOfTrack(0);
         writer.RewriteTrackLength();
     }
 
-    if ( !PostWrite() )
-    {
+    if (!PostWrite()) {
         return false;
     }
 
     return f;
 }
-
 
 bool MIDIFileWriteMultiTrack::PreWrite()
 {
@@ -109,6 +98,5 @@ bool MIDIFileWriteMultiTrack::PostWrite()
 {
     return true;
 }
-
 
 }  // namespace jdksmidi

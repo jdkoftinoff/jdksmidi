@@ -31,14 +31,12 @@
 **
 */
 
-
 #ifndef JDKSMIDI_MIDI_H
 #define JDKSMIDI_MIDI_H
 
 #include "jdksmidi/world.h"
 
-namespace jdksmidi
-{
+namespace jdksmidi {
 
 typedef unsigned long MIDIClockTime;
 
@@ -66,7 +64,6 @@ enum
     META_EVENT = 0xff  ///< 0xff means a meta event in our internal processing.
 };
 
-
 ///
 /// MIDI Real Time Messages
 ///
@@ -80,7 +77,6 @@ enum
     STOP = 0xfc,          ///< Sequence stop message
     ACTIVE_SENSE = 0xfe   ///< Active sense message
 };
-
 
 ///
 /// Controller Numbers
@@ -131,7 +127,6 @@ enum
     C_RPN_LSB = 0x64,  ///< registered parameter LSB
     C_RPN_MSB = 0x65,  ///< registered parameter MSB
 
-
     C_RESET = 0x79,  ///< reset all controllers
 
     C_LOCAL = 0x79,          ///< local control on/off
@@ -141,7 +136,6 @@ enum
     C_MONO = 0x7e,           ///< mono on, all notes off
     C_POLY = 0x7f            ///< poly on, all notes off
 };
-
 
 ///
 /// Registered Parameter Numbers:
@@ -153,7 +147,6 @@ enum
     RPN_FINE_TUNE = 0x01,   ///< fine tuning
     RPN_COARSE_TUNE = 0x02  ///< coarse tuning
 };
-
 
 ///
 /// META Event types (stored in first data byte if status==META_EVENT)
@@ -190,17 +183,16 @@ enum
 
 };
 
-extern const signed char lut_msglen[16];
-extern const signed char lut_sysmsglen[16];
-extern const bool lut_is_white[12];
-
+extern signed char const lut_msglen[16];
+extern signed char const lut_sysmsglen[16];
+extern bool const lut_is_white[12];
 
 ///
 /// Message Length function. Not valid for Meta-events (0xff). Returns -1 if you need to call
 /// GetSystemMessageLength() instead.
 ///
 
-inline signed char GetMessageLength( unsigned char stat )
+inline signed char GetMessageLength(unsigned char stat)
 {
     return lut_msglen[stat >> 4];
 }
@@ -210,17 +202,16 @@ inline signed char GetMessageLength( unsigned char stat )
 /// length is unknown until parsing is complete.
 ///
 
-inline signed char GetSystemMessageLength( unsigned char stat )
+inline signed char GetSystemMessageLength(unsigned char stat)
 {
     return lut_sysmsglen[stat - 0xf0];
 }
-
 
 ///
 /// Piano key color white test
 ///
 
-inline bool IsNoteWhite( unsigned char note )
+inline bool IsNoteWhite(unsigned char note)
 {
     return lut_is_white[note % 12];
 }
@@ -229,23 +220,20 @@ inline bool IsNoteWhite( unsigned char note )
 /// Piano key color black test
 ///
 
-inline bool IsNoteBlack( unsigned char note )
+inline bool IsNoteBlack(unsigned char note)
 {
     return !lut_is_white[note % 12];
 }
-
 
 ///
 /// Note # to standard octave conversion
 ///
 
-inline int GetNoteOctave( unsigned char note )
+inline int GetNoteOctave(unsigned char note)
 {
-    return ( note / 12 ) - 1;
+    return (note / 12) - 1;
 }
 
-
 }  // namespace jdksmidi
-
 
 #endif

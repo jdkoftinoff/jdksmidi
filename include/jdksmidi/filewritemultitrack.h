@@ -27,36 +27,28 @@
 #include "jdksmidi/filewrite.h"
 #include "jdksmidi/multitrack.h"
 
-namespace jdksmidi
-{
+namespace jdksmidi {
 
 class MIDIFileWriteMultiTrack
 {
   public:
-    MIDIFileWriteMultiTrack( const MIDIMultiTrack* mlt_, MIDIFileWriteStream* strm_ );
+    MIDIFileWriteMultiTrack(MIDIMultiTrack const* mlt_, MIDIFileWriteStream* strm_);
 
     virtual ~MIDIFileWriteMultiTrack();
 
-    bool Write( int num_tracks, int division );
+    bool Write(int num_tracks, int division);
 
-    bool Write( int num_tracks )
-    {
-        return Write( num_tracks, multitrack->GetClksPerBeat() );
-    }
-    bool Write()
-    {
-        return Write( multitrack->GetNumTracks(), multitrack->GetClksPerBeat() );
-    }
+    bool Write(int num_tracks) { return Write(num_tracks, multitrack->GetClksPerBeat()); }
+    bool Write() { return Write(multitrack->GetNumTracks(), multitrack->GetClksPerBeat()); }
 
   private:
     virtual bool PreWrite();
     virtual bool PostWrite();
 
-    const MIDIMultiTrack* multitrack;
+    MIDIMultiTrack const* multitrack;
     MIDIFileWrite writer;
 };
 
 }  // namespace jdksmidi
-
 
 #endif

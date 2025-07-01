@@ -24,31 +24,27 @@
 #include "jdksmidi/driverdump.h"
 #include "jdksmidi/world.h"
 
-namespace jdksmidi
-{
+namespace jdksmidi {
 
+MIDIDriverDump::MIDIDriverDump(int queue_size, FILE* outfile)
+    : MIDIDriver(queue_size)
+    , f(outfile)
+{}
 
-MIDIDriverDump::MIDIDriverDump( int queue_size, FILE* outfile )
-    : MIDIDriver( queue_size ), f( outfile )
-{
-}
+MIDIDriverDump::~MIDIDriverDump()
+{}
 
-MIDIDriverDump::~MIDIDriverDump() {}
-
-
-bool MIDIDriverDump::HardwareMsgOut( const MIDITimedBigMessage& msg )
+bool MIDIDriverDump::HardwareMsgOut(MIDITimedBigMessage const& msg)
 {
     char buf[256];
-    fprintf( f, "OUTPUT: %s\n", msg.MsgToText( buf ) );
+    fprintf(f, "OUTPUT: %s\n", msg.MsgToText(buf));
     return true;
 }
 
-
-void MIDIDriverDump::TimeTick( unsigned long sys_time )
+void MIDIDriverDump::TimeTick(unsigned long sys_time)
 {
-    fprintf( f, "TICK  : %8ld\n", sys_time );
-    MIDIDriver::TimeTick( sys_time );
+    fprintf(f, "TICK  : %8ld\n", sys_time);
+    MIDIDriver::TimeTick(sys_time);
 }
-
 
 }  // namespace jdksmidi

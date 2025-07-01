@@ -36,8 +36,7 @@
 
 #include "jdksmidi/track.h"
 
-namespace jdksmidi
-{
+namespace jdksmidi {
 
 class MIDIMultiTrack;
 class MIDIMultiTrackIteratorState;
@@ -46,33 +45,23 @@ class MIDIMultiTrackIterator;
 class MIDIMultiTrack
 {
   public:
-    MIDIMultiTrack( int max_num_tracks_ = 64, bool deletable_ = true );
+    MIDIMultiTrack(int max_num_tracks_ = 64, bool deletable_ = true);
     virtual ~MIDIMultiTrack();
 
-    void SetTrack( int trk, MIDITrack* t );
-    MIDITrack* GetTrack( int trk );
-    const MIDITrack* GetTrack( int trk ) const;
-    int GetNumTracks() const
-    {
-        return num_tracks;
-    }
-
+    void SetTrack(int trk, MIDITrack* t);
+    MIDITrack* GetTrack(int trk);
+    MIDITrack const* GetTrack(int trk) const;
+    int GetNumTracks() const { return num_tracks; }
 
     void Clear();
 
-    int GetClksPerBeat() const
-    {
-        return clks_per_beat;
-    }
+    int GetClksPerBeat() const { return clks_per_beat; }
 
-    void SetClksPerBeat( int c )
-    {
-        clks_per_beat = c;
-    }
+    void SetClksPerBeat(int c) { clks_per_beat = c; }
 
   protected:
     MIDITrack** tracks;
-    const int num_tracks;
+    int const num_tracks;
     bool deletable;
 
     int clks_per_beat;
@@ -83,24 +72,15 @@ class MIDIMultiTrack
 class MIDIMultiTrackIteratorState
 {
   public:
-    MIDIMultiTrackIteratorState( int num_tracks_ = 64 );
-    MIDIMultiTrackIteratorState( const MIDIMultiTrackIteratorState& m );
+    MIDIMultiTrackIteratorState(int num_tracks_ = 64);
+    MIDIMultiTrackIteratorState(MIDIMultiTrackIteratorState const& m);
     virtual ~MIDIMultiTrackIteratorState();
 
-    const MIDIMultiTrackIteratorState& operator=( const MIDIMultiTrackIteratorState& m );
+    MIDIMultiTrackIteratorState const& operator=(MIDIMultiTrackIteratorState const& m);
 
-    int GetNumTracks() const
-    {
-        return num_tracks;
-    }
-    int GetCurEventTrack() const
-    {
-        return cur_event_track;
-    }
-    MIDIClockTime GetCurrentTime() const
-    {
-        return cur_time;
-    }
+    int GetNumTracks() const { return num_tracks; }
+    int GetCurEventTrack() const { return cur_event_track; }
+    MIDIClockTime GetCurrentTime() const { return cur_time; }
 
     void Reset();
     int FindTrackOfFirstEvent();
@@ -115,41 +95,25 @@ class MIDIMultiTrackIteratorState
 class MIDIMultiTrackIterator
 {
   public:
-    MIDIMultiTrackIterator( MIDIMultiTrack* mlt );
+    MIDIMultiTrackIterator(MIDIMultiTrack* mlt);
     virtual ~MIDIMultiTrackIterator();
 
+    void GoToTime(MIDIClockTime time);
 
-    void GoToTime( MIDIClockTime time );
-
-    bool GetCurEventTime( MIDIClockTime* t ) const;
-    bool GetCurEvent( int* track, MIDITimedBigMessage** msg ) const;
+    bool GetCurEventTime(MIDIClockTime* t) const;
+    bool GetCurEvent(int* track, MIDITimedBigMessage** msg) const;
     bool GoToNextEvent();
 
-    bool GoToNextEventOnTrack( int track );
+    bool GoToNextEventOnTrack(int track);
 
-    const MIDIMultiTrackIteratorState& GetState() const
-    {
-        return state;
-    }
+    MIDIMultiTrackIteratorState const& GetState() const { return state; }
 
-    MIDIMultiTrackIteratorState& GetState()
-    {
-        return state;
-    }
+    MIDIMultiTrackIteratorState& GetState() { return state; }
 
-    void SetState( const MIDIMultiTrackIteratorState& s )
-    {
-        state = s;
-    }
+    void SetState(MIDIMultiTrackIteratorState const& s) { state = s; }
 
-    MIDIMultiTrack* GetMultiTrack()
-    {
-        return multitrack;
-    }
-    const MIDIMultiTrack* GetMultiTrack() const
-    {
-        return multitrack;
-    }
+    MIDIMultiTrack* GetMultiTrack() { return multitrack; }
+    MIDIMultiTrack const* GetMultiTrack() const { return multitrack; }
 
   protected:
     MIDIMultiTrack* multitrack;

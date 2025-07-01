@@ -24,15 +24,14 @@
 #include "jdksmidi/queue.h"
 #include "jdksmidi/world.h"
 
-namespace jdksmidi
-{
+namespace jdksmidi {
 
-
-MIDIQueue::MIDIQueue( int num_msgs )
-    : buf( new MIDITimedBigMessage[num_msgs] ), bufsize( num_msgs ), next_in( 0 ), next_out( 0 )
-{
-}
-
+MIDIQueue::MIDIQueue(int num_msgs)
+    : buf(new MIDITimedBigMessage[num_msgs])
+    , bufsize(num_msgs)
+    , next_in(0)
+    , next_out(0)
+{}
 
 MIDIQueue::~MIDIQueue()
 {
@@ -47,13 +46,12 @@ void MIDIQueue::Clear()
 
 bool MIDIQueue::CanPut() const
 {
-    return next_out != ( ( next_in + 1 ) % bufsize );
+    return next_out != ((next_in + 1) % bufsize);
 }
 
 bool MIDIQueue::CanGet() const
 {
     return next_in != next_out;
 }
-
 
 }  // namespace jdksmidi

@@ -38,8 +38,7 @@
 #include "jdksmidi/sysex.h"
 #include "jdksmidi/tempo.h"
 
-namespace jdksmidi
-{
+namespace jdksmidi {
 
 class MIDIMessage;
 class MIDIBigMessage;
@@ -72,21 +71,21 @@ class MIDIMessage
 
     MIDIMessage();  ///< Create a MIDIMessage object which holds no values.
 
-    MIDIMessage( const MIDIMessage& m );  ///< Copy Constructor.
+    MIDIMessage(MIDIMessage const& m);  ///< Copy Constructor.
 
-    const MIDIMessage& operator=(
-        const MIDIMessage& m );  ///< The assignment operator. Copies the MIDIMessage value.
+    MIDIMessage const& operator=(
+        MIDIMessage const& m);  ///< The assignment operator. Copies the MIDIMessage value.
 
     void Clear();  ///< Set the MIDIMessage object to 0,0,0,0.
 
-    void Copy( const MIDIMessage& m );  ///< Copy the value of the specified MIDIMessage.
+    void Copy(MIDIMessage const& m);  ///< Copy the value of the specified MIDIMessage.
 
     //@}
 
-    const char* MsgToText(
-        char* txt ) const;  ///< Create a human readable ascii string describing the message.  This
-                            ///< is potentially unsafe as the 'txt' param must point to a buffer of
-                            ///< at least 64 chars long.
+    char const* MsgToText(
+        char* txt) const;  ///< Create a human readable ascii string describing the message.  This
+                           ///< is potentially unsafe as the 'txt' param must point to a buffer of
+                           ///< at least 64 chars long.
 
     ///@name The Query methods.
     //@{
@@ -94,88 +93,49 @@ class MIDIMessage
     char GetLength() const;  ///< Get the length in bytes of the entire message.
 
     /// Get the status byte of the message.
-    unsigned char GetStatus() const
-    {
-        return ( unsigned char ) status;
-    }
+    unsigned char GetStatus() const { return (unsigned char)status; }
 
     /// If the message is a channel message, this method returns the MIDI channel that the message
     /// is on.
-    unsigned char GetChannel() const
-    {
-        return ( unsigned char ) ( status & 0x0f );
-    }
+    unsigned char GetChannel() const { return (unsigned char)(status & 0x0f); }
 
     /// If the message is a channel message, this method returns the relevant top 4 bits which
     /// describe what type of channel message it is.
-    unsigned char GetType() const
-    {
-        return ( unsigned char ) ( status & 0xf0 );
-    }
+    unsigned char GetType() const { return (unsigned char)(status & 0xf0); }
 
     /// If the message is some sort of meta-message, then GetMetaType returns the type byte.
-    unsigned char GetMetaType() const
-    {
-        return byte1;
-    }
+    unsigned char GetMetaType() const { return byte1; }
 
     /// Access to the raw byte1 of the message
-    unsigned char GetByte1() const
-    {
-        return byte1;
-    }
+    unsigned char GetByte1() const { return byte1; }
 
     /// Access to the raw byte2 of the message
-    unsigned char GetByte2() const
-    {
-        return byte2;
-    }
+    unsigned char GetByte2() const { return byte2; }
 
     /// Access to the raw byte3 of the message
-    unsigned char GetByte3() const
-    {
-        return byte3;
-    }
+    unsigned char GetByte3() const { return byte3; }
 
     /// If the message is a note on, note off, or poly aftertouch message, GetNote() returns the
     /// note number
-    unsigned char GetNote() const
-    {
-        return byte1;
-    }
+    unsigned char GetNote() const { return byte1; }
 
     /// If the message is a note on, note off, or poly aftertouch message, GetVelocity() returns the
     /// velocity or pressure
-    unsigned char GetVelocity() const
-    {
-        return byte2;
-    }
+    unsigned char GetVelocity() const { return byte2; }
 
     /// If the message is a channel pressure message, GetChannelPressure() returns the pressure
     /// value.
-    unsigned char GetChannelPressure() const
-    {
-        return byte1;
-    }
+    unsigned char GetChannelPressure() const { return byte1; }
 
     /// If the message is a 7 bit program change value, GetPGValue() returns the program number.
-    unsigned char GetPGValue() const
-    {
-        return byte1;
-    }
+    unsigned char GetPGValue() const { return byte1; }
 
     /// If the message is a control change message, GetController() returns the controller number.
-    unsigned char GetController() const
-    {
-        return byte1;
-    }
+    unsigned char GetController() const { return byte1; }
 
     /// If the message is a control change message, GetControllerValue() returns the 7 bit
     /// controller value.
-    unsigned char GetControllerValue() const
-    {
-        return byte2;
-    }
+    unsigned char GetControllerValue() const { return byte2; }
 
     /// If the message is a bender message, GetBenderValue() returns the signed 14 bit bender value.
     short GetBenderValue() const;
@@ -259,15 +219,11 @@ class MIDIMessage
 
     bool IsAllNotesOff() const;
 
-
     bool IsNoOp() const;
-
 
     bool IsTempo() const;
 
-
     bool IsDataEnd() const;
-
 
     bool IsTimeSig() const;
 
@@ -288,132 +244,99 @@ class MIDIMessage
     //@{
 
     /// Set all bits of the status byte
-    void SetStatus( unsigned char s )
-    {
-        status = s;
-    }
+    void SetStatus(unsigned char s) { status = s; }
 
     /// set just the lower 4 bits of the status byte without changing the upper 4 bits
-    void SetChannel( unsigned char s )
-    {
-        status = ( unsigned char ) ( ( status & 0xf0 ) | s );
-    }
+    void SetChannel(unsigned char s) { status = (unsigned char)((status & 0xf0) | s); }
 
     /// set just the upper 4 bits of the status byte without changing the lower 4 bits
-    void SetType( unsigned char s )
-    {
-        status = ( unsigned char ) ( ( status & 0x0f ) | s );
-    }
+    void SetType(unsigned char s) { status = (unsigned char)((status & 0x0f) | s); }
 
     /// Set the value of the data byte 1
-    void SetByte1( unsigned char b )
-    {
-        byte1 = b;
-    }
+    void SetByte1(unsigned char b) { byte1 = b; }
 
     /// Set the value of the data byte 2
-    void SetByte2( unsigned char b )
-    {
-        byte2 = b;
-    }
+    void SetByte2(unsigned char b) { byte2 = b; }
 
     /// Set the value of the data byte 3
-    void SetByte3( unsigned char b )
-    {
-        byte3 = b;
-    }
+    void SetByte3(unsigned char b) { byte3 = b; }
 
     /// Set the note number for note on, note off, and polyphonic aftertouch messages
-    void SetNote( unsigned char n )
-    {
-        byte1 = n;
-    }
+    void SetNote(unsigned char n) { byte1 = n; }
 
     /// Set the velocity of a note on or note off message
-    void SetVelocity( unsigned char v )
-    {
-        byte2 = v;
-    }
+    void SetVelocity(unsigned char v) { byte2 = v; }
 
     /// Set the program number of a program change message
-    void SetPGValue( unsigned char v )
-    {
-        byte1 = v;
-    }
+    void SetPGValue(unsigned char v) { byte1 = v; }
 
     /// Set the controller number of a control change message
-    void SetController( unsigned char c )
-    {
-        byte1 = c;
-    }
+    void SetController(unsigned char c) { byte1 = c; }
 
     /// Set the 7 bit controller value of a control change message
-    void SetControllerValue( unsigned char v )
-    {
-        byte2 = v;
-    }
+    void SetControllerValue(unsigned char v) { byte2 = v; }
 
     /// Set the signed 14 bit bender value of a pitch bend message
-    void SetBenderValue( short v );
+    void SetBenderValue(short v);
 
-    void SetMetaType( unsigned char t );
+    void SetMetaType(unsigned char t);
 
-    void SetMetaValue( unsigned short v );
+    void SetMetaValue(unsigned short v);
 
-    void SetNoteOn( unsigned char chan, unsigned char note, unsigned char vel );
+    void SetNoteOn(unsigned char chan, unsigned char note, unsigned char vel);
 
-    void SetNoteOff( unsigned char chan, unsigned char note, unsigned char vel );
+    void SetNoteOff(unsigned char chan, unsigned char note, unsigned char vel);
 
-    void SetPolyPressure( unsigned char chan, unsigned char note, unsigned char pres );
+    void SetPolyPressure(unsigned char chan, unsigned char note, unsigned char pres);
 
-    void SetControlChange( unsigned char chan, unsigned char ctrl, unsigned char val );
+    void SetControlChange(unsigned char chan, unsigned char ctrl, unsigned char val);
 
-    void SetProgramChange( unsigned char chan, unsigned char val );
+    void SetProgramChange(unsigned char chan, unsigned char val);
 
-    void SetChannelPressure( unsigned char chan, unsigned char val );
+    void SetChannelPressure(unsigned char chan, unsigned char val);
 
-    void SetPitchBend( unsigned char chan, short val );
+    void SetPitchBend(unsigned char chan, short val);
 
-    void SetPitchBend( unsigned char chan, unsigned char low, unsigned char high );
+    void SetPitchBend(unsigned char chan, unsigned char low, unsigned char high);
 
     void SetSysEx();
 
-    void SetMTC( unsigned char field, unsigned char v );
+    void SetMTC(unsigned char field, unsigned char v);
 
-    void SetSongPosition( short pos );
+    void SetSongPosition(short pos);
 
-    void SetSongSelect( unsigned char sng );
+    void SetSongSelect(unsigned char sng);
 
     void SetTuneRequest();
 
-    void SetMetaEvent( unsigned char type, unsigned char v1, unsigned char v2 );
+    void SetMetaEvent(unsigned char type, unsigned char v1, unsigned char v2);
 
-    void SetMetaEvent( unsigned char type, unsigned short v );
+    void SetMetaEvent(unsigned char type, unsigned short v);
 
-    void SetAllNotesOff( unsigned char chan, unsigned char type = C_ALL_NOTES_OFF );
+    void SetAllNotesOff(unsigned char chan, unsigned char type = C_ALL_NOTES_OFF);
 
-    void SetLocal( unsigned char chan, unsigned char v );
+    void SetLocal(unsigned char chan, unsigned char v);
 
     void SetNoOp();
 
-    void SetTempo32( unsigned short tempo_times_32 );
+    void SetTempo32(unsigned short tempo_times_32);
 
-    void SetText( unsigned short text_num, unsigned char type = META_GENERIC_TEXT );
+    void SetText(unsigned short text_num, unsigned char type = META_GENERIC_TEXT);
 
     void SetDataEnd();
 
-    void SetTimeSig( unsigned char numerator, unsigned char denominator );
+    void SetTimeSig(unsigned char numerator, unsigned char denominator);
 
-    void SetKeySig( signed char sharp_flats, unsigned char major_minor );
+    void SetKeySig(signed char sharp_flats, unsigned char major_minor);
 
     void SetBeatMarker();
 
     //@}
 
   protected:
-    static const char* chan_msg_name[16];  ///< Simple ascii text strings describing each channel
+    static char const* chan_msg_name[16];  ///< Simple ascii text strings describing each channel
                                            ///< message type (0x8X to 0xeX)
-    static const char* sys_msg_name[16];   ///< Simple ascii text strings describing each system
+    static char const* sys_msg_name[16];   ///< Simple ascii text strings describing each system
                                            ///< message type (0xf0 to 0xff)
 
     unsigned char status;
@@ -422,7 +345,6 @@ class MIDIMessage
     unsigned char byte3;  ///< byte 3 is only used for meta-events and to round out the structure
                           ///< size to 32 bits
 };
-
 
 ///
 /// The MIDIBigMessage inherits from a MIDIMessage and adds the capability of storing
@@ -439,28 +361,25 @@ class MIDIBigMessage : public MIDIMessage
 
     MIDIBigMessage();
 
-    MIDIBigMessage( const MIDIBigMessage& m );
+    MIDIBigMessage(MIDIBigMessage const& m);
 
-    MIDIBigMessage( const MIDIMessage& m );
+    MIDIBigMessage(MIDIMessage const& m);
 
-    const MIDIBigMessage& operator=( const MIDIBigMessage& m );
+    MIDIBigMessage const& operator=(MIDIBigMessage const& m);
 
-    const MIDIBigMessage& operator=( const MIDIMessage& m );
+    MIDIBigMessage const& operator=(MIDIMessage const& m);
 
+    void Copy(MIDIBigMessage const& m);
 
-    void Copy( const MIDIBigMessage& m );
+    void Copy(MIDIMessage const& m);
 
-    void Copy( const MIDIMessage& m );
-
-    void CopySysEx( const MIDISystemExclusive* e );
+    void CopySysEx(MIDISystemExclusive const* e);
 
     //@}
-
 
     void Clear();
 
     void ClearSysEx();
-
 
     ///
     /// destructor
@@ -468,15 +387,12 @@ class MIDIBigMessage : public MIDIMessage
 
     ~MIDIBigMessage();
 
-
     MIDISystemExclusive* GetSysEx();
 
-    const MIDISystemExclusive* GetSysEx() const;
-
+    MIDISystemExclusive const* GetSysEx() const;
 
     MIDISystemExclusive* sysex;
 };
-
 
 class MIDITimedMessage : public MIDIMessage
 {
@@ -487,21 +403,21 @@ class MIDITimedMessage : public MIDIMessage
 
     MIDITimedMessage();
 
-    MIDITimedMessage( const MIDITimedMessage& m );
+    MIDITimedMessage(MIDITimedMessage const& m);
 
-    MIDITimedMessage( const MIDIMessage& m );
+    MIDITimedMessage(MIDIMessage const& m);
 
     void Clear();
 
-    void Copy( const MIDITimedMessage& m );
+    void Copy(MIDITimedMessage const& m);
 
     //
     // operator =
     //
 
-    const MIDITimedMessage& operator=( const MIDITimedMessage& m );
+    MIDITimedMessage const& operator=(MIDITimedMessage const& m);
 
-    const MIDITimedMessage& operator=( const MIDIMessage& m );
+    MIDITimedMessage const& operator=(MIDIMessage const& m);
 
     //
     // 'Get' methods
@@ -513,19 +429,17 @@ class MIDITimedMessage : public MIDIMessage
     // 'Set' methods
     //
 
-    void SetTime( MIDIClockTime t );
-
+    void SetTime(MIDIClockTime t);
 
     //
     // Compare method for sorting. Not just comparing time.
     //
 
-    static int CompareEvents( const MIDITimedMessage& a, const MIDITimedMessage& b );
+    static int CompareEvents(MIDITimedMessage const& a, MIDITimedMessage const& b);
 
   protected:
     MIDIClockTime time;
 };
-
 
 class MIDIDeltaTimedMessage : public MIDIMessage
 {
@@ -536,21 +450,21 @@ class MIDIDeltaTimedMessage : public MIDIMessage
 
     MIDIDeltaTimedMessage();
 
-    MIDIDeltaTimedMessage( const MIDIDeltaTimedMessage& m );
+    MIDIDeltaTimedMessage(MIDIDeltaTimedMessage const& m);
 
-    MIDIDeltaTimedMessage( const MIDIMessage& m );
+    MIDIDeltaTimedMessage(MIDIMessage const& m);
 
     void Clear();
 
-    void Copy( const MIDIDeltaTimedMessage& m );
+    void Copy(MIDIDeltaTimedMessage const& m);
 
     //
     // operator =
     //
 
-    const MIDIDeltaTimedMessage& operator=( const MIDIDeltaTimedMessage& m );
+    MIDIDeltaTimedMessage const& operator=(MIDIDeltaTimedMessage const& m);
 
-    const MIDIDeltaTimedMessage& operator=( const MIDIMessage& m );
+    MIDIDeltaTimedMessage const& operator=(MIDIMessage const& m);
 
     //
     // 'Get' methods
@@ -562,13 +476,11 @@ class MIDIDeltaTimedMessage : public MIDIMessage
     // 'Set' methods
     //
 
-    void SetDeltaTime( MIDIClockTime t );
-
+    void SetDeltaTime(MIDIClockTime t);
 
   protected:
     MIDIClockTime dtime;
 };
-
 
 class MIDITimedBigMessage : public MIDIBigMessage
 {
@@ -579,29 +491,29 @@ class MIDITimedBigMessage : public MIDIBigMessage
 
     MIDITimedBigMessage();
 
-    MIDITimedBigMessage( const MIDITimedBigMessage& m );
+    MIDITimedBigMessage(MIDITimedBigMessage const& m);
 
-    MIDITimedBigMessage( const MIDIBigMessage& m );
+    MIDITimedBigMessage(MIDIBigMessage const& m);
 
-    MIDITimedBigMessage( const MIDITimedMessage& m );
+    MIDITimedBigMessage(MIDITimedMessage const& m);
 
-    MIDITimedBigMessage( const MIDIMessage& m );
+    MIDITimedBigMessage(MIDIMessage const& m);
 
     void Clear();
 
-    void Copy( const MIDITimedBigMessage& m );
+    void Copy(MIDITimedBigMessage const& m);
 
-    void Copy( const MIDITimedMessage& m );
+    void Copy(MIDITimedMessage const& m);
 
     //
     // operator =
     //
 
-    const MIDITimedBigMessage& operator=( const MIDITimedBigMessage& m );
+    MIDITimedBigMessage const& operator=(MIDITimedBigMessage const& m);
 
-    const MIDITimedBigMessage& operator=( const MIDITimedMessage& m );
+    MIDITimedBigMessage const& operator=(MIDITimedMessage const& m);
 
-    const MIDITimedBigMessage& operator=( const MIDIMessage& m );
+    MIDITimedBigMessage const& operator=(MIDIMessage const& m);
 
     //
     // 'Get' methods
@@ -613,18 +525,17 @@ class MIDITimedBigMessage : public MIDIBigMessage
     // 'Set' methods
     //
 
-    void SetTime( MIDIClockTime t );
+    void SetTime(MIDIClockTime t);
 
     //
     // Compare method, for sorting. Not just comparing time.
     //
 
-    static int CompareEvents( const MIDITimedBigMessage& a, const MIDITimedBigMessage& b );
+    static int CompareEvents(MIDITimedBigMessage const& a, MIDITimedBigMessage const& b);
 
   protected:
     MIDIClockTime time;
 };
-
 
 class MIDIDeltaTimedBigMessage : public MIDIBigMessage
 {
@@ -635,29 +546,29 @@ class MIDIDeltaTimedBigMessage : public MIDIBigMessage
 
     MIDIDeltaTimedBigMessage();
 
-    MIDIDeltaTimedBigMessage( const MIDIDeltaTimedBigMessage& m );
+    MIDIDeltaTimedBigMessage(MIDIDeltaTimedBigMessage const& m);
 
-    MIDIDeltaTimedBigMessage( const MIDIBigMessage& m );
+    MIDIDeltaTimedBigMessage(MIDIBigMessage const& m);
 
-    MIDIDeltaTimedBigMessage( const MIDIMessage& m );
+    MIDIDeltaTimedBigMessage(MIDIMessage const& m);
 
-    MIDIDeltaTimedBigMessage( const MIDIDeltaTimedMessage& m );
+    MIDIDeltaTimedBigMessage(MIDIDeltaTimedMessage const& m);
 
     void Clear();
 
-    void Copy( const MIDIDeltaTimedBigMessage& m );
+    void Copy(MIDIDeltaTimedBigMessage const& m);
 
-    void Copy( const MIDIDeltaTimedMessage& m );
+    void Copy(MIDIDeltaTimedMessage const& m);
 
     //
     // operator =
     //
 
-    const MIDIDeltaTimedBigMessage& operator=( const MIDIDeltaTimedBigMessage& m );
+    MIDIDeltaTimedBigMessage const& operator=(MIDIDeltaTimedBigMessage const& m);
 
-    const MIDIDeltaTimedBigMessage& operator=( const MIDIDeltaTimedMessage& m );
+    MIDIDeltaTimedBigMessage const& operator=(MIDIDeltaTimedMessage const& m);
 
-    const MIDIDeltaTimedBigMessage& operator=( const MIDIMessage& m );
+    MIDIDeltaTimedBigMessage const& operator=(MIDIMessage const& m);
 
     //
     // 'Get' methods
@@ -669,14 +580,12 @@ class MIDIDeltaTimedBigMessage : public MIDIBigMessage
     // 'Set' methods
     //
 
-    void SetDeltaTime( MIDIClockTime t );
-
+    void SetDeltaTime(MIDIClockTime t);
 
   protected:
     MIDIClockTime dtime;
 };
 
 }  // namespace jdksmidi
-
 
 #endif

@@ -31,19 +31,19 @@
 **
 */
 
-
 #ifndef JDKSMIDI_WORLD_H
 #define JDKSMIDI_WORLD_H
 
-#include <cstdint>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define ENTER( a )
+#include <cstdint>
 
-#define DBG( a )
-#define OSTYPE( a, b, c, d ) ( ( a ) * 0x1000000 + ( b ) * 0x10000 + ( c ) * 0x100 + ( d ) )
+#define ENTER(a)
+
+#define DBG(a)
+#define OSTYPE(a, b, c, d) ((a) * 0x1000000 + (b) * 0x10000 + (c) * 0x100 + (d))
 
 typedef unsigned int uint;
 
@@ -65,6 +65,5 @@ MIDI Files easily.
 \section future The Future
 
 */
-
 
 #endif

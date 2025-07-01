@@ -38,15 +38,13 @@
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
 
-namespace jdksmidi
-{
+namespace jdksmidi {
 
 ///
 /// MIDITrackChunkSize is a constant which specifies how many events are in one MIDITrackChunk.
 ///
 
-const int MIDITrackChunkSize = 512;
-
+int const MIDITrackChunkSize = 512;
 
 ///
 /// A MIDITrack's events are allocated in these chunks in order to avoid memory fragmentation
@@ -64,7 +62,7 @@ class MIDITrackChunk
     /// @param event_num an integer specifying an event number in the range 0 to MIDITrackChunkSize
     /// @returns The const pointer to the requested event.
     ///
-    const MIDITimedBigMessage* GetEventAddress( int event_num ) const;
+    MIDITimedBigMessage const* GetEventAddress(int event_num) const;
 
     ///
     /// GetEventAddress()  returns the address of the MIDITimedBigMessage referred to by event_num
@@ -72,7 +70,7 @@ class MIDITrackChunk
     /// @returns The non-const pointer to the requested event.
     ///
 
-    MIDITimedBigMessage* GetEventAddress( int event_num );
+    MIDITimedBigMessage* GetEventAddress(int event_num);
 
   protected:
   private:
@@ -86,8 +84,7 @@ class MIDITrackChunk
 /// MMU
 ///
 
-const int MIDIChunksPerTrack = 512;
-
+int const MIDIChunksPerTrack = 512;
 
 ///
 /// The MIDITrack class is a container that manages an array of MIDIChunk objects and provides an
@@ -103,13 +100,13 @@ class MIDITrack
     /// Construct a MIDITrack object with the specified number of events
     /// @param size The number of events, defaults to 0
     ///
-    MIDITrack( int size = 0 );
+    MIDITrack(int size = 0);
 
     ///
     /// Copy Constructor for a MIDITrack object
     /// @param t The reference to the MIDITrack object to copy
     ///
-    MIDITrack( const MIDITrack& t );
+    MIDITrack(MIDITrack const& t);
 
     ///
     /// The MIDITrack Destructor, frees all chunks and referenced MIDITimedBigMessage's
@@ -133,29 +130,29 @@ class MIDITrack
     /// @param src2 Pointer to second track
     /// ClearAndMerge() assumes all events in both tracks are already ordered by time.
     ///
-    void ClearAndMerge( const MIDITrack* src1, const MIDITrack* src2 );
+    void ClearAndMerge(MIDITrack const* src1, MIDITrack const* src2);
 
     // bool Insert( int start_event, int num_events );
     //    bool  Delete( int start_event, int num_events);
     //    void  Sort();
 
-    bool Expand( int increase_amount = ( MIDITrackChunkSize ) );
+    bool Expand(int increase_amount = (MIDITrackChunkSize));
 
-    MIDITimedBigMessage* GetEventAddress( int event_num );
+    MIDITimedBigMessage* GetEventAddress(int event_num);
 
-    const MIDITimedBigMessage* GetEventAddress( int event_num ) const;
+    MIDITimedBigMessage const* GetEventAddress(int event_num) const;
 
-    const MIDITimedBigMessage* GetEvent( int event_num ) const;
-    MIDITimedBigMessage* GetEvent( int event_num );
-    bool GetEvent( int event_num, MIDITimedBigMessage* msg ) const;
+    MIDITimedBigMessage const* GetEvent(int event_num) const;
+    MIDITimedBigMessage* GetEvent(int event_num);
+    bool GetEvent(int event_num, MIDITimedBigMessage* msg) const;
 
-    bool PutEvent( const MIDITimedBigMessage& msg );
-    bool PutEvent( const MIDITimedMessage& msg, MIDISystemExclusive* sysex );
-    bool SetEvent( int event_num, const MIDITimedBigMessage& msg );
+    bool PutEvent(MIDITimedBigMessage const& msg);
+    bool PutEvent(MIDITimedMessage const& msg, MIDISystemExclusive* sysex);
+    bool SetEvent(int event_num, MIDITimedBigMessage const& msg);
 
-    bool MakeEventNoOp( int event_num );
+    bool MakeEventNoOp(int event_num);
 
-    bool FindEventNumber( MIDIClockTime time, int* event_num ) const;
+    bool FindEventNumber(MIDIClockTime time, int* event_num) const;
 
     int GetBufferSize() const;
     int GetNumEvents() const;
