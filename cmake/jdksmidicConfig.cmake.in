@@ -1,0 +1,26 @@
+@PACKAGE_INIT@
+
+# jdksmidi CMake configuration file
+
+include(CMakeFindDependencyMacro)
+
+# Platform-specific dependencies
+if(WIN32)
+    # Windows requires winmm library
+    find_library(WINMM_LIBRARY winmm REQUIRED)
+endif()
+
+# Include the exported targets
+include("${CMAKE_CURRENT_LIST_DIR}/jdksmidicTargets.cmake")
+
+# Provide the jdksmidc::jdksmidi target
+if(NOT TARGET jdksmidc::jdksmidi)
+    message(FATAL_ERROR "Expected target jdksmidc::jdksmidi not found")
+endif()
+
+# For backwards compatibility, provide variables
+get_target_property(JDKSMIDI_INCLUDE_DIRS jdksmidc::jdksmidi INTERFACE_INCLUDE_DIRECTORIES)
+set(JDKSMIDI_LIBRARIES jdksmidc::jdksmidi)
+set(JDKSMIDI_FOUND TRUE)
+
+check_required_components(jdksmidc)
