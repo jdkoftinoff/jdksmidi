@@ -33,7 +33,7 @@ magic_PROJECT_TOP_DIR="$(cd ${relative_dir} && pwd)"
 # if we are called with --help
 
 if [ x"$1" = x"--help" ]; then
-    echo "configure script based on J.D. Koftinoff Software Ltd.'s MagicMake system."
+    echo "configure script based on Jeffrey Koftinoff's MagicMake system."
     echo "See http://wiki.github.com/jdkoftinoff/magicmake/ "
     echo ""
     echo "example usage:"

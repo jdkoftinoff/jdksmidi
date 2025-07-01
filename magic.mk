@@ -2,7 +2,7 @@
 #
 # The magic.makefile Copyright 2004-2008 
 # by Jeff Koftinoff <jeffk@jdkoftinoff.com> 
-# and J.D. Koftinoff Software Ltd.
+# and Jeffrey Koftinoff.
 #
 # Version 8: http://wiki.github.com/jdkoftinoff/magicmake/
 #
