@@ -20,45 +20,45 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 #ifndef JDKSMIDI_DRIVER_H
 #define JDKSMIDI_DRIVER_H
 
-#include "jdksmidi/msg.h"
-#include "jdksmidi/sysex.h"
 #include "jdksmidi/matrix.h"
+#include "jdksmidi/msg.h"
 #include "jdksmidi/process.h"
 #include "jdksmidi/queue.h"
+#include "jdksmidi/sysex.h"
 #include "jdksmidi/tick.h"
 
 namespace jdksmidi
 {
 class MIDIDriver : public MIDITick
 {
-public:
-    MIDIDriver ( int queue_size );
+  public:
+    MIDIDriver( int queue_size );
     virtual ~MIDIDriver();
 
     virtual void Reset();
 
     // to get the midi in queue
-    MIDIQueue * InputQueue()
+    MIDIQueue* InputQueue()
     {
         return &in_queue;
     }
 
-    const MIDIQueue * InputQueue() const
+    const MIDIQueue* InputQueue() const
     {
         return &in_queue;
     }
 
     // to get the midi out queue
-    MIDIQueue * OutputQueue()
+    MIDIQueue* OutputQueue()
     {
         return &out_queue;
     }
 
-    const MIDIQueue * OutputQueue() const
+    const MIDIQueue* OutputQueue() const
     {
         return &out_queue;
     }
@@ -74,16 +74,16 @@ public:
 
     // processes message with the OutProcessor and then
     // puts the message in the out_queue
-    void OutputMessage ( MIDITimedBigMessage &msg )
+    void OutputMessage( MIDITimedBigMessage& msg )
     {
-        if ( ( out_proc && out_proc->Process ( &msg ) ) || !out_proc )
+        if ( ( out_proc && out_proc->Process( &msg ) ) || !out_proc )
         {
-            out_matrix.Process ( msg );
-            out_queue.Put ( msg );
+            out_matrix.Process( msg );
+            out_queue.Put( msg );
         }
     }
 
-    void SetThruEnable ( bool f )
+    void SetThruEnable( bool f )
     {
         thru_enable = f;
     }
@@ -94,28 +94,28 @@ public:
     }
 
     // to set the midi processors used for thru, out, and in
-    void SetThruProcessor ( MIDIProcessor *proc )
+    void SetThruProcessor( MIDIProcessor* proc )
     {
         thru_proc = proc;
     }
 
-    void SetOutProcessor ( MIDIProcessor *proc )
+    void SetOutProcessor( MIDIProcessor* proc )
     {
         out_proc = proc;
     }
 
-    void SetInProcessor ( MIDIProcessor *proc )
+    void SetInProcessor( MIDIProcessor* proc )
     {
         in_proc = proc;
     }
 
-    void SetTickProc ( MIDITick *tick )
+    void SetTickProc( MIDITick* tick )
     {
         tick_proc = tick;
     }
 
     // to send all notes off on selected midi chanel
-    void AllNotesOff ( int chan );
+    void AllNotesOff( int chan );
 
     // to send all notes off on all midi channels
     void AllNotesOff();
@@ -124,12 +124,12 @@ public:
     // comes in to the system. Can be called by a callback function
     // or by your TimeTick() function.
 
-    virtual bool HardwareMsgIn ( MIDITimedBigMessage &msg );
+    virtual bool HardwareMsgIn( MIDITimedBigMessage& msg );
 
     // HardwareMsgOut() must be overriden by a subclass - It must
     // take
 
-    virtual bool HardwareMsgOut ( const MIDITimedBigMessage &msg ) = 0;
+    virtual bool HardwareMsgOut( const MIDITimedBigMessage& msg ) = 0;
 
     // the time tick procedure:
     //  manages in/out/thru to hardware
@@ -142,26 +142,24 @@ public:
     // resulting message to HandleMsgIn to process it and put it in
     // the in_queue.
 
-    virtual void TimeTick ( unsigned long sys_time );
+    virtual void TimeTick( unsigned long sys_time );
 
 
-protected:
-
-
+  protected:
     // the in and out queues
     MIDIQueue in_queue;
     MIDIQueue out_queue;
 
     // the processors
-    MIDIProcessor *in_proc;
-    MIDIProcessor *out_proc;
-    MIDIProcessor *thru_proc;
+    MIDIProcessor* in_proc;
+    MIDIProcessor* out_proc;
+    MIDIProcessor* thru_proc;
 
     bool thru_enable;
 
     // additional TimeTick procedure
 
-    MIDITick *tick_proc;
+    MIDITick* tick_proc;
 
     // to keep track of notes on going to MIDI out
 
@@ -169,6 +167,6 @@ protected:
 };
 
 
-}
+}  // namespace jdksmidi
 
 #endif

@@ -20,60 +20,52 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 #ifndef JDKSMIDI_MANAGER_H
 #define JDKSMIDI_MANAGER_H
 
-#include "jdksmidi/msg.h"
-#include "jdksmidi/sysex.h"
 #include "jdksmidi/driver.h"
+#include "jdksmidi/msg.h"
 #include "jdksmidi/sequencer.h"
+#include "jdksmidi/sysex.h"
 #include "jdksmidi/tick.h"
 
 namespace jdksmidi
 {
 class MIDIManager : public MIDITick
 {
-public:
-    MIDIManager (
-        MIDIDriver *drv,
-        MIDISequencerGUIEventNotifier *n = 0,
-        MIDISequencer *seq_ = 0
-    );
+  public:
+    MIDIManager( MIDIDriver* drv, MIDISequencerGUIEventNotifier* n = 0, MIDISequencer* seq_ = 0 );
 
     virtual ~MIDIManager();
 
     void Reset();
 
     // to set and get the current sequencer
-    void SetSeq ( MIDISequencer *seq );
-    MIDISequencer *GetSeq();
-    const MIDISequencer *GetSeq() const;
+    void SetSeq( MIDISequencer* seq );
+    MIDISequencer* GetSeq();
+    const MIDISequencer* GetSeq() const;
 
     // to get the driver that we use
-    MIDIDriver *GetDriver()
+    MIDIDriver* GetDriver()
     {
         return driver;
     }
 
 
     // to set and get the system time offset
-    void SetTimeOffset ( unsigned long off );
+    void SetTimeOffset( unsigned long off );
     unsigned long GetTimeOffset();
 
     // to set and get the sequencer time offset
-    void SetSeqOffset ( unsigned long seqoff );
+    void SetSeqOffset( unsigned long seqoff );
     unsigned long GetSeqOffset();
 
 
     // to manage the playback of the sequencer
     void SeqPlay();
     void SeqStop();
-    void SetRepeatPlay (
-        bool flag,
-        unsigned long start_measure,
-        unsigned long end_measure
-    );
+    void SetRepeatPlay( bool flag, unsigned long start_measure, unsigned long end_measure );
 
 
     // status request functions
@@ -82,16 +74,15 @@ public:
     bool IsSeqRepeat() const;
 
     // inherited from MIDITick
-    virtual void TimeTick ( unsigned long sys_time );
+    virtual void TimeTick( unsigned long sys_time );
 
-protected:
+  protected:
+    virtual void TimeTickPlayMode( unsigned long sys_time_ );
+    virtual void TimeTickStopMode( unsigned long sys_time_ );
 
-    virtual void TimeTickPlayMode ( unsigned long sys_time_ );
-    virtual void TimeTickStopMode ( unsigned long sys_time_ );
+    MIDIDriver* driver;
 
-    MIDIDriver *driver;
-
-    MIDISequencer *sequencer;
+    MIDISequencer* sequencer;
 
     unsigned long sys_time_offset;
     unsigned long seq_time_offset;
@@ -99,16 +90,14 @@ protected:
     volatile bool play_mode;
     volatile bool stop_mode;
 
-    MIDISequencerGUIEventNotifier *notifier;
+    MIDISequencerGUIEventNotifier* notifier;
 
     volatile bool repeat_play_mode;
     long repeat_start_measure;
     long repeat_end_measure;
-
-
 };
 
 
-}
+}  // namespace jdksmidi
 
 #endif

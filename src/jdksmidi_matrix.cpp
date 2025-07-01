@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 /*
 ** Copyright 1986 to 1998 By J.D. Koftinoff Software, Ltd.
 **
@@ -37,12 +37,12 @@
 #include "jdksmidi/matrix.h"
 
 #ifndef DEBUG_MDMATRIX
-# define DEBUG_MDMATRIX 0
+    #define DEBUG_MDMATRIX 0
 #endif
 
 #if DEBUG_MDMATRIX
-# undef DBG
-# define DBG(a) a
+    #undef DBG
+    #define DBG( a ) a
 #endif
 
 
@@ -52,7 +52,7 @@ namespace jdksmidi
 
 MIDIMatrix::MIDIMatrix()
 {
-    ENTER ( "MIDIMatrix::MIDIMatrix()" );
+    ENTER( "MIDIMatrix::MIDIMatrix()" );
 
     for ( int channel = 0; channel < 16; channel++ )
     {
@@ -68,13 +68,13 @@ MIDIMatrix::MIDIMatrix()
 
 MIDIMatrix::~MIDIMatrix()
 {
-    ENTER ( "MIDIMatrix::~MIDIMatrix()" );
+    ENTER( "MIDIMatrix::~MIDIMatrix()" );
 }
 
 
-void  MIDIMatrix::DecNoteCount ( const MIDIMessage &, int channel, int note )
+void MIDIMatrix::DecNoteCount( const MIDIMessage&, int channel, int note )
 {
-    ENTER ( "MIDIMatrix::DecNoteCount()" );
+    ENTER( "MIDIMatrix::DecNoteCount()" );
 
     if ( note_on_count[channel][note] > 0 )
     {
@@ -84,23 +84,23 @@ void  MIDIMatrix::DecNoteCount ( const MIDIMessage &, int channel, int note )
     }
 }
 
-void  MIDIMatrix::IncNoteCount ( const MIDIMessage &, int channel, int note )
+void MIDIMatrix::IncNoteCount( const MIDIMessage&, int channel, int note )
 {
-    ENTER ( "MIDIMatrix::IncNoteCount()" );
+    ENTER( "MIDIMatrix::IncNoteCount()" );
     ++note_on_count[channel][note];
     ++channel_count[channel];
     ++total_count;
 }
 
-void MIDIMatrix::OtherMessage ( const MIDIMessage & )
+void MIDIMatrix::OtherMessage( const MIDIMessage& )
 {
-    ENTER ( "MIDIMatrix::OtherMessage()" );
+    ENTER( "MIDIMatrix::OtherMessage()" );
 }
 
 
-bool MIDIMatrix::Process ( const MIDIMessage &m )
+bool MIDIMatrix::Process( const MIDIMessage& m )
 {
-    ENTER ( "MIDIMatrix::Process()" );
+    ENTER( "MIDIMatrix::Process()" );
     bool status = false;
 
     if ( m.IsChannelMsg() )
@@ -110,24 +110,24 @@ bool MIDIMatrix::Process ( const MIDIMessage &m )
 
         if ( m.IsAllNotesOff() )
         {
-            ClearChannel ( channel );
+            ClearChannel( channel );
             status = true;
         }
 
         else if ( m.IsNoteOn() )
         {
             if ( m.GetVelocity() != 0 )
-                IncNoteCount ( m, channel, note );
+                IncNoteCount( m, channel, note );
 
             else
-                DecNoteCount ( m, channel, note );
+                DecNoteCount( m, channel, note );
 
             status = true;
         }
 
         else if ( m.IsNoteOff() )
         {
-            DecNoteCount ( m, channel, note );
+            DecNoteCount( m, channel, note );
             status = true;
         }
 
@@ -145,7 +145,7 @@ bool MIDIMatrix::Process ( const MIDIMessage &m )
         }
 
         else
-            OtherMessage ( m );
+            OtherMessage( m );
     }
 
     return status;
@@ -153,19 +153,19 @@ bool MIDIMatrix::Process ( const MIDIMessage &m )
 
 void MIDIMatrix::Clear()
 {
-    ENTER ( "MIDIMatrix::Clear()" );
+    ENTER( "MIDIMatrix::Clear()" );
 
     for ( int channel = 0; channel < 16; ++channel )
     {
-        ClearChannel ( channel );
+        ClearChannel( channel );
     }
 
     total_count = 0;
 }
 
-void MIDIMatrix::ClearChannel ( int channel )
+void MIDIMatrix::ClearChannel( int channel )
 {
-    ENTER ( "MIDIMatrix::ClearChannel()" );
+    ENTER( "MIDIMatrix::ClearChannel()" );
 
     for ( int note = 0; note < 128; ++note )
     {
@@ -178,5 +178,4 @@ void MIDIMatrix::ClearChannel ( int channel )
 }
 
 
-
-}
+}  // namespace jdksmidi

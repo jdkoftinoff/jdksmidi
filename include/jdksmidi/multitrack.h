@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 /*
 ** Copyright 1986 to 1998 By J.D. Koftinoff Software, Ltd.
 **
@@ -45,14 +45,13 @@ class MIDIMultiTrackIterator;
 
 class MIDIMultiTrack
 {
-public:
-
-    MIDIMultiTrack ( int max_num_tracks_ = 64, bool deletable_ = true );
+  public:
+    MIDIMultiTrack( int max_num_tracks_ = 64, bool deletable_ = true );
     virtual ~MIDIMultiTrack();
 
-    void SetTrack ( int trk, MIDITrack *t );
-    MIDITrack *GetTrack ( int trk );
-    const MIDITrack *GetTrack ( int trk ) const;
+    void SetTrack( int trk, MIDITrack* t );
+    MIDITrack* GetTrack( int trk );
+    const MIDITrack* GetTrack( int trk ) const;
     int GetNumTracks() const
     {
         return num_tracks;
@@ -66,32 +65,29 @@ public:
         return clks_per_beat;
     }
 
-    void SetClksPerBeat ( int c )
+    void SetClksPerBeat( int c )
     {
         clks_per_beat = c;
     }
 
-protected:
-
-    MIDITrack **tracks;
+  protected:
+    MIDITrack** tracks;
     const int num_tracks;
     bool deletable;
 
-    int  clks_per_beat;
+    int clks_per_beat;
 
-private:
-
+  private:
 };
 
 class MIDIMultiTrackIteratorState
 {
-public:
-
-    MIDIMultiTrackIteratorState ( int num_tracks_ = 64 );
-    MIDIMultiTrackIteratorState ( const MIDIMultiTrackIteratorState &m );
+  public:
+    MIDIMultiTrackIteratorState( int num_tracks_ = 64 );
+    MIDIMultiTrackIteratorState( const MIDIMultiTrackIteratorState& m );
     virtual ~MIDIMultiTrackIteratorState();
 
-    const MIDIMultiTrackIteratorState & operator = ( const MIDIMultiTrackIteratorState &m );
+    const MIDIMultiTrackIteratorState& operator=( const MIDIMultiTrackIteratorState& m );
 
     int GetNumTracks() const
     {
@@ -112,58 +108,54 @@ public:
     MIDIClockTime cur_time;
     int cur_event_track;
     int num_tracks;
-    int *next_event_number;
-    MIDIClockTime *next_event_time;
+    int* next_event_number;
+    MIDIClockTime* next_event_time;
 };
 
 class MIDIMultiTrackIterator
 {
-public:
-
-    MIDIMultiTrackIterator ( MIDIMultiTrack *mlt );
+  public:
+    MIDIMultiTrackIterator( MIDIMultiTrack* mlt );
     virtual ~MIDIMultiTrackIterator();
 
 
-    void GoToTime ( MIDIClockTime time );
+    void GoToTime( MIDIClockTime time );
 
-    bool GetCurEventTime ( MIDIClockTime *t ) const;
-    bool GetCurEvent ( int *track, MIDITimedBigMessage **msg ) const;
+    bool GetCurEventTime( MIDIClockTime* t ) const;
+    bool GetCurEvent( int* track, MIDITimedBigMessage** msg ) const;
     bool GoToNextEvent();
 
-    bool GoToNextEventOnTrack ( int track );
+    bool GoToNextEventOnTrack( int track );
 
-    const MIDIMultiTrackIteratorState &GetState() const
+    const MIDIMultiTrackIteratorState& GetState() const
     {
         return state;
     }
 
-    MIDIMultiTrackIteratorState &GetState()
+    MIDIMultiTrackIteratorState& GetState()
     {
         return state;
     }
 
-    void SetState ( const MIDIMultiTrackIteratorState &s )
+    void SetState( const MIDIMultiTrackIteratorState& s )
     {
         state = s;
     }
 
-    MIDIMultiTrack * GetMultiTrack()
+    MIDIMultiTrack* GetMultiTrack()
     {
         return multitrack;
     }
-    const MIDIMultiTrack * GetMultiTrack() const
+    const MIDIMultiTrack* GetMultiTrack() const
     {
         return multitrack;
     }
 
-protected:
-
-    MIDIMultiTrack *multitrack;
+  protected:
+    MIDIMultiTrack* multitrack;
     MIDIMultiTrackIteratorState state;
 };
 
-}
+}  // namespace jdksmidi
 
 #endif
-
-

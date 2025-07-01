@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 /*
 ** Copyright 1986 to 1998 By J.D. Koftinoff Software, Ltd.
 **
@@ -39,10 +39,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ENTER(a)
+#define ENTER( a )
 
-#define DBG(a)
-#define OSTYPE( a,b,c,d )       ((a)*0x1000000 + (b)*0x10000 + (c)*0x100 + (d) )
+#define DBG( a )
+#define OSTYPE( a, b, c, d ) ( ( a ) * 0x1000000 + ( b ) * 0x10000 + ( c ) * 0x100 + ( d ) )
 
 typedef unsigned char uchar;
 typedef unsigned long ulong;
@@ -70,5 +70,3 @@ MIDI Files easily.
 
 
 #endif
-
-

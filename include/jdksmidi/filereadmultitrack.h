@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 /*
 ** Copyright 1986 to 1998 By J.D. Koftinoff Software, Ltd.
 **
@@ -34,74 +34,70 @@
 #ifndef JDKSMIDI_FILEREADMULTITRACK_H
 #define JDKSMIDI_FILEREADMULTITRACK_H
 
-#include "jdksmidi/midi.h"
-#include "jdksmidi/msg.h"
-#include "jdksmidi/sysex.h"
 #include "jdksmidi/file.h"
 #include "jdksmidi/fileread.h"
+#include "jdksmidi/midi.h"
+#include "jdksmidi/msg.h"
 #include "jdksmidi/multitrack.h"
+#include "jdksmidi/sysex.h"
 
 namespace jdksmidi
 {
 class MIDIFileReadMultiTrack : public MIDIFileEvents
 {
-public:
-    MIDIFileReadMultiTrack ( MIDIMultiTrack *mlttrk );
+  public:
+    MIDIFileReadMultiTrack( MIDIMultiTrack* mlttrk );
 
     virtual ~MIDIFileReadMultiTrack();
 
 
-//
-// The possible events in a MIDI Files
-//
+    //
+    // The possible events in a MIDI Files
+    //
 
-    virtual void    mf_sysex ( MIDIClockTime time, const MIDISystemExclusive &ex );
+    virtual void mf_sysex( MIDIClockTime time, const MIDISystemExclusive& ex );
 
-    virtual void    mf_arbitrary ( MIDIClockTime time, int len, unsigned char *data );
-    virtual void    mf_metamisc ( MIDIClockTime time, int, int, unsigned char * );
-    virtual void    mf_seqnum ( MIDIClockTime time, int );
-    virtual void    mf_smpte ( MIDIClockTime time, int, int, int, int, int );
-    virtual void    mf_timesig ( MIDIClockTime time, int, int, int, int );
-    virtual void    mf_tempo ( MIDIClockTime time, unsigned long tempo );
-    virtual void    mf_keysig ( MIDIClockTime time, int, int );
-    virtual void    mf_sqspecific ( MIDIClockTime time, int, unsigned char * );
-    virtual void    mf_text ( MIDIClockTime time, int, int, unsigned char * );
-    virtual void    mf_eot ( MIDIClockTime time );
+    virtual void mf_arbitrary( MIDIClockTime time, int len, unsigned char* data );
+    virtual void mf_metamisc( MIDIClockTime time, int, int, unsigned char* );
+    virtual void mf_seqnum( MIDIClockTime time, int );
+    virtual void mf_smpte( MIDIClockTime time, int, int, int, int, int );
+    virtual void mf_timesig( MIDIClockTime time, int, int, int, int );
+    virtual void mf_tempo( MIDIClockTime time, unsigned long tempo );
+    virtual void mf_keysig( MIDIClockTime time, int, int );
+    virtual void mf_sqspecific( MIDIClockTime time, int, unsigned char* );
+    virtual void mf_text( MIDIClockTime time, int, int, unsigned char* );
+    virtual void mf_eot( MIDIClockTime time );
 
-//
-// the following methods are to be overridden for your specific purpose
-//
+    //
+    // the following methods are to be overridden for your specific purpose
+    //
 
-    virtual void    mf_error ( const char * );
+    virtual void mf_error( const char* );
 
-    virtual void    mf_starttrack ( int trk );
-    virtual void    mf_endtrack ( int trk );
-    virtual void    mf_header ( int, int, int );
+    virtual void mf_starttrack( int trk );
+    virtual void mf_endtrack( int trk );
+    virtual void mf_header( int, int, int );
 
-//
-// Higher level dispatch functions
-//
+    //
+    // Higher level dispatch functions
+    //
 
-    virtual void    ChanMessage ( const MIDITimedMessage &msg );
+    virtual void ChanMessage( const MIDITimedMessage& msg );
 
-protected:
+  protected:
+    void AddEventToMultiTrack( const MIDITimedMessage& msg,
+                               MIDISystemExclusive* sysex,
+                               int dest_track );
 
-    void AddEventToMultiTrack (
-        const MIDITimedMessage &msg,
-        MIDISystemExclusive *sysex,
-        int dest_track
-    );
-
-    MIDIMultiTrack *multitrack;
+    MIDIMultiTrack* multitrack;
     int cur_track;
 
     int the_format;
     int num_tracks;
     int division;
-
 };
 
-}
+}  // namespace jdksmidi
 
 
 #endif

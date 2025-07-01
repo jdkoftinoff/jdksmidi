@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 #ifndef JDKSMIDI_DRIVERDUMP_H
 #define JDKSMIDI_DRIVERDUMP_H
 
@@ -31,19 +31,18 @@ namespace jdksmidi
 
 class MIDIDriverDump : public MIDIDriver
 {
-public:
-    MIDIDriverDump ( int queue_size, FILE *outfile );
+  public:
+    MIDIDriverDump( int queue_size, FILE* outfile );
     virtual ~MIDIDriverDump();
 
-    virtual bool HardwareMsgOut ( const MIDITimedBigMessage &msg );
+    virtual bool HardwareMsgOut( const MIDITimedBigMessage& msg );
 
-    virtual void TimeTick ( unsigned long sys_time );
+    virtual void TimeTick( unsigned long sys_time );
 
-protected:
-
-    FILE *f;
+  protected:
+    FILE* f;
 };
 
-}
+}  // namespace jdksmidi
 
 #endif

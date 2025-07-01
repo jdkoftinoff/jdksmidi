@@ -20,53 +20,52 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 #ifndef JDKSMIDI_SONG_H
 #define JDKSMIDI_SONG_H
 
+#include "jdksmidi/filereadmultitrack.h"
 #include "jdksmidi/multitrack.h"
 #include "jdksmidi/sequencer.h"
-#include "jdksmidi/filereadmultitrack.h"
 
 namespace jdksmidi
 {
 class MIDISong
 {
-public:
-    MIDISong ( int max_tracks );
+  public:
+    MIDISong( int max_tracks );
     virtual ~MIDISong();
 
-    bool Load ( const char *fname );
+    bool Load( const char* fname );
 
-// bool Save( const char *fname );
+    // bool Save( const char *fname );
 
-    MIDIMultiTrack *GetMultiTrack()
+    MIDIMultiTrack* GetMultiTrack()
     {
         return multitrack;
     }
 
-    const MIDIMultiTrack *GetMultiTrack() const
+    const MIDIMultiTrack* GetMultiTrack() const
     {
         return multitrack;
     }
 
-    MIDISequencer *GetSeq()
+    MIDISequencer* GetSeq()
     {
         return sequencer;
     }
 
-    const MIDISequencer *GetSeq() const
+    const MIDISequencer* GetSeq() const
     {
         return sequencer;
     }
 
-protected:
-
+  protected:
     MIDIMultiTrack track;
     MIDISequencer seq;
 
     char title;
 };
-}
+}  // namespace jdksmidi
 
 #endif

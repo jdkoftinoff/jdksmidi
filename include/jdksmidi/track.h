@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 /*
 ** Copyright 1986 to 1998 By J.D. Koftinoff Software, Ltd.
 **
@@ -55,15 +55,16 @@ const int MIDITrackChunkSize = 512;
 /// to these events is only done via the GetEventAddress() method.
 ///
 
-class  MIDITrackChunk
+class MIDITrackChunk
 {
-public:
+  public:
     ///
-    /// GetEventAddress() const returns the address of the MIDITimedBigMessage referred to by event_num
+    /// GetEventAddress() const returns the address of the MIDITimedBigMessage referred to by
+    /// event_num
     /// @param event_num an integer specifying an event number in the range 0 to MIDITrackChunkSize
     /// @returns The const pointer to the requested event.
     ///
-    const MIDITimedBigMessage * GetEventAddress ( int event_num ) const;
+    const MIDITimedBigMessage* GetEventAddress( int event_num ) const;
 
     ///
     /// GetEventAddress()  returns the address of the MIDITimedBigMessage referred to by event_num
@@ -71,18 +72,18 @@ public:
     /// @returns The non-const pointer to the requested event.
     ///
 
-    MIDITimedBigMessage * GetEventAddress ( int event_num );
+    MIDITimedBigMessage* GetEventAddress( int event_num );
 
-protected:
-
-private:
+  protected:
+  private:
     MIDITimedBigMessage buf[MIDITrackChunkSize];
 };
 
 ///
-/// The MIDIChunksPerTrack constant specifies the maximum number of MIDITrackChunks that can be in one track.
-/// The value MIDIChunksPerTrack * MIDITrackChunkSize is the total number of events.
-/// This is a constant in order to avoid memory fragmentation in embedded systems or systems without an MMU
+/// The MIDIChunksPerTrack constant specifies the maximum number of MIDITrackChunks that can be in
+/// one track. The value MIDIChunksPerTrack * MIDITrackChunkSize is the total number of events. This
+/// is a constant in order to avoid memory fragmentation in embedded systems or systems without an
+/// MMU
 ///
 
 const int MIDIChunksPerTrack = 512;
@@ -95,21 +96,20 @@ const int MIDIChunksPerTrack = 512;
 /// which is defined by MIDIChunksPerTrack * MIDITrackChunkSize.
 ///
 
-class  MIDITrack
+class MIDITrack
 {
-public:
-
+  public:
     ///
     /// Construct a MIDITrack object with the specified number of events
     /// @param size The number of events, defaults to 0
     ///
-    MIDITrack ( int size = 0 );
+    MIDITrack( int size = 0 );
 
     ///
     /// Copy Constructor for a MIDITrack object
     /// @param t The reference to the MIDITrack object to copy
     ///
-    MIDITrack ( const MIDITrack &t );
+    MIDITrack( const MIDITrack& t );
 
     ///
     /// The MIDITrack Destructor, frees all chunks and referenced MIDITimedBigMessage's
@@ -133,44 +133,42 @@ public:
     /// @param src2 Pointer to second track
     /// ClearAndMerge() assumes all events in both tracks are already ordered by time.
     ///
-    void ClearAndMerge ( const MIDITrack *src1, const MIDITrack *src2 );
+    void ClearAndMerge( const MIDITrack* src1, const MIDITrack* src2 );
 
-// bool Insert( int start_event, int num_events );
-//    bool  Delete( int start_event, int num_events);
-//    void  Sort();
+    // bool Insert( int start_event, int num_events );
+    //    bool  Delete( int start_event, int num_events);
+    //    void  Sort();
 
-    bool Expand ( int increase_amount = ( MIDITrackChunkSize ) );
+    bool Expand( int increase_amount = ( MIDITrackChunkSize ) );
 
-    MIDITimedBigMessage * GetEventAddress ( int event_num );
+    MIDITimedBigMessage* GetEventAddress( int event_num );
 
-    const MIDITimedBigMessage * GetEventAddress ( int event_num ) const;
+    const MIDITimedBigMessage* GetEventAddress( int event_num ) const;
 
-    const  MIDITimedBigMessage *GetEvent ( int event_num ) const;
-    MIDITimedBigMessage *GetEvent ( int event_num );
-    bool GetEvent ( int event_num, MIDITimedBigMessage *msg ) const;
+    const MIDITimedBigMessage* GetEvent( int event_num ) const;
+    MIDITimedBigMessage* GetEvent( int event_num );
+    bool GetEvent( int event_num, MIDITimedBigMessage* msg ) const;
 
-    bool PutEvent ( const MIDITimedBigMessage &msg );
-    bool PutEvent ( const MIDITimedMessage &msg, MIDISystemExclusive *sysex );
-    bool SetEvent ( int event_num, const MIDITimedBigMessage &msg );
+    bool PutEvent( const MIDITimedBigMessage& msg );
+    bool PutEvent( const MIDITimedMessage& msg, MIDISystemExclusive* sysex );
+    bool SetEvent( int event_num, const MIDITimedBigMessage& msg );
 
-    bool MakeEventNoOp ( int event_num );
+    bool MakeEventNoOp( int event_num );
 
-    bool FindEventNumber ( MIDIClockTime time, int *event_num ) const;
+    bool FindEventNumber( MIDIClockTime time, int* event_num ) const;
 
     int GetBufferSize() const;
     int GetNumEvents() const;
 
-private:
+  private:
+    // void  QSort( int left, int right );
 
-// void  QSort( int left, int right );
-
-    MIDITrackChunk * chunk[MIDIChunksPerTrack];
+    MIDITrackChunk* chunk[MIDIChunksPerTrack];
 
     int buf_size;
     int num_events;
 };
 
-}
+}  // namespace jdksmidi
 
 #endif
-

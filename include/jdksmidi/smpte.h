@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 /*
 ** Copyright 1986 to 1998 By J.D. Koftinoff Software, Ltd.
 **
@@ -48,7 +48,6 @@ enum SMPTE_RATE
 };
 
 
-
 enum SAMPLE_RATE
 {
     SAMPLE_32000 = 0,
@@ -60,16 +59,14 @@ enum SAMPLE_RATE
 };
 
 
-
-
 //
 // MDGetSMPTERateFrequency() converts the SMPTE_RATE enum to a double frequency.
 //
 
-inline double GetSMPTERateFrequency ( SMPTE_RATE r )
+inline double GetSMPTERateFrequency( SMPTE_RATE r )
 {
     extern const double smpte_smpte_rates[];
-    return smpte_smpte_rates[ ( int ) r];
+    return smpte_smpte_rates[( int ) r];
 }
 
 
@@ -78,10 +75,10 @@ inline double GetSMPTERateFrequency ( SMPTE_RATE r )
 // frequency times 100
 //
 
-inline long GetSMPTERateFrequencyLong ( SMPTE_RATE r )
+inline long GetSMPTERateFrequencyLong( SMPTE_RATE r )
 {
     extern const double smpte_smpte_rates_long[];
-    return ( long ) smpte_smpte_rates_long[ ( int ) r];
+    return ( long ) smpte_smpte_rates_long[( int ) r];
 }
 
 
@@ -90,10 +87,10 @@ inline long GetSMPTERateFrequencyLong ( SMPTE_RATE r )
 //
 
 
-inline  double  GetSampleRateFrequency ( SAMPLE_RATE r )
+inline double GetSampleRateFrequency( SAMPLE_RATE r )
 {
     extern const double smpte_sample_rates[];
-    return smpte_sample_rates[ ( int ) r];
+    return smpte_sample_rates[( int ) r];
 }
 
 
@@ -103,31 +100,22 @@ inline  double  GetSampleRateFrequency ( SAMPLE_RATE r )
 //
 
 
-inline long GetSampleRateFrequencyLong ( SAMPLE_RATE r )
+inline long GetSampleRateFrequencyLong( SAMPLE_RATE r )
 {
     // return the sample rate as a long word of the frequency times 10.
     extern const long smpte_sample_rates_long[];
-    return smpte_sample_rates_long[ ( int ) r];
+    return smpte_sample_rates_long[( int ) r];
 }
 
 
-
-
-
-
-class  SMPTE
+class SMPTE
 {
-public:
-    SMPTE (
-        SMPTE_RATE smpte_rate = SMPTE_RATE_30,
-        SAMPLE_RATE sample_rate = SAMPLE_48000
-    );
+  public:
+    SMPTE( SMPTE_RATE smpte_rate = SMPTE_RATE_30, SAMPLE_RATE sample_rate = SAMPLE_48000 );
 
-    SMPTE (
-        const SMPTE & s
-    );
+    SMPTE( const SMPTE& s );
 
-    void SetSMPTERate ( SMPTE_RATE r )
+    void SetSMPTERate( SMPTE_RATE r )
     {
         smpte_rate = r;
         sample_number_dirty = true;
@@ -137,7 +125,7 @@ public:
         return smpte_rate;
     }
 
-    void SetSampleRate ( SAMPLE_RATE r )
+    void SetSampleRate( SAMPLE_RATE r )
     {
         sample_rate = r;
         sample_number_dirty = true;
@@ -147,7 +135,7 @@ public:
         return sample_rate;
     }
 
-    void SetSampleNumber ( ulong n )
+    void SetSampleNumber( ulong n )
     {
         sample_number = n;
         SampleToTime();
@@ -160,7 +148,7 @@ public:
         return sample_number;
     }
 
-    void SetTime ( uchar h, uchar m, uchar s, uchar f = 0, uchar sf = 0 )
+    void SetTime( uchar h, uchar m, uchar s, uchar f = 0, uchar sf = 0 )
     {
         hours = h;
         minutes = m;
@@ -182,7 +170,7 @@ public:
     {
         return seconds;
     }
-    uchar  GetFrames()
+    uchar GetFrames()
     {
         return frames;
     }
@@ -191,38 +179,38 @@ public:
         return sub_frames;
     }
 
-    void SetHours ( uchar h )
+    void SetHours( uchar h )
     {
         hours = h;
         sample_number_dirty = true;
     }
-    void SetMinutes ( uchar m )
+    void SetMinutes( uchar m )
     {
         minutes = m;
         sample_number_dirty = true;
     }
-    void SetSeconds ( uchar s )
+    void SetSeconds( uchar s )
     {
         seconds = s;
         sample_number_dirty = true;
     }
-    void SetFrames ( uchar f )
+    void SetFrames( uchar f )
     {
         frames = f;
         sample_number_dirty = true;
     }
-    void SetSubFrames ( uchar sf )
+    void SetSubFrames( uchar sf )
     {
         sub_frames = sf;
         sample_number_dirty = true;
     }
 
-    void AddHours ( char h );
-    void AddMinutes ( char m );
-    void AddSeconds ( char s );
-    void AddFrames ( char f );
-    void AddSubFrames ( char sf );
-    void AddSamples ( long n )
+    void AddHours( char h );
+    void AddMinutes( char m );
+    void AddSeconds( char s );
+    void AddFrames( char f );
+    void AddSubFrames( char sf );
+    void AddSamples( long n )
     {
         sample_number = GetSampleNumber() + n;
         SampleToTime();
@@ -230,149 +218,146 @@ public:
 
     void IncHours()
     {
-        AddHours ( 1 );
+        AddHours( 1 );
     }
     void IncMinutes()
     {
-        AddMinutes ( 1 );
+        AddMinutes( 1 );
     }
     void IncSeconds()
     {
-        AddSeconds ( 1 );
+        AddSeconds( 1 );
     }
     void IncFrames()
     {
-        AddFrames ( 1 );
+        AddFrames( 1 );
     }
     void IncSubFrames()
     {
-        AddSubFrames ( 1 );
+        AddSubFrames( 1 );
     }
     void IncSamples()
     {
-        AddSamples ( 1 );
+        AddSamples( 1 );
     }
 
     void DecHours()
     {
-        AddHours ( -1 );
+        AddHours( -1 );
     }
     void DecMinutes()
     {
-        AddMinutes ( -1 );
+        AddMinutes( -1 );
     }
     void DecSeconds()
     {
-        AddSeconds ( -1 );
+        AddSeconds( -1 );
     }
     void DecFrames()
     {
-        AddFrames ( -1 );
+        AddFrames( -1 );
     }
     void DecSubFrames()
     {
-        AddSubFrames ( -1 );
+        AddSubFrames( -1 );
     }
     void DecSamples()
     {
-        AddSamples ( -1 );
+        AddSamples( -1 );
     }
 
 
-
-    const SMPTE & operator = ( const SMPTE & s )
+    const SMPTE& operator=( const SMPTE& s )
     {
-        Copy ( s );
+        Copy( s );
         return *this;
     }
-    bool operator == ( SMPTE & s )
+    bool operator==( SMPTE& s )
     {
-        return Compare ( s ) == 0;
+        return Compare( s ) == 0;
     }
-    bool operator != ( SMPTE & s )
+    bool operator!=( SMPTE& s )
     {
-        return Compare ( s ) != 0;
+        return Compare( s ) != 0;
     }
-    bool operator < ( SMPTE & s )
+    bool operator<( SMPTE& s )
     {
-        return Compare ( s ) < 0;
+        return Compare( s ) < 0;
     }
-    bool operator > ( SMPTE & s )
+    bool operator>( SMPTE& s )
     {
-        return Compare ( s ) > 0;
+        return Compare( s ) > 0;
     }
-    bool operator <= ( SMPTE & s )
+    bool operator<=( SMPTE& s )
     {
-        return Compare ( s ) <= 0;
+        return Compare( s ) <= 0;
     }
-    bool operator >= ( SMPTE & s )
+    bool operator>=( SMPTE& s )
     {
-        return Compare ( s ) >= 0;
-    }
-
-    const SMPTE & operator += ( SMPTE & s )
-    {
-        Add ( s );
-        return *this;
-    }
-    const SMPTE & operator -= ( SMPTE & s )
-    {
-        Subtract ( s );
-        return *this;
+        return Compare( s ) >= 0;
     }
 
-protected:
+    const SMPTE& operator+=( SMPTE& s )
+    {
+        Add( s );
+        return *this;
+    }
+    const SMPTE& operator-=( SMPTE& s )
+    {
+        Subtract( s );
+        return *this;
+    }
+
+  protected:
     void SampleToTime();
     void TimeToSample();
 
-    void Copy ( const SMPTE & s );
-    int Compare ( SMPTE & s );
-    void Add ( SMPTE & s );
-    void Subtract ( SMPTE & s );
+    void Copy( const SMPTE& s );
+    int Compare( SMPTE& s );
+    void Add( SMPTE& s );
+    void Subtract( SMPTE& s );
 
     long GetSampleRateLong()
     {
-        return GetSampleRateFrequencyLong ( sample_rate );
+        return GetSampleRateFrequencyLong( sample_rate );
     }
 
     int GetSMPTERateLong()
     {
-        return GetSMPTERateFrequencyLong ( smpte_rate );
+        return GetSMPTERateFrequencyLong( smpte_rate );
     }
 
-private:
-    SMPTE_RATE  smpte_rate;
+  private:
+    SMPTE_RATE smpte_rate;
     SAMPLE_RATE sample_rate;
-    ulong  sample_number;
+    ulong sample_number;
 
-    uchar  hours;
-    uchar  minutes;
-    uchar  seconds;
-    uchar  frames;
-    uchar  sub_frames;
-    uchar  sample_number_dirty;
+    uchar hours;
+    uchar minutes;
+    uchar seconds;
+    uchar frames;
+    uchar sub_frames;
+    uchar sample_number_dirty;
 
 
-    friend SMPTE operator + ( SMPTE a, SMPTE b );
-    friend SMPTE operator - ( SMPTE a, SMPTE b );
+    friend SMPTE operator+( SMPTE a, SMPTE b );
+    friend SMPTE operator-( SMPTE a, SMPTE b );
 };
 
-inline SMPTE operator + ( SMPTE a, SMPTE b )
+inline SMPTE operator+( SMPTE a, SMPTE b )
 {
-    SMPTE c ( a );
+    SMPTE c( a );
     c += b;
     return c;
 }
 
-inline SMPTE operator - ( SMPTE a, SMPTE b )
+inline SMPTE operator-( SMPTE a, SMPTE b )
 {
-    SMPTE c ( a );
+    SMPTE c( a );
     c -= b;
     return c;
 }
 
-}
+}  // namespace jdksmidi
 
 #endif
-
-

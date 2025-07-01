@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 #ifndef JDKSMIDI_QUEUE_H
 #define JDKSMIDI_QUEUE_H
 
@@ -32,8 +32,8 @@ namespace jdksmidi
 
 class MIDIQueue
 {
-public:
-    MIDIQueue ( int num_msgs );
+  public:
+    MIDIQueue( int num_msgs );
     virtual ~MIDIQueue();
 
     void Clear();
@@ -48,7 +48,7 @@ public:
     }
 
 
-    void Put ( const MIDITimedBigMessage &msg )
+    void Put( const MIDITimedBigMessage& msg )
     {
         buf[next_in] = msg;
         next_in = ( next_in + 1 ) % bufsize;
@@ -56,7 +56,7 @@ public:
 
     MIDITimedBigMessage Get() const
     {
-        return MIDITimedBigMessage ( buf[next_out] );
+        return MIDITimedBigMessage( buf[next_out] );
     }
 
     void Next()
@@ -64,18 +64,18 @@ public:
         next_out = ( next_out + 1 ) % bufsize;
     }
 
-    const MIDITimedBigMessage *Peek() const
+    const MIDITimedBigMessage* Peek() const
     {
         return &buf[next_out];
     }
 
-protected:
-    MIDITimedBigMessage *buf;
+  protected:
+    MIDITimedBigMessage* buf;
     int bufsize;
     volatile int next_in;
     volatile int next_out;
 };
 
-}
+}  // namespace jdksmidi
 
 #endif

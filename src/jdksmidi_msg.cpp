@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 /*
 ** Copyright 1986 to 1998 By J.D. Koftinoff Software, Ltd.
 **
@@ -33,24 +33,22 @@
 
 #include "jdksmidi/world.h"
 
-#include "jdksmidi/sysex.h"
 #include "jdksmidi/msg.h"
+#include "jdksmidi/sysex.h"
 
 namespace jdksmidi
 {
 
 
-
-const char *  MIDIMessage::chan_msg_name[16] =
-{
+const char* MIDIMessage::chan_msg_name[16] = {
     "ERROR 00    ",  // 0x00
     "ERROR 10    ",  // 0x10
     "ERROR 20    ",  // 0x20
-    "ERROR 30    ",       // 0x30
-    "ERROR 40    ",       // 0x40
-    "ERROR 50    ",       // 0x50
-    "ERROR 60    ",       // 0x60
-    "ERROR 70    ",      // 0x70
+    "ERROR 30    ",  // 0x30
+    "ERROR 40    ",  // 0x40
+    "ERROR 50    ",  // 0x50
+    "ERROR 60    ",  // 0x60
+    "ERROR 70    ",  // 0x70
     "NOTE OFF    ",  // 0x80
     "NOTE ON     ",  // 0x90
     "POLY PRES.  ",  // 0xa0
@@ -61,8 +59,7 @@ const char *  MIDIMessage::chan_msg_name[16] =
     "SYSTEM      "   // 0xf0
 };
 
-const char *  MIDIMessage::sys_msg_name[16] =
-{
+const char* MIDIMessage::sys_msg_name[16] = {
     "SYSEX       ",  // 0xf0
     "MTC         ",  // 0xf1
     "SONG POS    ",  // 0xf2
@@ -75,14 +72,14 @@ const char *  MIDIMessage::sys_msg_name[16] =
     "MEASURE END ",  // 0xf9
     "START       ",  // 0xfa
     "CONTINUE    ",  // 0xfb
-    "STOP        ",         // 0xfc
-    "ERR - FD    ",         // 0xfd
+    "STOP        ",  // 0xfc
+    "ERR - FD    ",  // 0xfd
     "SENSE       ",  // 0xfe
-    "META-EVENT  "  // 0xff
+    "META-EVENT  "   // 0xff
 };
 
 
-const char * MIDIMessage::MsgToText ( char *txt ) const
+const char* MIDIMessage::MsgToText( char* txt ) const
 {
     char buf[64];
     int len = GetLength();
@@ -90,8 +87,9 @@ const char * MIDIMessage::MsgToText ( char *txt ) const
 
     if ( IsAllNotesOff() )
     {
-        sprintf ( buf, "Ch %2d  All Notes Off  (ctrl=%3d)", ( int ) GetChannel() + 1, ( int ) byte1 );
-        strcat ( txt, buf );
+        sprintf(
+            buf, "Ch %2d  All Notes Off  (ctrl=%3d)", ( int ) GetChannel() + 1, ( int ) byte1 );
+        strcat( txt, buf );
     }
 
     else
@@ -106,68 +104,68 @@ const char * MIDIMessage::MsgToText ( char *txt ) const
 
         if ( type != 0xf )
         {
-            sprintf ( buf, "Ch %2d  ", ( int ) GetChannel() + 1 );
-            strcat ( txt, buf );
+            sprintf( buf, "Ch %2d  ", ( int ) GetChannel() + 1 );
+            strcat( txt, buf );
         }
 
-        strcat ( txt, chan_msg_name[type] );
+        strcat( txt, chan_msg_name[type] );
 
         if ( status >= 0xf0 )
         {
-            strcat ( txt, sys_msg_name[status-0xf0] );
+            strcat( txt, sys_msg_name[status - 0xf0] );
 
             if ( len > 1 )
             {
-                sprintf ( buf, "%02x", ( int ) byte1 );
-                strcat ( txt, buf );
+                sprintf( buf, "%02x", ( int ) byte1 );
+                strcat( txt, buf );
             }
 
             if ( len > 2 )
             {
-                sprintf ( buf, ",%02x", ( int ) byte2 );
-                strcat ( txt, buf );
+                sprintf( buf, ",%02x", ( int ) byte2 );
+                strcat( txt, buf );
             }
 
             if ( len > 3 )
             {
-                sprintf ( buf, ",%02x", ( int ) byte3 );
-                strcat ( txt, buf );
+                sprintf( buf, ",%02x", ( int ) byte3 );
+                strcat( txt, buf );
             }
         }
 
         else
         {
-            char *endtxt = txt + strlen ( txt );
+            char* endtxt = txt + strlen( txt );
 
             switch ( status & 0xf0 )
             {
-            case NOTE_ON:
+                case NOTE_ON:
 
-                if ( byte2 == 0 )
-                    sprintf ( endtxt, "Note %3d", ( int ) byte1 );
+                    if ( byte2 == 0 )
+                        sprintf( endtxt, "Note %3d", ( int ) byte1 );
 
-                else
-                    sprintf ( endtxt, "Note %3d  Vel  %3d  ", ( int ) byte1, ( int ) byte2 );
+                    else
+                        sprintf( endtxt, "Note %3d  Vel  %3d  ", ( int ) byte1, ( int ) byte2 );
 
-                break;
-            case NOTE_OFF:
-                sprintf ( endtxt, "Note %3d  Vel  %3d  ", ( int ) byte1, ( int ) byte2 );
-                break;
-            case POLY_PRESSURE:
-                sprintf ( endtxt, "Note %3d  Pres %3d  ", ( int ) byte1, ( int ) byte2 );
-                break;
-            case CONTROL_CHANGE:
-                sprintf ( endtxt, "Ctrl %3d  Val  %3d  ", ( int ) byte1, ( int ) byte2 );
-                break;
-            case PROGRAM_CHANGE:
-                sprintf ( endtxt, "PG   %3d  ", ( int ) byte1 );
-                break;
-            case CHANNEL_PRESSURE:
-                sprintf ( endtxt, "Pres %3d  ", ( int ) byte1 );
-                break;
-            case PITCH_BEND:
-                sprintf ( endtxt, "Val %5d", ( int ) GetBenderValue() );
-                break;
+                    break;
+                case NOTE_OFF:
+                    sprintf( endtxt, "Note %3d  Vel  %3d  ", ( int ) byte1, ( int ) byte2 );
+                    break;
+                case POLY_PRESSURE:
+                    sprintf( endtxt, "Note %3d  Pres %3d  ", ( int ) byte1, ( int ) byte2 );
+                    break;
+                case CONTROL_CHANGE:
+                    sprintf( endtxt, "Ctrl %3d  Val  %3d  ", ( int ) byte1, ( int ) byte2 );
+                    break;
+                case PROGRAM_CHANGE:
+                    sprintf( endtxt, "PG   %3d  ", ( int ) byte1 );
+                    break;
+                case CHANNEL_PRESSURE:
+                    sprintf( endtxt, "Pres %3d  ", ( int ) byte1 );
+                    break;
+                case PITCH_BEND:
+                    sprintf( endtxt, "Val %5d", ( int ) GetBenderValue() );
+                    break;
             }
         }
     }
@@ -176,8 +174,8 @@ const char * MIDIMessage::MsgToText ( char *txt ) const
     // pad the rest with spaces
     //
     {
-        int len = strlen ( txt );
-        char *p = txt + len;
+        int len = strlen( txt );
+        char* p = txt + len;
 
         while ( len < 45 )
         {
@@ -200,7 +198,7 @@ MIDIMessage::MIDIMessage()
 }
 
 
-MIDIMessage::MIDIMessage ( const MIDIMessage &m )
+MIDIMessage::MIDIMessage( const MIDIMessage& m )
 {
     status = m.status;
     byte1 = m.byte1;
@@ -218,7 +216,7 @@ void MIDIMessage::Clear()
 }
 
 
-void MIDIMessage::Copy ( const MIDIMessage & m )
+void MIDIMessage::Copy( const MIDIMessage& m )
 {
     status = m.status;
     byte1 = m.byte1;
@@ -227,12 +225,11 @@ void MIDIMessage::Copy ( const MIDIMessage & m )
 }
 
 
-
 //
 // The equal operator
 //
 
-const MIDIMessage & MIDIMessage::operator = ( const MIDIMessage &m )
+const MIDIMessage& MIDIMessage::operator=( const MIDIMessage& m )
 {
     status = m.status;
     byte1 = m.byte1;
@@ -246,15 +243,14 @@ char MIDIMessage::GetLength() const
 {
     if ( ( status & 0xf0 ) == 0xf0 )
     {
-        return GetSystemMessageLength ( status );
+        return GetSystemMessageLength( status );
     }
 
     else
     {
-        return GetMessageLength ( status );
+        return GetMessageLength( status );
     }
 }
-
 
 
 short MIDIMessage::GetBenderValue() const
@@ -305,8 +301,7 @@ bool MIDIMessage::IsNoteOn() const
 
 bool MIDIMessage::IsNoteOff() const
 {
-    return ( ( status & 0xf0 ) == NOTE_OFF ) ||
-           ( ( ( status & 0xf0 ) == NOTE_ON ) && byte2 == 0 );
+    return ( ( status & 0xf0 ) == NOTE_OFF ) || ( ( ( status & 0xf0 ) == NOTE_ON ) && byte2 == 0 );
 }
 
 
@@ -376,7 +371,7 @@ bool MIDIMessage::IsSongSelect() const
 }
 
 
-bool  MIDIMessage::IsTuneRequest() const
+bool MIDIMessage::IsTuneRequest() const
 {
     return ( status == TUNE_REQUEST );
 }
@@ -388,58 +383,49 @@ bool MIDIMessage::IsMetaEvent() const
 }
 
 
-bool  MIDIMessage::IsTextEvent() const
+bool MIDIMessage::IsTextEvent() const
 {
-    return ( status == META_EVENT ) &&
-           ( byte1 >= 0x1 && byte1 <= 0xf );
+    return ( status == META_EVENT ) && ( byte1 >= 0x1 && byte1 <= 0xf );
 }
 
 
 bool MIDIMessage::IsAllNotesOff() const
 {
-    return ( ( status & 0xf0 ) == CONTROL_CHANGE )
-           && ( byte1 >= C_ALL_NOTES_OFF );
+    return ( ( status & 0xf0 ) == CONTROL_CHANGE ) && ( byte1 >= C_ALL_NOTES_OFF );
 }
 
 
 bool MIDIMessage::IsNoOp() const
 {
-    return ( status == META_EVENT )
-           && ( byte1 == META_NO_OPERATION );
+    return ( status == META_EVENT ) && ( byte1 == META_NO_OPERATION );
 }
 
 
 bool MIDIMessage::IsTempo() const
 {
-    return ( status == META_EVENT )
-           && ( byte1 == META_TEMPO );
+    return ( status == META_EVENT ) && ( byte1 == META_TEMPO );
 }
 
 
 bool MIDIMessage::IsDataEnd() const
 {
-    return ( status == META_EVENT )
-           && ( byte1 == META_DATA_END );
+    return ( status == META_EVENT ) && ( byte1 == META_DATA_END );
 }
 
 bool MIDIMessage::IsTimeSig() const
 {
-    return ( status == META_EVENT )
-           && ( byte1 == META_TIMESIG );
+    return ( status == META_EVENT ) && ( byte1 == META_TIMESIG );
 }
 
 bool MIDIMessage::IsKeySig() const
 {
-    return ( status == META_EVENT )
-           && ( byte1 == META_KEYSIG );
+    return ( status == META_EVENT ) && ( byte1 == META_KEYSIG );
 }
 
-bool  MIDIMessage::IsBeatMarker() const
+bool MIDIMessage::IsBeatMarker() const
 {
-    return ( status == META_EVENT )
-           && ( byte1 == META_BEAT_MARKER );
+    return ( status == META_EVENT ) && ( byte1 == META_BEAT_MARKER );
 }
-
 
 
 unsigned short MIDIMessage::GetTempo32() const
@@ -454,7 +440,7 @@ unsigned short MIDIMessage::GetLoopNumber() const
 }
 
 
-void MIDIMessage::SetBenderValue ( short v )
+void MIDIMessage::SetBenderValue( short v )
 {
     short x = ( short ) ( v + 8192 );
     byte1 = ( unsigned char ) ( x & 0x7f );
@@ -462,21 +448,20 @@ void MIDIMessage::SetBenderValue ( short v )
 }
 
 
-void MIDIMessage::SetMetaType ( unsigned char t )
+void MIDIMessage::SetMetaType( unsigned char t )
 {
     byte1 = t;
 }
 
 
-
-void MIDIMessage::SetMetaValue ( unsigned short v )
+void MIDIMessage::SetMetaValue( unsigned short v )
 {
     byte2 = ( unsigned char ) ( v & 0xff );
     byte3 = ( unsigned char ) ( ( v >> 8 ) & 0xff );
 }
 
 
-void MIDIMessage::SetNoteOn ( unsigned char chan, unsigned char note, unsigned char vel )
+void MIDIMessage::SetNoteOn( unsigned char chan, unsigned char note, unsigned char vel )
 {
     status = ( unsigned char ) ( chan | NOTE_ON );
     byte1 = note;
@@ -485,7 +470,7 @@ void MIDIMessage::SetNoteOn ( unsigned char chan, unsigned char note, unsigned c
 }
 
 
-void MIDIMessage::SetNoteOff ( unsigned char chan, unsigned char note, unsigned char vel )
+void MIDIMessage::SetNoteOff( unsigned char chan, unsigned char note, unsigned char vel )
 {
     status = ( unsigned char ) ( chan | NOTE_OFF );
     byte1 = note;
@@ -494,7 +479,7 @@ void MIDIMessage::SetNoteOff ( unsigned char chan, unsigned char note, unsigned 
 }
 
 
-void MIDIMessage::SetPolyPressure ( unsigned char chan, unsigned char note, unsigned char pres )
+void MIDIMessage::SetPolyPressure( unsigned char chan, unsigned char note, unsigned char pres )
 {
     status = ( unsigned char ) ( chan | POLY_PRESSURE );
     byte1 = note;
@@ -503,7 +488,7 @@ void MIDIMessage::SetPolyPressure ( unsigned char chan, unsigned char note, unsi
 }
 
 
-void MIDIMessage::SetControlChange ( unsigned char chan, unsigned char ctrl, unsigned char val )
+void MIDIMessage::SetControlChange( unsigned char chan, unsigned char ctrl, unsigned char val )
 {
     status = ( unsigned char ) ( chan | CONTROL_CHANGE );
     byte1 = ctrl;
@@ -512,7 +497,7 @@ void MIDIMessage::SetControlChange ( unsigned char chan, unsigned char ctrl, uns
 }
 
 
-void MIDIMessage::SetProgramChange ( unsigned char chan, unsigned char val )
+void MIDIMessage::SetProgramChange( unsigned char chan, unsigned char val )
 {
     status = ( unsigned char ) ( chan | PROGRAM_CHANGE );
     byte1 = val;
@@ -521,7 +506,7 @@ void MIDIMessage::SetProgramChange ( unsigned char chan, unsigned char val )
 }
 
 
-void MIDIMessage::SetChannelPressure ( unsigned char chan, unsigned char val )
+void MIDIMessage::SetChannelPressure( unsigned char chan, unsigned char val )
 {
     status = ( unsigned char ) ( chan | CHANNEL_PRESSURE );
     byte1 = val;
@@ -530,17 +515,17 @@ void MIDIMessage::SetChannelPressure ( unsigned char chan, unsigned char val )
 }
 
 
-void MIDIMessage::SetPitchBend ( unsigned char chan, short val )
+void MIDIMessage::SetPitchBend( unsigned char chan, short val )
 {
     status = ( unsigned char ) ( chan | PITCH_BEND );
-    val += ( short ) 0x2000; // center value
-    byte1 = ( unsigned char ) ( val & 0x7f ); // 7 bit bytes
+    val += ( short ) 0x2000;                   // center value
+    byte1 = ( unsigned char ) ( val & 0x7f );  // 7 bit bytes
     byte2 = ( unsigned char ) ( ( val >> 7 ) & 0x7f );
     byte3 = 0;
 }
 
 
-void MIDIMessage::SetPitchBend ( unsigned char chan, unsigned char low, unsigned char high )
+void MIDIMessage::SetPitchBend( unsigned char chan, unsigned char low, unsigned char high )
 {
     status = ( unsigned char ) ( chan | PITCH_BEND );
     byte1 = ( unsigned char ) ( low );
@@ -559,7 +544,7 @@ void MIDIMessage::SetSysEx()
 }
 
 
-void MIDIMessage::SetMTC ( unsigned char field, unsigned char v )
+void MIDIMessage::SetMTC( unsigned char field, unsigned char v )
 {
     status = MTC;
     byte1 = ( unsigned char ) ( ( field << 4 ) | v );
@@ -568,7 +553,7 @@ void MIDIMessage::SetMTC ( unsigned char field, unsigned char v )
 }
 
 
-void MIDIMessage::SetSongPosition ( short pos )
+void MIDIMessage::SetSongPosition( short pos )
 {
     status = SONG_POSITION;
     byte1 = ( unsigned char ) ( pos & 0x7f );
@@ -577,7 +562,7 @@ void MIDIMessage::SetSongPosition ( short pos )
 }
 
 
-void MIDIMessage::SetSongSelect ( unsigned char sng )
+void MIDIMessage::SetSongSelect( unsigned char sng )
 {
     status = SONG_SELECT;
     byte1 = sng;
@@ -595,7 +580,7 @@ void MIDIMessage::SetTuneRequest()
 }
 
 
-void MIDIMessage::SetMetaEvent ( unsigned char type, unsigned char v1, unsigned char v2 )
+void MIDIMessage::SetMetaEvent( unsigned char type, unsigned char v1, unsigned char v2 )
 {
     status = META_EVENT;
     byte1 = type;
@@ -604,7 +589,7 @@ void MIDIMessage::SetMetaEvent ( unsigned char type, unsigned char v1, unsigned 
 }
 
 
-void MIDIMessage::SetMetaEvent ( unsigned char type, unsigned short v )
+void MIDIMessage::SetMetaEvent( unsigned char type, unsigned short v )
 {
     status = META_EVENT;
     byte1 = type;
@@ -613,10 +598,7 @@ void MIDIMessage::SetMetaEvent ( unsigned char type, unsigned short v )
 }
 
 
-void MIDIMessage::SetAllNotesOff (
-    unsigned char chan,
-    unsigned char type
-)
+void MIDIMessage::SetAllNotesOff( unsigned char chan, unsigned char type )
 {
     status = ( unsigned char ) ( chan | CONTROL_CHANGE );
     byte1 = type;
@@ -625,7 +607,7 @@ void MIDIMessage::SetAllNotesOff (
 }
 
 
-void MIDIMessage::SetLocal ( unsigned char chan, unsigned char v )
+void MIDIMessage::SetLocal( unsigned char chan, unsigned char v )
 {
     status = ( unsigned char ) ( chan | CONTROL_CHANGE );
     byte1 = C_LOCAL;
@@ -643,64 +625,51 @@ void MIDIMessage::SetNoOp()
 }
 
 
-void MIDIMessage::SetTempo32 ( unsigned short tempo_times_32 )
+void MIDIMessage::SetTempo32( unsigned short tempo_times_32 )
 {
-    SetMetaEvent ( META_TEMPO, tempo_times_32 );
+    SetMetaEvent( META_TEMPO, tempo_times_32 );
 }
 
 
-void MIDIMessage::SetText ( unsigned short text_num, unsigned char type )
+void MIDIMessage::SetText( unsigned short text_num, unsigned char type )
 {
-    SetMetaEvent ( type, text_num );
+    SetMetaEvent( type, text_num );
 }
 
 
 void MIDIMessage::SetDataEnd()
 {
-    SetMetaEvent ( META_DATA_END, 0 );
+    SetMetaEvent( META_DATA_END, 0 );
 }
 
-void  MIDIMessage::SetTimeSig ( unsigned char num, unsigned char den )
+void MIDIMessage::SetTimeSig( unsigned char num, unsigned char den )
 {
-    SetMetaEvent ( META_TIMESIG, num, den );
+    SetMetaEvent( META_TIMESIG, num, den );
 }
 
-void  MIDIMessage::SetKeySig ( signed char sharp_flats, unsigned char major_minor )
+void MIDIMessage::SetKeySig( signed char sharp_flats, unsigned char major_minor )
 {
-    SetMetaEvent ( META_KEYSIG, sharp_flats, major_minor );
+    SetMetaEvent( META_KEYSIG, sharp_flats, major_minor );
 }
 
 
-void  MIDIMessage::SetBeatMarker()
+void MIDIMessage::SetBeatMarker()
 {
-    SetMetaEvent ( META_BEAT_MARKER, 0, 0 );
+    SetMetaEvent( META_BEAT_MARKER, 0, 0 );
 }
 
 
+MIDIBigMessage::MIDIBigMessage() : sysex( 0 ) {}
 
-MIDIBigMessage::MIDIBigMessage()
-        :
-        sysex ( 0 )
-{
-}
-
-MIDIBigMessage::MIDIBigMessage ( const MIDIBigMessage &m )
-        :
-        MIDIMessage ( m ),
-        sysex ( 0 )
+MIDIBigMessage::MIDIBigMessage( const MIDIBigMessage& m ) : MIDIMessage( m ), sysex( 0 )
 {
     if ( m.sysex )
     {
-        sysex = new MIDISystemExclusive ( *m.sysex );
+        sysex = new MIDISystemExclusive( *m.sysex );
     }
 }
 
-MIDIBigMessage::MIDIBigMessage ( const MIDIMessage &m )
-        :
-        MIDIMessage ( m ),
-        sysex ( 0 )
-{
-}
+MIDIBigMessage::MIDIBigMessage( const MIDIMessage& m ) : MIDIMessage( m ), sysex( 0 ) {}
 
 void MIDIBigMessage::Clear()
 {
@@ -713,13 +682,13 @@ void MIDIBigMessage::Clear()
     MIDIMessage::Clear();
 }
 
-void MIDIBigMessage::Copy ( const MIDIBigMessage &m )
+void MIDIBigMessage::Copy( const MIDIBigMessage& m )
 {
     delete sysex;
 
     if ( m.sysex )
     {
-        sysex = new MIDISystemExclusive ( *m.sysex );
+        sysex = new MIDISystemExclusive( *m.sysex );
     }
 
     else
@@ -727,14 +696,14 @@ void MIDIBigMessage::Copy ( const MIDIBigMessage &m )
         sysex = 0;
     }
 
-    MIDIMessage::Copy ( m );
+    MIDIMessage::Copy( m );
 }
 
-void MIDIBigMessage::Copy ( const MIDIMessage &m )
+void MIDIBigMessage::Copy( const MIDIMessage& m )
 {
     delete sysex;
     sysex = 0;
-    MIDIMessage::Copy ( m );
+    MIDIMessage::Copy( m );
 }
 
 //
@@ -754,13 +723,13 @@ MIDIBigMessage::~MIDIBigMessage()
 // operator =
 //
 
-const MIDIBigMessage &MIDIBigMessage::operator = ( const MIDIBigMessage &m )
+const MIDIBigMessage& MIDIBigMessage::operator=( const MIDIBigMessage& m )
 {
     delete sysex;
 
     if ( m.sysex )
     {
-        sysex = new MIDISystemExclusive ( *m.sysex );
+        sysex = new MIDISystemExclusive( *m.sysex );
     }
 
     else
@@ -768,15 +737,15 @@ const MIDIBigMessage &MIDIBigMessage::operator = ( const MIDIBigMessage &m )
         sysex = 0;
     }
 
-    MIDIMessage::operator = ( m );
+    MIDIMessage::operator=( m );
     return *this;
 }
 
-const MIDIBigMessage &MIDIBigMessage::operator = ( const MIDIMessage &m )
+const MIDIBigMessage& MIDIBigMessage::operator=( const MIDIMessage& m )
 {
     delete sysex;
     sysex = 0;
-    MIDIMessage::operator = ( m );
+    MIDIMessage::operator=( m );
     return *this;
 }
 
@@ -784,12 +753,12 @@ const MIDIBigMessage &MIDIBigMessage::operator = ( const MIDIMessage &m )
 // 'Get' methods
 //
 
-MIDISystemExclusive *MIDIBigMessage::GetSysEx()
+MIDISystemExclusive* MIDIBigMessage::GetSysEx()
 {
     return sysex;
 }
 
-const MIDISystemExclusive *MIDIBigMessage::GetSysEx() const
+const MIDISystemExclusive* MIDIBigMessage::GetSysEx() const
 {
     return sysex;
 }
@@ -798,14 +767,14 @@ const MIDISystemExclusive *MIDIBigMessage::GetSysEx() const
 // 'Set' methods
 //
 
-void MIDIBigMessage::CopySysEx ( const MIDISystemExclusive *e )
+void MIDIBigMessage::CopySysEx( const MIDISystemExclusive* e )
 {
     delete sysex;
     sysex = 0;
 
     if ( e )
     {
-        sysex = new MIDISystemExclusive ( *e );
+        sysex = new MIDISystemExclusive( *e );
     }
 }
 
@@ -825,28 +794,18 @@ void MIDIBigMessage::ClearSysEx()
 }
 
 
-
-
-
-
 //
 // Constructors
 //
 
-MIDITimedMessage::MIDITimedMessage()
-        : time ( 0 )
+MIDITimedMessage::MIDITimedMessage() : time( 0 ) {}
+
+MIDITimedMessage::MIDITimedMessage( const MIDITimedMessage& m )
+    : MIDIMessage( m ), time( m.GetTime() )
 {
 }
 
-MIDITimedMessage::MIDITimedMessage ( const MIDITimedMessage &m )
-        : MIDIMessage ( m ), time ( m.GetTime() )
-{
-}
-
-MIDITimedMessage::MIDITimedMessage ( const MIDIMessage &m )
-        : MIDIMessage ( m ), time ( 0 )
-{
-}
+MIDITimedMessage::MIDITimedMessage( const MIDIMessage& m ) : MIDIMessage( m ), time( 0 ) {}
 
 void MIDITimedMessage::Clear()
 {
@@ -854,27 +813,27 @@ void MIDITimedMessage::Clear()
     MIDIMessage::Clear();
 }
 
-void MIDITimedMessage::Copy ( const MIDITimedMessage &m )
+void MIDITimedMessage::Copy( const MIDITimedMessage& m )
 {
     time = m.GetTime();
-    MIDIMessage::Copy ( m );
+    MIDIMessage::Copy( m );
 }
 
 //
 // operator =
 //
 
-const MIDITimedMessage &MIDITimedMessage::operator = ( const MIDITimedMessage & m )
+const MIDITimedMessage& MIDITimedMessage::operator=( const MIDITimedMessage& m )
 {
     time = m.GetTime();
-    MIDIMessage::operator = ( m );
+    MIDIMessage::operator=( m );
     return *this;
 }
 
-const MIDITimedMessage &MIDITimedMessage::operator = ( const MIDIMessage & m )
+const MIDITimedMessage& MIDITimedMessage::operator=( const MIDIMessage& m )
 {
     time = 0;
-    MIDIMessage::operator = ( m );
+    MIDIMessage::operator=( m );
     return *this;
 }
 
@@ -891,70 +850,55 @@ MIDIClockTime MIDITimedMessage::GetTime() const
 // 'Set' methods
 //
 
-void MIDITimedMessage::SetTime ( MIDIClockTime t )
+void MIDITimedMessage::SetTime( MIDIClockTime t )
 {
     time = t;
 }
 
 
-
-int  MIDITimedMessage::CompareEvents (
-    const MIDITimedMessage &m1,
-    const MIDITimedMessage &m2
-)
+int MIDITimedMessage::CompareEvents( const MIDITimedMessage& m1, const MIDITimedMessage& m2 )
 {
     bool n1 = m1.IsNoOp();
     bool n2 = m2.IsNoOp();
     // NOP's always are larger.
 
     if ( n1 && n2 )
-        return 0; // same, do not care.
+        return 0;  // same, do not care.
 
     if ( n2 )
-        return 2; // m2 is larger
+        return 2;  // m2 is larger
 
     if ( n1 )
-        return 1; // m1 is larger
+        return 1;  // m1 is larger
 
     if ( m1.GetTime() > m2.GetTime() )
-        return 1; // m1 is larger
+        return 1;  // m1 is larger
 
     if ( m2.GetTime() > m1.GetTime() )
-        return 2; // m2 is larger
+        return 2;  // m2 is larger
 
     // if times are the same, a note off is always larger
 
-    if ( m1.byte1 == m2.byte1
-            && m1.GetStatus() == NOTE_ON
-            && ( ( m2.GetStatus() == NOTE_ON && m2.byte2 == 0 ) || ( m2.GetStatus() == NOTE_OFF ) )
-       )
-        return 2; // m2 is larger
+    if ( m1.byte1 == m2.byte1 && m1.GetStatus() == NOTE_ON &&
+         ( ( m2.GetStatus() == NOTE_ON && m2.byte2 == 0 ) || ( m2.GetStatus() == NOTE_OFF ) ) )
+        return 2;  // m2 is larger
 
-    if ( m1.byte1 == m2.byte1
-            && m2.GetStatus() == NOTE_ON
-            && ( ( m1.GetStatus() == NOTE_ON && m1.byte2 == 0 ) || ( m1.GetStatus() == NOTE_OFF ) )
-       )
-        return 1; // m1 is larger
+    if ( m1.byte1 == m2.byte1 && m2.GetStatus() == NOTE_ON &&
+         ( ( m1.GetStatus() == NOTE_ON && m1.byte2 == 0 ) || ( m1.GetStatus() == NOTE_OFF ) ) )
+        return 1;  // m1 is larger
 
     return 0;  // both are equal.
 }
 
 
+MIDIDeltaTimedMessage::MIDIDeltaTimedMessage() : dtime( 0 ) {}
 
-
-
-MIDIDeltaTimedMessage::MIDIDeltaTimedMessage()
-        : dtime ( 0 )
+MIDIDeltaTimedMessage::MIDIDeltaTimedMessage( const MIDIDeltaTimedMessage& m )
+    : MIDIMessage( m ), dtime( m.GetDeltaTime() )
 {
 }
 
-MIDIDeltaTimedMessage::MIDIDeltaTimedMessage ( const MIDIDeltaTimedMessage &m )
-        : MIDIMessage ( m ), dtime ( m.GetDeltaTime() )
-{
-}
-
-MIDIDeltaTimedMessage::MIDIDeltaTimedMessage ( const MIDIMessage &m )
-        : MIDIMessage ( m ), dtime ( 0 )
+MIDIDeltaTimedMessage::MIDIDeltaTimedMessage( const MIDIMessage& m ) : MIDIMessage( m ), dtime( 0 )
 {
 }
 
@@ -964,27 +908,27 @@ void MIDIDeltaTimedMessage::Clear()
     MIDIMessage::Clear();
 }
 
-void MIDIDeltaTimedMessage::Copy ( const MIDIDeltaTimedMessage &m )
+void MIDIDeltaTimedMessage::Copy( const MIDIDeltaTimedMessage& m )
 {
     dtime = m.GetDeltaTime();
-    MIDIMessage::Copy ( m );
+    MIDIMessage::Copy( m );
 }
 
 //
 // operator =
 //
 
-const MIDIDeltaTimedMessage &MIDIDeltaTimedMessage::operator = ( const MIDIDeltaTimedMessage &m )
+const MIDIDeltaTimedMessage& MIDIDeltaTimedMessage::operator=( const MIDIDeltaTimedMessage& m )
 {
     dtime = m.GetDeltaTime();
-    MIDIMessage::operator = ( m );
+    MIDIMessage::operator=( m );
     return *this;
 }
 
-const MIDIDeltaTimedMessage &MIDIDeltaTimedMessage::operator = ( const MIDIMessage &m )
+const MIDIDeltaTimedMessage& MIDIDeltaTimedMessage::operator=( const MIDIMessage& m )
 {
     dtime = 0;
-    MIDIMessage::operator = ( m );
+    MIDIMessage::operator=( m );
     return *this;
 }
 
@@ -1001,48 +945,33 @@ MIDIClockTime MIDIDeltaTimedMessage::GetDeltaTime() const
 // 'Set' methods
 //
 
-void MIDIDeltaTimedMessage::SetDeltaTime ( MIDIClockTime t )
+void MIDIDeltaTimedMessage::SetDeltaTime( MIDIClockTime t )
 {
     dtime = t;
 }
-
-
-
-
 
 
 //
 // Constructors
 //
 
-MIDITimedBigMessage::MIDITimedBigMessage()
-        : time ( 0 )
+MIDITimedBigMessage::MIDITimedBigMessage() : time( 0 ) {}
+
+MIDITimedBigMessage::MIDITimedBigMessage( const MIDITimedBigMessage& m )
+    : MIDIBigMessage( m ), time( m.GetTime() )
 {
 }
 
-MIDITimedBigMessage::MIDITimedBigMessage ( const MIDITimedBigMessage &m )
-        : MIDIBigMessage ( m ),
-        time ( m.GetTime() )
+MIDITimedBigMessage::MIDITimedBigMessage( const MIDIBigMessage& m ) : MIDIBigMessage( m ), time( 0 )
 {
 }
 
-MIDITimedBigMessage::MIDITimedBigMessage ( const MIDIBigMessage &m )
-        : MIDIBigMessage ( m ),
-        time ( 0 )
+MIDITimedBigMessage::MIDITimedBigMessage( const MIDITimedMessage& m )
+    : MIDIBigMessage( m ), time( m.GetTime() )
 {
 }
 
-MIDITimedBigMessage::MIDITimedBigMessage ( const MIDITimedMessage &m )
-        : MIDIBigMessage ( m ),
-        time ( m.GetTime() )
-{
-}
-
-MIDITimedBigMessage::MIDITimedBigMessage ( const MIDIMessage &m )
-        : MIDIBigMessage ( m ),
-        time ( 0 )
-{
-}
+MIDITimedBigMessage::MIDITimedBigMessage( const MIDIMessage& m ) : MIDIBigMessage( m ), time( 0 ) {}
 
 void MIDITimedBigMessage::Clear()
 {
@@ -1050,40 +979,40 @@ void MIDITimedBigMessage::Clear()
     MIDIBigMessage::Clear();
 }
 
-void MIDITimedBigMessage::Copy ( const MIDITimedBigMessage &m )
+void MIDITimedBigMessage::Copy( const MIDITimedBigMessage& m )
 {
     time = m.GetTime();
-    MIDIBigMessage::Copy ( m );
+    MIDIBigMessage::Copy( m );
 }
 
-void MIDITimedBigMessage::Copy ( const MIDITimedMessage &m )
+void MIDITimedBigMessage::Copy( const MIDITimedMessage& m )
 {
     time = m.GetTime();
-    MIDIBigMessage::Copy ( m );
+    MIDIBigMessage::Copy( m );
 }
 
 //
 // operator =
 //
 
-const MIDITimedBigMessage &MIDITimedBigMessage::operator = ( const MIDITimedBigMessage & m )
+const MIDITimedBigMessage& MIDITimedBigMessage::operator=( const MIDITimedBigMessage& m )
 {
     time = m.GetTime();
-    MIDIBigMessage::operator = ( m );
+    MIDIBigMessage::operator=( m );
     return *this;
 }
 
-const MIDITimedBigMessage &MIDITimedBigMessage::operator = ( const MIDITimedMessage & m )
+const MIDITimedBigMessage& MIDITimedBigMessage::operator=( const MIDITimedMessage& m )
 {
     time = m.GetTime();
-    MIDIBigMessage::operator = ( m );
+    MIDIBigMessage::operator=( m );
     return *this;
 }
 
-const MIDITimedBigMessage &MIDITimedBigMessage::operator = ( const MIDIMessage & m )
+const MIDITimedBigMessage& MIDITimedBigMessage::operator=( const MIDIMessage& m )
 {
     time = 0;
-    MIDIBigMessage::operator = ( m );
+    MIDIBigMessage::operator=( m );
     return *this;
 }
 
@@ -1100,82 +1029,71 @@ MIDIClockTime MIDITimedBigMessage::GetTime() const
 // 'Set' methods
 //
 
-void MIDITimedBigMessage::SetTime ( MIDIClockTime t )
+void MIDITimedBigMessage::SetTime( MIDIClockTime t )
 {
     time = t;
 }
 
 
-
-int  MIDITimedBigMessage::CompareEvents (
-    const MIDITimedBigMessage &m1,
-    const MIDITimedBigMessage &m2
-)
+int MIDITimedBigMessage::CompareEvents( const MIDITimedBigMessage& m1,
+                                        const MIDITimedBigMessage& m2 )
 {
     bool n1 = m1.IsNoOp();
     bool n2 = m2.IsNoOp();
     // NOP's always are larger.
 
     if ( n1 && n2 )
-        return 0; // same, do not care.
+        return 0;  // same, do not care.
 
     if ( n2 )
-        return 2; // m2 is larger
+        return 2;  // m2 is larger
 
     if ( n1 )
-        return 1; // m1 is larger
+        return 1;  // m1 is larger
 
     if ( m1.GetTime() > m2.GetTime() )
-        return 1; // m1 is larger
+        return 1;  // m1 is larger
 
     if ( m2.GetTime() > m1.GetTime() )
-        return 2; // m2 is larger
+        return 2;  // m2 is larger
 
     // if times are the same, a note off is always larger
 
-    if ( m1.byte1 == m2.byte1
-            && m1.GetStatus() == NOTE_ON
-            && ( ( m2.GetStatus() == NOTE_ON && m2.byte2 == 0 ) || ( m2.GetStatus() == NOTE_OFF ) )
-       )
-        return 2; // m2 is larger
+    if ( m1.byte1 == m2.byte1 && m1.GetStatus() == NOTE_ON &&
+         ( ( m2.GetStatus() == NOTE_ON && m2.byte2 == 0 ) || ( m2.GetStatus() == NOTE_OFF ) ) )
+        return 2;  // m2 is larger
 
-    if ( m1.byte1 == m2.byte1
-            && m2.GetStatus() == NOTE_ON
-            && ( ( m1.GetStatus() == NOTE_ON && m1.byte2 == 0 ) || ( m1.GetStatus() == NOTE_OFF ) )
-       )
-        return 1; // m1 is larger
+    if ( m1.byte1 == m2.byte1 && m2.GetStatus() == NOTE_ON &&
+         ( ( m1.GetStatus() == NOTE_ON && m1.byte2 == 0 ) || ( m1.GetStatus() == NOTE_OFF ) ) )
+        return 1;  // m1 is larger
 
     return 0;  // both are equal.
 }
-
 
 
 //
 // Constructors
 //
 
-MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage()
-        : dtime ( 0 )
+MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage() : dtime( 0 ) {}
+
+MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage( const MIDIDeltaTimedBigMessage& m )
+    : MIDIBigMessage( m ), dtime( m.GetDeltaTime() )
 {
 }
 
-MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage ( const MIDIDeltaTimedBigMessage &m )
-        : MIDIBigMessage ( m ), dtime ( m.GetDeltaTime() )
+MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage( const MIDIBigMessage& m )
+    : MIDIBigMessage( m ), dtime( 0 )
 {
 }
 
-MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage ( const MIDIBigMessage &m )
-        : MIDIBigMessage ( m ), dtime ( 0 )
+MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage( const MIDIMessage& m )
+    : MIDIBigMessage( m ), dtime( 0 )
 {
 }
 
-MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage ( const MIDIMessage &m )
-        : MIDIBigMessage ( m ), dtime ( 0 )
-{
-}
-
-MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage ( const MIDIDeltaTimedMessage &m )
-        : MIDIBigMessage ( m ), dtime ( m.GetDeltaTime() )
+MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage( const MIDIDeltaTimedMessage& m )
+    : MIDIBigMessage( m ), dtime( m.GetDeltaTime() )
 {
 }
 
@@ -1185,40 +1103,42 @@ void MIDIDeltaTimedBigMessage::Clear()
     MIDIBigMessage::Clear();
 }
 
-void MIDIDeltaTimedBigMessage::Copy ( const MIDIDeltaTimedBigMessage &m )
+void MIDIDeltaTimedBigMessage::Copy( const MIDIDeltaTimedBigMessage& m )
 {
     dtime = m.GetDeltaTime();
-    MIDIBigMessage::Copy ( m );
+    MIDIBigMessage::Copy( m );
 }
 
-void MIDIDeltaTimedBigMessage::Copy ( const MIDIDeltaTimedMessage &m )
+void MIDIDeltaTimedBigMessage::Copy( const MIDIDeltaTimedMessage& m )
 {
     dtime = m.GetDeltaTime();
-    MIDIBigMessage::Copy ( m );
+    MIDIBigMessage::Copy( m );
 }
 
 //
 // operator =
 //
 
-const MIDIDeltaTimedBigMessage &MIDIDeltaTimedBigMessage::operator = ( const MIDIDeltaTimedBigMessage &m )
+const MIDIDeltaTimedBigMessage& MIDIDeltaTimedBigMessage::operator=(
+    const MIDIDeltaTimedBigMessage& m )
 {
     dtime = m.GetDeltaTime();
-    MIDIBigMessage::operator = ( m );
+    MIDIBigMessage::operator=( m );
     return *this;
 }
 
-const MIDIDeltaTimedBigMessage &MIDIDeltaTimedBigMessage::operator = ( const MIDIDeltaTimedMessage &m )
+const MIDIDeltaTimedBigMessage& MIDIDeltaTimedBigMessage::operator=(
+    const MIDIDeltaTimedMessage& m )
 {
     dtime = m.GetDeltaTime();
-    MIDIBigMessage::operator = ( m );
+    MIDIBigMessage::operator=( m );
     return *this;
 }
 
-const MIDIDeltaTimedBigMessage &MIDIDeltaTimedBigMessage::operator = ( const MIDIMessage &m )
+const MIDIDeltaTimedBigMessage& MIDIDeltaTimedBigMessage::operator=( const MIDIMessage& m )
 {
     dtime = 0;
-    MIDIBigMessage::operator = ( m );
+    MIDIBigMessage::operator=( m );
     return *this;
 }
 
@@ -1235,23 +1155,10 @@ MIDIClockTime MIDIDeltaTimedBigMessage::GetDeltaTime() const
 // 'Set' methods
 //
 
-void MIDIDeltaTimedBigMessage::SetDeltaTime ( MIDIClockTime t )
+void MIDIDeltaTimedBigMessage::SetDeltaTime( MIDIClockTime t )
 {
     dtime = t;
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
+}  // namespace jdksmidi

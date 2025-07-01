@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 /*
 ** Copyright 1986 to 1998 By J.D. Koftinoff Software, Ltd.
 **
@@ -36,26 +36,19 @@
 #include "jdksmidi/file.h"
 
 #if DEBUG_MDFILE
-# undef DBG
-# define DBG(a) a
+    #undef DBG
+    #define DBG( a ) a
 #endif
 
 namespace jdksmidi
 {
 
 
-MIDIFile::MIDIFile()
-{
-}
+MIDIFile::MIDIFile() {}
 
-MIDIFile::~MIDIFile()
-{
-}
+MIDIFile::~MIDIFile() {}
 
-unsigned long MIDIFile::ConvertTempoToFreq (
-    short division,
-    MIDITempo &tempo
-)
+unsigned long MIDIFile::ConvertTempoToFreq( short division, MIDITempo& tempo )
 {
     if ( division > 0 )
     {
@@ -72,23 +65,22 @@ unsigned long MIDIFile::ConvertTempoToFreq (
 }
 
 
-unsigned long MIDIFile::ReadVariableLengthNumber ( unsigned char **in )
+unsigned long MIDIFile::ReadVariableLengthNumber( unsigned char** in )
 {
     unsigned long num = 0;
-    unsigned char *t = *in;
+    unsigned char* t = *in;
 
     do
     {
         num <<= 7;
         num |= ( *t );
-    }
-    while ( ( *t++ ) & 0x80 );
+    } while ( ( *t++ ) & 0x80 );
 
     *in = t;
     return num;
 }
 
-unsigned char * MIDIFile::WriteVariableLengthNumber ( unsigned long num, unsigned char *out )
+unsigned char* MIDIFile::WriteVariableLengthNumber( unsigned long num, unsigned char* out )
 {
     register unsigned long buffer;
     buffer = num & 0x7f;
@@ -109,10 +101,9 @@ unsigned char * MIDIFile::WriteVariableLengthNumber ( unsigned long num, unsigne
 
         else
             break;
-    }
-    while ( true );
+    } while ( true );
 
     return out;
 }
 
-}
+}  // namespace jdksmidi

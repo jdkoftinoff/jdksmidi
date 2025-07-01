@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 /*
 ** Copyright 1986 to 1998 By J.D. Koftinoff Software, Ltd.
 **
@@ -38,32 +38,29 @@
 
 
 #ifndef DEBUG_MDTRACK
-# define DEBUG_MDTRACK 0
+    #define DEBUG_MDTRACK 0
 #endif
 
 #if DEBUG_MDTRACK
-# undef DBG
-# define DBG(a) a
+    #undef DBG
+    #define DBG( a ) a
 #endif
 
 namespace jdksmidi
 {
 
-const MIDITimedBigMessage * MIDITrackChunk::GetEventAddress ( int event_num ) const
+const MIDITimedBigMessage* MIDITrackChunk::GetEventAddress( int event_num ) const
 {
     return &buf[event_num];
 }
 
-MIDITimedBigMessage * MIDITrackChunk::GetEventAddress ( int event_num )
+MIDITimedBigMessage* MIDITrackChunk::GetEventAddress( int event_num )
 {
     return &buf[event_num];
 }
 
 
-
-
-
-MIDITrack::MIDITrack ( int size )
+MIDITrack::MIDITrack( int size )
 {
     buf_size = 0;
     num_events = 0;
@@ -73,20 +70,20 @@ MIDITrack::MIDITrack ( int size )
 
     if ( size )
     {
-        Expand ( size );
+        Expand( size );
     }
 }
 
-MIDITrack::MIDITrack ( const MIDITrack &t )
+MIDITrack::MIDITrack( const MIDITrack& t )
 {
     buf_size = 0;
     num_events = 0;
 
     for ( int i = 0; i < t.GetNumEvents(); ++i )
     {
-        const MIDITimedBigMessage *src;
-        src = t.GetEventAddress ( i );
-        PutEvent ( *src );
+        const MIDITimedBigMessage* src;
+        src = t.GetEventAddress( i );
+        PutEvent( *src );
     }
 }
 
@@ -102,28 +99,22 @@ void MIDITrack::Clear()
 }
 
 
-void MIDITrack::ClearAndMerge (
-    const MIDITrack *src1,
-    const MIDITrack *src2
-)
+void MIDITrack::ClearAndMerge( const MIDITrack* src1, const MIDITrack* src2 )
 {
     Clear();
-    const MIDITimedBigMessage *ev1;
+    const MIDITimedBigMessage* ev1;
     int cur_trk1ev = 0;
     int num_trk1ev = src1->GetNumEvents();
-    const MIDITimedBigMessage *ev2;
+    const MIDITimedBigMessage* ev2;
     int cur_trk2ev = 0;
     int num_trk2ev = src2->GetNumEvents();
     MIDIClockTime last_data_end_time = 0;
 
-    while (
-        cur_trk1ev < num_trk1ev
-        || cur_trk2ev < num_trk2ev
-    )
+    while ( cur_trk1ev < num_trk1ev || cur_trk2ev < num_trk2ev )
     {
         // skip any NOPs on track 1
-        ev1 = src1->GetEventAddress ( cur_trk1ev );
-        ev2 = src2->GetEventAddress ( cur_trk2ev );
+        ev1 = src1->GetEventAddress( cur_trk1ev );
+        ev2 = src2->GetEventAddress( cur_trk2ev );
         bool has_ev1 = ( cur_trk1ev < num_trk1ev ) && ev1;
         bool has_ev2 = ( cur_trk2ev < num_trk2ev ) && ev2;
 
@@ -175,7 +166,7 @@ void MIDITrack::ClearAndMerge (
                     last_data_end_time = ev1->GetTime();
                 }
 
-                PutEvent ( *ev1 );
+                PutEvent( *ev1 );
                 ++cur_trk1ev;
             }
         }
@@ -185,7 +176,7 @@ void MIDITrack::ClearAndMerge (
             // nothing left on trk 1
             if ( !ev2->IsNoOp() )
             {
-                PutEvent ( *ev2 );
+                PutEvent( *ev2 );
                 ++cur_trk2ev;
             }
         }
@@ -211,7 +202,7 @@ void MIDITrack::ClearAndMerge (
                     last_data_end_time = ev1->GetTime();
                 }
 
-                PutEvent ( *ev1 );
+                PutEvent( *ev1 );
                 ++cur_trk1ev;
             }
 
@@ -222,7 +213,7 @@ void MIDITrack::ClearAndMerge (
                     last_data_end_time = ev2->GetTime();
                 }
 
-                PutEvent ( *ev2 );
+                PutEvent( *ev2 );
                 ++cur_trk2ev;
             }
         }
@@ -230,9 +221,9 @@ void MIDITrack::ClearAndMerge (
 
     // put single final data end event
     MIDITimedBigMessage dataend;
-    dataend.SetTime ( last_data_end_time );
+    dataend.SetTime( last_data_end_time );
     dataend.SetDataEnd();
-    PutEvent ( dataend );
+    PutEvent( dataend );
 }
 
 #if 0
@@ -362,7 +353,7 @@ void MIDITrack::Shrink()
     }
 }
 
-bool MIDITrack::Expand ( int increase_amount )
+bool MIDITrack::Expand( int increase_amount )
 {
     int num_chunks_to_expand = ( int ) ( ( increase_amount / MIDITrackChunkSize ) + 1 );
     int num_chunks_alloced = ( int ) ( buf_size / MIDITrackChunkSize );
@@ -388,19 +379,19 @@ bool MIDITrack::Expand ( int increase_amount )
     return true;
 }
 
-MIDITimedBigMessage * MIDITrack::GetEventAddress ( int event_num )
+MIDITimedBigMessage* MIDITrack::GetEventAddress( int event_num )
 {
-    return chunk[ event_num/ ( MIDITrackChunkSize ) ]->GetEventAddress (
-               ( event_num % MIDITrackChunkSize ) );
+    return chunk[event_num / ( MIDITrackChunkSize )]->GetEventAddress(
+        ( event_num % MIDITrackChunkSize ) );
 }
 
-const MIDITimedBigMessage * MIDITrack::GetEventAddress ( int event_num ) const
+const MIDITimedBigMessage* MIDITrack::GetEventAddress( int event_num ) const
 {
-    return chunk[ event_num/ ( MIDITrackChunkSize ) ]->GetEventAddress (
-               ( event_num % MIDITrackChunkSize ) );
+    return chunk[event_num / ( MIDITrackChunkSize )]->GetEventAddress(
+        ( event_num % MIDITrackChunkSize ) );
 }
 
-bool MIDITrack::PutEvent ( const MIDITimedBigMessage &msg )
+bool MIDITrack::PutEvent( const MIDITimedBigMessage& msg )
 {
     if ( num_events >= buf_size )
     {
@@ -408,11 +399,11 @@ bool MIDITrack::PutEvent ( const MIDITimedBigMessage &msg )
             return false;
     }
 
-    GetEventAddress ( num_events++ )->Copy ( msg );
+    GetEventAddress( num_events++ )->Copy( msg );
     return true;
 }
 
-bool MIDITrack::PutEvent ( const MIDITimedMessage &msg, MIDISystemExclusive *sysex )
+bool MIDITrack::PutEvent( const MIDITimedMessage& msg, MIDISystemExclusive* sysex )
 {
     if ( num_events >= buf_size )
     {
@@ -420,14 +411,14 @@ bool MIDITrack::PutEvent ( const MIDITimedMessage &msg, MIDISystemExclusive *sys
             return false;
     }
 
-    MIDITimedBigMessage *e = GetEventAddress ( num_events );
-    e->Copy ( msg );
-    e->CopySysEx ( sysex );
+    MIDITimedBigMessage* e = GetEventAddress( num_events );
+    e->Copy( msg );
+    e->CopySysEx( sysex );
     ++num_events;
     return true;
 }
 
-bool MIDITrack::GetEvent ( int event_num, MIDITimedBigMessage *msg ) const
+bool MIDITrack::GetEvent( int event_num, MIDITimedBigMessage* msg ) const
 {
     if ( event_num >= num_events )
     {
@@ -436,12 +427,12 @@ bool MIDITrack::GetEvent ( int event_num, MIDITimedBigMessage *msg ) const
 
     else
     {
-        msg->Copy ( *GetEventAddress ( event_num ) );
+        msg->Copy( *GetEventAddress( event_num ) );
         return true;
     }
 }
 
-bool MIDITrack::SetEvent ( int event_num, const MIDITimedBigMessage &msg )
+bool MIDITrack::SetEvent( int event_num, const MIDITimedBigMessage& msg )
 {
     if ( event_num >= num_events )
     {
@@ -450,12 +441,12 @@ bool MIDITrack::SetEvent ( int event_num, const MIDITimedBigMessage &msg )
 
     else
     {
-        GetEventAddress ( event_num )->Copy ( msg );
+        GetEventAddress( event_num )->Copy( msg );
         return true;
     }
 }
 
-bool MIDITrack::MakeEventNoOp ( int event_num )
+bool MIDITrack::MakeEventNoOp( int event_num )
 {
     if ( event_num >= num_events )
     {
@@ -464,7 +455,7 @@ bool MIDITrack::MakeEventNoOp ( int event_num )
 
     else
     {
-        MIDITimedBigMessage *ev = GetEventAddress ( event_num );
+        MIDITimedBigMessage* ev = GetEventAddress( event_num );
 
         if ( ev )
         {
@@ -476,14 +467,14 @@ bool MIDITrack::MakeEventNoOp ( int event_num )
     }
 }
 
-bool MIDITrack::FindEventNumber ( MIDIClockTime time, int *event_num ) const
+bool MIDITrack::FindEventNumber( MIDIClockTime time, int* event_num ) const
 {
-    ENTER ( "MIDITrack::FindEventNumber( int , int * )" );
+    ENTER( "MIDITrack::FindEventNumber( int , int * )" );
     // TO DO: try make this a binary search
 
     for ( int i = 0; i < num_events; ++i )
     {
-        const MIDITimedBigMessage *msg = GetEventAddress ( i );
+        const MIDITimedBigMessage* msg = GetEventAddress( i );
 
         if ( msg->GetTime() >= time )
         {
@@ -496,7 +487,7 @@ bool MIDITrack::FindEventNumber ( MIDIClockTime time, int *event_num ) const
     return false;
 }
 
-const MIDITimedBigMessage *MIDITrack::GetEvent ( int event_num ) const
+const MIDITimedBigMessage* MIDITrack::GetEvent( int event_num ) const
 {
     if ( event_num >= num_events )
     {
@@ -505,11 +496,11 @@ const MIDITimedBigMessage *MIDITrack::GetEvent ( int event_num ) const
 
     else
     {
-        return GetEventAddress ( event_num );
+        return GetEventAddress( event_num );
     }
 }
 
-MIDITimedBigMessage *MIDITrack::GetEvent ( int event_num )
+MIDITimedBigMessage* MIDITrack::GetEvent( int event_num )
 {
     if ( event_num >= num_events )
     {
@@ -518,7 +509,7 @@ MIDITimedBigMessage *MIDITrack::GetEvent ( int event_num )
 
     else
     {
-        return GetEventAddress ( event_num );
+        return GetEventAddress( event_num );
     }
 }
 
@@ -532,4 +523,4 @@ int MIDITrack::GetNumEvents() const
     return num_events;
 }
 
-}
+}  // namespace jdksmidi

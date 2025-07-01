@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 /*
 ** Copyright 1986 to 1998 By J.D. Koftinoff Software, Ltd.
 **
@@ -37,21 +37,21 @@
 
 
 #ifndef DEBUG_MDSYSEX
-# define DEBUG_MDSYSEX 0
+    #define DEBUG_MDSYSEX 0
 #endif
 
 #if DEBUG_MDSYSEX
-# undef DBG
-# define DBG(a) a
+    #undef DBG
+    #define DBG( a ) a
 #endif
 
 namespace jdksmidi
 {
 
 
-MIDISystemExclusive::MIDISystemExclusive ( int size_ )
+MIDISystemExclusive::MIDISystemExclusive( int size_ )
 {
-    ENTER ( "MIDISystemExclusive::MIDISystemExclusive" );
+    ENTER( "MIDISystemExclusive::MIDISystemExclusive" );
     buf = new uchar[size_];
 
     if ( buf )
@@ -65,9 +65,9 @@ MIDISystemExclusive::MIDISystemExclusive ( int size_ )
     deletable = true;
 }
 
-MIDISystemExclusive::MIDISystemExclusive ( const MIDISystemExclusive &e )
+MIDISystemExclusive::MIDISystemExclusive( const MIDISystemExclusive& e )
 {
-    buf = new unsigned char [e.max_len];
+    buf = new unsigned char[e.max_len];
     max_len = e.max_len;
     cur_len = e.cur_len;
     chk_sum = e.chk_sum;
@@ -81,11 +81,11 @@ MIDISystemExclusive::MIDISystemExclusive ( const MIDISystemExclusive &e )
 
 MIDISystemExclusive::~MIDISystemExclusive()
 {
-    ENTER ( "MIDISystemExclusive::~MIDISystemExclusive" );
+    ENTER( "MIDISystemExclusive::~MIDISystemExclusive" );
 
     if ( deletable )
-        delete [] buf;
+        delete[] buf;
 }
 
 
-}
+}  // namespace jdksmidi

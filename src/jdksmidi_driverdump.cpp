@@ -20,39 +20,35 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-#include "jdksmidi/world.h"
+ */
 #include "jdksmidi/driverdump.h"
+#include "jdksmidi/world.h"
 
 namespace jdksmidi
 {
 
 
-MIDIDriverDump::MIDIDriverDump ( int queue_size, FILE *outfile )
-        :
-        MIDIDriver ( queue_size ),
-        f ( outfile )
+MIDIDriverDump::MIDIDriverDump( int queue_size, FILE* outfile )
+    : MIDIDriver( queue_size ), f( outfile )
 {
 }
 
-MIDIDriverDump::~MIDIDriverDump()
-{
-}
+MIDIDriverDump::~MIDIDriverDump() {}
 
 
-bool MIDIDriverDump::HardwareMsgOut ( const MIDITimedBigMessage &msg )
+bool MIDIDriverDump::HardwareMsgOut( const MIDITimedBigMessage& msg )
 {
     char buf[256];
-    fprintf ( f, "OUTPUT: %s\n", msg.MsgToText ( buf ) );
+    fprintf( f, "OUTPUT: %s\n", msg.MsgToText( buf ) );
     return true;
 }
 
 
-void MIDIDriverDump::TimeTick ( unsigned long sys_time )
+void MIDIDriverDump::TimeTick( unsigned long sys_time )
 {
-    fprintf ( f, "TICK  : %8ld\n", sys_time );
-    MIDIDriver::TimeTick ( sys_time );
+    fprintf( f, "TICK  : %8ld\n", sys_time );
+    MIDIDriver::TimeTick( sys_time );
 }
 
 
-}
+}  // namespace jdksmidi

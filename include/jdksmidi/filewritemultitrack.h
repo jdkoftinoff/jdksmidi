@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 #ifndef JDKSMIDI_FILEWRITEMULTITRACK_H
 #define JDKSMIDI_FILEWRITEMULTITRACK_H
 
@@ -32,36 +32,31 @@ namespace jdksmidi
 
 class MIDIFileWriteMultiTrack
 {
-public:
-
-    MIDIFileWriteMultiTrack (
-        const MIDIMultiTrack *mlt_,
-        MIDIFileWriteStream *strm_
-    );
+  public:
+    MIDIFileWriteMultiTrack( const MIDIMultiTrack* mlt_, MIDIFileWriteStream* strm_ );
 
     virtual ~MIDIFileWriteMultiTrack();
 
-    bool Write ( int num_tracks, int division );
+    bool Write( int num_tracks, int division );
 
-    bool Write ( int num_tracks )
+    bool Write( int num_tracks )
     {
-        return Write ( num_tracks, multitrack->GetClksPerBeat() );
+        return Write( num_tracks, multitrack->GetClksPerBeat() );
     }
     bool Write()
     {
-        return Write ( multitrack->GetNumTracks(), multitrack->GetClksPerBeat() );
+        return Write( multitrack->GetNumTracks(), multitrack->GetClksPerBeat() );
     }
 
-private:
-
+  private:
     virtual bool PreWrite();
     virtual bool PostWrite();
 
-    const MIDIMultiTrack *multitrack;
+    const MIDIMultiTrack* multitrack;
     MIDIFileWrite writer;
 };
 
-}
+}  // namespace jdksmidi
 
 
 #endif

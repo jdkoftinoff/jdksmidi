@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 /*
 ** Copyright 1986 to 1998 By J.D. Koftinoff Software, Ltd.
 **
@@ -32,32 +32,29 @@
 */
 
 
-
 #include "jdksmidi/world.h"
 
 #include "jdksmidi/multitrack.h"
 
 
 #ifndef DEBUG_MDMLTTRK
-# define DEBUG_MDMLTTRK 0
+    #define DEBUG_MDMLTTRK 0
 #endif
 
 #if DEBUG_MDMLTTRK
-# undef DBG
-# define DBG(a) a
+    #undef DBG
+    #define DBG( a ) a
 #endif
 
 namespace jdksmidi
 {
 
 
-MIDIMultiTrack::MIDIMultiTrack ( int num_tracks_, bool deletable_ )
-        :
-        num_tracks ( num_tracks_ ),
-        deletable ( deletable_ )
+MIDIMultiTrack::MIDIMultiTrack( int num_tracks_, bool deletable_ )
+    : num_tracks( num_tracks_ ), deletable( deletable_ )
 {
-    ENTER ( "MIDIMultiTrack::MIDIMultiTrack()" );
-    tracks = new MIDITrack * [num_tracks];
+    ENTER( "MIDIMultiTrack::MIDIMultiTrack()" );
+    tracks = new MIDITrack*[num_tracks];
 
     if ( tracks )
     {
@@ -77,7 +74,7 @@ MIDIMultiTrack::MIDIMultiTrack ( int num_tracks_, bool deletable_ )
 
 MIDIMultiTrack::~MIDIMultiTrack()
 {
-    ENTER ( "MIDIMultiTrack::~MIDIMultiTrack()" );
+    ENTER( "MIDIMultiTrack::~MIDIMultiTrack()" );
 
     if ( deletable )
     {
@@ -85,7 +82,7 @@ MIDIMultiTrack::~MIDIMultiTrack()
             delete tracks[i];
     }
 
-    delete [] tracks;
+    delete[] tracks;
 }
 
 void MIDIMultiTrack::Clear()
@@ -96,42 +93,38 @@ void MIDIMultiTrack::Clear()
     }
 }
 
-void MIDIMultiTrack::SetTrack ( int trk, MIDITrack *t )
+void MIDIMultiTrack::SetTrack( int trk, MIDITrack* t )
 {
     tracks[trk] = t;
 }
 
 
-MIDITrack *MIDIMultiTrack::GetTrack ( int trk )
+MIDITrack* MIDIMultiTrack::GetTrack( int trk )
 {
     return tracks[trk];
 }
 
-const MIDITrack *MIDIMultiTrack::GetTrack ( int trk ) const
+const MIDITrack* MIDIMultiTrack::GetTrack( int trk ) const
 {
     return tracks[trk];
 }
 
 
-
-
-
-
-MIDIMultiTrackIteratorState::MIDIMultiTrackIteratorState ( int num_tracks_ )
+MIDIMultiTrackIteratorState::MIDIMultiTrackIteratorState( int num_tracks_ )
 {
     num_tracks = num_tracks_;
     cur_event_track = 0;
-    next_event_number = new int [num_tracks];
-    next_event_time = new MIDIClockTime [num_tracks];
+    next_event_number = new int[num_tracks];
+    next_event_time = new MIDIClockTime[num_tracks];
     Reset();
 }
 
-MIDIMultiTrackIteratorState::MIDIMultiTrackIteratorState ( const MIDIMultiTrackIteratorState &m )
+MIDIMultiTrackIteratorState::MIDIMultiTrackIteratorState( const MIDIMultiTrackIteratorState& m )
 {
     num_tracks = m.num_tracks;
     cur_event_track = m.cur_event_track;
-    next_event_number = new int [num_tracks];
-    next_event_time = new MIDIClockTime [num_tracks];
+    next_event_number = new int[num_tracks];
+    next_event_time = new MIDIClockTime[num_tracks];
     cur_time = m.cur_time;
 
     for ( int i = 0; i < num_tracks; ++i )
@@ -143,19 +136,20 @@ MIDIMultiTrackIteratorState::MIDIMultiTrackIteratorState ( const MIDIMultiTrackI
 
 MIDIMultiTrackIteratorState::~MIDIMultiTrackIteratorState()
 {
-    delete [] next_event_number;
-    delete [] next_event_time;
+    delete[] next_event_number;
+    delete[] next_event_time;
 }
 
-const MIDIMultiTrackIteratorState & MIDIMultiTrackIteratorState::operator = ( const MIDIMultiTrackIteratorState &m )
+const MIDIMultiTrackIteratorState& MIDIMultiTrackIteratorState::operator=(
+    const MIDIMultiTrackIteratorState& m )
 {
     if ( num_tracks != m.num_tracks )
     {
-        delete [] next_event_number;
-        delete [] next_event_time;
+        delete[] next_event_number;
+        delete[] next_event_time;
         num_tracks = m.num_tracks;
-        next_event_number = new int [num_tracks];
-        next_event_time = new MIDIClockTime [num_tracks];
+        next_event_number = new int[num_tracks];
+        next_event_time = new MIDIClockTime[num_tracks];
     }
 
     cur_time = m.cur_time;
@@ -209,23 +203,15 @@ int MIDIMultiTrackIteratorState::FindTrackOfFirstEvent()
 }
 
 
-
-
-
-
-MIDIMultiTrackIterator::MIDIMultiTrackIterator ( MIDIMultiTrack *mlt )
-        :
-        multitrack ( mlt ),
-        state ( mlt->GetNumTracks() )
+MIDIMultiTrackIterator::MIDIMultiTrackIterator( MIDIMultiTrack* mlt )
+    : multitrack( mlt ), state( mlt->GetNumTracks() )
 
 {
 }
 
-MIDIMultiTrackIterator::~MIDIMultiTrackIterator()
-{
-}
+MIDIMultiTrackIterator::~MIDIMultiTrackIterator() {}
 
-void MIDIMultiTrackIterator::GoToTime ( MIDIClockTime time )
+void MIDIMultiTrackIterator::GoToTime( MIDIClockTime time )
 {
     // start at time 0
     state.Reset();
@@ -234,16 +220,16 @@ void MIDIMultiTrackIterator::GoToTime ( MIDIClockTime time )
 
     for ( int i = 0; i < multitrack->GetNumTracks(); ++i )
     {
-        MIDITrack *track = multitrack->GetTrack ( i );
+        MIDITrack* track = multitrack->GetTrack( i );
         // default: set the next_event_number for this track to -1
         // to signify end of track
-        state.next_event_number[ i ] = -1;
+        state.next_event_number[i] = -1;
 
         // are there any events in this track?
         if ( track && track->GetNumEvents() > 0 )
         {
             // yes, extract the time of the first event
-            MIDITimedBigMessage *msg = track->GetEventAddress ( 0 );
+            MIDITimedBigMessage* msg = track->GetEventAddress( 0 );
 
             if ( msg )
             {
@@ -275,7 +261,7 @@ void MIDIMultiTrackIterator::GoToTime ( MIDIClockTime time )
     }
 }
 
-bool MIDIMultiTrackIterator::GetCurEventTime ( MIDIClockTime *t ) const
+bool MIDIMultiTrackIterator::GetCurEventTime( MIDIClockTime* t ) const
 {
     // if there is a next event, then set *t to the time of the event and return true
     if ( state.GetCurEventTrack() != -1 )
@@ -290,7 +276,7 @@ bool MIDIMultiTrackIterator::GetCurEventTime ( MIDIClockTime *t ) const
     }
 }
 
-bool MIDIMultiTrackIterator::GetCurEvent ( int *track, MIDITimedBigMessage **msg ) const
+bool MIDIMultiTrackIterator::GetCurEvent( int* track, MIDITimedBigMessage** msg ) const
 {
     int t = state.GetCurEventTrack();
 
@@ -307,7 +293,7 @@ bool MIDIMultiTrackIterator::GetCurEvent ( int *track, MIDITimedBigMessage **msg
 
             if ( num >= 0 )
             {
-                *msg = multitrack->GetTrack ( t )->GetEventAddress ( state.next_event_number[t] );
+                *msg = multitrack->GetTrack( t )->GetEventAddress( state.next_event_number[t] );
             }
 
             else
@@ -316,7 +302,7 @@ bool MIDIMultiTrackIterator::GetCurEvent ( int *track, MIDITimedBigMessage **msg
             }
 
             // do we really have a message?
-            if ( ! *msg )
+            if ( !*msg )
             {
                 // no, return false then
                 return false;
@@ -345,7 +331,7 @@ bool MIDIMultiTrackIterator::GoToNextEvent()
 
     // update the current event for the current track to the
     // next event on the same track.
-    GoToNextEventOnTrack ( state.cur_event_track );
+    GoToNextEventOnTrack( state.cur_event_track );
     // now find out which track now has the earliest event
 
     if ( state.FindTrackOfFirstEvent() == -1 )
@@ -358,17 +344,17 @@ bool MIDIMultiTrackIterator::GoToNextEvent()
     return true;
 }
 
-bool MIDIMultiTrackIterator::GoToNextEventOnTrack ( int track_num )
+bool MIDIMultiTrackIterator::GoToNextEventOnTrack( int track_num )
 {
     // Get the track that we are dealing with
-    MIDITrack *track = multitrack->GetTrack ( track_num );
+    MIDITrack* track = multitrack->GetTrack( track_num );
     // Get ptr to the current event number for this track
-    int *event_num = &state.next_event_number[ track_num ];
+    int* event_num = &state.next_event_number[track_num];
     // skip this track if this event number is <0 - This track has hit end already.
 
     if ( *event_num < 0 )
     {
-        return false; // at end of track
+        return false;  // at end of track
     }
 
     // increment *event_num to next event on track
@@ -379,21 +365,19 @@ bool MIDIMultiTrackIterator::GoToNextEventOnTrack ( int track_num )
     {
         // yes, set *event_num to -1
         *event_num = -1;
-        return false; // at end of track
+        return false;  // at end of track
     }
 
     else
     {
         // not at end of track yet - get the time of the event
-        MIDITimedBigMessage *msg;
-        msg = track->GetEventAddress ( *event_num );
-        state.next_event_time[ track_num ] = msg->GetTime();
+        MIDITimedBigMessage* msg;
+        msg = track->GetEventAddress( *event_num );
+        state.next_event_time[track_num] = msg->GetTime();
     }
 
     return true;
 }
 
 
-
-
-}
+}  // namespace jdksmidi

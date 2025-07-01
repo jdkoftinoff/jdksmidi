@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 #ifndef JDKSMIDI_TICK_H
 #define JDKSMIDI_TICK_H
 
@@ -28,15 +28,13 @@ namespace jdksmidi
 {
 class MIDITick
 {
-public:
-    MIDITick()
-    {
-    }
+  public:
+    MIDITick() {}
 
     virtual ~MIDITick();
 
-    virtual void TimeTick ( unsigned long sys_time ) = 0;
+    virtual void TimeTick( unsigned long sys_time ) = 0;
 };
-}
+}  // namespace jdksmidi
 
 #endif

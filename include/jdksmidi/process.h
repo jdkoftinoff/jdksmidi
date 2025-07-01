@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 #ifndef JDKSMIDI_PROCESS_H
 #define JDKSMIDI_PROCESS_H
 
@@ -37,91 +37,91 @@ class MIDIProcessor;
 
 class MIDIProcessor
 {
-public:
+  public:
     MIDIProcessor();
     virtual ~MIDIProcessor();
 
-    virtual bool Process ( MIDITimedBigMessage *msg ) = 0;
+    virtual bool Process( MIDITimedBigMessage* msg ) = 0;
 };
 
 class MIDIMultiProcessor : public MIDIProcessor
 {
-public:
-    MIDIMultiProcessor ( int num_processors );
+  public:
+    MIDIMultiProcessor( int num_processors );
     virtual ~MIDIMultiProcessor();
 
     // MIDIProcessors given to a MIDIMultiProcessor are NOT owned
     // by MIDIMultiProcessor.
 
-    void SetProcessor ( int position, MIDIProcessor *proc )
+    void SetProcessor( int position, MIDIProcessor* proc )
     {
         processors[position] = proc;
     }
 
-    MIDIProcessor *GetProcessor ( int position )
+    MIDIProcessor* GetProcessor( int position )
     {
         return processors[position];
     }
 
-    const MIDIProcessor *GetProcessor ( int position ) const
+    const MIDIProcessor* GetProcessor( int position ) const
     {
         return processors[position];
     }
 
-    virtual bool Process ( MIDITimedBigMessage *msg );
+    virtual bool Process( MIDITimedBigMessage* msg );
 
-private:
-    MIDIProcessor **processors;
+  private:
+    MIDIProcessor** processors;
     int num_processors;
 };
 
 class MIDIProcessorTransposer : public MIDIProcessor
 {
-public:
+  public:
     MIDIProcessorTransposer();
     virtual ~MIDIProcessorTransposer();
 
-    void SetTransposeChannel ( int chan, int trans )
+    void SetTransposeChannel( int chan, int trans )
     {
         trans_amount[chan] = trans;
     }
 
-    int GetTransposeChannel ( int chan ) const
+    int GetTransposeChannel( int chan ) const
     {
         return trans_amount[chan];
     }
 
-    void SetAllTranspose ( int trans );
+    void SetAllTranspose( int trans );
 
-    virtual bool Process ( MIDITimedBigMessage *msg );
-private:
+    virtual bool Process( MIDITimedBigMessage* msg );
+
+  private:
     int trans_amount[16];
 };
 
 class MIDIProcessorRechannelizer : public MIDIProcessor
 {
-public:
+  public:
     MIDIProcessorRechannelizer();
     virtual ~MIDIProcessorRechannelizer();
 
-    void SetRechanMap ( int src_chan, int dest_chan )
+    void SetRechanMap( int src_chan, int dest_chan )
     {
         rechan_map[src_chan] = dest_chan;
     }
 
-    int GetRechanMap ( int src_chan ) const
+    int GetRechanMap( int src_chan ) const
     {
         return rechan_map[src_chan];
     }
 
-    void SetAllRechan ( int dest_chan );
+    void SetAllRechan( int dest_chan );
 
-    virtual bool Process ( MIDITimedBigMessage *msg );
+    virtual bool Process( MIDITimedBigMessage* msg );
 
-private:
-
+  private:
     int rechan_map[16];
 };
-}
+}  // namespace jdksmidi
 
 #endif

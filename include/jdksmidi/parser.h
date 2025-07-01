@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 /*
 ** Copyright 1986 to 1998 By J.D. Koftinoff Software, Ltd.
 **
@@ -41,53 +41,50 @@
 namespace jdksmidi
 {
 
-class  MIDIParser
+class MIDIParser
 {
-public:
-    MIDIParser ( ushort max_sysex_size = 384 );
-    virtual  ~MIDIParser();
+  public:
+    MIDIParser( ushort max_sysex_size = 384 );
+    virtual ~MIDIParser();
 
-    void  Clear()
+    void Clear()
     {
         state = FIND_STATUS;
     }
 
-    virtual bool Parse ( uchar b, MIDIMessage *msg );
+    virtual bool Parse( uchar b, MIDIMessage* msg );
 
-    MIDISystemExclusive *GetSystemExclusive() const
+    MIDISystemExclusive* GetSystemExclusive() const
     {
         return sysex;
     }
 
-protected:
-
+  protected:
     //
     // The states used for parsing messages.
     //
 
     enum State
     {
-        FIND_STATUS,  // ignore data bytes
-        FIRST_OF_ONE,  // read first data byte of a one data byte msg
-        FIRST_OF_TWO,  // read first data byte of two data byte msg
-        SECOND_OF_TWO,  // read second data byte of two data byte msg
-        FIRST_OF_ONE_NORUN, // read one byte message, do not allow
+        FIND_STATUS,         // ignore data bytes
+        FIRST_OF_ONE,        // read first data byte of a one data byte msg
+        FIRST_OF_TWO,        // read first data byte of two data byte msg
+        SECOND_OF_TWO,       // read second data byte of two data byte msg
+        FIRST_OF_ONE_NORUN,  // read one byte message, do not allow
         // running status (for MTC)
         SYSEX_DATA  // read sysex data byte
     };
 
     MIDIMessage tmp_msg;
-    MIDISystemExclusive *sysex;
-    State  state;
+    MIDISystemExclusive* sysex;
+    State state;
 
-    bool ParseSystemByte ( uchar b, MIDIMessage *msg );
-    bool ParseDataByte ( uchar b, MIDIMessage *msg );
-    void ParseStatusByte ( uchar b );
+    bool ParseSystemByte( uchar b, MIDIMessage* msg );
+    bool ParseDataByte( uchar b, MIDIMessage* msg );
+    void ParseStatusByte( uchar b );
 };
 
 
-}
+}  // namespace jdksmidi
 
 #endif
-
-

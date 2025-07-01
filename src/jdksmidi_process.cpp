@@ -20,29 +20,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-#include "jdksmidi/world.h"
+ */
 #include "jdksmidi/process.h"
+#include "jdksmidi/world.h"
 
 namespace jdksmidi
 {
 
 
-MIDIProcessor::MIDIProcessor()
-{
-}
+MIDIProcessor::MIDIProcessor() {}
 
-MIDIProcessor::~MIDIProcessor()
-{
-}
+MIDIProcessor::~MIDIProcessor() {}
 
 
-
-
-MIDIMultiProcessor::MIDIMultiProcessor ( int num )
-        :
-        processors ( new MIDIProcessor *[num] ),
-        num_processors ( num )
+MIDIMultiProcessor::MIDIMultiProcessor( int num )
+    : processors( new MIDIProcessor*[num] ), num_processors( num )
 {
     for ( int i = 0; i < num_processors; ++i )
     {
@@ -52,18 +44,17 @@ MIDIMultiProcessor::MIDIMultiProcessor ( int num )
 
 MIDIMultiProcessor::~MIDIMultiProcessor()
 {
-    delete [] processors;
+    delete[] processors;
 }
 
 
-
-bool MIDIMultiProcessor::Process ( MIDITimedBigMessage *msg )
+bool MIDIMultiProcessor::Process( MIDITimedBigMessage* msg )
 {
     for ( int i = 0; i < num_processors; ++i )
     {
         if ( processors[i] )
         {
-            if ( processors[i]->Process ( msg ) == false )
+            if ( processors[i]->Process( msg ) == false )
             {
                 return false;
             }
@@ -74,9 +65,6 @@ bool MIDIMultiProcessor::Process ( MIDITimedBigMessage *msg )
 }
 
 
-
-
-
 MIDIProcessorTransposer::MIDIProcessorTransposer()
 {
     for ( int i = 0; i < 16; ++i )
@@ -85,12 +73,10 @@ MIDIProcessorTransposer::MIDIProcessorTransposer()
     }
 }
 
-MIDIProcessorTransposer::~MIDIProcessorTransposer()
-{
-}
+MIDIProcessorTransposer::~MIDIProcessorTransposer() {}
 
 
-void MIDIProcessorTransposer::SetAllTranspose ( int val )
+void MIDIProcessorTransposer::SetAllTranspose( int val )
 {
     for ( int chan = 0; chan < 16; ++chan )
     {
@@ -98,13 +84,13 @@ void MIDIProcessorTransposer::SetAllTranspose ( int val )
     }
 }
 
-bool MIDIProcessorTransposer::Process ( MIDITimedBigMessage *msg )
+bool MIDIProcessorTransposer::Process( MIDITimedBigMessage* msg )
 {
     if ( msg->IsChannelMsg() )
     {
         if ( msg->IsNoteOn() || msg->IsNoteOff() || msg->IsPolyPressure() )
         {
-            int trans = trans_amount[ msg->GetChannel() ];
+            int trans = trans_amount[msg->GetChannel()];
             int new_note = ( ( int ) msg->GetNote() ) + trans;
 
             if ( trans > 127 || trans < 0 )
@@ -116,16 +102,13 @@ bool MIDIProcessorTransposer::Process ( MIDITimedBigMessage *msg )
             else
             {
                 // set new note number
-                msg->SetNote ( ( unsigned char ) new_note );
+                msg->SetNote( ( unsigned char ) new_note );
             }
         }
     }
 
     return true;
 }
-
-
-
 
 
 MIDIProcessorRechannelizer::MIDIProcessorRechannelizer()
@@ -136,12 +119,10 @@ MIDIProcessorRechannelizer::MIDIProcessorRechannelizer()
     }
 }
 
-MIDIProcessorRechannelizer::~MIDIProcessorRechannelizer()
-{
-}
+MIDIProcessorRechannelizer::~MIDIProcessorRechannelizer() {}
 
 
-void MIDIProcessorRechannelizer::SetAllRechan ( int dest_chan )
+void MIDIProcessorRechannelizer::SetAllRechan( int dest_chan )
 {
     for ( int i = 0; i < 16; ++i )
     {
@@ -149,11 +130,11 @@ void MIDIProcessorRechannelizer::SetAllRechan ( int dest_chan )
     }
 }
 
-bool MIDIProcessorRechannelizer::Process ( MIDITimedBigMessage *msg )
+bool MIDIProcessorRechannelizer::Process( MIDITimedBigMessage* msg )
 {
     if ( msg->IsChannelMsg() )
     {
-        int new_chan = rechan_map[ msg->GetChannel() ];
+        int new_chan = rechan_map[msg->GetChannel()];
 
         if ( new_chan == -1 )
         {
@@ -161,14 +142,11 @@ bool MIDIProcessorRechannelizer::Process ( MIDITimedBigMessage *msg )
             return false;
         }
 
-        msg->SetChannel ( ( unsigned char ) new_chan );
+        msg->SetChannel( ( unsigned char ) new_chan );
     }
 
     return true;
 }
 
 
-
-
-
-}
+}  // namespace jdksmidi

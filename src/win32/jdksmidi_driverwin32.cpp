@@ -20,48 +20,32 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 
 #include "jdksmidi/world.h"
 
 #ifdef WIN32
-#include "jdksmidi/driverwin32.h"
+    #include "jdksmidi/driverwin32.h"
 
 namespace jdksmidi
 {
 
 
-MIDISequencerGUIEventNotifierWin32::MIDISequencerGUIEventNotifierWin32 (
-    HWND w,
-    DWORD msg,
-    WPARAM wparam_value_
-)
-        :
-        dest_window ( w ),
-        window_msg ( msg ),
-        wparam_value ( wparam_value_ ),
-        en ( true )
+MIDISequencerGUIEventNotifierWin32::MIDISequencerGUIEventNotifierWin32( HWND w,
+                                                                        DWORD msg,
+                                                                        WPARAM wparam_value_ )
+    : dest_window( w ), window_msg( msg ), wparam_value( wparam_value_ ), en( true )
 {
 }
 
-MIDISequencerGUIEventNotifierWin32::~MIDISequencerGUIEventNotifierWin32()
-{
-}
+MIDISequencerGUIEventNotifierWin32::~MIDISequencerGUIEventNotifierWin32() {}
 
 
-void MIDISequencerGUIEventNotifierWin32::Notify (
-    const MIDISequencer *seq,
-    MIDISequencerGUIEvent e
-)
+void MIDISequencerGUIEventNotifierWin32::Notify( const MIDISequencer* seq, MIDISequencerGUIEvent e )
 {
     if ( en )
     {
-        PostMessage (
-            dest_window,
-            window_msg,
-            wparam_value,
-            ( unsigned long ) e
-        );
+        PostMessage( dest_window, window_msg, wparam_value, ( unsigned long ) e );
     }
 }
 
@@ -70,21 +54,19 @@ bool MIDISequencerGUIEventNotifierWin32::GetEnable() const
     return en;
 }
 
-void MIDISequencerGUIEventNotifierWin32::SetEnable ( bool f )
+void MIDISequencerGUIEventNotifierWin32::SetEnable( bool f )
 {
     en = f;
 }
 
 
-
-MIDIDriverWin32::MIDIDriverWin32 ( int queue_size )
-        :
-        MIDIDriver ( queue_size ),
-        in_handle ( 0 ),
-        out_handle ( 0 ),
-        in_open ( false ),
-        out_open ( false ),
-        timer_open ( false )
+MIDIDriverWin32::MIDIDriverWin32( int queue_size )
+    : MIDIDriver( queue_size ),
+      in_handle( 0 ),
+      out_handle( 0 ),
+      in_open( false ),
+      out_open( false ),
+      timer_open( false )
 {
 }
 
@@ -99,17 +81,17 @@ void MIDIDriverWin32::ResetMIDIOut()
 {
     if ( out_open )
     {
-        midiOutReset ( out_handle );
+        midiOutReset( out_handle );
     }
 }
 
-bool MIDIDriverWin32::StartTimer ( int res )
+bool MIDIDriverWin32::StartTimer( int res )
 {
     if ( !timer_open )
     {
         TIMECAPS tc;
 
-        if ( timeGetDevCaps ( &tc, sizeof ( TIMECAPS ) ) != TIMERR_NOERROR )
+        if ( timeGetDevCaps( &tc, sizeof( TIMECAPS ) ) != TIMERR_NOERROR )
         {
             return false;
         }
@@ -122,14 +104,8 @@ bool MIDIDriverWin32::StartTimer ( int res )
         if ( timer_res > ( int ) tc.wPeriodMax )
             timer_res = ( int ) tc.wPeriodMax;
 
-        timeBeginPeriod ( timer_res );
-        timer_id = timeSetEvent (
-                       res,
-                       res,
-                       win32_timer,
-                       ( DWORD ) this,
-                       TIME_PERIODIC
-                   );
+        timeBeginPeriod( timer_res );
+        timer_id = timeSetEvent( res, res, win32_timer, ( DWORD ) this, TIME_PERIODIC );
 
         if ( timer_id )
         {
@@ -144,45 +120,34 @@ void MIDIDriverWin32::StopTimer()
 {
     if ( timer_open )
     {
-        timeKillEvent ( timer_id );
-        timeEndPeriod ( timer_res );
+        timeKillEvent( timer_id );
+        timeEndPeriod( timer_res );
         timer_open = false;
     }
 }
 
-bool MIDIDriverWin32::OpenMIDIInPort ( int id )
+bool MIDIDriverWin32::OpenMIDIInPort( int id )
 {
     if ( !in_open )
     {
-        if ( midiInOpen (
-                    &in_handle,
-                    id,
-                    ( DWORD ) win32_midi_in,
-                    ( DWORD ) this,
-                    CALLBACK_FUNCTION ) != 0
-           )
+        if ( midiInOpen(
+                 &in_handle, id, ( DWORD ) win32_midi_in, ( DWORD ) this, CALLBACK_FUNCTION ) != 0 )
         {
             return false;
         }
 
-        midiInStart ( in_handle );
+        midiInStart( in_handle );
         in_open = true;
     }
 
     return true;
 }
 
-bool MIDIDriverWin32::OpenMIDIOutPort ( int id )
+bool MIDIDriverWin32::OpenMIDIOutPort( int id )
 {
     if ( !out_open )
     {
-        int e = midiOutOpen (
-                    &out_handle,
-                    id,
-                    0,
-                    0,
-                    CALLBACK_NULL
-                );
+        int e = midiOutOpen( &out_handle, id, 0, 0, CALLBACK_NULL );
 
         if ( e != 0 )
         {
@@ -199,8 +164,8 @@ void MIDIDriverWin32::CloseMIDIInPort()
 {
     if ( in_open )
     {
-        midiInStop ( in_handle );
-        midiInClose ( in_handle );
+        midiInStop( in_handle );
+        midiInClose( in_handle );
         in_open = false;
     }
 }
@@ -209,13 +174,13 @@ void MIDIDriverWin32::CloseMIDIOutPort()
 {
     if ( out_open )
     {
-        midiOutClose ( out_handle );
+        midiOutClose( out_handle );
         out_open = false;
         Reset();
     }
 }
 
-bool MIDIDriverWin32::HardwareMsgOut ( const MIDITimedBigMessage &msg )
+bool MIDIDriverWin32::HardwareMsgOut( const MIDITimedBigMessage& msg )
 {
     if ( out_open )
     {
@@ -223,12 +188,11 @@ bool MIDIDriverWin32::HardwareMsgOut ( const MIDITimedBigMessage &msg )
         if ( msg.GetStatus() < 0xff && msg.GetStatus() != 0xf0 )
         {
             DWORD winmsg;
-            winmsg =
-                ( ( ( DWORD ) msg.GetStatus() & 0xff ) << 0 )
-                | ( ( ( DWORD ) msg.GetByte1() & 0xff ) << 8 )
-                | ( ( ( DWORD ) msg.GetByte2() & 0xff ) << 16 );
+            winmsg = ( ( ( DWORD ) msg.GetStatus() & 0xff ) << 0 ) |
+                     ( ( ( DWORD ) msg.GetByte1() & 0xff ) << 8 ) |
+                     ( ( ( DWORD ) msg.GetByte2() & 0xff ) << 16 );
 
-            if ( midiOutShortMsg ( out_handle, winmsg ) != 0 )
+            if ( midiOutShortMsg( out_handle, winmsg ) != 0 )
             {
                 return false;
             }
@@ -240,39 +204,28 @@ bool MIDIDriverWin32::HardwareMsgOut ( const MIDITimedBigMessage &msg )
     return false;
 }
 
-void CALLBACK MIDIDriverWin32::win32_timer (
-    UINT wTimerID,
-    UINT msg,
-    DWORD dwUser,
-    DWORD dw1,
-    DWORD dw2
-)
+void CALLBACK
+MIDIDriverWin32::win32_timer( UINT wTimerID, UINT msg, DWORD dwUser, DWORD dw1, DWORD dw2 )
 {
-    MIDIDriverWin32 *self = ( MIDIDriverWin32 * ) dwUser;
-    self->TimeTick ( timeGetTime() );
+    MIDIDriverWin32* self = ( MIDIDriverWin32* ) dwUser;
+    self->TimeTick( timeGetTime() );
 }
 
-void CALLBACK MIDIDriverWin32::win32_midi_in (
-    HMIDIIN hMidiIn,
-    UINT wMsg,
-    DWORD dwInstance,
-    DWORD dwParam1,
-    DWORD dwParam2
-)
+void CALLBACK MIDIDriverWin32::win32_midi_in(
+    HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2 )
 {
-    MIDIDriverWin32 *self = ( MIDIDriverWin32 * ) dwInstance;
+    MIDIDriverWin32* self = ( MIDIDriverWin32* ) dwInstance;
 
     if ( wMsg == MIM_DATA )
     {
         MIDITimedBigMessage msg;
-        msg.SetStatus ( ( unsigned char ) ( dwParam1 & 0xff ) );
-        msg.SetByte1 ( ( unsigned char ) ( ( dwParam1 >> 8 ) & 0xff ) );
-        msg.SetByte2 ( ( unsigned char ) ( ( dwParam1 >> 16 ) & 0xff ) );
-        msg.SetTime ( timeGetTime() );
-        self->HardwareMsgIn ( msg );
+        msg.SetStatus( ( unsigned char ) ( dwParam1 & 0xff ) );
+        msg.SetByte1( ( unsigned char ) ( ( dwParam1 >> 8 ) & 0xff ) );
+        msg.SetByte2( ( unsigned char ) ( ( dwParam1 >> 16 ) & 0xff ) );
+        msg.SetTime( timeGetTime() );
+        self->HardwareMsgIn( msg );
     }
 }
 
-}
+}  // namespace jdksmidi
 #endif
-

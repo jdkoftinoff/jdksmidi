@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 #ifndef JDKSMIDI_DRIVERWIN32_H
 #define JDKSMIDI_DRIVERWIN32_H
 
@@ -28,30 +28,24 @@
 #include "jdksmidi/sequencer.h"
 
 #ifdef WIN32
-#include "windows.h"
-#include "mmsystem.h"
+    #include "mmsystem.h"
+    #include "windows.h"
 
 namespace jdksmidi
 {
 
-class MIDISequencerGUIEventNotifierWin32 :
-        public MIDISequencerGUIEventNotifier
+class MIDISequencerGUIEventNotifierWin32 : public MIDISequencerGUIEventNotifier
 {
-public:
-    MIDISequencerGUIEventNotifierWin32 (
-        HWND w,
-        DWORD wmmsg,
-        WPARAM wparam_value_ = 0
-    );
+  public:
+    MIDISequencerGUIEventNotifierWin32( HWND w, DWORD wmmsg, WPARAM wparam_value_ = 0 );
 
     virtual ~MIDISequencerGUIEventNotifierWin32();
 
-    virtual void Notify ( const MIDISequencer *seq, MIDISequencerGUIEvent e );
+    virtual void Notify( const MIDISequencer* seq, MIDISequencerGUIEvent e );
     virtual bool GetEnable() const;
-    virtual void SetEnable ( bool f );
+    virtual void SetEnable( bool f );
 
-private:
-
+  private:
     HWND dest_window;
     DWORD window_msg;
     WPARAM wparam_value;
@@ -59,43 +53,30 @@ private:
 };
 
 
-
 class MIDIDriverWin32 : public MIDIDriver
 {
-public:
-    MIDIDriverWin32 ( int queue_size );
+  public:
+    MIDIDriverWin32( int queue_size );
     virtual ~MIDIDriverWin32();
 
     void ResetMIDIOut();
 
-    bool StartTimer ( int resolution_ms );
-    bool OpenMIDIInPort ( int id );
-    bool OpenMIDIOutPort ( int id );
+    bool StartTimer( int resolution_ms );
+    bool OpenMIDIInPort( int id );
+    bool OpenMIDIOutPort( int id );
 
     void StopTimer();
     void CloseMIDIInPort();
     void CloseMIDIOutPort();
 
 
-    bool HardwareMsgOut ( const MIDITimedBigMessage &msg );
+    bool HardwareMsgOut( const MIDITimedBigMessage& msg );
 
-protected:
+  protected:
+    static void CALLBACK win32_timer( UINT wTimerID, UINT msg, DWORD dwUser, DWORD dw1, DWORD dw2 );
 
-    static void CALLBACK win32_timer (
-        UINT wTimerID,
-        UINT msg,
-        DWORD dwUser,
-        DWORD dw1,
-        DWORD dw2
-    );
-
-    static void CALLBACK win32_midi_in (
-        HMIDIIN hMidiIn,
-        UINT wMsg,
-        DWORD dwInstance,
-        DWORD dwParam1,
-        DWORD dwParam2
-    );
+    static void CALLBACK
+    win32_midi_in( HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2 );
 
     HMIDIIN in_handle;
     HMIDIOUT out_handle;
@@ -108,7 +89,7 @@ protected:
 };
 
 
-}
+}  // namespace jdksmidi
 #endif
 
 #endif

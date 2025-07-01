@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 /*
 ** Copyright 1986 to 1998 By J.D. Koftinoff Software, Ltd.
 **
@@ -38,12 +38,12 @@
 
 
 #ifndef DEBUG_MDKEYSIG
-# define DEBUG_MDKEYSIG 0
+    #define DEBUG_MDKEYSIG 0
 #endif
 
 #if DEBUG_MDKEYSIG
-# undef DBG
-# define DBG(a) a
+    #undef DBG
+    #define DBG( a ) a
 #endif
 
 namespace jdksmidi
@@ -51,21 +51,21 @@ namespace jdksmidi
 
 
 int MIDIKeySignature::sharp_list[7] = { 3, 0, 4, 1, 5, 2, 6 };
-int MIDIKeySignature::flat_list[7] =  { 6, 2, 5, 1, 4, 0, 3 };
+int MIDIKeySignature::flat_list[7] = { 6, 2, 5, 1, 4, 0, 3 };
 
 
 MIDIKeySignature::MIDIKeySignature()
 {
-    ENTER ( "MIDIKeySignature::MIDIKeySignature()" );
+    ENTER( "MIDIKeySignature::MIDIKeySignature()" );
     use_sharps = true;
     sharp_flat = 0;
     major = true;
     Reset();
 }
 
-MIDIKeySignature::MIDIKeySignature ( const MIDIKeySignature &k )
+MIDIKeySignature::MIDIKeySignature( const MIDIKeySignature& k )
 {
-    ENTER ( "MIDIKeySignature::MIDIKeySignature()" );
+    ENTER( "MIDIKeySignature::MIDIKeySignature()" );
     use_sharps = k.use_sharps;
     sharp_flat = k.sharp_flat;
     major = k.major;
@@ -80,7 +80,7 @@ MIDIKeySignature::MIDIKeySignature ( const MIDIKeySignature &k )
 
 void MIDIKeySignature::Reset()
 {
-    ENTER ( "MIDIKeySignature::Reset()" );
+    ENTER( "MIDIKeySignature::Reset()" );
 
     if ( sharp_flat < -7 )
         sharp_flat = -7;
@@ -122,17 +122,15 @@ void MIDIKeySignature::Reset()
 
         for ( int i = 0; i < flats; ++i )
         {
-            state[ flat_list[i] ] = ACCFlat;
+            state[flat_list[i]] = ACCFlat;
         }
     }
 }
 
 
-
-
-bool MIDIKeySignature::ProcessWhiteNote ( int in_note, int *out_note )
+bool MIDIKeySignature::ProcessWhiteNote( int in_note, int* out_note )
 {
-    ENTER ( "MIDIKeySignature::ProcessWhiteNote()" );
+    ENTER( "MIDIKeySignature::ProcessWhiteNote()" );
     //
     // check to see if this white note is allowed in the current
     // state.
@@ -170,9 +168,9 @@ bool MIDIKeySignature::ProcessWhiteNote ( int in_note, int *out_note )
 }
 
 
-bool MIDIKeySignature::ProcessBlackNote ( int in_note, int *out_note )
+bool MIDIKeySignature::ProcessBlackNote( int in_note, int* out_note )
 {
-    ENTER ( "MIDIKeySignature::ProcessBlackNote()" );
+    ENTER( "MIDIKeySignature::ProcessBlackNote()" );
     //
     // if this note is already sharped,
     // return the note unchanged and return false
@@ -189,7 +187,7 @@ bool MIDIKeySignature::ProcessBlackNote ( int in_note, int *out_note )
     // instead.
     //
 
-    if ( state[in_note+1] == ACCFlat )
+    if ( state[in_note + 1] == ACCFlat )
     {
         *out_note = in_note + 1;
         return false;
@@ -217,7 +215,7 @@ bool MIDIKeySignature::ProcessBlackNote ( int in_note, int *out_note )
         //
         // make the next white note a flat.
         //
-        state[in_note+1] = ACCFlat;
+        state[in_note + 1] = ACCFlat;
         *out_note = in_note + 1;
         //
         // Accidental required. Return true.
@@ -227,18 +225,14 @@ bool MIDIKeySignature::ProcessBlackNote ( int in_note, int *out_note )
 }
 
 
-
 //
 // ConvertMIDINote() takes a real MIDI note number and converts it to a
 // white-key note number. it returns true if an Accidental is required.
 //
 
-bool MIDIKeySignature::ConvertMIDINote (
-    int in_note,
-    int *out_note
-)
+bool MIDIKeySignature::ConvertMIDINote( int in_note, int* out_note )
 {
-    ENTER ( "MIDIKeySignature::ConvertMIDINote()" );
+    ENTER( "MIDIKeySignature::ConvertMIDINote()" );
     int octave = in_note / 12;
     int midi_note = in_note % 12;
     int actual_note = 0;
@@ -246,42 +240,42 @@ bool MIDIKeySignature::ConvertMIDINote (
 
     switch ( midi_note )
     {
-    case 0:  // C
-        changed = ProcessWhiteNote ( 0, &actual_note );
-        break;
-    case 2:  // D
-        changed = ProcessWhiteNote ( 1, &actual_note );
-        break;
-    case 4:  // E
-        changed = ProcessWhiteNote ( 2, &actual_note );
-        break;
-    case 5:  // F
-        changed = ProcessWhiteNote ( 3, &actual_note );
-        break;
-    case 7:  // G
-        changed = ProcessWhiteNote ( 4, &actual_note );
-        break;
-    case 9:  // A
-        changed = ProcessWhiteNote ( 5, &actual_note );
-        break;
-    case 11: // B
-        changed = ProcessWhiteNote ( 6, &actual_note );
-        break;
-    case 1:  // C#
-        changed = ProcessBlackNote ( 0, &actual_note );
-        break;
-    case 3:  // D#
-        changed = ProcessBlackNote ( 1, &actual_note );
-        break;
-    case 6:  // F#
-        changed = ProcessBlackNote ( 3, &actual_note );
-        break;
-    case 8:  // G#
-        changed = ProcessBlackNote ( 4, &actual_note );
-        break;
-    case 10: // A#
-        changed = ProcessBlackNote ( 5, &actual_note );
-        break;
+        case 0:  // C
+            changed = ProcessWhiteNote( 0, &actual_note );
+            break;
+        case 2:  // D
+            changed = ProcessWhiteNote( 1, &actual_note );
+            break;
+        case 4:  // E
+            changed = ProcessWhiteNote( 2, &actual_note );
+            break;
+        case 5:  // F
+            changed = ProcessWhiteNote( 3, &actual_note );
+            break;
+        case 7:  // G
+            changed = ProcessWhiteNote( 4, &actual_note );
+            break;
+        case 9:  // A
+            changed = ProcessWhiteNote( 5, &actual_note );
+            break;
+        case 11:  // B
+            changed = ProcessWhiteNote( 6, &actual_note );
+            break;
+        case 1:  // C#
+            changed = ProcessBlackNote( 0, &actual_note );
+            break;
+        case 3:  // D#
+            changed = ProcessBlackNote( 1, &actual_note );
+            break;
+        case 6:  // F#
+            changed = ProcessBlackNote( 3, &actual_note );
+            break;
+        case 8:  // G#
+            changed = ProcessBlackNote( 4, &actual_note );
+            break;
+        case 10:  // A#
+            changed = ProcessBlackNote( 5, &actual_note );
+            break;
     };
 
     *out_note = ( octave * 7 ) + actual_note;
@@ -289,4 +283,4 @@ bool MIDIKeySignature::ConvertMIDINote (
     return changed;
 }
 
-}
+}  // namespace jdksmidi

@@ -20,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 /*
 ** Copyright 1986 to 1998 By J.D. Koftinoff Software, Ltd.
 **
@@ -47,10 +47,9 @@ enum MIDIAccidentalType
 
 class MIDIKeySignature
 {
-public:
-
+  public:
     MIDIKeySignature();
-    MIDIKeySignature ( const MIDIKeySignature &k );
+    MIDIKeySignature( const MIDIKeySignature& k );
 
     void Reset();
 
@@ -60,7 +59,7 @@ public:
         return major;
     }
 
-    void SetSharpFlats ( int sf, bool maj = true )
+    void SetSharpFlats( int sf, bool maj = true )
     {
         sharp_flat = sf;
         major = maj;
@@ -72,31 +71,26 @@ public:
         return sharp_flat;
     }
 
-    MIDIAccidentalType GetNoteStatus ( int white_note )
+    MIDIAccidentalType GetNoteStatus( int white_note )
     {
-        return state[white_note%7];
+        return state[white_note % 7];
     }
 
 
-    bool ConvertMIDINote ( int in_note, int *out_note );
+    bool ConvertMIDINote( int in_note, int* out_note );
 
-protected:
-
-    bool ProcessWhiteNote ( int in_note, int *out_note );
-    bool ProcessBlackNote ( int in_note, int *out_note );
+  protected:
+    bool ProcessWhiteNote( int in_note, int* out_note );
+    bool ProcessBlackNote( int in_note, int* out_note );
 
     MIDIAccidentalType state[7];
-    bool  use_sharps;
-    int  sharp_flat;
-    bool  major;
+    bool use_sharps;
+    int sharp_flat;
+    bool major;
 
     static int sharp_list[7];
     static int flat_list[7];
-
-
 };
-}
+}  // namespace jdksmidi
 
 #endif
-
-

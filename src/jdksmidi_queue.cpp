@@ -20,27 +20,23 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-#include "jdksmidi/world.h"
+ */
 #include "jdksmidi/queue.h"
+#include "jdksmidi/world.h"
 
 namespace jdksmidi
 {
 
 
-MIDIQueue::MIDIQueue ( int num_msgs )
-        :
-        buf ( new MIDITimedBigMessage[ num_msgs ] ),
-        bufsize ( num_msgs ),
-        next_in ( 0 ),
-        next_out ( 0 )
+MIDIQueue::MIDIQueue( int num_msgs )
+    : buf( new MIDITimedBigMessage[num_msgs] ), bufsize( num_msgs ), next_in( 0 ), next_out( 0 )
 {
 }
 
 
 MIDIQueue::~MIDIQueue()
 {
-    delete [] buf;
+    delete[] buf;
 }
 
 void MIDIQueue::Clear()
@@ -60,5 +56,4 @@ bool MIDIQueue::CanGet() const
 }
 
 
-
-}
+}  // namespace jdksmidi
