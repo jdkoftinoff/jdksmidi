@@ -388,7 +388,7 @@ MIDISequencerState::MIDISequencerState(
     , next_beat_time(0)
 {
     for (int i = 0; i < num_tracks; ++i) {
-        track_state[i] = new MIDISequencerTrackState(s, i, notifier);
+        track_state[i] = std::make_unique<MIDISequencerTrackState>(s, i, notifier);
     }
 }
 
@@ -404,29 +404,25 @@ MIDISequencerState::MIDISequencerState(MIDISequencerState const& s)
     , next_beat_time(s.next_beat_time)
 {
     for (int i = 0; i < num_tracks; ++i) {
-        track_state[i] = new MIDISequencerTrackState(*s.track_state[i]);
+        track_state[i] = std::make_unique<MIDISequencerTrackState>(*s.track_state[i]);
     }
 }
 
 MIDISequencerState::~MIDISequencerState()
-{
-    for (int i = 0; i < num_tracks; ++i) {
-        delete track_state[i];
-    }
-}
+{}
 
 MIDISequencerState const& MIDISequencerState::operator=(MIDISequencerState const& s)
 {
     if (num_tracks != s.num_tracks) {
         {
             for (int i = 0; i < num_tracks; ++i) {
-                delete track_state[i];
+                track_state[i].reset();
             }
         }
         num_tracks = s.num_tracks;
         {
             for (int i = 0; i < num_tracks; ++i) {
-                track_state[i] = new MIDISequencerTrackState(*s.track_state[i]);
+                track_state[i] = std::make_unique<MIDISequencerTrackState>(*s.track_state[i]);
             }
         }
     }
@@ -449,16 +445,12 @@ MIDISequencer::MIDISequencer(MIDIMultiTrack* m, MIDISequencerGUIEventNotifier* n
     , state(this, m, n)  // TODO: fix this hack
 {
     for (int i = 0; i < num_tracks; ++i) {
-        track_processors[i] = new MIDISequencerTrackProcessor;
+        track_processors[i] = std::make_unique<MIDISequencerTrackProcessor>();
     }
 }
 
 MIDISequencer::~MIDISequencer()
-{
-    for (int i = 0; i < num_tracks; ++i) {
-        delete track_processors[i];
-    }
-}
+{}
 
 void MIDISequencer::ResetTrack(int trk)
 {
@@ -521,22 +513,22 @@ double MIDISequencer::GetCurrentTempo() const
 
 MIDISequencerTrackState* MIDISequencer::GetTrackState(int trk)
 {
-    return state.track_state[trk];
+    return state.track_state[trk].get();
 }
 
 MIDISequencerTrackState const* MIDISequencer::GetTrackState(int trk) const
 {
-    return state.track_state[trk];
+    return state.track_state[trk].get();
 }
 
 MIDISequencerTrackProcessor* MIDISequencer::GetTrackProcessor(int trk)
 {
-    return track_processors[trk];
+    return track_processors[trk].get();
 }
 
 MIDISequencerTrackProcessor const* MIDISequencer::GetTrackProcessor(int trk) const
 {
-    return track_processors[trk];
+    return track_processors[trk].get();
 }
 
 bool MIDISequencer::GetSoloMode() const

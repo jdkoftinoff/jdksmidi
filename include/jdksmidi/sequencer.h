@@ -34,6 +34,8 @@
 #include "jdksmidi/tempo.h"
 #include "jdksmidi/track.h"
 
+#include <memory>
+
 namespace jdksmidi {
 
 class MIDISequencerGUIEvent;
@@ -220,7 +222,7 @@ class MIDISequencerState
     MIDIMultiTrack* multitrack;
     int num_tracks;
 
-    MIDISequencerTrackState* track_state[64];
+    std::unique_ptr<MIDISequencerTrackState> track_state[64];
     MIDIMultiTrackIterator iterator;
     MIDIClockTime cur_clock;
     float cur_time_ms;
@@ -283,7 +285,7 @@ class MIDISequencer
     int tempo_scale;
 
     int num_tracks;
-    MIDISequencerTrackProcessor* track_processors[64];
+    std::unique_ptr<MIDISequencerTrackProcessor> track_processors[64];
 
     MIDISequencerState state;
 };

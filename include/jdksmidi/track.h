@@ -42,6 +42,8 @@
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
 
+#include <memory>
+
 namespace jdksmidi {
 
 ///
@@ -164,7 +166,7 @@ class MIDITrack
   private:
     // void  QSort( int left, int right );
 
-    MIDITrackChunk* chunk[MIDIChunksPerTrack];
+    std::unique_ptr<MIDITrackChunk> chunk[MIDIChunksPerTrack];
 
     int buf_size;
     int num_events;

@@ -228,14 +228,11 @@ MIDIFileRead::MIDIFileRead(
     msg_index = 0;
     cur_track = 0;
     abort_parse = 0;
-    max_msg_len = max_msg_len_;
-    the_msg = new unsigned char[max_msg_len];
+    message_buffer.resize(max_msg_len_);
 }
 
 MIDIFileRead::~MIDIFileRead()
-{
-    delete[] the_msg;
-}
+{}
 
 void MIDIFileRead::mf_error(char const* e)
 {
@@ -431,7 +428,7 @@ void MIDIFileRead::ReadTrack()
                     MsgAdd(EGetC());
                 }
 
-                event_handler->MetaEvent(cur_time, type, msg_index, the_msg);
+                event_handler->MetaEvent(cur_time, type, msg_index, message_buffer.data());
                 break;
             case 0xf0:  // start of sys-ex
                 lng = ReadVariableNum();
@@ -445,7 +442,7 @@ void MIDIFileRead::ReadTrack()
                 if (c == 0xf7 || no_merge == 0) {
                     // make a sysex object out of the raw sysex data
                     // the buffer is not to be deleted upon destruction of ex
-                    MIDISystemExclusive ex(the_msg, msg_index, msg_index, false);
+                    MIDISystemExclusive ex(message_buffer.data(), msg_index, msg_index, false);
                     // give the sysex object to our event handler
                     event_handler->mf_sysex(cur_time, ex);
                 }
@@ -466,13 +463,13 @@ void MIDIFileRead::ReadTrack()
                     MsgAdd(c = EGetC());
 
                 if (!sysexcontinue) {
-                    event_handler->mf_arbitrary(cur_time, msg_index, the_msg);
+                    event_handler->mf_arbitrary(cur_time, msg_index, message_buffer.data());
                 }
 
                 else if (c == 0xf7) {
                     // make a sysex object out of the raw sysex data
                     // the buffer is not to be deleted upon destruction of ex
-                    MIDISystemExclusive ex(the_msg, msg_index, msg_index, false);
+                    MIDISystemExclusive ex(message_buffer.data(), msg_index, msg_index, false);
                     event_handler->mf_sysex(cur_time, ex);
                     sysexcontinue = 0;
                 }
@@ -547,8 +544,8 @@ int MIDIFileRead::EGetC()
 
 void MIDIFileRead::MsgAdd(int a)
 {
-    if (msg_index < max_msg_len)
-        the_msg[msg_index++] = (unsigned char)a;
+    if (msg_index < static_cast<int>(message_buffer.size()))
+        message_buffer[msg_index++] = (unsigned char)a;
 }
 
 void MIDIFileRead::MsgInit()

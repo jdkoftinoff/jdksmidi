@@ -74,7 +74,7 @@ namespace jdksmidi {
 // 'void SetDPosition( const double &a ) { Position=a; }
 //
 
-#define JDKSMIDI_ATTRIBUTE(TYPE, NAME)                                                            \
+#define JDKSMIDI_ATTRIBUTE(TYPE, NAME)                                                             \
   public:                                                                                          \
     TYPE Get##NAME() const                                                                         \
     {                                                                                              \
@@ -88,7 +88,7 @@ namespace jdksmidi {
   private:                                                                                         \
     TYPE NAME
 
-#define JDKSMIDI_ATTRIBUTE_REF(TYPE, NAME)                                                        \
+#define JDKSMIDI_ATTRIBUTE_REF(TYPE, NAME)                                                         \
   public:                                                                                          \
     const TYPE& Get##NAME() const                                                                  \
     {                                                                                              \
@@ -102,7 +102,7 @@ namespace jdksmidi {
   private:                                                                                         \
     TYPE NAME
 
-#define JDKSMIDI_ACCESS(TYPE, NAME1, NAME2)                                                       \
+#define JDKSMIDI_ACCESS(TYPE, NAME1, NAME2)                                                        \
   public:                                                                                          \
     TYPE Get##NAME1() const                                                                        \
     {                                                                                              \
@@ -113,7 +113,7 @@ namespace jdksmidi {
         NAME2 = a;                                                                                 \
     }
 
-#define JDKSMIDI_ACCESS_REF(TYPE, NAME1, NAME2)                                                   \
+#define JDKSMIDI_ACCESS_REF(TYPE, NAME1, NAME2)                                                    \
   public:                                                                                          \
     const TYPE& Get##NAME1() const                                                                 \
     {                                                                                              \
@@ -124,7 +124,7 @@ namespace jdksmidi {
         NAME2 = a;                                                                                 \
     }
 
-#define JDKSMIDI_PATTRIBUTE(TYPE, NAME)                                                           \
+#define JDKSMIDI_PATTRIBUTE(TYPE, NAME)                                                            \
   protected:                                                                                       \
     const TYPE* Get##NAME() const                                                                  \
     {                                                                                              \
@@ -138,7 +138,7 @@ namespace jdksmidi {
   private:                                                                                         \
     TYPE NAME
 
-#define JDKSMIDI_PATTRIBUTE_REF(TYPE, NAME)                                                       \
+#define JDKSMIDI_PATTRIBUTE_REF(TYPE, NAME)                                                        \
   protected:                                                                                       \
     const TYPE& Get##NAME() const                                                                  \
     {                                                                                              \
@@ -152,7 +152,7 @@ namespace jdksmidi {
   private:                                                                                         \
     TYPE NAME
 
-#define JDKSMIDI_PACCESS(TYPE, NAME1, NAME2)                                                      \
+#define JDKSMIDI_PACCESS(TYPE, NAME1, NAME2)                                                       \
   protected:                                                                                       \
     const TYPE Get##NAME1() const                                                                  \
     {                                                                                              \
@@ -163,7 +163,7 @@ namespace jdksmidi {
         NAME2 = a;                                                                                 \
     }
 
-#define JDKSMIDI_PACCESS_REF(TYPE, NAME1, NAME2)                                                  \
+#define JDKSMIDI_PACCESS_REF(TYPE, NAME1, NAME2)                                                   \
   protected:                                                                                       \
     const TYPE& Get##NAME1() const                                                                 \
     {                                                                                              \

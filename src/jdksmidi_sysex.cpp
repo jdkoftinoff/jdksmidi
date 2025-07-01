@@ -50,40 +50,21 @@
 namespace jdksmidi {
 
 MIDISystemExclusive::MIDISystemExclusive(int size_)
+    : max_len(size_)
+    , chk_sum(0)
 {
     ENTER("MIDISystemExclusive::MIDISystemExclusive");
-    buf = new std::uint8_t[size_];
-
-    if (buf)
-        max_len = size_;
-
-    else
-        max_len = 0;
-
-    cur_len = 0;
-    chk_sum = 0;
-    deletable = true;
+    buffer.reserve(size_);
 }
 
 MIDISystemExclusive::MIDISystemExclusive(MIDISystemExclusive const& e)
-{
-    buf = new unsigned char[e.max_len];
-    max_len = e.max_len;
-    cur_len = e.cur_len;
-    chk_sum = e.chk_sum;
-    deletable = true;
-
-    for (int i = 0; i < cur_len; ++i) {
-        buf[i] = e.buf[i];
-    }
-}
+    : max_len(e.max_len)
+    , chk_sum(e.chk_sum)
+{}
 
 MIDISystemExclusive::~MIDISystemExclusive()
 {
     ENTER("MIDISystemExclusive::~MIDISystemExclusive");
-
-    if (deletable)
-        delete[] buf;
 }
 
 }  // namespace jdksmidi

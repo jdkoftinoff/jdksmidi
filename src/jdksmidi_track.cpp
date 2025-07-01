@@ -38,6 +38,8 @@
 #include "jdksmidi/track.h"
 #include "jdksmidi/world.h"
 
+#include <memory>
+
 #ifndef DEBUG_MDTRACK
 #    define DEBUG_MDTRACK 0
 #endif
@@ -65,7 +67,7 @@ MIDITrack::MIDITrack(int size)
     num_events = 0;
 
     for (int i = 0; i < MIDIChunksPerTrack; ++i)
-        chunk[i] = 0;
+        chunk[i] = nullptr;
 
     if (size) {
         Expand(size);
@@ -85,10 +87,7 @@ MIDITrack::MIDITrack(MIDITrack const& t)
 }
 
 MIDITrack::~MIDITrack()
-{
-    for (int i = 0; i < buf_size / MIDITrackChunkSize; ++i)
-        delete chunk[i];
-}
+{}
 
 void MIDITrack::Clear()
 {
@@ -318,8 +317,7 @@ void MIDITrack::Shrink()
 
     if (num_chunks_used < num_chunks_alloced) {
         for (int i = num_chunks_used; i < num_chunks_alloced; ++i) {
-            delete (chunk[i]);
-            chunk[i] = 0;
+            chunk[i].reset();
         }
 
         buf_size = num_chunks_used * MIDITrackChunkSize;
@@ -337,7 +335,7 @@ bool MIDITrack::Expand(int increase_amount)
     }
 
     for (int i = num_chunks_alloced; i < new_last_chunk_num; ++i) {
-        chunk[i] = new MIDITrackChunk;
+        chunk[i] = std::make_unique<MIDITrackChunk>();
 
         if (!chunk[i]) {
             buf_size = (i - 1) * MIDITrackChunkSize;

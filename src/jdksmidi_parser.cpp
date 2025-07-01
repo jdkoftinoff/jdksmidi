@@ -38,6 +38,8 @@
 #include "jdksmidi/parser.h"
 #include "jdksmidi/world.h"
 
+#include <memory>
+
 #ifndef DEBUG_MDPARSER
 #    define DEBUG_MDPARSER 0
 #endif
@@ -52,14 +54,13 @@ namespace jdksmidi {
 MIDIParser::MIDIParser(std::uint16_t max_sysex_size)
 {
     ENTER("MIDIParser::MIDIParser");
-    sysex = new MIDISystemExclusive(max_sysex_size);
+    sysex = std::make_unique<MIDISystemExclusive>(max_sysex_size);
     state = FIND_STATUS;
 }
 
 MIDIParser::~MIDIParser()
 {
     ENTER("MIDIParser::~MIDIParser");
-    delete sysex;
 }
 
 bool MIDIParser::Parse(std::uint8_t b, MIDIMessage* msg)

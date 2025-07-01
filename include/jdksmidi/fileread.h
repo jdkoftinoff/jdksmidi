@@ -43,6 +43,8 @@
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
 
+#include <vector>
+
 namespace jdksmidi {
 class MIDIFileReadStream;
 class MIDIFileReadStreamFile;
@@ -168,8 +170,7 @@ class MIDIFileRead : protected MIDIFile
     int cur_track;
     int abort_parse;
 
-    unsigned char* the_msg;
-    int max_msg_len;
+    std::vector<unsigned char> message_buffer;
     int msg_index;
 
   private:

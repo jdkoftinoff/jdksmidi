@@ -43,6 +43,7 @@
 #include "jdksmidi/sysex.h"
 
 #include <cstdint>
+#include <memory>
 
 namespace jdksmidi {
 
@@ -56,7 +57,7 @@ class MIDIParser
 
     virtual bool Parse(std::uint8_t b, MIDIMessage* msg);
 
-    MIDISystemExclusive* GetSystemExclusive() const { return sysex; }
+    MIDISystemExclusive* GetSystemExclusive() const { return sysex.get(); }
 
   protected:
     //
@@ -75,7 +76,7 @@ class MIDIParser
     };
 
     MIDIMessage tmp_msg;
-    MIDISystemExclusive* sysex;
+    std::unique_ptr<MIDISystemExclusive> sysex;
     State state;
 
     bool ParseSystemByte(std::uint8_t b, MIDIMessage* msg);

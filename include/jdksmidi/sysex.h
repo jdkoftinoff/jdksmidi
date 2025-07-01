@@ -40,6 +40,8 @@
 
 #include "jdksmidi/midi.h"
 
+#include <vector>
+
 namespace jdksmidi {
 
 class MIDISystemExclusive
@@ -50,27 +52,26 @@ class MIDISystemExclusive
     MIDISystemExclusive(MIDISystemExclusive const& e);
 
     MIDISystemExclusive(unsigned char* buf_, int max_len_, int cur_len_, bool deletable_)
+        : max_len(max_len_)
+        , chk_sum(0)
     {
-        buf = buf_;
-        max_len = max_len_;
-        cur_len = cur_len_;
-        chk_sum = 0;
-        deletable = deletable_;
+        if (buf_ && cur_len_ > 0) {
+            buffer.assign(buf_, buf_ + cur_len_);
+        }
     }
 
     virtual ~MIDISystemExclusive();
 
     void Clear()
     {
-        cur_len = 0;
+        buffer.clear();
         chk_sum = 0;
     }
     void ClearChecksum() { chk_sum = 0; }
 
     void PutSysByte(unsigned char b)  // does not add to chksum
     {
-        if (cur_len < max_len)
-            buf[cur_len++] = b;
+        buffer.push_back(b);
     }
 
     void PutByte(unsigned char b)
@@ -100,22 +101,23 @@ class MIDISystemExclusive
 
     unsigned char GetChecksum() const { return (unsigned char)(chk_sum & 0x7f); }
 
-    int GetLength() const { return cur_len; }
+    int GetLength() const { return static_cast<int>(buffer.size()); }
 
-    unsigned char GetData(int i) const { return buf[i]; }
+    unsigned char GetData(int i) const
+    {
+        return (i >= 0 && i < static_cast<int>(buffer.size())) ? buffer[i] : 0;
+    }
 
-    bool IsFull() const { return cur_len >= max_len; }
+    bool IsFull() const { return false; }
 
-    unsigned char* GetBuf() { return buf; }
+    unsigned char* GetBuf() { return buffer.empty() ? nullptr : buffer.data(); }
 
-    unsigned char const* GetBuf() const { return buf; }
+    unsigned char const* GetBuf() const { return buffer.empty() ? nullptr : buffer.data(); }
 
   private:
-    unsigned char* buf;
+    std::vector<unsigned char> buffer;
     int max_len;
-    int cur_len;
     unsigned char chk_sum;
-    bool deletable;
 };
 }  // namespace jdksmidi
 
