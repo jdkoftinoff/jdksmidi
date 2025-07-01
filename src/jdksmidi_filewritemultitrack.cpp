@@ -55,7 +55,6 @@ bool MIDIFileWriteMultiTrack::Write(int num_tracks, int division)
 
         MIDITrack const* t = multitrack->GetTrack(i);
 
-        MIDIClockTime last_event_time = 0;
 
         writer.WriteTrackHeader(0);  // will be rewritten later
 
@@ -64,8 +63,6 @@ bool MIDIFileWriteMultiTrack::Write(int num_tracks, int division)
                 MIDITimedBigMessage const* ev = t->GetEventAddress(event_num);
 
                 if (ev && !ev->IsNoOp()) {
-                    last_event_time = ev->GetTime();
-
                     if (!ev->IsDataEnd()) {
                         writer.WriteEvent(*ev);
 

@@ -545,7 +545,6 @@ void AdvancedSequencer::ExtractMarkers(std::vector<std::string>* list)
     int timesig_numerator = 4;
     int timesig_denominator = 4;
     MIDIClockTime last_beat_time = 0;
-    MIDIClockTime last_event_time = 0;
     int clks_per_beat = tracks.GetClksPerBeat();
 
     for (int i = 0; i < t->GetNumEvents(); ++i) {
@@ -583,8 +582,6 @@ void AdvancedSequencer::ExtractMarkers(std::vector<std::string>* list)
                     marker_times[cnt++] = m->GetTime();
                 }
             }
-
-            last_event_time = m->GetTime();
         }
     }
 
