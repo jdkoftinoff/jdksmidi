@@ -55,7 +55,8 @@ void MIDIDriver::AllNotesOff(int chan)
         for (int note = 0; note < 128; ++note) {
             while (out_matrix.GetNoteCount(chan, note) > 0) {
                 // make a note off with note on msg, velocity 0
-                msg.SetNoteOn((unsigned char)chan, (unsigned char)note, 0);
+                msg.SetNoteOn(
+                    static_cast<unsigned char>(chan), static_cast<unsigned char>(note), 0);
                 OutputMessage(msg);
             }
         }
@@ -63,7 +64,7 @@ void MIDIDriver::AllNotesOff(int chan)
 
     msg.SetControlChange(chan, C_DAMPER, 0);
     OutputMessage(msg);
-    msg.SetAllNotesOff((unsigned char)chan);
+    msg.SetAllNotesOff(static_cast<unsigned char>(chan));
     OutputMessage(msg);
 }
 

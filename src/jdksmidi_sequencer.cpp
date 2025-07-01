@@ -191,13 +191,13 @@ bool MIDISequencerTrackProcessor::Process(MIDITimedBigMessage* msg)
     if (msg->IsChannelMsg()) {
         // yes, are we to re-channel it?
         if (rechannel != -1) {
-            msg->SetChannel((unsigned char)rechannel);
+            msg->SetChannel(static_cast<unsigned char>(rechannel));
         }
 
         // is it a note on message?
         if (msg->IsNoteOn() && msg->GetVelocity() > 0) {
             // yes, scale the velocity value as required
-            int vel = (int)msg->GetVelocity();
+            int vel = static_cast<int>(msg->GetVelocity());
             vel = vel * velocity_scale / 100;
             // make sure velocity is never less than 0
 
@@ -206,17 +206,17 @@ bool MIDISequencerTrackProcessor::Process(MIDITimedBigMessage* msg)
             }
 
             // rewrite the velocity
-            msg->SetVelocity((unsigned char)vel);
+            msg->SetVelocity(static_cast<unsigned char>(vel));
         }
 
         // is it a type of event that needs to be transposed?
 
         if (msg->IsNoteOn() || msg->IsNoteOff() || msg->IsPolyPressure()) {
-            int new_note = ((int)msg->GetNote()) + transpose;
+            int new_note = static_cast<int>(msg->GetNote()) + transpose;
 
             if (new_note >= 0 && new_note <= 127) {
                 // set new note number
-                msg->SetNote((unsigned char)new_note);
+                msg->SetNote(static_cast<unsigned char>(new_note));
             }
 
             else {
@@ -314,7 +314,7 @@ bool MIDISequencerTrackState::Process(MIDITimedBigMessage* msg)
             // yes, is it a tempo event
             if (msg->IsTempo()) {
                 // yes get the current tempo
-                tempobpm = ((float)msg->GetTempo32()) * (1.0f / 32.0f);
+                tempobpm = static_cast<float>(msg->GetTempo32()) * (1.0f / 32.0f);
 
                 if (tempobpm < 1) {
                     tempobpm = 120.0;
@@ -341,8 +341,8 @@ bool MIDISequencerTrackState::Process(MIDITimedBigMessage* msg)
                         // yes, copy the track name
                         int len = msg->GetSysEx()->GetLength();
 
-                        if (len > (int)sizeof(track_name) - 1)
-                            len = (int)sizeof(track_name) - 1;
+                        if (len > static_cast<int>(sizeof(track_name)) - 1)
+                            len = static_cast<int>(sizeof(track_name)) - 1;
 
                         memcpy(track_name, msg->GetSysEx()->GetBuf(), len);
                         track_name[len] = '\0';
@@ -507,7 +507,7 @@ int MIDISequencer::GetCurrentMeasure() const
 
 double MIDISequencer::GetCurrentTempoScale() const
 {
-    return ((double)tempo_scale) * 0.01;
+    return static_cast<double>(tempo_scale) * 0.01;
 }
 
 double MIDISequencer::GetCurrentTempo() const
@@ -542,7 +542,7 @@ bool MIDISequencer::GetSoloMode() const
 
 void MIDISequencer::SetCurrentTempoScale(float scale)
 {
-    tempo_scale = (int)(scale * 100);
+    tempo_scale = static_cast<int>(scale * 100);
 }
 
 void MIDISequencer::SetSoloMode(bool m, int trk)
@@ -734,14 +734,15 @@ bool MIDISequencer::GetNextEventTimeMs(float* t)
 
     if (f) {
         // calculate delta time from last event time
-        double delta_clocks = (double)(ct - state.cur_clock);
+        double delta_clocks = static_cast<double>(ct - state.cur_clock);
         // calculate tempo in milliseconds per clock
         double clocks_per_sec =
-            ((state.track_state[0]->tempobpm * (((double)tempo_scale) * 0.01) * (1.0f / 60.0f)) *
+            ((state.track_state[0]->tempobpm * (static_cast<double>(tempo_scale) * 0.01) *
+              (1.0f / 60.0f)) *
              state.multitrack->GetClksPerBeat());
 
         if (clocks_per_sec > 0) {
-            float ms_per_clock = 1000.0f / (float)clocks_per_sec;
+            float ms_per_clock = 1000.0f / static_cast<float>(clocks_per_sec);
             // calculate delta time in milliseconds
             float delta_ms = float(delta_clocks * ms_per_clock);
             // return it added with the current time in ms.

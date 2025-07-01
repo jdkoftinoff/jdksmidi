@@ -319,10 +319,10 @@ bool MIDIShowControlPacket::Parse3Param(MIDISystemExclusive const* e, int* pos)
 bool MIDIShowControlPacket::StoreSet(MIDISystemExclusive* e) const
 {
     bool f = true;
-    e->PutByte((std::uint8_t)(GetControlNum() & 0x7f));
-    e->PutByte((std::uint8_t)((GetControlNum() >> 7) & 0x7f));
-    e->PutByte((std::uint8_t)(GetControlVal() & 0x7f));
-    e->PutByte((std::uint8_t)((GetControlVal() >> 7) & 0x7f));
+    e->PutByte(static_cast<std::uint8_t>(GetControlNum() & 0x7f));
+    e->PutByte(static_cast<std::uint8_t>((GetControlNum() >> 7) & 0x7f));
+    e->PutByte(static_cast<std::uint8_t>(GetControlVal() & 0x7f));
+    e->PutByte(static_cast<std::uint8_t>((GetControlVal() >> 7) & 0x7f));
 
     if (HasTime) {
         f = StoreTime(e);
@@ -352,7 +352,7 @@ bool MIDIShowControlPacket::ParseSet(MIDISystemExclusive const* e, int* pos)
 
 bool MIDIShowControlPacket::StoreFire(MIDISystemExclusive* e) const
 {
-    e->PutByte((std::uint8_t)(GetMacroNum()));
+    e->PutByte(static_cast<std::uint8_t>(GetMacroNum()));
     return true;
 }
 

@@ -85,7 +85,7 @@ int main(int argc, char** argv)
         if (c == EOF)
             break;
 
-        if (p.Parse((std::uint8_t)c, &m)) {
+        if (p.Parse(static_cast<std::uint8_t>(c), &m)) {
             if (m.IsSysEx()) {
                 PrintSysEx(stdout, p.GetSystemExclusive());
             }

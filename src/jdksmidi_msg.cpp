@@ -82,7 +82,11 @@ char const* MIDIMessage::MsgToText(char* txt) const
     *txt = 0;
 
     if (IsAllNotesOff()) {
-        sprintf(buf, "Ch %2d  All Notes Off  (ctrl=%3d)", (int)GetChannel() + 1, (int)byte1);
+        sprintf(
+            buf,
+            "Ch %2d  All Notes Off  (ctrl=%3d)",
+            static_cast<int>(GetChannel()) + 1,
+            static_cast<int>(byte1));
         strcat(txt, buf);
     }
 
@@ -96,7 +100,7 @@ char const* MIDIMessage::MsgToText(char* txt) const
             type = 8;
 
         if (type != 0xf) {
-            sprintf(buf, "Ch %2d  ", (int)GetChannel() + 1);
+            sprintf(buf, "Ch %2d  ", static_cast<int>(GetChannel()) + 1);
             strcat(txt, buf);
         }
 
@@ -106,17 +110,17 @@ char const* MIDIMessage::MsgToText(char* txt) const
             strcat(txt, sys_msg_name[status - 0xf0]);
 
             if (len > 1) {
-                sprintf(buf, "%02x", (int)byte1);
+                sprintf(buf, "%02x", static_cast<int>(byte1));
                 strcat(txt, buf);
             }
 
             if (len > 2) {
-                sprintf(buf, ",%02x", (int)byte2);
+                sprintf(buf, ",%02x", static_cast<int>(byte2));
                 strcat(txt, buf);
             }
 
             if (len > 3) {
-                sprintf(buf, ",%02x", (int)byte3);
+                sprintf(buf, ",%02x", static_cast<int>(byte3));
                 strcat(txt, buf);
             }
         }
@@ -128,29 +132,45 @@ char const* MIDIMessage::MsgToText(char* txt) const
                 case NOTE_ON:
 
                     if (byte2 == 0)
-                        sprintf(endtxt, "Note %3d", (int)byte1);
+                        sprintf(endtxt, "Note %3d", static_cast<int>(byte1));
 
                     else
-                        sprintf(endtxt, "Note %3d  Vel  %3d  ", (int)byte1, (int)byte2);
+                        sprintf(
+                            endtxt,
+                            "Note %3d  Vel  %3d  ",
+                            static_cast<int>(byte1),
+                            static_cast<int>(byte2));
 
                     break;
                 case NOTE_OFF:
-                    sprintf(endtxt, "Note %3d  Vel  %3d  ", (int)byte1, (int)byte2);
+                    sprintf(
+                        endtxt,
+                        "Note %3d  Vel  %3d  ",
+                        static_cast<int>(byte1),
+                        static_cast<int>(byte2));
                     break;
                 case POLY_PRESSURE:
-                    sprintf(endtxt, "Note %3d  Pres %3d  ", (int)byte1, (int)byte2);
+                    sprintf(
+                        endtxt,
+                        "Note %3d  Pres %3d  ",
+                        static_cast<int>(byte1),
+                        static_cast<int>(byte2));
                     break;
                 case CONTROL_CHANGE:
-                    sprintf(endtxt, "Ctrl %3d  Val  %3d  ", (int)byte1, (int)byte2);
+                    sprintf(
+                        endtxt,
+                        "Ctrl %3d  Val  %3d  ",
+                        static_cast<int>(byte1),
+                        static_cast<int>(byte2));
                     break;
                 case PROGRAM_CHANGE:
-                    sprintf(endtxt, "PG   %3d  ", (int)byte1);
+                    sprintf(endtxt, "PG   %3d  ", static_cast<int>(byte1));
                     break;
                 case CHANNEL_PRESSURE:
-                    sprintf(endtxt, "Pres %3d  ", (int)byte1);
+                    sprintf(endtxt, "Pres %3d  ", static_cast<int>(byte1));
                     break;
                 case PITCH_BEND:
-                    sprintf(endtxt, "Val %5d", (int)GetBenderValue());
+                    sprintf(endtxt, "Val %5d", static_cast<int>(GetBenderValue()));
                     break;
             }
         }
@@ -391,9 +411,9 @@ unsigned short MIDIMessage::GetLoopNumber() const
 
 void MIDIMessage::SetBenderValue(short v)
 {
-    short x = (short)(v + 8192);
-    byte1 = (unsigned char)(x & 0x7f);
-    byte2 = (unsigned char)((x >> 7) & 0x7f);
+    short x = static_cast<short>(v + 8192);
+    byte1 = static_cast<unsigned char>(x & 0x7f);
+    byte2 = static_cast<unsigned char>((x >> 7) & 0x7f);
 }
 
 void MIDIMessage::SetMetaType(unsigned char t)
@@ -403,13 +423,13 @@ void MIDIMessage::SetMetaType(unsigned char t)
 
 void MIDIMessage::SetMetaValue(unsigned short v)
 {
-    byte2 = (unsigned char)(v & 0xff);
-    byte3 = (unsigned char)((v >> 8) & 0xff);
+    byte2 = static_cast<unsigned char>(v & 0xff);
+    byte3 = static_cast<unsigned char>((v >> 8) & 0xff);
 }
 
 void MIDIMessage::SetNoteOn(unsigned char chan, unsigned char note, unsigned char vel)
 {
-    status = (unsigned char)(chan | NOTE_ON);
+    status = static_cast<unsigned char>(chan | NOTE_ON);
     byte1 = note;
     byte2 = vel;
     byte3 = 0;
@@ -417,7 +437,7 @@ void MIDIMessage::SetNoteOn(unsigned char chan, unsigned char note, unsigned cha
 
 void MIDIMessage::SetNoteOff(unsigned char chan, unsigned char note, unsigned char vel)
 {
-    status = (unsigned char)(chan | NOTE_OFF);
+    status = static_cast<unsigned char>(chan | NOTE_OFF);
     byte1 = note;
     byte2 = vel;
     byte3 = 0;
@@ -425,7 +445,7 @@ void MIDIMessage::SetNoteOff(unsigned char chan, unsigned char note, unsigned ch
 
 void MIDIMessage::SetPolyPressure(unsigned char chan, unsigned char note, unsigned char pres)
 {
-    status = (unsigned char)(chan | POLY_PRESSURE);
+    status = static_cast<unsigned char>(chan | POLY_PRESSURE);
     byte1 = note;
     byte2 = pres;
     byte3 = 0;
@@ -433,7 +453,7 @@ void MIDIMessage::SetPolyPressure(unsigned char chan, unsigned char note, unsign
 
 void MIDIMessage::SetControlChange(unsigned char chan, unsigned char ctrl, unsigned char val)
 {
-    status = (unsigned char)(chan | CONTROL_CHANGE);
+    status = static_cast<unsigned char>(chan | CONTROL_CHANGE);
     byte1 = ctrl;
     byte2 = val;
     byte3 = 0;
@@ -441,7 +461,7 @@ void MIDIMessage::SetControlChange(unsigned char chan, unsigned char ctrl, unsig
 
 void MIDIMessage::SetProgramChange(unsigned char chan, unsigned char val)
 {
-    status = (unsigned char)(chan | PROGRAM_CHANGE);
+    status = static_cast<unsigned char>(chan | PROGRAM_CHANGE);
     byte1 = val;
     byte2 = 0;
     byte3 = 0;
@@ -449,7 +469,7 @@ void MIDIMessage::SetProgramChange(unsigned char chan, unsigned char val)
 
 void MIDIMessage::SetChannelPressure(unsigned char chan, unsigned char val)
 {
-    status = (unsigned char)(chan | CHANNEL_PRESSURE);
+    status = static_cast<unsigned char>(chan | CHANNEL_PRESSURE);
     byte1 = val;
     byte2 = 0;
     byte3 = 0;
@@ -457,18 +477,18 @@ void MIDIMessage::SetChannelPressure(unsigned char chan, unsigned char val)
 
 void MIDIMessage::SetPitchBend(unsigned char chan, short val)
 {
-    status = (unsigned char)(chan | PITCH_BEND);
-    val += (short)0x2000;                 // center value
-    byte1 = (unsigned char)(val & 0x7f);  // 7 bit bytes
-    byte2 = (unsigned char)((val >> 7) & 0x7f);
+    status = static_cast<unsigned char>(chan | PITCH_BEND);
+    val += static_cast<short>(0x2000);               // center value
+    byte1 = static_cast<unsigned char>(val & 0x7f);  // 7 bit bytes
+    byte2 = static_cast<unsigned char>((val >> 7) & 0x7f);
     byte3 = 0;
 }
 
 void MIDIMessage::SetPitchBend(unsigned char chan, unsigned char low, unsigned char high)
 {
-    status = (unsigned char)(chan | PITCH_BEND);
-    byte1 = (unsigned char)(low);
-    byte2 = (unsigned char)(high);
+    status = static_cast<unsigned char>(chan | PITCH_BEND);
+    byte1 = static_cast<unsigned char>(low);
+    byte2 = static_cast<unsigned char>(high);
     byte3 = 0;
 }
 
@@ -477,14 +497,14 @@ void MIDIMessage::SetSysEx()
     status = SYSEX_START;
     byte1 = 0;
     int num = 0;
-    byte2 = (unsigned char)(num & 0xff);
-    byte3 = (unsigned char)((num >> 8) & 0xff);
+    byte2 = static_cast<unsigned char>(num & 0xff);
+    byte3 = static_cast<unsigned char>((num >> 8) & 0xff);
 }
 
 void MIDIMessage::SetMTC(unsigned char field, unsigned char v)
 {
     status = MTC;
-    byte1 = (unsigned char)((field << 4) | v);
+    byte1 = static_cast<unsigned char>((field << 4) | v);
     byte2 = 0;
     byte3 = 0;
 }
@@ -492,8 +512,8 @@ void MIDIMessage::SetMTC(unsigned char field, unsigned char v)
 void MIDIMessage::SetSongPosition(short pos)
 {
     status = SONG_POSITION;
-    byte1 = (unsigned char)(pos & 0x7f);
-    byte2 = (unsigned char)((pos >> 7) & 0x7f);
+    byte1 = static_cast<unsigned char>(pos & 0x7f);
+    byte2 = static_cast<unsigned char>((pos >> 7) & 0x7f);
     byte3 = 0;
 }
 
@@ -525,13 +545,13 @@ void MIDIMessage::SetMetaEvent(unsigned char type, unsigned short v)
 {
     status = META_EVENT;
     byte1 = type;
-    byte2 = (unsigned char)(v & 0xff);
-    byte3 = (unsigned char)((v >> 8) & 0xff);
+    byte2 = static_cast<unsigned char>(v & 0xff);
+    byte3 = static_cast<unsigned char>((v >> 8) & 0xff);
 }
 
 void MIDIMessage::SetAllNotesOff(unsigned char chan, unsigned char type)
 {
-    status = (unsigned char)(chan | CONTROL_CHANGE);
+    status = static_cast<unsigned char>(chan | CONTROL_CHANGE);
     byte1 = type;
     byte2 = 0x7f;
     byte3 = 0;
@@ -539,7 +559,7 @@ void MIDIMessage::SetAllNotesOff(unsigned char chan, unsigned char type)
 
 void MIDIMessage::SetLocal(unsigned char chan, unsigned char v)
 {
-    status = (unsigned char)(chan | CONTROL_CHANGE);
+    status = static_cast<unsigned char>(chan | CONTROL_CHANGE);
     byte1 = C_LOCAL;
     byte2 = v;
     byte3 = 0;

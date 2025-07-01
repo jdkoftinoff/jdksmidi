@@ -62,11 +62,11 @@ class MIDISequencerGUIEvent
         bits = ((group & 0xff) << 24) | ((subgroup & 0xfff) << 12) | ((item & 0xfff) << 0);
     }
 
-    int GetEventGroup() const { return (int)((bits >> 24) & 0xff); }
+    int GetEventGroup() const { return static_cast<int>((bits >> 24) & 0xff); }
 
-    int GetEventSubGroup() const { return (int)((bits >> 12) & 0xfff); }
+    int GetEventSubGroup() const { return static_cast<int>((bits >> 12) & 0xfff); }
 
-    int GetEventItem() const { return (int)((bits >> 0) & 0xfff); }
+    int GetEventItem() const { return static_cast<int>((bits >> 0) & 0xfff); }
 
     // main groups
     enum

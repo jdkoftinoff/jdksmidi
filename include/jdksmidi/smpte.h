@@ -65,7 +65,7 @@ enum SAMPLE_RATE
 inline double GetSMPTERateFrequency(SMPTE_RATE r)
 {
     extern double const smpte_smpte_rates[];
-    return smpte_smpte_rates[(int)r];
+    return smpte_smpte_rates[static_cast<int>(r)];
 }
 
 //
@@ -76,7 +76,7 @@ inline double GetSMPTERateFrequency(SMPTE_RATE r)
 inline long GetSMPTERateFrequencyLong(SMPTE_RATE r)
 {
     extern double const smpte_smpte_rates_long[];
-    return (long)smpte_smpte_rates_long[(int)r];
+    return static_cast<long>(smpte_smpte_rates_long[static_cast<int>(r)]);
 }
 
 //
@@ -86,7 +86,7 @@ inline long GetSMPTERateFrequencyLong(SMPTE_RATE r)
 inline double GetSampleRateFrequency(SAMPLE_RATE r)
 {
     extern double const smpte_sample_rates[];
-    return smpte_sample_rates[(int)r];
+    return smpte_sample_rates[static_cast<int>(r)];
 }
 
 //
@@ -98,7 +98,7 @@ inline long GetSampleRateFrequencyLong(SAMPLE_RATE r)
 {
     // return the sample rate as a long word of the frequency times 10.
     extern long const smpte_sample_rates_long[];
-    return smpte_sample_rates_long[(int)r];
+    return smpte_sample_rates_long[static_cast<int>(r)];
 }
 
 class SMPTE
