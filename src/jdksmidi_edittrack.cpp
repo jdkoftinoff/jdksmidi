@@ -155,8 +155,8 @@ void MIDIEditTrack::Shift(signed long offset, MIDIEditTrackEventMatcher* match)
 
 static int cmpmsgtime ( const void *a, const void *b )
 {
-    register const TimedMIDIMessage *m1 = ( TimedMIDIMessage * ) a;
-    register const TimedMIDIMessage *m2 = ( TimedMIDIMessage * ) b;
+    const TimedMIDIMessage *m1 = ( TimedMIDIMessage * ) a;
+    const TimedMIDIMessage *m2 = ( TimedMIDIMessage * ) b;
     //
     // Check if message is a NOP. if it is, then propegate them to
     // the end of track.

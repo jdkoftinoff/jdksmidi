@@ -77,7 +77,7 @@ unsigned long MIDIFile::ReadVariableLengthNumber(unsigned char** in)
 
 unsigned char* MIDIFile::WriteVariableLengthNumber(unsigned long num, unsigned char* out)
 {
-    register unsigned long buffer;
+    unsigned long buffer;
     buffer = num & 0x7f;
 
     while ((num >>= 7) > 0) {

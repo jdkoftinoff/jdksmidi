@@ -82,8 +82,9 @@ char const* MIDIMessage::MsgToText(char* txt) const
     *txt = 0;
 
     if (IsAllNotesOff()) {
-        sprintf(
+        snprintf(
             buf,
+            sizeof(buf),
             "Ch %2d  All Notes Off  (ctrl=%3d)",
             static_cast<int>(GetChannel()) + 1,
             static_cast<int>(byte1));
@@ -100,7 +101,7 @@ char const* MIDIMessage::MsgToText(char* txt) const
             type = 8;
 
         if (type != 0xf) {
-            sprintf(buf, "Ch %2d  ", static_cast<int>(GetChannel()) + 1);
+            snprintf(buf, sizeof(buf), "Ch %2d  ", static_cast<int>(GetChannel()) + 1);
             strcat(txt, buf);
         }
 
@@ -110,17 +111,17 @@ char const* MIDIMessage::MsgToText(char* txt) const
             strcat(txt, sys_msg_name[status - 0xf0]);
 
             if (len > 1) {
-                sprintf(buf, "%02x", static_cast<int>(byte1));
+                snprintf(buf, sizeof(buf), "%02x", static_cast<int>(byte1));
                 strcat(txt, buf);
             }
 
             if (len > 2) {
-                sprintf(buf, ",%02x", static_cast<int>(byte2));
+                snprintf(buf, sizeof(buf), ",%02x", static_cast<int>(byte2));
                 strcat(txt, buf);
             }
 
             if (len > 3) {
-                sprintf(buf, ",%02x", static_cast<int>(byte3));
+                snprintf(buf, sizeof(buf), ",%02x", static_cast<int>(byte3));
                 strcat(txt, buf);
             }
         }
@@ -132,45 +133,49 @@ char const* MIDIMessage::MsgToText(char* txt) const
                 case NOTE_ON:
 
                     if (byte2 == 0)
-                        sprintf(endtxt, "Note %3d", static_cast<int>(byte1));
+                        snprintf(endtxt, 64, "Note %3d", static_cast<int>(byte1));
 
                     else
-                        sprintf(
+                        snprintf(
                             endtxt,
+                            64,
                             "Note %3d  Vel  %3d  ",
                             static_cast<int>(byte1),
                             static_cast<int>(byte2));
 
                     break;
                 case NOTE_OFF:
-                    sprintf(
+                    snprintf(
                         endtxt,
+                        64,
                         "Note %3d  Vel  %3d  ",
                         static_cast<int>(byte1),
                         static_cast<int>(byte2));
                     break;
                 case POLY_PRESSURE:
-                    sprintf(
+                    snprintf(
                         endtxt,
+                        64,
                         "Note %3d  Pres %3d  ",
                         static_cast<int>(byte1),
                         static_cast<int>(byte2));
                     break;
                 case CONTROL_CHANGE:
-                    sprintf(
+                    snprintf(
                         endtxt,
+                        64,
                         "Ctrl %3d  Val  %3d  ",
                         static_cast<int>(byte1),
                         static_cast<int>(byte2));
                     break;
                 case PROGRAM_CHANGE:
-                    sprintf(endtxt, "PG   %3d  ", static_cast<int>(byte1));
+                    snprintf(endtxt, 64, "PG   %3d  ", static_cast<int>(byte1));
                     break;
                 case CHANNEL_PRESSURE:
-                    sprintf(endtxt, "Pres %3d  ", static_cast<int>(byte1));
+                    snprintf(endtxt, 64, "Pres %3d  ", static_cast<int>(byte1));
                     break;
                 case PITCH_BEND:
-                    sprintf(endtxt, "Val %5d", static_cast<int>(GetBenderValue()));
+                    snprintf(endtxt, 64, "Val %5d", static_cast<int>(GetBenderValue()));
                     break;
             }
         }

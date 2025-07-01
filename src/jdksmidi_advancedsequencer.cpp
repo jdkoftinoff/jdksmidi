@@ -578,7 +578,7 @@ void AdvancedSequencer::ExtractMarkers(std::vector<std::string>* list)
                     memcpy(buf, m->GetSysEx()->GetBuf(), m->GetSysEx()->GetLength());
                     buf[m->GetSysEx()->GetLength()] = '\0';
                     FixQuotes(buf);
-                    sprintf(line, "%03d:%d        %s", measure + 1, beat + 1, buf);
+                    snprintf(line, sizeof(line), "%03d:%d        %s", measure + 1, beat + 1, buf);
                     list->push_back(std::string(line));
                     marker_times[cnt++] = m->GetTime();
                 }

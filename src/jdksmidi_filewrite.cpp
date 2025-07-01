@@ -155,7 +155,7 @@ void MIDIFileWrite::WriteTrackHeader(unsigned long length)
 int MIDIFileWrite::WriteVariableNum(unsigned long n)
 {
     ENTER("short MIDIFileWrite::WriteVariableNum()");
-    register unsigned long buffer;
+    unsigned long buffer;
     short cnt = 0;
     buffer = n & 0x7f;
 

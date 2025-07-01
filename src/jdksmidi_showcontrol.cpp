@@ -446,13 +446,19 @@ bool MIDIShowControlPacket::StoreAsciiNum(MIDISystemExclusive* e, MIDICue const&
         case 0:
             break;
         case 1:
-            sprintf(buf, "%" PRIu32, num.GetV1());
+            snprintf(buf, sizeof(buf), "%" PRIu32, num.GetV1());
             break;
         case 2:
-            sprintf(buf, "%" PRIu32 ".%" PRIu32, num.GetV1(), num.GetV2());
+            snprintf(buf, sizeof(buf), "%" PRIu32 ".%" PRIu32, num.GetV1(), num.GetV2());
             break;
         case 3:
-            sprintf(buf, "%" PRIu32 ".%" PRIu32 ".%" PRIu32, num.GetV1(), num.GetV2(), num.GetV3());
+            snprintf(
+                buf,
+                sizeof(buf),
+                "%" PRIu32 ".%" PRIu32 ".%" PRIu32,
+                num.GetV1(),
+                num.GetV2(),
+                num.GetV3());
             break;
     }
 
