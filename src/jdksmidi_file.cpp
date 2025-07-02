@@ -65,10 +65,10 @@ unsigned long MIDIFile::ConvertTempoToFreq(short division, MIDITempo& tempo)
     }
 }
 
-unsigned long MIDIFile::ReadVariableLengthNumber(unsigned char** in)
+unsigned long MIDIFile::ReadVariableLengthNumber(std::uint8_t** in)
 {
     unsigned long num = 0;
-    unsigned char* t = *in;
+    std::uint8_t* t = *in;
 
     do {
         num <<= 7;
@@ -79,7 +79,7 @@ unsigned long MIDIFile::ReadVariableLengthNumber(unsigned char** in)
     return num;
 }
 
-unsigned char* MIDIFile::WriteVariableLengthNumber(unsigned long num, unsigned char* out)
+std::uint8_t* MIDIFile::WriteVariableLengthNumber(unsigned long num, std::uint8_t* out)
 {
     unsigned long buffer;
     buffer = num & 0x7f;
@@ -91,7 +91,7 @@ unsigned char* MIDIFile::WriteVariableLengthNumber(unsigned long num, unsigned c
     }
 
     do {
-        *out++ = (unsigned char)buffer;
+        *out++ = (std::uint8_t)buffer;
 
         if (buffer & 0x80)
             buffer >>= 8;

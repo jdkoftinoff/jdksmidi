@@ -40,6 +40,8 @@
 
 #include "jdksmidi/fileread.h"
 
+#include <cstdint>
+
 namespace jdksmidi {
 
 class MIDIFileShow : public MIDIFileEvents
@@ -71,15 +73,15 @@ class MIDIFileShow : public MIDIFileEvents
     virtual void mf_control(MIDITimedMessage const& msg);
     virtual void mf_sysex(MIDIClockTime time, MIDISystemExclusive const& ex);
 
-    virtual void mf_arbitrary(MIDIClockTime time, int len, unsigned char* data);
-    virtual void mf_metamisc(MIDIClockTime time, int, int, unsigned char*);
+    virtual void mf_arbitrary(MIDIClockTime time, int len, std::uint8_t* data);
+    virtual void mf_metamisc(MIDIClockTime time, int, int, std::uint8_t*);
     virtual void mf_seqnum(MIDIClockTime time, int);
     virtual void mf_smpte(MIDIClockTime time, int, int, int, int, int);
     virtual void mf_timesig(MIDIClockTime time, int, int, int, int);
     virtual void mf_tempo(MIDIClockTime time, unsigned long tempo);
     virtual void mf_keysig(MIDIClockTime time, int, int);
-    virtual void mf_sqspecific(MIDIClockTime time, int, unsigned char*);
-    virtual void mf_text(MIDIClockTime time, int, int, unsigned char*);
+    virtual void mf_sqspecific(MIDIClockTime time, int, std::uint8_t*);
+    virtual void mf_text(MIDIClockTime time, int, int, std::uint8_t*);
     virtual void mf_eot(MIDIClockTime time);
 
     FILE* out;

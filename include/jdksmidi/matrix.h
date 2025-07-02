@@ -41,6 +41,8 @@
 #include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"
 
+#include <cstdint>
+
 namespace jdksmidi {
 
 class MIDIMatrix
@@ -66,14 +68,14 @@ class MIDIMatrix
     virtual void ClearChannel(int channel);
     virtual void OtherMessage(MIDIMessage const& m);
 
-    void SetNoteCount(unsigned char chan, unsigned char note, unsigned char val)
+    void SetNoteCount(std::uint8_t chan, std::uint8_t note, std::uint8_t val)
     {
         note_on_count[chan][note] = val;
     }
-    void SetChannelCount(unsigned char chan, int val) { channel_count[chan] = val; }
+    void SetChannelCount(std::uint8_t chan, int val) { channel_count[chan] = val; }
 
   private:
-    unsigned char note_on_count[16][128];
+    std::uint8_t note_on_count[16][128];
     int channel_count[16];
     bool hold_pedal[16];
     int total_count;

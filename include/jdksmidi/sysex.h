@@ -40,6 +40,7 @@
 
 #include "jdksmidi/midi.h"
 
+#include <cstdint>
 #include <vector>
 
 namespace jdksmidi {
@@ -51,7 +52,7 @@ class MIDISystemExclusive
 
     MIDISystemExclusive(MIDISystemExclusive const& e);
 
-    MIDISystemExclusive(unsigned char* buf_, int max_len_, int cur_len_, bool deletable_)
+    MIDISystemExclusive(std::uint8_t* buf_, int max_len_, int cur_len_, bool deletable_)
         : max_len(max_len_)
         , chk_sum(0)
     {
@@ -69,12 +70,12 @@ class MIDISystemExclusive
     }
     void ClearChecksum() { chk_sum = 0; }
 
-    void PutSysByte(unsigned char b)  // does not add to chksum
+    void PutSysByte(std::uint8_t b)  // does not add to chksum
     {
         buffer.push_back(b);
     }
 
-    void PutByte(unsigned char b)
+    void PutByte(std::uint8_t b)
     {
         PutSysByte(b);
         chk_sum += b;
@@ -84,40 +85,40 @@ class MIDISystemExclusive
     void PutEOX() { PutSysByte(SYSEX_END); }
 
     // low nibble first
-    void PutNibblizedByte(unsigned char b)
+    void PutNibblizedByte(std::uint8_t b)
     {
-        PutByte((unsigned char)(b & 0xf));
-        PutByte((unsigned char)(b >> 4));
+        PutByte((std::uint8_t)(b & 0xf));
+        PutByte((std::uint8_t)(b >> 4));
     }
 
     // high nibble first
-    void PutNibblizedByte2(unsigned char b)
+    void PutNibblizedByte2(std::uint8_t b)
     {
-        PutByte((unsigned char)(b >> 4));
-        PutByte((unsigned char)(b & 0xf));
+        PutByte((std::uint8_t)(b >> 4));
+        PutByte((std::uint8_t)(b & 0xf));
     }
 
-    void PutChecksum() { PutByte((unsigned char)(chk_sum & 0x7f)); }
+    void PutChecksum() { PutByte((std::uint8_t)(chk_sum & 0x7f)); }
 
-    unsigned char GetChecksum() const { return (unsigned char)(chk_sum & 0x7f); }
+    std::uint8_t GetChecksum() const { return (std::uint8_t)(chk_sum & 0x7f); }
 
     int GetLength() const { return static_cast<int>(buffer.size()); }
 
-    unsigned char GetData(int i) const
+    std::uint8_t GetData(int i) const
     {
         return (i >= 0 && i < static_cast<int>(buffer.size())) ? buffer[i] : 0;
     }
 
     bool IsFull() const { return false; }
 
-    unsigned char* GetBuf() { return buffer.empty() ? nullptr : buffer.data(); }
+    std::uint8_t* GetBuf() { return buffer.empty() ? nullptr : buffer.data(); }
 
-    unsigned char const* GetBuf() const { return buffer.empty() ? nullptr : buffer.data(); }
+    std::uint8_t const* GetBuf() const { return buffer.empty() ? nullptr : buffer.data(); }
 
   private:
-    std::vector<unsigned char> buffer;
+    std::vector<std::uint8_t> buffer;
     int max_len;
-    unsigned char chk_sum;
+    std::uint8_t chk_sum;
 };
 }  // namespace jdksmidi
 

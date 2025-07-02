@@ -34,7 +34,7 @@ namespace jdksmidi {
 
 static void FixQuotes(char* s_)
 {
-    unsigned char* s = (unsigned char*)s_;
+    std::uint8_t* s = (std::uint8_t*)s_;
 
     while (*s) {
         if (*s == 0xd2 || *s == 0xd3) {
@@ -195,7 +195,7 @@ bool MIDISequencerTrackProcessor::Process(MIDITimedBigMessage* msg)
     if (msg->IsChannelMsg()) {
         // yes, are we to re-channel it?
         if (rechannel != -1) {
-            msg->SetChannel(static_cast<unsigned char>(rechannel));
+            msg->SetChannel(static_cast<std::uint8_t>(rechannel));
         }
 
         // is it a note on message?
@@ -210,7 +210,7 @@ bool MIDISequencerTrackProcessor::Process(MIDITimedBigMessage* msg)
             }
 
             // rewrite the velocity
-            msg->SetVelocity(static_cast<unsigned char>(vel));
+            msg->SetVelocity(static_cast<std::uint8_t>(vel));
         }
 
         // is it a type of event that needs to be transposed?
@@ -220,7 +220,7 @@ bool MIDISequencerTrackProcessor::Process(MIDITimedBigMessage* msg)
 
             if (new_note >= 0 && new_note <= 127) {
                 // set new note number
-                msg->SetNote(static_cast<unsigned char>(new_note));
+                msg->SetNote(static_cast<std::uint8_t>(new_note));
             }
 
             else {

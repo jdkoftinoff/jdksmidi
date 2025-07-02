@@ -43,6 +43,8 @@
 #include "jdksmidi/sysex.h"
 #include "jdksmidi/tempo.h"
 
+#include <cstdint>
+
 namespace jdksmidi {
 
 //
@@ -116,7 +118,7 @@ class MIDIFile
     // Convert a four byte number to an unsigned long.
     //
 
-    static unsigned long To32Bit(unsigned char a, unsigned char b, unsigned char c, unsigned char d)
+    static unsigned long To32Bit(std::uint8_t a, std::uint8_t b, std::uint8_t c, std::uint8_t d)
     {
         return ((unsigned long)a << 24) + ((unsigned long)b << 16) + ((unsigned long)c << 8) +
             ((unsigned long)d << 0);
@@ -126,14 +128,14 @@ class MIDIFile
     // Convert a two byte number to an unsigned short
     //
 
-    static unsigned short To16Bit(unsigned char a, unsigned char b)
+    static unsigned short To16Bit(std::uint8_t a, std::uint8_t b)
     {
         return (unsigned short)(((unsigned short)a << 8) + ((unsigned short)b << 0));
     }
 
-    static unsigned long ReadVariableLengthNumber(unsigned char** in);
+    static unsigned long ReadVariableLengthNumber(std::uint8_t** in);
 
-    static unsigned char* WriteVariableLengthNumber(unsigned long num, unsigned char* out);
+    static std::uint8_t* WriteVariableLengthNumber(unsigned long num, std::uint8_t* out);
 };
 
 }  // namespace jdksmidi

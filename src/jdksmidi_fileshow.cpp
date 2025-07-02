@@ -82,8 +82,8 @@ void MIDIFileShow::mf_header(int format, int ntrks, int d)
     division = d;
 
     if (division > 0x8000) {
-        unsigned char smpte_rate = ((unsigned char)((-division) >> 8));
-        unsigned char smpte_division = (unsigned char)(division & 0xff);
+        std::uint8_t smpte_rate = ((std::uint8_t)((-division) >> 8));
+        std::uint8_t smpte_division = (std::uint8_t)(division & 0xff);
         fprintf(out, " SMPTE=%d Division=%d\n", smpte_rate, smpte_division);
     }
 
@@ -180,7 +180,7 @@ void MIDIFileShow::mf_sysex(MIDIClockTime time, MIDISystemExclusive const& ex)
     fprintf(out, "\n");
 }
 
-void MIDIFileShow::mf_arbitrary(MIDIClockTime time, int len, unsigned char* data)
+void MIDIFileShow::mf_arbitrary(MIDIClockTime time, int len, std::uint8_t* data)
 {
     show_time(time);
     fprintf(out, "RAW MIDI DATA    Length=%d\n", len);
@@ -195,7 +195,7 @@ void MIDIFileShow::mf_arbitrary(MIDIClockTime time, int len, unsigned char* data
     fprintf(out, "\n");
 }
 
-void MIDIFileShow::mf_metamisc(MIDIClockTime time, int type, int len, unsigned char* data)
+void MIDIFileShow::mf_metamisc(MIDIClockTime time, int type, int len, std::uint8_t* data)
 {
     show_time(time);
     fprintf(out, "META-EVENT       TYPE=%d Length=%d\n", type, len);
@@ -267,7 +267,7 @@ void MIDIFileShow::mf_keysig(MIDIClockTime time, int sf, int mi)
         fprintf(out, "%d Sharps\n", sf);
 }
 
-void MIDIFileShow::mf_sqspecific(MIDIClockTime time, int len, unsigned char* data)
+void MIDIFileShow::mf_sqspecific(MIDIClockTime time, int len, std::uint8_t* data)
 {
     show_time(time);
     fprintf(out, "Sequencer Specific     Length=%d\n", len);
@@ -282,7 +282,7 @@ void MIDIFileShow::mf_sqspecific(MIDIClockTime time, int len, unsigned char* dat
     fprintf(out, "\n");
 }
 
-void MIDIFileShow::mf_text(MIDIClockTime time, int type, int len, unsigned char* txt)
+void MIDIFileShow::mf_text(MIDIClockTime time, int type, int len, std::uint8_t* txt)
 {
     static char const* text_event_names[16] = {
         "SEQ. #    ",

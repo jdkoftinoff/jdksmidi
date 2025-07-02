@@ -42,6 +42,8 @@
 #include "jdksmidi/sysex.h"
 #include "jdksmidi/tempo.h"
 
+#include <cstdint>
+
 namespace jdksmidi {
 
 class MIDIMessage;
@@ -97,49 +99,49 @@ class MIDIMessage
     char GetLength() const;  ///< Get the length in bytes of the entire message.
 
     /// Get the status byte of the message.
-    unsigned char GetStatus() const { return (unsigned char)status; }
+    std::uint8_t GetStatus() const { return (std::uint8_t)status; }
 
     /// If the message is a channel message, this method returns the MIDI channel that the message
     /// is on.
-    unsigned char GetChannel() const { return (unsigned char)(status & 0x0f); }
+    std::uint8_t GetChannel() const { return (std::uint8_t)(status & 0x0f); }
 
     /// If the message is a channel message, this method returns the relevant top 4 bits which
     /// describe what type of channel message it is.
-    unsigned char GetType() const { return (unsigned char)(status & 0xf0); }
+    std::uint8_t GetType() const { return (std::uint8_t)(status & 0xf0); }
 
     /// If the message is some sort of meta-message, then GetMetaType returns the type byte.
-    unsigned char GetMetaType() const { return byte1; }
+    std::uint8_t GetMetaType() const { return byte1; }
 
     /// Access to the raw byte1 of the message
-    unsigned char GetByte1() const { return byte1; }
+    std::uint8_t GetByte1() const { return byte1; }
 
     /// Access to the raw byte2 of the message
-    unsigned char GetByte2() const { return byte2; }
+    std::uint8_t GetByte2() const { return byte2; }
 
     /// Access to the raw byte3 of the message
-    unsigned char GetByte3() const { return byte3; }
+    std::uint8_t GetByte3() const { return byte3; }
 
     /// If the message is a note on, note off, or poly aftertouch message, GetNote() returns the
     /// note number
-    unsigned char GetNote() const { return byte1; }
+    std::uint8_t GetNote() const { return byte1; }
 
     /// If the message is a note on, note off, or poly aftertouch message, GetVelocity() returns the
     /// velocity or pressure
-    unsigned char GetVelocity() const { return byte2; }
+    std::uint8_t GetVelocity() const { return byte2; }
 
     /// If the message is a channel pressure message, GetChannelPressure() returns the pressure
     /// value.
-    unsigned char GetChannelPressure() const { return byte1; }
+    std::uint8_t GetChannelPressure() const { return byte1; }
 
     /// If the message is a 7 bit program change value, GetPGValue() returns the program number.
-    unsigned char GetPGValue() const { return byte1; }
+    std::uint8_t GetPGValue() const { return byte1; }
 
     /// If the message is a control change message, GetController() returns the controller number.
-    unsigned char GetController() const { return byte1; }
+    std::uint8_t GetController() const { return byte1; }
 
     /// If the message is a control change message, GetControllerValue() returns the 7 bit
     /// controller value.
-    unsigned char GetControllerValue() const { return byte2; }
+    std::uint8_t GetControllerValue() const { return byte2; }
 
     /// If the message is a bender message, GetBenderValue() returns the signed 14 bit bender value.
     short GetBenderValue() const;
@@ -149,11 +151,11 @@ class MIDIMessage
 
     /// If the message is a time signature meta-message, GetTimeSigNumerator() returns the numerator
     /// of the time signature.
-    unsigned char GetTimeSigNumerator() const;
+    std::uint8_t GetTimeSigNumerator() const;
 
     /// If the message is a time signature meta-message, GetTimeSigDenominator() returns the
     /// denominator of the time signature.
-    unsigned char GetTimeSigDenominator() const;
+    std::uint8_t GetTimeSigDenominator() const;
 
     /// If the message is a key signature meta-message, GetKeySigSharpFlats() returns to standard
     /// midi file form of the key. Negative values means that many flats, positive numbers means
@@ -162,7 +164,7 @@ class MIDIMessage
 
     /// If the message is a key signature meta-message, GetKeySigMajorMinor() returns to standard
     /// midi file form of the key major/minor flag. 0 means a major key, 1 means a minor key.
-    unsigned char GetKeySigMajorMinor() const;
+    std::uint8_t GetKeySigMajorMinor() const;
 
     /// If the message is some sort of real time channel message, IsChannelMsg() will return true.
     /// You can then call GetChannel() for more information.
@@ -248,90 +250,90 @@ class MIDIMessage
     //@{
 
     /// Set all bits of the status byte
-    void SetStatus(unsigned char s) { status = s; }
+    void SetStatus(std::uint8_t s) { status = s; }
 
     /// set just the lower 4 bits of the status byte without changing the upper 4 bits
-    void SetChannel(unsigned char s) { status = (unsigned char)((status & 0xf0) | s); }
+    void SetChannel(std::uint8_t s) { status = (std::uint8_t)((status & 0xf0) | s); }
 
     /// set just the upper 4 bits of the status byte without changing the lower 4 bits
-    void SetType(unsigned char s) { status = (unsigned char)((status & 0x0f) | s); }
+    void SetType(std::uint8_t s) { status = (std::uint8_t)((status & 0x0f) | s); }
 
     /// Set the value of the data byte 1
-    void SetByte1(unsigned char b) { byte1 = b; }
+    void SetByte1(std::uint8_t b) { byte1 = b; }
 
     /// Set the value of the data byte 2
-    void SetByte2(unsigned char b) { byte2 = b; }
+    void SetByte2(std::uint8_t b) { byte2 = b; }
 
     /// Set the value of the data byte 3
-    void SetByte3(unsigned char b) { byte3 = b; }
+    void SetByte3(std::uint8_t b) { byte3 = b; }
 
     /// Set the note number for note on, note off, and polyphonic aftertouch messages
-    void SetNote(unsigned char n) { byte1 = n; }
+    void SetNote(std::uint8_t n) { byte1 = n; }
 
     /// Set the velocity of a note on or note off message
-    void SetVelocity(unsigned char v) { byte2 = v; }
+    void SetVelocity(std::uint8_t v) { byte2 = v; }
 
     /// Set the program number of a program change message
-    void SetPGValue(unsigned char v) { byte1 = v; }
+    void SetPGValue(std::uint8_t v) { byte1 = v; }
 
     /// Set the controller number of a control change message
-    void SetController(unsigned char c) { byte1 = c; }
+    void SetController(std::uint8_t c) { byte1 = c; }
 
     /// Set the 7 bit controller value of a control change message
-    void SetControllerValue(unsigned char v) { byte2 = v; }
+    void SetControllerValue(std::uint8_t v) { byte2 = v; }
 
     /// Set the signed 14 bit bender value of a pitch bend message
     void SetBenderValue(short v);
 
-    void SetMetaType(unsigned char t);
+    void SetMetaType(std::uint8_t t);
 
     void SetMetaValue(unsigned short v);
 
-    void SetNoteOn(unsigned char chan, unsigned char note, unsigned char vel);
+    void SetNoteOn(std::uint8_t chan, std::uint8_t note, std::uint8_t vel);
 
-    void SetNoteOff(unsigned char chan, unsigned char note, unsigned char vel);
+    void SetNoteOff(std::uint8_t chan, std::uint8_t note, std::uint8_t vel);
 
-    void SetPolyPressure(unsigned char chan, unsigned char note, unsigned char pres);
+    void SetPolyPressure(std::uint8_t chan, std::uint8_t note, std::uint8_t pres);
 
-    void SetControlChange(unsigned char chan, unsigned char ctrl, unsigned char val);
+    void SetControlChange(std::uint8_t chan, std::uint8_t ctrl, std::uint8_t val);
 
-    void SetProgramChange(unsigned char chan, unsigned char val);
+    void SetProgramChange(std::uint8_t chan, std::uint8_t val);
 
-    void SetChannelPressure(unsigned char chan, unsigned char val);
+    void SetChannelPressure(std::uint8_t chan, std::uint8_t val);
 
-    void SetPitchBend(unsigned char chan, short val);
+    void SetPitchBend(std::uint8_t chan, short val);
 
-    void SetPitchBend(unsigned char chan, unsigned char low, unsigned char high);
+    void SetPitchBend(std::uint8_t chan, std::uint8_t low, std::uint8_t high);
 
     void SetSysEx();
 
-    void SetMTC(unsigned char field, unsigned char v);
+    void SetMTC(std::uint8_t field, std::uint8_t v);
 
     void SetSongPosition(short pos);
 
-    void SetSongSelect(unsigned char sng);
+    void SetSongSelect(std::uint8_t sng);
 
     void SetTuneRequest();
 
-    void SetMetaEvent(unsigned char type, unsigned char v1, unsigned char v2);
+    void SetMetaEvent(std::uint8_t type, std::uint8_t v1, std::uint8_t v2);
 
-    void SetMetaEvent(unsigned char type, unsigned short v);
+    void SetMetaEvent(std::uint8_t type, unsigned short v);
 
-    void SetAllNotesOff(unsigned char chan, unsigned char type = C_ALL_NOTES_OFF);
+    void SetAllNotesOff(std::uint8_t chan, std::uint8_t type = C_ALL_NOTES_OFF);
 
-    void SetLocal(unsigned char chan, unsigned char v);
+    void SetLocal(std::uint8_t chan, std::uint8_t v);
 
     void SetNoOp();
 
     void SetTempo32(unsigned short tempo_times_32);
 
-    void SetText(unsigned short text_num, unsigned char type = META_GENERIC_TEXT);
+    void SetText(unsigned short text_num, std::uint8_t type = META_GENERIC_TEXT);
 
     void SetDataEnd();
 
-    void SetTimeSig(unsigned char numerator, unsigned char denominator);
+    void SetTimeSig(std::uint8_t numerator, std::uint8_t denominator);
 
-    void SetKeySig(signed char sharp_flats, unsigned char major_minor);
+    void SetKeySig(signed char sharp_flats, std::uint8_t major_minor);
 
     void SetBeatMarker();
 
@@ -343,11 +345,11 @@ class MIDIMessage
     static char const* sys_msg_name[16];   ///< Simple ascii text strings describing each system
                                            ///< message type (0xf0 to 0xff)
 
-    unsigned char status;
-    unsigned char byte1;
-    unsigned char byte2;
-    unsigned char byte3;  ///< byte 3 is only used for meta-events and to round out the structure
-                          ///< size to 32 bits
+    std::uint8_t status;
+    std::uint8_t byte1;
+    std::uint8_t byte2;
+    std::uint8_t byte3;  ///< byte 3 is only used for meta-events and to round out the structure
+                         ///< size to 32 bits
 };
 
 ///

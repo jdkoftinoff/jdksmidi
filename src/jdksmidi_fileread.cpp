@@ -91,7 +91,7 @@ void MIDIFileEvents::ChanMessage(MIDITimedMessage const& msg)
     }
 }
 
-void MIDIFileEvents::MetaEvent(MIDIClockTime time, int type, int leng, unsigned char* m)
+void MIDIFileEvents::MetaEvent(MIDIClockTime time, int type, int leng, std::uint8_t* m)
 {
     switch (type) {
         case MF_SEQUENCE_NUMBER:
@@ -162,10 +162,10 @@ void MIDIFileEvents::mf_error(char const* s)
 void MIDIFileEvents::mf_header(int a, int b, int c)
 {}
 
-void MIDIFileEvents::mf_arbitrary(MIDIClockTime time, int a, unsigned char* s)
+void MIDIFileEvents::mf_arbitrary(MIDIClockTime time, int a, std::uint8_t* s)
 {}
 
-void MIDIFileEvents::mf_metamisc(MIDIClockTime time, int a, int b, unsigned char* s)
+void MIDIFileEvents::mf_metamisc(MIDIClockTime time, int a, int b, std::uint8_t* s)
 {}
 
 void MIDIFileEvents::mf_seqnum(MIDIClockTime time, int a)
@@ -183,10 +183,10 @@ void MIDIFileEvents::mf_tempo(MIDIClockTime time, unsigned long a)
 void MIDIFileEvents::mf_keysig(MIDIClockTime time, int a, int b)
 {}
 
-void MIDIFileEvents::mf_sqspecific(MIDIClockTime time, int a, unsigned char* s)
+void MIDIFileEvents::mf_sqspecific(MIDIClockTime time, int a, std::uint8_t* s)
 {}
 
-void MIDIFileEvents::mf_text(MIDIClockTime time, int a, int b, unsigned char* s)
+void MIDIFileEvents::mf_text(MIDIClockTime time, int a, int b, std::uint8_t* s)
 {}
 
 void MIDIFileEvents::mf_system_mode(MIDITimedMessage const& msg)
@@ -411,9 +411,7 @@ void MIDIFileRead::ReadTrack()
                 c1 = EGetC();
 
             FormChanMessage(
-                (unsigned char)status,
-                (unsigned char)c1,
-                (unsigned char)((needed > 1) ? EGetC() : 0));
+                (std::uint8_t)status, (std::uint8_t)c1, (std::uint8_t)((needed > 1) ? EGetC() : 0));
             continue;
         }
 
@@ -516,7 +514,7 @@ unsigned long MIDIFileRead::Read32Bit()
     c2 = EGetC();
     c3 = EGetC();
     c4 = EGetC();
-    return To32Bit((unsigned char)c1, (unsigned char)c2, (unsigned char)c3, (unsigned char)c4);
+    return To32Bit((std::uint8_t)c1, (std::uint8_t)c2, (std::uint8_t)c3, (std::uint8_t)c4);
 }
 
 int MIDIFileRead::Read16Bit()
@@ -524,7 +522,7 @@ int MIDIFileRead::Read16Bit()
     int c1, c2;
     c1 = EGetC();
     c2 = EGetC();
-    return To16Bit((unsigned char)c1, (unsigned char)c2);
+    return To16Bit((std::uint8_t)c1, (std::uint8_t)c2);
 }
 
 int MIDIFileRead::EGetC()
@@ -545,7 +543,7 @@ int MIDIFileRead::EGetC()
 void MIDIFileRead::MsgAdd(int a)
 {
     if (msg_index < static_cast<int>(message_buffer.size()))
-        message_buffer[msg_index++] = (unsigned char)a;
+        message_buffer[msg_index++] = (std::uint8_t)a;
 }
 
 void MIDIFileRead::MsgInit()
@@ -559,7 +557,7 @@ void MIDIFileRead::BadByte(int c)
     abort_parse = true;
 }
 
-void MIDIFileRead::FormChanMessage(unsigned char st, unsigned char b1, unsigned char b2)
+void MIDIFileRead::FormChanMessage(std::uint8_t st, std::uint8_t b1, std::uint8_t b2)
 {
     MIDITimedMessage m;
     m.SetStatus(st);

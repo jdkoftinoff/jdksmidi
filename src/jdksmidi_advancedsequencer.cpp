@@ -4,7 +4,7 @@
 namespace jdksmidi {
 static void FixQuotes(char* s_)
 {
-    unsigned char* s = (unsigned char*)s_;
+    std::uint8_t* s = (std::uint8_t*)s_;
 
     while (*s) {
         if (*s == 0xd2 || *s == 0xd3) {

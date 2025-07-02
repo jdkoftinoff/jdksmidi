@@ -103,12 +103,12 @@ void MIDIFileReadMultiTrack::mf_sysex(MIDIClockTime time, MIDISystemExclusive co
     AddEventToMultiTrack(msg, sysex, cur_track);
 }
 
-void MIDIFileReadMultiTrack::mf_arbitrary(MIDIClockTime time, int len, unsigned char* data)
+void MIDIFileReadMultiTrack::mf_arbitrary(MIDIClockTime time, int len, std::uint8_t* data)
 {
     // ignore arbitrary byte strings
 }
 
-void MIDIFileReadMultiTrack::mf_metamisc(MIDIClockTime time, int, int, unsigned char*)
+void MIDIFileReadMultiTrack::mf_metamisc(MIDIClockTime time, int, int, std::uint8_t*)
 {
     // ignore miscellaneous meta events
 }
@@ -128,13 +128,13 @@ void MIDIFileReadMultiTrack::mf_timesig(
 {
     MIDITimedMessage msg;
     int denom = 1 << denom_power;
-    msg.SetTimeSig((unsigned char)num, (unsigned char)denom);
+    msg.SetTimeSig((std::uint8_t)num, (std::uint8_t)denom);
     msg.SetTime(time);
     auto sysex = new MIDISystemExclusive(4);
-    sysex->PutByte((unsigned char)num);
-    sysex->PutByte((unsigned char)denom_power);
-    sysex->PutByte((unsigned char)clks_per_metro);
-    sysex->PutByte((unsigned char)notated_32nd_per_quarter);
+    sysex->PutByte((std::uint8_t)num);
+    sysex->PutByte((std::uint8_t)denom_power);
+    sysex->PutByte((std::uint8_t)clks_per_metro);
+    sysex->PutByte((std::uint8_t)notated_32nd_per_quarter);
     AddEventToMultiTrack(msg, sysex, cur_track);
 }
 
@@ -160,17 +160,17 @@ void MIDIFileReadMultiTrack::mf_tempo(MIDIClockTime time, unsigned long tempo)
 void MIDIFileReadMultiTrack::mf_keysig(MIDIClockTime time, int c, int v)
 {
     MIDITimedMessage msg;
-    msg.SetKeySig((unsigned char)c, (unsigned char)v);
+    msg.SetKeySig((std::uint8_t)c, (std::uint8_t)v);
     msg.SetTime(time);
     AddEventToMultiTrack(msg, 0, cur_track);
 }
 
-void MIDIFileReadMultiTrack::mf_sqspecific(MIDIClockTime time, int, unsigned char*)
+void MIDIFileReadMultiTrack::mf_sqspecific(MIDIClockTime time, int, std::uint8_t*)
 {
     // ignore any sequencer specific messages
 }
 
-void MIDIFileReadMultiTrack::mf_text(MIDIClockTime time, int type, int len, unsigned char* s)
+void MIDIFileReadMultiTrack::mf_text(MIDIClockTime time, int type, int len, std::uint8_t* s)
 {
     MIDITimedMessage msg;
     msg.SetStatus(META_EVENT);

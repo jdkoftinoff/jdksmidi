@@ -268,12 +268,12 @@ unsigned short MIDIMessage::GetMetaValue() const
     return (unsigned short)((byte3 << 8) | byte2);
 }
 
-unsigned char MIDIMessage::GetTimeSigNumerator() const
+std::uint8_t MIDIMessage::GetTimeSigNumerator() const
 {
     return byte2;
 }
 
-unsigned char MIDIMessage::GetTimeSigDenominator() const
+std::uint8_t MIDIMessage::GetTimeSigDenominator() const
 {
     return byte3;
 }
@@ -283,7 +283,7 @@ signed char MIDIMessage::GetKeySigSharpFlats() const
     return (signed char)byte2;
 }
 
-unsigned char MIDIMessage::GetKeySigMajorMinor() const
+std::uint8_t MIDIMessage::GetKeySigMajorMinor() const
 {
     return byte3;
 }
@@ -421,83 +421,83 @@ unsigned short MIDIMessage::GetLoopNumber() const
 void MIDIMessage::SetBenderValue(short v)
 {
     short x = static_cast<short>(v + 8192);
-    byte1 = static_cast<unsigned char>(x & 0x7f);
-    byte2 = static_cast<unsigned char>((x >> 7) & 0x7f);
+    byte1 = static_cast<std::uint8_t>(x & 0x7f);
+    byte2 = static_cast<std::uint8_t>((x >> 7) & 0x7f);
 }
 
-void MIDIMessage::SetMetaType(unsigned char t)
+void MIDIMessage::SetMetaType(std::uint8_t t)
 {
     byte1 = t;
 }
 
 void MIDIMessage::SetMetaValue(unsigned short v)
 {
-    byte2 = static_cast<unsigned char>(v & 0xff);
-    byte3 = static_cast<unsigned char>((v >> 8) & 0xff);
+    byte2 = static_cast<std::uint8_t>(v & 0xff);
+    byte3 = static_cast<std::uint8_t>((v >> 8) & 0xff);
 }
 
-void MIDIMessage::SetNoteOn(unsigned char chan, unsigned char note, unsigned char vel)
+void MIDIMessage::SetNoteOn(std::uint8_t chan, std::uint8_t note, std::uint8_t vel)
 {
-    status = static_cast<unsigned char>(chan | NOTE_ON);
+    status = static_cast<std::uint8_t>(chan | NOTE_ON);
     byte1 = note;
     byte2 = vel;
     byte3 = 0;
 }
 
-void MIDIMessage::SetNoteOff(unsigned char chan, unsigned char note, unsigned char vel)
+void MIDIMessage::SetNoteOff(std::uint8_t chan, std::uint8_t note, std::uint8_t vel)
 {
-    status = static_cast<unsigned char>(chan | NOTE_OFF);
+    status = static_cast<std::uint8_t>(chan | NOTE_OFF);
     byte1 = note;
     byte2 = vel;
     byte3 = 0;
 }
 
-void MIDIMessage::SetPolyPressure(unsigned char chan, unsigned char note, unsigned char pres)
+void MIDIMessage::SetPolyPressure(std::uint8_t chan, std::uint8_t note, std::uint8_t pres)
 {
-    status = static_cast<unsigned char>(chan | POLY_PRESSURE);
+    status = static_cast<std::uint8_t>(chan | POLY_PRESSURE);
     byte1 = note;
     byte2 = pres;
     byte3 = 0;
 }
 
-void MIDIMessage::SetControlChange(unsigned char chan, unsigned char ctrl, unsigned char val)
+void MIDIMessage::SetControlChange(std::uint8_t chan, std::uint8_t ctrl, std::uint8_t val)
 {
-    status = static_cast<unsigned char>(chan | CONTROL_CHANGE);
+    status = static_cast<std::uint8_t>(chan | CONTROL_CHANGE);
     byte1 = ctrl;
     byte2 = val;
     byte3 = 0;
 }
 
-void MIDIMessage::SetProgramChange(unsigned char chan, unsigned char val)
+void MIDIMessage::SetProgramChange(std::uint8_t chan, std::uint8_t val)
 {
-    status = static_cast<unsigned char>(chan | PROGRAM_CHANGE);
+    status = static_cast<std::uint8_t>(chan | PROGRAM_CHANGE);
     byte1 = val;
     byte2 = 0;
     byte3 = 0;
 }
 
-void MIDIMessage::SetChannelPressure(unsigned char chan, unsigned char val)
+void MIDIMessage::SetChannelPressure(std::uint8_t chan, std::uint8_t val)
 {
-    status = static_cast<unsigned char>(chan | CHANNEL_PRESSURE);
+    status = static_cast<std::uint8_t>(chan | CHANNEL_PRESSURE);
     byte1 = val;
     byte2 = 0;
     byte3 = 0;
 }
 
-void MIDIMessage::SetPitchBend(unsigned char chan, short val)
+void MIDIMessage::SetPitchBend(std::uint8_t chan, short val)
 {
-    status = static_cast<unsigned char>(chan | PITCH_BEND);
-    val += static_cast<short>(0x2000);               // center value
-    byte1 = static_cast<unsigned char>(val & 0x7f);  // 7 bit bytes
-    byte2 = static_cast<unsigned char>((val >> 7) & 0x7f);
+    status = static_cast<std::uint8_t>(chan | PITCH_BEND);
+    val += static_cast<short>(0x2000);              // center value
+    byte1 = static_cast<std::uint8_t>(val & 0x7f);  // 7 bit bytes
+    byte2 = static_cast<std::uint8_t>((val >> 7) & 0x7f);
     byte3 = 0;
 }
 
-void MIDIMessage::SetPitchBend(unsigned char chan, unsigned char low, unsigned char high)
+void MIDIMessage::SetPitchBend(std::uint8_t chan, std::uint8_t low, std::uint8_t high)
 {
-    status = static_cast<unsigned char>(chan | PITCH_BEND);
-    byte1 = static_cast<unsigned char>(low);
-    byte2 = static_cast<unsigned char>(high);
+    status = static_cast<std::uint8_t>(chan | PITCH_BEND);
+    byte1 = static_cast<std::uint8_t>(low);
+    byte2 = static_cast<std::uint8_t>(high);
     byte3 = 0;
 }
 
@@ -506,14 +506,14 @@ void MIDIMessage::SetSysEx()
     status = SYSEX_START;
     byte1 = 0;
     int num = 0;
-    byte2 = static_cast<unsigned char>(num & 0xff);
-    byte3 = static_cast<unsigned char>((num >> 8) & 0xff);
+    byte2 = static_cast<std::uint8_t>(num & 0xff);
+    byte3 = static_cast<std::uint8_t>((num >> 8) & 0xff);
 }
 
-void MIDIMessage::SetMTC(unsigned char field, unsigned char v)
+void MIDIMessage::SetMTC(std::uint8_t field, std::uint8_t v)
 {
     status = MTC;
-    byte1 = static_cast<unsigned char>((field << 4) | v);
+    byte1 = static_cast<std::uint8_t>((field << 4) | v);
     byte2 = 0;
     byte3 = 0;
 }
@@ -521,12 +521,12 @@ void MIDIMessage::SetMTC(unsigned char field, unsigned char v)
 void MIDIMessage::SetSongPosition(short pos)
 {
     status = SONG_POSITION;
-    byte1 = static_cast<unsigned char>(pos & 0x7f);
-    byte2 = static_cast<unsigned char>((pos >> 7) & 0x7f);
+    byte1 = static_cast<std::uint8_t>(pos & 0x7f);
+    byte2 = static_cast<std::uint8_t>((pos >> 7) & 0x7f);
     byte3 = 0;
 }
 
-void MIDIMessage::SetSongSelect(unsigned char sng)
+void MIDIMessage::SetSongSelect(std::uint8_t sng)
 {
     status = SONG_SELECT;
     byte1 = sng;
@@ -542,7 +542,7 @@ void MIDIMessage::SetTuneRequest()
     byte3 = 0;
 }
 
-void MIDIMessage::SetMetaEvent(unsigned char type, unsigned char v1, unsigned char v2)
+void MIDIMessage::SetMetaEvent(std::uint8_t type, std::uint8_t v1, std::uint8_t v2)
 {
     status = META_EVENT;
     byte1 = type;
@@ -550,25 +550,25 @@ void MIDIMessage::SetMetaEvent(unsigned char type, unsigned char v1, unsigned ch
     byte3 = v2;
 }
 
-void MIDIMessage::SetMetaEvent(unsigned char type, unsigned short v)
+void MIDIMessage::SetMetaEvent(std::uint8_t type, unsigned short v)
 {
     status = META_EVENT;
     byte1 = type;
-    byte2 = static_cast<unsigned char>(v & 0xff);
-    byte3 = static_cast<unsigned char>((v >> 8) & 0xff);
+    byte2 = static_cast<std::uint8_t>(v & 0xff);
+    byte3 = static_cast<std::uint8_t>((v >> 8) & 0xff);
 }
 
-void MIDIMessage::SetAllNotesOff(unsigned char chan, unsigned char type)
+void MIDIMessage::SetAllNotesOff(std::uint8_t chan, std::uint8_t type)
 {
-    status = static_cast<unsigned char>(chan | CONTROL_CHANGE);
+    status = static_cast<std::uint8_t>(chan | CONTROL_CHANGE);
     byte1 = type;
     byte2 = 0x7f;
     byte3 = 0;
 }
 
-void MIDIMessage::SetLocal(unsigned char chan, unsigned char v)
+void MIDIMessage::SetLocal(std::uint8_t chan, std::uint8_t v)
 {
-    status = static_cast<unsigned char>(chan | CONTROL_CHANGE);
+    status = static_cast<std::uint8_t>(chan | CONTROL_CHANGE);
     byte1 = C_LOCAL;
     byte2 = v;
     byte3 = 0;
@@ -587,7 +587,7 @@ void MIDIMessage::SetTempo32(unsigned short tempo_times_32)
     SetMetaEvent(META_TEMPO, tempo_times_32);
 }
 
-void MIDIMessage::SetText(unsigned short text_num, unsigned char type)
+void MIDIMessage::SetText(unsigned short text_num, std::uint8_t type)
 {
     SetMetaEvent(type, text_num);
 }
@@ -597,12 +597,12 @@ void MIDIMessage::SetDataEnd()
     SetMetaEvent(META_DATA_END, 0);
 }
 
-void MIDIMessage::SetTimeSig(unsigned char num, unsigned char den)
+void MIDIMessage::SetTimeSig(std::uint8_t num, std::uint8_t den)
 {
     SetMetaEvent(META_TIMESIG, num, den);
 }
 
-void MIDIMessage::SetKeySig(signed char sharp_flats, unsigned char major_minor)
+void MIDIMessage::SetKeySig(signed char sharp_flats, std::uint8_t major_minor)
 {
     SetMetaEvent(META_KEYSIG, sharp_flats, major_minor);
 }

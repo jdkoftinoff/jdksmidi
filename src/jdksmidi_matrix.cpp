@@ -57,7 +57,7 @@ MIDIMatrix::MIDIMatrix()
         channel_count[channel] = 0;
         hold_pedal[channel] = false;
 
-        for (unsigned char note = 0; note < 128; note++)
+        for (std::uint8_t note = 0; note < 128; note++)
             note_on_count[channel][note] = 0;
     }
 

@@ -40,6 +40,8 @@
 
 #include "jdksmidi/world.h"
 
+#include <cstdint>
+
 namespace jdksmidi {
 
 typedef unsigned long MIDIClockTime;
@@ -196,7 +198,7 @@ extern bool const lut_is_white[12];
 /// GetSystemMessageLength() instead.
 ///
 
-inline signed char GetMessageLength(unsigned char stat)
+inline signed char GetMessageLength(std::uint8_t stat)
 {
     return lut_msglen[stat >> 4];
 }
@@ -206,7 +208,7 @@ inline signed char GetMessageLength(unsigned char stat)
 /// length is unknown until parsing is complete.
 ///
 
-inline signed char GetSystemMessageLength(unsigned char stat)
+inline signed char GetSystemMessageLength(std::uint8_t stat)
 {
     return lut_sysmsglen[stat - 0xf0];
 }
@@ -215,7 +217,7 @@ inline signed char GetSystemMessageLength(unsigned char stat)
 /// Piano key color white test
 ///
 
-inline bool IsNoteWhite(unsigned char note)
+inline bool IsNoteWhite(std::uint8_t note)
 {
     return lut_is_white[note % 12];
 }
@@ -224,7 +226,7 @@ inline bool IsNoteWhite(unsigned char note)
 /// Piano key color black test
 ///
 
-inline bool IsNoteBlack(unsigned char note)
+inline bool IsNoteBlack(std::uint8_t note)
 {
     return !lut_is_white[note % 12];
 }
@@ -233,7 +235,7 @@ inline bool IsNoteBlack(unsigned char note)
 /// Note # to standard octave conversion
 ///
 
-inline int GetNoteOctave(unsigned char note)
+inline int GetNoteOctave(std::uint8_t note)
 {
     return (note / 12) - 1;
 }

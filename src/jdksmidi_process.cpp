@@ -94,7 +94,7 @@ bool MIDIProcessorTransposer::Process(MIDITimedBigMessage* msg)
 
             else {
                 // set new note number
-                msg->SetNote((unsigned char)new_note);
+                msg->SetNote((std::uint8_t)new_note);
             }
         }
     }
@@ -129,7 +129,7 @@ bool MIDIProcessorRechannelizer::Process(MIDITimedBigMessage* msg)
             return false;
         }
 
-        msg->SetChannel((unsigned char)new_chan);
+        msg->SetChannel((std::uint8_t)new_chan);
     }
 
     return true;

@@ -113,7 +113,7 @@ class MIDIFileWrite : protected MIDIFile
     void WriteEvent(MIDITimedBigMessage const& m);
 
     void WriteMetaEvent(
-        unsigned long time, unsigned char type, unsigned char const* data, long length);
+        unsigned long time, std::uint8_t type, std::uint8_t const* data, long length);
     void WriteTempo(unsigned long time, long tempo);
     void WriteKeySignature(unsigned long time, char sharp_flat, char minor);
     void WriteTimeSignature(

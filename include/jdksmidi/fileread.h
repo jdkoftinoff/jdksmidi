@@ -43,6 +43,7 @@
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
 
+#include <cstdint>
 #include <vector>
 
 namespace jdksmidi {
@@ -113,15 +114,15 @@ class MIDIFileEvents : protected MIDIFile
     virtual void mf_control(MIDITimedMessage const& msg);
     virtual void mf_sysex(MIDIClockTime time, MIDISystemExclusive const& ex);
 
-    virtual void mf_arbitrary(MIDIClockTime time, int len, unsigned char* data);
-    virtual void mf_metamisc(MIDIClockTime time, int, int, unsigned char*);
+    virtual void mf_arbitrary(MIDIClockTime time, int len, std::uint8_t* data);
+    virtual void mf_metamisc(MIDIClockTime time, int, int, std::uint8_t*);
     virtual void mf_seqnum(MIDIClockTime time, int);
     virtual void mf_smpte(MIDIClockTime time, int, int, int, int, int);
     virtual void mf_timesig(MIDIClockTime time, int, int, int, int);
     virtual void mf_tempo(MIDIClockTime time, unsigned long tempo);
     virtual void mf_keysig(MIDIClockTime time, int, int);
-    virtual void mf_sqspecific(MIDIClockTime time, int, unsigned char*);
-    virtual void mf_text(MIDIClockTime time, int, int, unsigned char*);
+    virtual void mf_sqspecific(MIDIClockTime time, int, std::uint8_t*);
+    virtual void mf_text(MIDIClockTime time, int, int, std::uint8_t*);
     virtual void mf_eot(MIDIClockTime time);
 
     //
@@ -138,7 +139,7 @@ class MIDIFileEvents : protected MIDIFile
     // Higher level dispatch functions
     //
     virtual void UpdateTime(MIDIClockTime delta_time);
-    virtual void MetaEvent(MIDIClockTime time, int type, int len, unsigned char* buf);
+    virtual void MetaEvent(MIDIClockTime time, int type, int len, std::uint8_t* buf);
     virtual void ChanMessage(MIDITimedMessage const& msg);
 };
 
@@ -170,7 +171,7 @@ class MIDIFileRead : protected MIDIFile
     int cur_track;
     int abort_parse;
 
-    std::vector<unsigned char> message_buffer;
+    std::vector<std::uint8_t> message_buffer;
     int msg_index;
 
   private:
@@ -188,7 +189,7 @@ class MIDIFileRead : protected MIDIFile
     int ReadMT(unsigned long, int);
     void BadByte(int);
 
-    void FormChanMessage(unsigned char st, unsigned char b1, unsigned char b2);
+    void FormChanMessage(std::uint8_t st, std::uint8_t b1, std::uint8_t b2);
 
     int header_format;
     int header_ntrks;
