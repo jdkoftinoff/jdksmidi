@@ -114,72 +114,72 @@ class SMPTE
 
     void set_smpte_rate(SMPTEFormat r)
     {
-        smpte_rate = r;
-        sample_number_dirty = true;
+        _smpte_rate = r;
+        _sample_number_dirty = true;
     }
-    SMPTEFormat get_smpte_rate() { return smpte_rate; }
+    SMPTEFormat get_smpte_rate() { return _smpte_rate; }
 
     void set_sample_rate(SAMPLE_RATE r)
     {
-        sample_rate = r;
-        sample_number_dirty = true;
+        _sample_rate = r;
+        _sample_number_dirty = true;
     }
-    SAMPLE_RATE get_sample_rate() { return sample_rate; }
+    SAMPLE_RATE get_sample_rate() { return _sample_rate; }
 
     void set_sample_number(std::uint32_t n)
     {
-        sample_number = n;
+        _sample_number = n;
         sample_to_time();
     }
     std::uint32_t get_sample_number()
     {
-        if (sample_number_dirty)
+        if (_sample_number_dirty)
             time_to_sample();
 
-        return sample_number;
+        return _sample_number;
     }
 
     void set_time(
         std::uint8_t h, std::uint8_t m, std::uint8_t s, std::uint8_t f = 0, std::uint8_t sf = 0)
     {
-        hours = h;
-        minutes = m;
-        seconds = s;
-        frames = f;
-        sub_frames = sf;
-        sample_number_dirty = true;
+        _hours = h;
+        _minutes = m;
+        _seconds = s;
+        _frames = f;
+        _sub_frames = sf;
+        _sample_number_dirty = true;
     }
 
-    std::uint8_t get_hours() { return hours; }
-    std::uint8_t get_minutes() { return minutes; }
-    std::uint8_t get_seconds() { return seconds; }
-    std::uint8_t get_frames() { return frames; }
-    std::uint8_t get_sub_frames() { return sub_frames; }
+    std::uint8_t get_hours() { return _hours; }
+    std::uint8_t get_minutes() { return _minutes; }
+    std::uint8_t get_seconds() { return _seconds; }
+    std::uint8_t get_frames() { return _frames; }
+    std::uint8_t get_sub_frames() { return _sub_frames; }
 
     void set_hours(std::uint8_t h)
     {
-        hours = h;
-        sample_number_dirty = true;
+        _hours = h;
+        _sample_number_dirty = true;
     }
     void set_minutes(std::uint8_t m)
     {
-        minutes = m;
-        sample_number_dirty = true;
+        _minutes = m;
+        _sample_number_dirty = true;
     }
     void set_seconds(std::uint8_t s)
     {
-        seconds = s;
-        sample_number_dirty = true;
+        _seconds = s;
+        _sample_number_dirty = true;
     }
     void set_frames(std::uint8_t f)
     {
-        frames = f;
-        sample_number_dirty = true;
+        _frames = f;
+        _sample_number_dirty = true;
     }
     void set_sub_frames(std::uint8_t sf)
     {
-        sub_frames = sf;
-        sample_number_dirty = true;
+        _sub_frames = sf;
+        _sample_number_dirty = true;
     }
 
     void add_hours(char h);
@@ -189,7 +189,7 @@ class SMPTE
     void add_sub_frames(char sf);
     void add_samples(long n)
     {
-        sample_number = get_sample_number() + n;
+        _sample_number = get_sample_number() + n;
         sample_to_time();
     }
 
@@ -239,21 +239,21 @@ class SMPTE
     void add(SMPTE& s);
     void subtract(SMPTE& s);
 
-    long get_sample_rate_long() { return get_sample_rate_frequency_long(sample_rate); }
+    long get_sample_rate_long() { return get_sample_rate_frequency_long(_sample_rate); }
 
-    int get_smpte_rate_long() { return get_smpte_rate_frequency_long(smpte_rate); }
+    int get_smpte_rate_long() { return get_smpte_rate_frequency_long(_smpte_rate); }
 
   private:
-    SMPTEFormat smpte_rate;
-    SAMPLE_RATE sample_rate;
-    std::uint32_t sample_number;
+    SMPTEFormat _smpte_rate;
+    SAMPLE_RATE _sample_rate;
+    std::uint32_t _sample_number;
 
-    std::uint8_t hours;
-    std::uint8_t minutes;
-    std::uint8_t seconds;
-    std::uint8_t frames;
-    std::uint8_t sub_frames;
-    std::uint8_t sample_number_dirty;
+    std::uint8_t _hours;
+    std::uint8_t _minutes;
+    std::uint8_t _seconds;
+    std::uint8_t _frames;
+    std::uint8_t _sub_frames;
+    std::uint8_t _sample_number_dirty;
 
     friend SMPTE operator+(SMPTE a, SMPTE b);
     friend SMPTE operator-(SMPTE a, SMPTE b);

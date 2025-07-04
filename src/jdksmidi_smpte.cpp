@@ -69,16 +69,16 @@ long const smpte_sample_rates_long[] = {
     480000,
     (long)(480000.0 * 1.001)};
 
-SMPTE::SMPTE(SMPTEFormat smpte_rate_, SAMPLE_RATE sample_rate_)
-    : smpte_rate(smpte_rate_)
-    , sample_rate(sample_rate_)
-    , sample_number(0)
-    , hours(0)
-    , minutes(0)
-    , seconds(0)
-    , frames(0)
-    , sub_frames(0)
-    , sample_number_dirty(false)
+SMPTE::SMPTE(SMPTEFormat _smpte_rate_, SAMPLE_RATE sample_rate_)
+    : _smpte_rate(_smpte_rate_)
+    , _sample_rate(sample_rate_)
+    , _sample_number(0)
+    , _hours(0)
+    , _minutes(0)
+    , _seconds(0)
+    , _frames(0)
+    , _sub_frames(0)
+    , _sample_number_dirty(false)
 {}
 
 SMPTE::SMPTE(const SMPTE& s)
@@ -140,26 +140,26 @@ void SMPTE::sample_to_time()
     //
     // make a temporary copy of the sample number
     //
-    std::uint32_t tmp_sample = sample_number;
+    std::uint32_t tmp_sample = _sample_number;
     //
     // keep track of the actual rates in use in doubles.
     //
-    double the_smpte_rate = smpte_smpte_rates[static_cast<int>(smpte_rate)];
-    double the_sample_rate = smpte_sample_rates[static_cast<int>(sample_rate)];
+    double the_smpte_rate = smpte_smpte_rates[static_cast<int>(_smpte_rate)];
+    double the_sample_rate = smpte_sample_rates[static_cast<int>(_sample_rate)];
     //
     // keep track of the maximum frame number for this smpte format.
     //
-    std::uint8_t max_frame = smpte_max_frames[static_cast<int>(smpte_rate)];
+    std::uint8_t max_frame = smpte_max_frames[static_cast<int>(_smpte_rate)];
     //
     // Calculate the number of samples per frame.
     //
-    double samples_per_frame = smpte_sample_rates[static_cast<int>(sample_rate)] / smpte_smpte_rates[static_cast<int>(smpte_rate)];
+    double samples_per_frame = smpte_sample_rates[static_cast<int>(_sample_rate)] / smpte_smpte_rates[static_cast<int>(_smpte_rate)];
     //
     // if the smpte rate is a drop frame type, calculate the number
     // of frames that must be dropped.
     //
 
-    if (smpte_rate == SMPTEFormat::Rate30DF || smpte_rate == SMPTEFormat::Rate2997DF) {
+    if (_smpte_rate == SMPTEFormat::Rate30DF || _smpte_rate == SMPTEFormat::Rate2997DF) {
         //
         // Calculate number of minutes that have gone by
         //
@@ -191,11 +191,11 @@ void SMPTE::sample_to_time()
     std::uint32_t rounded_sub_frames =
         (std::uint32_t)((tmp_sample * the_smpte_rate * 100) / the_sample_rate + .5);
     DBG(printf("rounded_sub_frames = %ld\n", rounded_sub_frames));
-    sub_frames = (std::uint8_t)((rounded_sub_frames) % 100);
-    frames = (std::uint8_t)((rounded_sub_frames / 100) % max_frame);
-    seconds = (std::uint8_t)((rounded_sub_frames / (100L * max_frame)) % 60);
-    minutes = (std::uint8_t)((rounded_sub_frames / (100L * 60L * max_frame)) % 60);
-    hours = (std::uint8_t)((rounded_sub_frames / (100L * 60L * 24L * max_frame)) % 24);
+    _sub_frames = (std::uint8_t)((rounded_sub_frames) % 100);
+    _frames = (std::uint8_t)((rounded_sub_frames / 100) % max_frame);
+    _seconds = (std::uint8_t)((rounded_sub_frames / (100L * max_frame)) % 60);
+    _minutes = (std::uint8_t)((rounded_sub_frames / (100L * 60L * max_frame)) % 60);
+    _hours = (std::uint8_t)((rounded_sub_frames / (100L * 60L * 24L * max_frame)) % 24);
 }
 
 void SMPTE::time_to_sample()
@@ -203,8 +203,8 @@ void SMPTE::time_to_sample()
     //
     // keep track of the actual rates in use in doubles.
     //
-    double the_smpte_rate = smpte_smpte_rates[static_cast<int>(smpte_rate)];
-    double the_sample_rate = smpte_sample_rates[static_cast<int>(sample_rate)];
+    double the_smpte_rate = smpte_smpte_rates[static_cast<int>(_smpte_rate)];
+    double the_sample_rate = smpte_sample_rates[static_cast<int>(_sample_rate)];
     //
     // optimize a coupla similiar double divides by calculating it once.
     //
@@ -213,18 +213,18 @@ void SMPTE::time_to_sample()
     // calculate the sample number
     //
     double tmp_sample = (double)((
-        (hours * the_sample_rate * (60 * 60)) + (minutes * the_sample_rate * 60) +
-        (seconds * the_sample_rate) + (frames * samples_per_frame) +
-        (sub_frames * samples_per_frame * (1.0 / 100.0)) + .5));
+        (_hours * the_sample_rate * (60 * 60)) + (_minutes * the_sample_rate * 60) +
+        (_seconds * the_sample_rate) + (_frames * samples_per_frame) +
+        (_sub_frames * samples_per_frame * (1.0 / 100.0)) + .5));
     //
     // Now compensate for Drop Frame mode if we are in drop frame mode.
     //
 
-    if (smpte_rate == SMPTEFormat::Rate30DF || smpte_rate == SMPTEFormat::Rate2997DF) {
+    if (_smpte_rate == SMPTEFormat::Rate30DF || _smpte_rate == SMPTEFormat::Rate2997DF) {
         //
         // Calculate number of minutes that have gone by
         //
-        int num_minutes = (int)((double)tmp_sample / (smpte_sample_rates[static_cast<int>(sample_rate)] * 60));
+        int num_minutes = (int)((double)tmp_sample / (smpte_sample_rates[static_cast<int>(_sample_rate)] * 60));
         DBG(printf("num_minutes=%d\n", (int)num_minutes));
         //
         // Calculate the number of tens of minutes that have gone by, including minute 00
@@ -248,20 +248,20 @@ void SMPTE::time_to_sample()
     //
     // save the calculated sample number in self.
     //
-    sample_number = (std::uint32_t)tmp_sample;
+    _sample_number = (std::uint32_t)tmp_sample;
 }
 
 void SMPTE::copy(const SMPTE& s)
 {
-    smpte_rate = s.smpte_rate;
-    sample_rate = s.sample_rate;
-    sample_number = s.sample_number;
-    hours = s.hours;
-    minutes = s.minutes;
-    seconds = s.seconds;
-    frames = s.frames;
-    sub_frames = s.sub_frames;
-    sample_number_dirty = s.sample_number_dirty;
+    _smpte_rate = s._smpte_rate;
+    _sample_rate = s._sample_rate;
+    _sample_number = s._sample_number;
+    _hours = s._hours;
+    _minutes = s._minutes;
+    _seconds = s._seconds;
+    _frames = s._frames;
+    _sub_frames = s._sub_frames;
+    _sample_number_dirty = s._sample_number_dirty;
 }
 
 int SMPTE::compare(SMPTE& s)
