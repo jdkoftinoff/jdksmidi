@@ -153,7 +153,8 @@ void SMPTE::sample_to_time()
     //
     // Calculate the number of samples per frame.
     //
-    double samples_per_frame = smpte_sample_rates[static_cast<int>(_sample_rate)] / smpte_smpte_rates[static_cast<int>(_smpte_rate)];
+    double samples_per_frame = smpte_sample_rates[static_cast<int>(_sample_rate)] /
+        smpte_smpte_rates[static_cast<int>(_smpte_rate)];
     //
     // if the smpte rate is a drop frame type, calculate the number
     // of frames that must be dropped.
@@ -224,7 +225,8 @@ void SMPTE::time_to_sample()
         //
         // Calculate number of minutes that have gone by
         //
-        int num_minutes = (int)((double)tmp_sample / (smpte_sample_rates[static_cast<int>(_sample_rate)] * 60));
+        int num_minutes =
+            (int)((double)tmp_sample / (smpte_sample_rates[static_cast<int>(_sample_rate)] * 60));
         DBG(printf("num_minutes=%d\n", (int)num_minutes));
         //
         // Calculate the number of tens of minutes that have gone by, including minute 00

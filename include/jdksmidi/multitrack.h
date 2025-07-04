@@ -91,7 +91,7 @@ class MIDIMultiTrackIteratorState
 
   protected:
     friend class MIDIMultiTrackIterator;
-    
+
     MIDIClockTime _cur_time;
     int _cur_event_track;
     int _num_tracks;
