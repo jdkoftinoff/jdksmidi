@@ -57,35 +57,29 @@ class MIDITempo
 {
   public:
     MIDITempo() { _tempo = 120 << 8; }
-    MIDITempo(int a) { _tempo = static_cast<unsigned long>(a) << 8; }
-    MIDITempo(unsigned int a) { _tempo = static_cast<unsigned long>(a) << 8; }
-    MIDITempo(long a) { _tempo = static_cast<unsigned long>(a) << 8; }
-    MIDITempo(unsigned long a) { _tempo = a << 8; }
-    MIDITempo(float a) { _tempo = static_cast<unsigned long>(a * 256.0); }
+    MIDITempo(std::int32_t a) { _tempo = static_cast<std::uint32_t>(a) << 8; }
+    MIDITempo(std::uint32_t a) { _tempo = a << 8; }
+    MIDITempo(float a) { _tempo = static_cast<std::uint32_t>(a * 256.0); }
     MIDITempo(MIDITempo const& a) { _tempo = a.get_full_tempo(); }
 
     operator short() { return static_cast<short>((_tempo + 0x80) >> 8); }
     operator unsigned short() { return static_cast<unsigned short>((_tempo + 0x80) >> 8); }
 
-    operator int() { return static_cast<int>((_tempo + 0x80) >> 8); }
-    operator unsigned int() { return static_cast<unsigned int>((_tempo + 0x80) >> 8); }
-    operator long() { return static_cast<long>((_tempo + 0x80) >> 8); }
-    operator unsigned long() { return static_cast<unsigned long>((_tempo + 0x80) >> 8); }
+    operator std::int32_t() { return static_cast<std::int32_t>((_tempo + 0x80) >> 8); }
+    operator std::uint32_t() { return static_cast<std::uint32_t>((_tempo + 0x80) >> 8); }
     operator float() { return static_cast<float>(_tempo) / 256.0f; }
-    void operator=(unsigned short a) { _tempo = static_cast<unsigned long>(a) << 8; }
-    void operator=(short a) { _tempo = static_cast<unsigned long>(a) << 8; }
+    void operator=(unsigned short a) { _tempo = static_cast<std::uint32_t>(a) << 8; }
+    void operator=(short a) { _tempo = static_cast<std::uint32_t>(a) << 8; }
 
-    void operator=(unsigned int a) { _tempo = static_cast<unsigned long>(a) << 8; }
-    void operator=(int a) { _tempo = static_cast<unsigned long>(a) << 8; }
-    void operator=(unsigned long a) { _tempo = static_cast<unsigned long>(a) << 8; }
-    void operator=(long a) { _tempo = static_cast<unsigned long>(a) << 8; }
+    void operator=(std::uint32_t a) { _tempo = static_cast<std::uint32_t>(a) << 8; }
+    void operator=(std::int32_t a) { _tempo = static_cast<std::uint32_t>(a) << 8; }
 
-    void operator=(float a) { _tempo = static_cast<unsigned long>(a * 256.0); }
+    void operator=(float a) { _tempo = static_cast<std::uint32_t>(a * 256.0); }
 
-    unsigned long get_full_tempo() const { return _tempo; }
-    void set_full_tempo(unsigned long v) { _tempo = v; }
+    std::uint32_t get_full_tempo() const { return _tempo; }
+    void set_full_tempo(std::uint32_t v) { _tempo = v; }
 
-    unsigned long get_midi_file_tempo()
+    std::uint32_t get_midi_file_tempo()
     {
         if (_tempo)
             return (60000000L / 256) / _tempo;
@@ -95,7 +89,7 @@ class MIDITempo
     }
 
   protected:
-    unsigned long _tempo;
+    std::uint32_t _tempo;
 };
 
 }  // namespace jdksmidi

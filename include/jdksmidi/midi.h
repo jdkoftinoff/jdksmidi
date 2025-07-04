@@ -44,7 +44,7 @@
 
 namespace jdksmidi {
 
-typedef unsigned long MIDIClockTime;
+typedef std::uint32_t MIDIClockTime;
 
 ///
 /// MIDI Status bytes

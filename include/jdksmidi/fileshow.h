@@ -78,7 +78,7 @@ class MIDIFileShow : public MIDIFileEvents
     virtual void mf_seqnum(MIDIClockTime time, int);
     virtual void mf_smpte(MIDIClockTime time, int, int, int, int, int);
     virtual void mf_timesig(MIDIClockTime time, int, int, int, int);
-    virtual void mf_tempo(MIDIClockTime time, unsigned long tempo);
+    virtual void mf_tempo(MIDIClockTime time, std::uint32_t tempo);
     virtual void mf_keysig(MIDIClockTime time, int, int);
     virtual void mf_sqspecific(MIDIClockTime time, int, std::uint8_t*);
     virtual void mf_text(MIDIClockTime time, int, int, std::uint8_t*);

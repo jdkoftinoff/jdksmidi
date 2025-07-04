@@ -53,17 +53,17 @@ class MIDIManager : public MIDITick
     MIDIDriver* get_driver() { return _driver; }
 
     // to set and get the system time offset
-    void set_time_offset(unsigned long off);
-    unsigned long get_time_offset();
+    void set_time_offset(std::uint32_t off);
+    std::uint32_t get_time_offset();
 
     // to set and get the sequencer time offset
-    void set_seq_offset(unsigned long seqoff);
-    unsigned long get_seq_offset();
+    void set_seq_offset(std::uint32_t seqoff);
+    std::uint32_t get_seq_offset();
 
     // to manage the playback of the sequencer
     void seq_play();
     void seq_stop();
-    void set_repeat_play(bool flag, unsigned long start_measure, unsigned long end_measure);
+    void set_repeat_play(bool flag, std::uint32_t start_measure, std::uint32_t end_measure);
 
     // status request functions
     bool is_seq_play() const;
@@ -71,18 +71,18 @@ class MIDIManager : public MIDITick
     bool is_seq_repeat() const;
 
     // inherited from MIDITick
-    virtual void time_tick(unsigned long sys_time);
+    virtual void time_tick(std::uint32_t sys_time);
 
   protected:
-    virtual void time_tick_play_mode(unsigned long sys_time_);
-    virtual void time_tick_stop_mode(unsigned long sys_time_);
+    virtual void time_tick_play_mode(std::uint32_t sys_time_);
+    virtual void time_tick_stop_mode(std::uint32_t sys_time_);
 
     MIDIDriver* _driver;
 
     MIDISequencer* _sequencer;
 
-    unsigned long _sys_time_offset;
-    unsigned long _seq_time_offset;
+    std::uint32_t _sys_time_offset;
+    std::uint32_t _seq_time_offset;
 
     bool volatile _play_mode;
     bool volatile _stop_mode;
@@ -90,8 +90,8 @@ class MIDIManager : public MIDITick
     MIDISequencerGUIEventNotifier* _notifier;
 
     bool volatile _repeat_play_mode;
-    long _repeat_start_measure;
-    long _repeat_end_measure;
+    std::int32_t _repeat_start_measure;
+    std::int32_t _repeat_end_measure;
 };
 
 }  // namespace jdksmidi

@@ -61,13 +61,13 @@ double const smpte_smpte_rates_long[] = {2400, 2500, 3000 / 1.001, 3000 / 1.001,
 double const smpte_sample_rates[] = {
     32000.0, 44100.0 / 1.001, 44100.0, 48000.0 / 1.001, 48000.0, 48000.0 * 1.001};
 
-long const smpte_sample_rates_long[] = {
+std::int32_t const smpte_sample_rates_long[] = {
     320000,
-    (long)(441000.0 / 1.001),
+    static_cast<std::int32_t>(441000.0 / 1.001),
     441000,
-    (long)(480000.0 / 1.001),
+    static_cast<std::int32_t>(480000.0 / 1.001),
     480000,
-    (long)(480000.0 * 1.001)};
+    static_cast<std::int32_t>(480000.0 * 1.001)};
 
 SMPTE::SMPTE(SMPTEFormat _smpte_rate_, SAMPLE_RATE sample_rate_)
     : _smpte_rate(_smpte_rate_)

@@ -138,9 +138,9 @@ void MIDIFileReadMultiTrack::mf_timesig(
     add_event_to_multi_track(msg, sysex, cur_track);
 }
 
-void MIDIFileReadMultiTrack::mf_tempo(MIDIClockTime time, unsigned long tempo)
+void MIDIFileReadMultiTrack::mf_tempo(MIDIClockTime time, std::uint32_t tempo)
 {
-    unsigned long tempo_bpm_times_32;
+    std::uint32_t tempo_bpm_times_32;
 
     if (tempo == 0)
         tempo = 1;
@@ -150,7 +150,7 @@ void MIDIFileReadMultiTrack::mf_tempo(MIDIClockTime time, unsigned long tempo)
     float beats_per_second =
         static_cast<float>(1e6 / (double)tempo);  // 1 million microseconds per second
     float beats_per_minute = beats_per_second * 60;
-    tempo_bpm_times_32 = static_cast<unsigned long>(beats_per_minute * 32.0);
+    tempo_bpm_times_32 = static_cast<std::uint32_t>(beats_per_minute * 32.0);
     MIDITimedMessage msg;
     msg.set_tempo32(static_cast<unsigned short>(tempo_bpm_times_32));
     msg.set_time(time);

@@ -119,7 +119,7 @@ class MIDIFileEvents : protected MIDIFile
     virtual void mf_seqnum(MIDIClockTime time, int);
     virtual void mf_smpte(MIDIClockTime time, int, int, int, int, int);
     virtual void mf_timesig(MIDIClockTime time, int, int, int, int);
-    virtual void mf_tempo(MIDIClockTime time, unsigned long tempo);
+    virtual void mf_tempo(MIDIClockTime time, std::uint32_t tempo);
     virtual void mf_keysig(MIDIClockTime time, int, int);
     virtual void mf_sqspecific(MIDIClockTime time, int, std::uint8_t*);
     virtual void mf_text(MIDIClockTime time, int, int, std::uint8_t*);
@@ -149,7 +149,7 @@ class MIDIFileRead : protected MIDIFile
     MIDIFileRead(
         MIDIFileReadStream* input_stream_,
         MIDIFileEvents* event_handler_,
-        unsigned long max_msg_len = 8192);
+        std::uint32_t max_msg_len = 8192);
     virtual ~MIDIFileRead();
 
     virtual bool parse();
@@ -167,7 +167,7 @@ class MIDIFileRead : protected MIDIFile
     int no_merge;
     MIDIClockTime cur_time;
     int skip_init;
-    unsigned long to_be_read;
+    std::uint32_t to_be_read;
     int cur_track;
     int abort_parse;
 
@@ -175,8 +175,8 @@ class MIDIFileRead : protected MIDIFile
     int msg_index;
 
   private:
-    unsigned long read_variable_num();
-    unsigned long read_32_bit();
+    std::uint32_t read_variable_num();
+    std::uint32_t read_32_bit();
     int read_16_bit();
 
     void read_track();
@@ -186,7 +186,7 @@ class MIDIFileRead : protected MIDIFile
 
     int e_get_c();
 
-    int read_mt(unsigned long, int);
+    int read_mt(std::uint32_t, int);
     void bad_byte(int);
 
     void form_chan_message(std::uint8_t st, std::uint8_t b1, std::uint8_t b2);

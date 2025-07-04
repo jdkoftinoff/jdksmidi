@@ -243,11 +243,11 @@ void AdvancedSequencer::play(int clock_offset)
 
     MIDIClockTime cur_time = seq.get_current_midi_clock_time();
 
-    if ((long)cur_time > -clock_offset)
+    if (static_cast<std::int32_t>(cur_time) > -clock_offset)
         cur_time += clock_offset;
 
     seq.go_to_time(cur_time);
-    mgr.set_seq_offset((unsigned long)seq.get_current_time_in_ms());
+    mgr.set_seq_offset(static_cast<std::uint32_t>(seq.get_current_time_in_ms()));
     mgr.set_time_offset(0);
     mgr.seq_play();
 }
@@ -552,7 +552,7 @@ void AdvancedSequencer::extract_markers(std::vector<std::string>* list)
 
         if (m) {
             // how many beats have gone by since the last event?
-            long beats_gone_by = (m->get_time() - last_beat_time) / clks_per_beat;
+            std::int32_t beats_gone_by = (m->get_time() - last_beat_time) / clks_per_beat;
 
             if (beats_gone_by > 0) {
                 // calculate what our new measure/beat is

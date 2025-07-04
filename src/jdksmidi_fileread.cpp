@@ -177,7 +177,7 @@ void MIDIFileEvents::mf_smpte(MIDIClockTime time, int a, int b, int c, int d, in
 void MIDIFileEvents::mf_timesig(MIDIClockTime time, int a, int b, int c, int d)
 {}
 
-void MIDIFileEvents::mf_tempo(MIDIClockTime time, unsigned long a)
+void MIDIFileEvents::mf_tempo(MIDIClockTime time, std::uint32_t a)
 {}
 
 void MIDIFileEvents::mf_keysig(MIDIClockTime time, int a, int b)
@@ -217,7 +217,7 @@ void MIDIFileEvents::mf_sysex(MIDIClockTime time, MIDISystemExclusive const& ex)
 {}
 
 MIDIFileRead::MIDIFileRead(
-    MIDIFileReadStream* input_stream_, MIDIFileEvents* event_handler_, unsigned long max_msg_len_)
+    MIDIFileReadStream* input_stream_, MIDIFileEvents* event_handler_, std::uint32_t max_msg_len_)
     : input_stream(input_stream_)
     , event_handler(event_handler_)
 {
@@ -261,9 +261,9 @@ bool MIDIFileRead::parse()
     return true;
 }
 
-int MIDIFileRead::read_mt(unsigned long type, int skip)
+int MIDIFileRead::read_mt(std::uint32_t type, int skip)
 {
-    unsigned long read = 0;
+    std::uint32_t read = 0;
     int c;
     read = OSTYPE(e_get_c(), e_get_c(), e_get_c(), e_get_c());
 
@@ -352,7 +352,7 @@ void MIDIFileRead::read_track()
         2,
         0  // 0x80 through 0xf0
     };
-    unsigned long lookfor, lng;
+    std::uint32_t lookfor, lng;
     int c, c1, type;
     int sysexcontinue = 0;  // 1 if last message was unfinished sysex
     int running = 0;        // 1 when running status used
@@ -367,7 +367,7 @@ void MIDIFileRead::read_track()
     event_handler->mf_starttrack(cur_track);
 
     while (to_be_read > 0 && !abort_parse) {
-        unsigned long deltat = read_variable_num();
+        std::uint32_t deltat = read_variable_num();
         event_handler->update_time(deltat);
         cur_time += deltat;
         c = e_get_c();
@@ -485,9 +485,9 @@ void MIDIFileRead::read_track()
     return;
 }
 
-unsigned long MIDIFileRead::read_variable_num()
+std::uint32_t MIDIFileRead::read_variable_num()
 {
-    unsigned long value;
+    std::uint32_t value;
     int c;
     c = e_get_c();
 
@@ -509,7 +509,7 @@ unsigned long MIDIFileRead::read_variable_num()
     return value;
 }
 
-unsigned long MIDIFileRead::read_32_bit()
+std::uint32_t MIDIFileRead::read_32_bit()
 {
     int c1, c2, c3, c4;
     c1 = e_get_c();

@@ -123,7 +123,7 @@ bool MIDIDriver::hardware_msg_in(MIDITimedBigMessage& msg)
     return true;
 }
 
-void MIDIDriver::time_tick(unsigned long sys_time)
+void MIDIDriver::time_tick(std::uint32_t sys_time)
 {
     // run the additional tick procedure if we need to
     if (_tick_proc) {

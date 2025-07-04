@@ -45,9 +45,9 @@ bool MIDIDriverDump::hardware_msg_out(MIDITimedBigMessage const& msg)
     return true;
 }
 
-void MIDIDriverDump::time_tick(unsigned long sys_time)
+void MIDIDriverDump::time_tick(std::uint32_t sys_time)
 {
-    fprintf(f, "TICK  : %8ld\n", sys_time);
+    fprintf(f, "TICK  : %8u\n", sys_time);
     MIDIDriver::time_tick(sys_time);
 }
 

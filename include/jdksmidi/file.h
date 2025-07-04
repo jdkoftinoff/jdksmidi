@@ -52,8 +52,8 @@ namespace jdksmidi {
 // reading and writing midi files.
 //
 
-unsigned long const _MThd = OSTYPE('M', 'T', 'h', 'd');
-unsigned long const _MTrk = OSTYPE('M', 'T', 'r', 'k');
+std::uint32_t const _MThd = OSTYPE('M', 'T', 'h', 'd');
+std::uint32_t const _MTrk = OSTYPE('M', 'T', 'r', 'k');
 
 class MIDIFile
 {
@@ -63,8 +63,8 @@ class MIDIFile
 
     struct MIDIFileChunk
     {
-        unsigned long id;
-        unsigned long length;
+        std::uint32_t id;
+        std::uint32_t length;
     };
 
     struct MIDIFileHeader
@@ -112,16 +112,16 @@ class MIDIFile
     // tempo clock
     //
 
-    static unsigned long convert_tempo_to_freq(short division, MIDITempo& tempo);
+    static std::uint32_t convert_tempo_to_freq(short division, MIDITempo& tempo);
 
     //
-    // Convert a four byte number to an unsigned long.
+    // Convert a four byte number to a std::uint32_t.
     //
 
-    static unsigned long to_32_bit(std::uint8_t a, std::uint8_t b, std::uint8_t c, std::uint8_t d)
+    static std::uint32_t to_32_bit(std::uint8_t a, std::uint8_t b, std::uint8_t c, std::uint8_t d)
     {
-        return ((unsigned long)a << 24) + ((unsigned long)b << 16) + ((unsigned long)c << 8) +
-            ((unsigned long)d << 0);
+        return ((std::uint32_t)a << 24) + ((std::uint32_t)b << 16) + ((std::uint32_t)c << 8) +
+            ((std::uint32_t)d << 0);
     }
 
     //
@@ -133,9 +133,9 @@ class MIDIFile
         return (unsigned short)(((unsigned short)a << 8) + ((unsigned short)b << 0));
     }
 
-    static unsigned long read_variable_length_number(std::uint8_t** in);
+    static std::uint32_t read_variable_length_number(std::uint8_t** in);
 
-    static std::uint8_t* write_variable_length_number(unsigned long num, std::uint8_t* out);
+    static std::uint8_t* write_variable_length_number(std::uint32_t num, std::uint8_t* out);
 };
 
 }  // namespace jdksmidi

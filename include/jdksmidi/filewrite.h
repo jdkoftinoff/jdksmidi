@@ -57,7 +57,7 @@ class MIDIFileWriteStream
     MIDIFileWriteStream();
     virtual ~MIDIFileWriteStream();
 
-    virtual long seek(long pos, int whence = SEEK_SET) = 0;
+    virtual std::int32_t seek(std::int32_t pos, int whence = SEEK_SET) = 0;
     virtual int write_char(int c) = 0;
 };
 
@@ -67,7 +67,7 @@ class MIDIFileWriteStreamFile : public MIDIFileWriteStream
     MIDIFileWriteStreamFile(FILE* f_);
     virtual ~MIDIFileWriteStreamFile();
 
-    long seek(long pos, int whence = SEEK_SET);
+    std::int32_t seek(std::int32_t pos, int whence = SEEK_SET);
     int write_char(int c);
 
   protected:
@@ -98,32 +98,32 @@ class MIDIFileWrite : protected MIDIFile
     virtual ~MIDIFileWrite();
 
     bool error_occurred() { return error; }
-    unsigned long get_file_length() { return file_length; }
-    unsigned long get_track_length() { return track_length; }
+    std::uint32_t get_file_length() { return file_length; }
+    std::uint32_t get_track_length() { return track_length; }
     void reset_track_length() { track_length = 0; }
     void reset_track_time() { track_time = 0; }
 
     void write_file_header(int format, int ntrks, int division);
 
-    void write_track_header(unsigned long length);
+    void write_track_header(std::uint32_t length);
 
     void write_event(MIDITimedMessage const& m);
-    void write_event(unsigned long time, MIDISystemExclusive const* e);
-    void write_event(unsigned long time, unsigned short text_type, char const* text);
+    void write_event(std::uint32_t time, MIDISystemExclusive const* e);
+    void write_event(std::uint32_t time, unsigned short text_type, char const* text);
     void write_event(MIDITimedBigMessage const& m);
 
     void write_meta_event(
-        unsigned long time, std::uint8_t type, std::uint8_t const* data, long length);
-    void write_tempo(unsigned long time, long tempo);
-    void write_key_signature(unsigned long time, char sharp_flat, char minor);
+        std::uint32_t time, std::uint8_t type, std::uint8_t const* data, std::int32_t length);
+    void write_tempo(std::uint32_t time, std::int32_t tempo);
+    void write_key_signature(std::uint32_t time, char sharp_flat, char minor);
     void write_time_signature(
-        unsigned long time,
+        std::uint32_t time,
         char numerator = 4,
         char denominator_power = 2,
         char midi_clocks_per_metronome = 24,
         char num_32nd_per_midi_quarter_note = 8);
 
-    void write_end_of_track(unsigned long time);
+    void write_end_of_track(std::uint32_t time);
 
     virtual void rewrite_track_length();
 
@@ -136,7 +136,7 @@ class MIDIFileWrite : protected MIDIFile
             error = true;
     }
 
-    void seek(long pos)
+    void seek(std::int32_t pos)
     {
         if (out_stream->seek(pos) < 0)
             error = true;
@@ -149,20 +149,20 @@ class MIDIFileWrite : protected MIDIFile
     }
 
     void write_short(unsigned short c);
-    void write_3_char(long c);
-    void write_long(unsigned long c);
+    void write_3_char(std::int32_t c);
+    void write_long(std::uint32_t c);
 
-    int write_variable_num(unsigned long n);
+    int write_variable_num(std::uint32_t n);
 
-    void write_delta_time(unsigned long time);
+    void write_delta_time(std::uint32_t time);
 
   private:
     bool error;
     bool within_track;
-    unsigned long file_length;
-    unsigned long track_length;
-    unsigned long track_time;
-    unsigned long track_position;
+    std::uint32_t file_length;
+    std::uint32_t track_length;
+    std::uint32_t track_time;
+    std::uint32_t track_position;
     std::uint8_t running_status;
 
     MIDIFileWriteStream* out_stream;

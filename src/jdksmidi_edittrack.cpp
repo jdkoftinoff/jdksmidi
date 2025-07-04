@@ -134,7 +134,7 @@ void MIDIEditTrack::insert(MIDIClockTime start, MIDIClockTime length)
 //
 // this shift function will shift all event times by an offset.
 //
-void MIDIEditTrack::shift(signed long offset, MIDIEditTrackEventMatcher* match)
+void MIDIEditTrack::shift(std::int32_t offset, MIDIEditTrackEventMatcher* match)
 {
     ENTER("TO DO: MIDIEditTrack::shift()");
     // TO DO:

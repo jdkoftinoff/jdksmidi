@@ -77,10 +77,10 @@ inline double get_smpte_rate_frequency(SMPTEFormat r)
 // frequency times 100
 //
 
-inline long get_smpte_rate_frequency_long(SMPTEFormat r)
+inline std::int32_t get_smpte_rate_frequency_long(SMPTEFormat r)
 {
     extern double const smpte_smpte_rates_long[];
-    return static_cast<long>(smpte_smpte_rates_long[static_cast<int>(r)]);
+    return static_cast<std::int32_t>(smpte_smpte_rates_long[static_cast<int>(r)]);
 }
 
 //
@@ -98,10 +98,10 @@ inline double get_sample_rate_frequency(SAMPLE_RATE r)
 // frequency times 10
 //
 
-inline long get_sample_rate_frequency_long(SAMPLE_RATE r)
+inline std::int32_t get_sample_rate_frequency_long(SAMPLE_RATE r)
 {
     // return the sample rate as a long word of the frequency times 10.
-    extern long const smpte_sample_rates_long[];
+    extern std::int32_t const smpte_sample_rates_long[];
     return smpte_sample_rates_long[static_cast<int>(r)];
 }
 
@@ -187,7 +187,7 @@ class SMPTE
     void add_seconds(char s);
     void add_frames(char f);
     void add_sub_frames(char sf);
-    void add_samples(long n)
+    void add_samples(std::int32_t n)
     {
         _sample_number = get_sample_number() + n;
         sample_to_time();
@@ -239,9 +239,9 @@ class SMPTE
     void add(SMPTE& s);
     void subtract(SMPTE& s);
 
-    long get_sample_rate_long() { return get_sample_rate_frequency_long(_sample_rate); }
+    std::int32_t get_sample_rate_long() { return get_sample_rate_frequency_long(_sample_rate); }
 
-    int get_smpte_rate_long() { return get_smpte_rate_frequency_long(_smpte_rate); }
+    std::int32_t get_smpte_rate_long() { return get_smpte_rate_frequency_long(_smpte_rate); }
 
   private:
     SMPTEFormat _smpte_rate;

@@ -42,6 +42,8 @@
 #include "jdksmidi/process.h"
 #include "jdksmidi/track.h"
 
+#include <cstdint>
+
 namespace jdksmidi {
 
 class MIDIEditTrackEventMatcher
@@ -114,7 +116,7 @@ class MIDIEditTrack
     //
     // this shift function will shift all event times by an offset.
     //
-    void shift(signed long offset, MIDIEditTrackEventMatcher* match = 0);
+    void shift(std::int32_t offset, MIDIEditTrackEventMatcher* match = 0);
 
   protected:
     MIDIMatrix matrix;

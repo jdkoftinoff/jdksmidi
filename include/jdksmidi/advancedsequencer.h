@@ -140,8 +140,8 @@ class AdvancedSequencer
 
     MIDIManager mgr;
 
-    long repeat_start_measure;
-    long repeat_end_measure;
+    std::int32_t repeat_start_measure;
+    std::int32_t repeat_end_measure;
     bool repeat_play_mode;
 
     int num_warp_positions;

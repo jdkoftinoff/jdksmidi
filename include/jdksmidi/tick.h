@@ -28,6 +28,8 @@
 #ifndef JDKSMIDI_TICK_H
 #define JDKSMIDI_TICK_H
 
+#include <cstdint>
+
 namespace jdksmidi {
 class MIDITick
 {
@@ -36,7 +38,7 @@ class MIDITick
 
     virtual ~MIDITick();
 
-    virtual void time_tick(unsigned long sys_time) = 0;
+    virtual void time_tick(std::uint32_t sys_time) = 0;
 };
 }  // namespace jdksmidi
 

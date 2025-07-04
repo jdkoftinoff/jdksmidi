@@ -82,23 +82,23 @@ MIDISequencer const* MIDIManager::get_seq() const
 }
 
 // to set and get the system time offset
-void MIDIManager::set_time_offset(unsigned long off)
+void MIDIManager::set_time_offset(std::uint32_t off)
 {
     _sys_time_offset = off;
 }
 
-unsigned long MIDIManager::get_time_offset()
+std::uint32_t MIDIManager::get_time_offset()
 {
     return _sys_time_offset;
 }
 
 // to set and get the sequencer time offset
-void MIDIManager::set_seq_offset(unsigned long seqoff)
+void MIDIManager::set_seq_offset(std::uint32_t seqoff)
 {
     _seq_time_offset = seqoff;
 }
 
-unsigned long MIDIManager::get_seq_offset()
+std::uint32_t MIDIManager::get_seq_offset()
 {
     return _seq_time_offset;
 }
@@ -120,7 +120,7 @@ void MIDIManager::seq_play()
 }
 
 // to manage the repeat playback of the sequencer
-void MIDIManager::set_repeat_play(bool flag, unsigned long start_measure, unsigned long end_measure)
+void MIDIManager::set_repeat_play(bool flag, std::uint32_t start_measure, std::uint32_t end_measure)
 {
     // shut off repeat play while we muck with values
     _repeat_play_mode = false;
@@ -161,7 +161,7 @@ bool MIDIManager::is_seq_repeat() const
     return _repeat_play_mode && _play_mode;
 }
 
-void MIDIManager::time_tick(unsigned long sys_time_)
+void MIDIManager::time_tick(std::uint32_t sys_time_)
 {
     if (_play_mode) {
         time_tick_play_mode(sys_time_);
@@ -172,7 +172,7 @@ void MIDIManager::time_tick(unsigned long sys_time_)
     }
 }
 
-void MIDIManager::time_tick_play_mode(unsigned long sys_time_)
+void MIDIManager::time_tick_play_mode(std::uint32_t sys_time_)
 {
     double sys_time = (double)sys_time_ - (double)_sys_time_offset;
     float next_event_time = 0.0;
@@ -191,7 +191,7 @@ void MIDIManager::time_tick_play_mode(unsigned long sys_time_)
         sys_time = 0;
         // the sequencer time offset now must be reset to the
         // time in milliseconds of the sequence start point
-        _seq_time_offset = (unsigned long)_sequencer->get_current_time_in_ms();
+        _seq_time_offset = (std::uint32_t)_sequencer->get_current_time_in_ms();
     }
 
     // find all events that exist before or at this time,
@@ -233,6 +233,6 @@ void MIDIManager::time_tick_play_mode(unsigned long sys_time_)
     }
 }
 
-void MIDIManager::time_tick_stop_mode(unsigned long sys_time_)
+void MIDIManager::time_tick_stop_mode(std::uint32_t sys_time_)
 {}
 }  // namespace jdksmidi

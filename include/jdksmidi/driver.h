@@ -109,7 +109,7 @@ class MIDIDriver : public MIDITick
     // resulting message to HandleMsgIn to process it and put it in
     // the in_queue.
 
-    virtual void time_tick(unsigned long sys_time);
+    virtual void time_tick(std::uint32_t sys_time);
 
   protected:
     // the in and out queues

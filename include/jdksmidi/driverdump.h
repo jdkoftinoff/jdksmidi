@@ -40,7 +40,7 @@ class MIDIDriverDump : public MIDIDriver
 
     virtual bool hardware_msg_out(MIDITimedBigMessage const& msg);
 
-    virtual void time_tick(unsigned long sys_time);
+    virtual void time_tick(std::uint32_t sys_time);
 
   protected:
     FILE* f;

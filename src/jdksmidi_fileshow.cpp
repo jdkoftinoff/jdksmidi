@@ -95,13 +95,13 @@ void MIDIFileShow::mf_header(int format, int ntrks, int d)
 void MIDIFileShow::show_time(MIDIClockTime time)
 {
     if (division > 0) {
-        unsigned long beat = time / division;
-        unsigned long clk = time % division;
-        fprintf(out, "Time: %6ld:%3ld    ", beat, clk);
+        std::uint32_t beat = time / division;
+        std::uint32_t clk = time % division;
+        fprintf(out, "Time: %6u:%3u    ", beat, clk);
     }
 
     else {
-        fprintf(out, "Time: %9ld     ", time);
+        fprintf(out, "Time: %9u     ", time);
     }
 }
 
@@ -239,14 +239,11 @@ void MIDIFileShow::mf_timesig(
         notated_32nds_per_midi_quarter_note);
 }
 
-void MIDIFileShow::mf_tempo(MIDIClockTime time, unsigned long tempo)
+void MIDIFileShow::mf_tempo(MIDIClockTime time, std::uint32_t tempo)
 {
     show_time(time);
     fprintf(
-        out,
-        "Tempo              %4.2f BPM (%9ld usec/beat)\n",
-        (60000000.0 / (double)tempo),
-        tempo);
+        out, "Tempo              %4.2f BPM (%9u usec/beat)\n", (60000000.0 / (double)tempo), tempo);
 }
 
 void MIDIFileShow::mf_keysig(MIDIClockTime time, int sf, int mi)
