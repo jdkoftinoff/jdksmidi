@@ -144,22 +144,22 @@ void SMPTE::sample_to_time()
     //
     // keep track of the actual rates in use in doubles.
     //
-    double the_smpte_rate = smpte_smpte_rates[smpte_rate];
-    double the_sample_rate = smpte_sample_rates[sample_rate];
+    double the_smpte_rate = smpte_smpte_rates[static_cast<int>(smpte_rate)];
+    double the_sample_rate = smpte_sample_rates[static_cast<int>(sample_rate)];
     //
     // keep track of the maximum frame number for this smpte format.
     //
-    std::uint8_t max_frame = smpte_max_frames[smpte_rate];
+    std::uint8_t max_frame = smpte_max_frames[static_cast<int>(smpte_rate)];
     //
     // Calculate the number of samples per frame.
     //
-    double samples_per_frame = smpte_sample_rates[sample_rate] / smpte_smpte_rates[smpte_rate];
+    double samples_per_frame = smpte_sample_rates[static_cast<int>(sample_rate)] / smpte_smpte_rates[static_cast<int>(smpte_rate)];
     //
     // if the smpte rate is a drop frame type, calculate the number
     // of frames that must be dropped.
     //
 
-    if (smpte_rate == SMPTE_RATE_30DF || smpte_rate == SMPTE_RATE_2997DF) {
+    if (smpte_rate == SMPTEFormat::Rate30DF || smpte_rate == SMPTEFormat::Rate2997DF) {
         //
         // Calculate number of minutes that have gone by
         //
@@ -203,8 +203,8 @@ void SMPTE::time_to_sample()
     //
     // keep track of the actual rates in use in doubles.
     //
-    double the_smpte_rate = smpte_smpte_rates[smpte_rate];
-    double the_sample_rate = smpte_sample_rates[sample_rate];
+    double the_smpte_rate = smpte_smpte_rates[static_cast<int>(smpte_rate)];
+    double the_sample_rate = smpte_sample_rates[static_cast<int>(sample_rate)];
     //
     // optimize a coupla similiar double divides by calculating it once.
     //
@@ -220,11 +220,11 @@ void SMPTE::time_to_sample()
     // Now compensate for Drop Frame mode if we are in drop frame mode.
     //
 
-    if (smpte_rate == SMPTE_RATE_30DF || smpte_rate == SMPTE_RATE_2997DF) {
+    if (smpte_rate == SMPTEFormat::Rate30DF || smpte_rate == SMPTEFormat::Rate2997DF) {
         //
         // Calculate number of minutes that have gone by
         //
-        int num_minutes = (int)((double)tmp_sample / (smpte_sample_rates[sample_rate] * 60));
+        int num_minutes = (int)((double)tmp_sample / (smpte_sample_rates[static_cast<int>(sample_rate)] * 60));
         DBG(printf("num_minutes=%d\n", (int)num_minutes));
         //
         // Calculate the number of tens of minutes that have gone by, including minute 00

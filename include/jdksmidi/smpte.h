@@ -42,14 +42,14 @@
 
 namespace jdksmidi {
 
-enum SMPTEFormat
+enum class SMPTEFormat
 {
-    SMPTE_RATE_24 = 0,
-    SMPTE_RATE_25,
-    SMPTE_RATE_2997,
-    SMPTE_RATE_2997DF,
-    SMPTE_RATE_30,
-    SMPTE_RATE_30DF
+    Rate24 = 0,
+    Rate25,
+    Rate2997,
+    Rate2997DF,
+    Rate30,
+    Rate30DF
 };
 
 enum SAMPLE_RATE
@@ -108,7 +108,7 @@ inline long get_sample_rate_frequency_long(SAMPLE_RATE r)
 class SMPTE
 {
   public:
-    SMPTE(SMPTEFormat smpte_rate = SMPTE_RATE_30, SAMPLE_RATE sample_rate = SAMPLE_48000);
+    SMPTE(SMPTEFormat smpte_rate = SMPTEFormat::Rate30, SAMPLE_RATE sample_rate = SAMPLE_48000);
 
     SMPTE(const SMPTE& s);
 
