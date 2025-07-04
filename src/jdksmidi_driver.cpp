@@ -43,46 +43,46 @@ MIDIDriver::MIDIDriver(int queue_size)
 MIDIDriver::~MIDIDriver()
 {}
 
-void MIDIDriver::Reset()
+void MIDIDriver::reset()
 {
-    in_queue.Clear();
-    out_queue.Clear();
-    out_matrix.Clear();
+    in_queue.clear();
+    out_queue.clear();
+    out_matrix.clear();
 }
 
-void MIDIDriver::AllNotesOff(int chan)
+void MIDIDriver::all_notes_off(int chan)
 {
     MIDITimedBigMessage msg;
     // send a note off for every note on in the out_matrix
 
-    if (out_matrix.GetChannelCount(chan) > 0) {
+    if (out_matrix.get_channel_count(chan) > 0) {
         for (int note = 0; note < 128; ++note) {
-            while (out_matrix.GetNoteCount(chan, note) > 0) {
+            while (out_matrix.get_note_count(chan, note) > 0) {
                 // make a note off with note on msg, velocity 0
-                msg.SetNoteOn(static_cast<std::uint8_t>(chan), static_cast<std::uint8_t>(note), 0);
-                OutputMessage(msg);
+                msg.set_note_on(static_cast<std::uint8_t>(chan), static_cast<std::uint8_t>(note), 0);
+                output_message(msg);
             }
         }
     }
 
-    msg.SetControlChange(chan, C_DAMPER, 0);
-    OutputMessage(msg);
-    msg.SetAllNotesOff(static_cast<std::uint8_t>(chan));
-    OutputMessage(msg);
+    msg.set_control_change(chan, C_DAMPER, 0);
+    output_message(msg);
+    msg.set_all_notes_off(static_cast<std::uint8_t>(chan));
+    output_message(msg);
 }
 
-void MIDIDriver::AllNotesOff()
+void MIDIDriver::all_notes_off()
 {
     for (int i = 0; i < 16; ++i) {
-        AllNotesOff(i);
+        all_notes_off(i);
     }
 }
 
-bool MIDIDriver::HardwareMsgIn(MIDITimedBigMessage& msg)
+bool MIDIDriver::hardware_msg_in(MIDITimedBigMessage& msg)
 {
     // put input midi messages thru the in processor
     if (in_proc) {
-        if (in_proc->Process(&msg) == false) {
+        if (in_proc->process(&msg) == false) {
             // message was deleted, so ignore it.
             return true;
         }
@@ -90,7 +90,7 @@ bool MIDIDriver::HardwareMsgIn(MIDITimedBigMessage& msg)
 
     // stick input into in queue
 
-    if (in_queue.CanPut()) {
+    if (in_queue.can_put()) {
         in_queue.Put(msg);
     }
 
@@ -101,7 +101,7 @@ bool MIDIDriver::HardwareMsgIn(MIDITimedBigMessage& msg)
     // now stick it through the THRU processor
 
     if (thru_proc) {
-        if (thru_proc->Process(&msg) == false) {
+        if (thru_proc->process(&msg) == false) {
             // message was deleted, so ignore it.
             return true;
         }
@@ -110,7 +110,7 @@ bool MIDIDriver::HardwareMsgIn(MIDITimedBigMessage& msg)
     if (thru_enable) {
         // stick this message into the out queue so the tick procedure
         // will play it out asap
-        if (out_queue.CanPut()) {
+        if (out_queue.can_put()) {
             out_queue.Put(msg);
         }
 
@@ -122,20 +122,20 @@ bool MIDIDriver::HardwareMsgIn(MIDITimedBigMessage& msg)
     return true;
 }
 
-void MIDIDriver::TimeTick(unsigned long sys_time)
+void MIDIDriver::time_tick(unsigned long sys_time)
 {
     // run the additional tick procedure if we need to
     if (tick_proc) {
-        tick_proc->TimeTick(sys_time);
+        tick_proc->time_tick(sys_time);
     }
 
     // feed as many midi messages from out_queu to the hardware out port
     // as we can
 
-    while (out_queue.CanGet()) {
+    while (out_queue.can_get()) {
         // use the Peek() function to avoid allocating memory for
         // a duplicate sysex
-        if (HardwareMsgOut(*(out_queue.Peek())) == true) {
+        if (hardware_msg_out(*(out_queue.Peek())) == true) {
             // ok, got and sent a message - update our out_queue now
             out_queue.Next();
         }

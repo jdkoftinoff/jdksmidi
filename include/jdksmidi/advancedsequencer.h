@@ -75,10 +75,10 @@ class AdvancedSequencer
     int GetMIDIThruTranspose() const;
 
     bool Load(char const* fname);
-    void Reset();
+    void reset();
 
-    void GoToMeasure(int measure, int beat = 0);
-    void GoToTime(MIDIClockTime t);
+    void go_to_measure(int measure, int beat = 0);
+    void go_to_time(MIDIClockTime t);
     void Play(int clock_offset = 0);
     void RepeatPlay(bool enable, int start_measure, int end_measure);
     void Pause();
@@ -98,8 +98,8 @@ class AdvancedSequencer
     int GetMeasure() const;
     int GetBeat() const;
 
-    int GetTimeSigNumerator() const;
-    int GetTimeSigDenominator() const;
+    int get_time_sig_numerator() const;
+    int get_time_sig_denominator() const;
 
     int GetTrackNoteCount(int trk) const;
     char const* GetTrackName(int trk) const;

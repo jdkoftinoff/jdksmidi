@@ -86,7 +86,7 @@ class MIDIFileReadMultiTrack : public MIDIFileEvents
     // Higher level dispatch functions
     //
 
-    virtual void ChanMessage(MIDITimedMessage const& msg);
+    virtual void chan_message(MIDITimedMessage const& msg);
 
   protected:
     void AddEventToMultiTrack(

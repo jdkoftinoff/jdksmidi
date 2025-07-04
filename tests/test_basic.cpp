@@ -10,34 +10,34 @@ TEST_CASE("Basic MIDI message creation")
     SUBCASE("Create Note On message")
     {
         MIDIMessage msg;
-        msg.SetNoteOn(0, 60, 127);  // Channel 0, middle C, velocity 127
+        msg.set_note_on(0, 60, 127);  // Channel 0, middle C, velocity 127
 
-        CHECK(msg.GetStatus() == NOTE_ON);
-        CHECK(msg.GetChannel() == 0);
-        CHECK(msg.GetNote() == 60);
-        CHECK(msg.GetVelocity() == 127);
+        CHECK(msg.get_status() == NOTE_ON);
+        CHECK(msg.get_channel() == 0);
+        CHECK(msg.get_note() == 60);
+        CHECK(msg.get_velocity() == 127);
     }
 
     SUBCASE("Create Note Off message")
     {
         MIDIMessage msg;
-        msg.SetNoteOff(0, 60, 64);  // Channel 0, middle C, velocity 64
+        msg.set_note_off(0, 60, 64);  // Channel 0, middle C, velocity 64
 
-        CHECK(msg.GetStatus() == NOTE_OFF);
-        CHECK(msg.GetChannel() == 0);
-        CHECK(msg.GetNote() == 60);
-        CHECK(msg.GetVelocity() == 64);
+        CHECK(msg.get_status() == NOTE_OFF);
+        CHECK(msg.get_channel() == 0);
+        CHECK(msg.get_note() == 60);
+        CHECK(msg.get_velocity() == 64);
     }
 
     SUBCASE("Create Control Change message")
     {
         MIDIMessage msg;
-        msg.SetControlChange(0, 7, 100);  // Channel 0, volume control, value 100
+        msg.set_control_change(0, 7, 100);  // Channel 0, volume control, value 100
 
-        CHECK(msg.GetStatus() == CONTROL_CHANGE);
-        CHECK(msg.GetChannel() == 0);
-        CHECK(msg.GetController() == 7);
-        CHECK(msg.GetControllerValue() == 100);
+        CHECK(msg.get_status() == CONTROL_CHANGE);
+        CHECK(msg.get_channel() == 0);
+        CHECK(msg.get_controller() == 7);
+        CHECK(msg.get_controller_value() == 100);
     }
 }
 
@@ -47,8 +47,8 @@ TEST_CASE("MIDI message validation")
     {
         MIDIMessage msg;
         for (int channel = 0; channel < 16; ++channel) {
-            msg.SetNoteOn(channel, 60, 127);
-            CHECK(msg.GetChannel() == channel);
+            msg.set_note_on(channel, 60, 127);
+            CHECK(msg.get_channel() == channel);
         }
     }
 
@@ -56,8 +56,8 @@ TEST_CASE("MIDI message validation")
     {
         MIDIMessage msg;
         for (int note = 0; note < 128; ++note) {
-            msg.SetNoteOn(0, note, 127);
-            CHECK(msg.GetNote() == note);
+            msg.set_note_on(0, note, 127);
+            CHECK(msg.get_note() == note);
         }
     }
 
@@ -65,8 +65,8 @@ TEST_CASE("MIDI message validation")
     {
         MIDIMessage msg;
         for (int velocity = 0; velocity < 128; ++velocity) {
-            msg.SetNoteOn(0, 60, velocity);
-            CHECK(msg.GetVelocity() == velocity);
+            msg.set_note_on(0, 60, velocity);
+            CHECK(msg.get_velocity() == velocity);
         }
     }
 }

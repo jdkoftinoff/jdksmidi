@@ -62,7 +62,7 @@ class MIDITempo
     MIDITempo(long a) { tempo = static_cast<unsigned long>(a) << 8; }
     MIDITempo(unsigned long a) { tempo = a << 8; }
     MIDITempo(float a) { tempo = static_cast<unsigned long>(a * 256.0); }
-    MIDITempo(MIDITempo const& a) { tempo = a.GetFullTempo(); }
+    MIDITempo(MIDITempo const& a) { tempo = a.get_full_tempo(); }
 
     operator short() { return static_cast<short>((tempo + 0x80) >> 8); }
     operator unsigned short() { return static_cast<unsigned short>((tempo + 0x80) >> 8); }
@@ -82,10 +82,10 @@ class MIDITempo
 
     void operator=(float a) { tempo = static_cast<unsigned long>(a * 256.0); }
 
-    unsigned long GetFullTempo() const { return tempo; }
-    void SetFullTempo(unsigned long v) { tempo = v; }
+    unsigned long get_full_tempo() const { return tempo; }
+    void set_full_tempo(unsigned long v) { tempo = v; }
 
-    unsigned long GetMIDIFileTempo()
+    unsigned long get_midi_file_tempo()
     {
         if (tempo)
             return (60000000L / 256) / tempo;

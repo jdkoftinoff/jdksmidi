@@ -36,7 +36,7 @@ class MIDITick
 
     virtual ~MIDITick();
 
-    virtual void TimeTick(unsigned long sys_time) = 0;
+    virtual void time_tick(unsigned long sys_time) = 0;
 };
 }  // namespace jdksmidi
 

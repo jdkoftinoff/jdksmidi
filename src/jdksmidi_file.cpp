@@ -55,7 +55,7 @@ unsigned long MIDIFile::ConvertTempoToFreq(short division, MIDITempo& tempo)
 {
     if (division > 0) {
         long clocks_per_beat = (long)division * 1000;
-        long micro_sec_per_beat = tempo.GetMIDIFileTempo() / 1000;
+        long micro_sec_per_beat = tempo.get_midi_file_tempo() / 1000;
         return (unsigned long)clocks_per_beat / micro_sec_per_beat;
     }
 

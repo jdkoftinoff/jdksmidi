@@ -36,7 +36,7 @@ int main(int argc, char** argv)
         jdksmidi::MIDIFileReadStreamFile rs(argv[1]);
         jdksmidi::MIDIFileShow shower(stdout);
         jdksmidi::MIDIFileRead reader(&rs, &shower);
-        reader.Parse();
+        reader.parse();
     }
 
     return 0;

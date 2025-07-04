@@ -59,7 +59,7 @@ class MIDIFileReadStream
 
     virtual ~MIDIFileReadStream() {}
 
-    virtual int ReadChar() = 0;
+    virtual int read_char() = 0;
 };
 
 class MIDIFileReadStreamFile : public MIDIFileReadStream
@@ -78,7 +78,7 @@ class MIDIFileReadStreamFile : public MIDIFileReadStream
         }
     }
 
-    virtual int ReadChar()
+    virtual int read_char()
     {
         int r = -1;
 
@@ -138,9 +138,9 @@ class MIDIFileEvents : protected MIDIFile
     //
     // Higher level dispatch functions
     //
-    virtual void UpdateTime(MIDIClockTime delta_time);
-    virtual void MetaEvent(MIDIClockTime time, int type, int len, std::uint8_t* buf);
-    virtual void ChanMessage(MIDITimedMessage const& msg);
+    virtual void update_time(MIDIClockTime delta_time);
+    virtual void meta_event(MIDIClockTime time, int type, int len, std::uint8_t* buf);
+    virtual void chan_message(MIDITimedMessage const& msg);
 };
 
 class MIDIFileRead : protected MIDIFile
@@ -152,14 +152,14 @@ class MIDIFileRead : protected MIDIFile
         unsigned long max_msg_len = 8192);
     virtual ~MIDIFileRead();
 
-    virtual bool Parse();
+    virtual bool parse();
 
-    int GetFormat() { return header_format; }
-    int GetNumberTracks() { return header_ntrks; }
-    int GetDivision() { return header_division; }
+    int get_format() { return header_format; }
+    int get_number_tracks() { return header_ntrks; }
+    int get_division() { return header_division; }
 
   protected:
-    virtual int ReadHeader();
+    virtual int read_header();
 
     virtual void mf_error(char const*);
 
@@ -175,21 +175,21 @@ class MIDIFileRead : protected MIDIFile
     int msg_index;
 
   private:
-    unsigned long ReadVariableNum();
-    unsigned long Read32Bit();
-    int Read16Bit();
+    unsigned long read_variable_num();
+    unsigned long read_32_bit();
+    int read_16_bit();
 
-    void ReadTrack();
+    void read_track();
 
-    void MsgAdd(int);
-    void MsgInit();
+    void msg_add(int);
+    void msg_init();
 
-    int EGetC();
+    int e_get_c();
 
-    int ReadMT(unsigned long, int);
-    void BadByte(int);
+    int read_mt(unsigned long, int);
+    void bad_byte(int);
 
-    void FormChanMessage(std::uint8_t st, std::uint8_t b1, std::uint8_t b2);
+    void form_chan_message(std::uint8_t st, std::uint8_t b1, std::uint8_t b2);
 
     int header_format;
     int header_ntrks;

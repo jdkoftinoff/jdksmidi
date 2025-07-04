@@ -50,11 +50,11 @@ MIDIMultiProcessor::~MIDIMultiProcessor()
     delete[] processors;
 }
 
-bool MIDIMultiProcessor::Process(MIDITimedBigMessage* msg)
+bool MIDIMultiProcessor::process(MIDITimedBigMessage* msg)
 {
     for (int i = 0; i < num_processors; ++i) {
         if (processors[i]) {
-            if (processors[i]->Process(msg) == false) {
+            if (processors[i]->process(msg) == false) {
                 return false;
             }
         }
@@ -73,19 +73,19 @@ MIDIProcessorTransposer::MIDIProcessorTransposer()
 MIDIProcessorTransposer::~MIDIProcessorTransposer()
 {}
 
-void MIDIProcessorTransposer::SetAllTranspose(int val)
+void MIDIProcessorTransposer::set_all_transpose(int val)
 {
     for (int chan = 0; chan < 16; ++chan) {
         trans_amount[chan] = val;
     }
 }
 
-bool MIDIProcessorTransposer::Process(MIDITimedBigMessage* msg)
+bool MIDIProcessorTransposer::process(MIDITimedBigMessage* msg)
 {
-    if (msg->IsChannelMsg()) {
-        if (msg->IsNoteOn() || msg->IsNoteOff() || msg->IsPolyPressure()) {
-            int trans = trans_amount[msg->GetChannel()];
-            int new_note = ((int)msg->GetNote()) + trans;
+    if (msg->is_channel_msg()) {
+        if (msg->is_note_on() || msg->is_note_off() || msg->is_poly_pressure()) {
+            int trans = trans_amount[msg->get_channel()];
+            int new_note = ((int)msg->get_note()) + trans;
 
             if (trans > 127 || trans < 0) {
                 // delete event if out of range
@@ -94,7 +94,7 @@ bool MIDIProcessorTransposer::Process(MIDITimedBigMessage* msg)
 
             else {
                 // set new note number
-                msg->SetNote((std::uint8_t)new_note);
+                msg->set_note((std::uint8_t)new_note);
             }
         }
     }
@@ -112,24 +112,24 @@ MIDIProcessorRechannelizer::MIDIProcessorRechannelizer()
 MIDIProcessorRechannelizer::~MIDIProcessorRechannelizer()
 {}
 
-void MIDIProcessorRechannelizer::SetAllRechan(int dest_chan)
+void MIDIProcessorRechannelizer::set_all_rechan(int dest_chan)
 {
     for (int i = 0; i < 16; ++i) {
         rechan_map[i] = dest_chan;
     }
 }
 
-bool MIDIProcessorRechannelizer::Process(MIDITimedBigMessage* msg)
+bool MIDIProcessorRechannelizer::process(MIDITimedBigMessage* msg)
 {
-    if (msg->IsChannelMsg()) {
-        int new_chan = rechan_map[msg->GetChannel()];
+    if (msg->is_channel_msg()) {
+        int new_chan = rechan_map[msg->get_channel()];
 
         if (new_chan == -1) {
             // this channel is to be deleted! return false
             return false;
         }
 
-        msg->SetChannel((std::uint8_t)new_chan);
+        msg->set_channel((std::uint8_t)new_chan);
     }
 
     return true;

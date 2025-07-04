@@ -38,9 +38,9 @@ class MIDIDriverDump : public MIDIDriver
     MIDIDriverDump(int queue_size, FILE* outfile);
     virtual ~MIDIDriverDump();
 
-    virtual bool HardwareMsgOut(MIDITimedBigMessage const& msg);
+    virtual bool hardware_msg_out(MIDITimedBigMessage const& msg);
 
-    virtual void TimeTick(unsigned long sys_time);
+    virtual void time_tick(unsigned long sys_time);
 
   protected:
     FILE* f;

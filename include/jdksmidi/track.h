@@ -56,27 +56,27 @@ int const MIDITrackChunkSize = 512;
 /// A MIDITrack's events are allocated in these chunks in order to avoid memory fragmentation
 /// in embedded systems or other systems lacking an MMU. Every item within a MIDITrackChunk
 /// object is a MIDITimedBigMessage. To avoid unnecessary copied of big events, access
-/// to these events is only done via the GetEventAddress() method.
+/// to these events is only done via the get_event_address() method.
 ///
 
 class MIDITrackChunk
 {
   public:
     ///
-    /// GetEventAddress() const returns the address of the MIDITimedBigMessage referred to by
+    /// get_event_address() const returns the address of the MIDITimedBigMessage referred to by
     /// event_num
     /// @param event_num an integer specifying an event number in the range 0 to MIDITrackChunkSize
     /// @returns The const pointer to the requested event.
     ///
-    MIDITimedBigMessage const* GetEventAddress(int event_num) const;
+    MIDITimedBigMessage const* get_event_address(int event_num) const;
 
     ///
-    /// GetEventAddress()  returns the address of the MIDITimedBigMessage referred to by event_num
+    /// get_event_address()  returns the address of the MIDITimedBigMessage referred to by event_num
     /// @param event_num an integer specifying an event number in the range 0 to MIDITrackChunkSize
     /// @returns The non-const pointer to the requested event.
     ///
 
-    MIDITimedBigMessage* GetEventAddress(int event_num);
+    MIDITimedBigMessage* get_event_address(int event_num);
 
   protected:
   private:
@@ -120,48 +120,48 @@ class MIDITrack
     ~MIDITrack();
 
     ///
-    /// Clear() sets the number of active events in the track to 0. It does NOT
-    /// free any events. See the Shrink() method.
+    /// clear() sets the number of active events in the track to 0. It does NOT
+    /// free any events. See the shrink() method.
     ///
-    void Clear();
+    void clear();
 
     ///
-    /// Shrink() frees any unused MIDITrackChunk objects and associated MIDITimedBigMessage events.
+    /// shrink() frees any unused MIDITrackChunk objects and associated MIDITimedBigMessage events.
     ///
-    void Shrink();
+    void shrink();
 
     ///
-    /// ClearAndMerge() allows you to merge the events in two separate tracks into a third track.
+    /// clear_and_merge() allows you to merge the events in two separate tracks into a third track.
     /// @param src1 Pointer to first track
     /// @param src2 Pointer to second track
-    /// ClearAndMerge() assumes all events in both tracks are already ordered by time.
+    /// clear_and_merge() assumes all events in both tracks are already ordered by time.
     ///
-    void ClearAndMerge(MIDITrack const* src1, MIDITrack const* src2);
+    void clear_and_merge(MIDITrack const* src1, MIDITrack const* src2);
 
     // bool Insert( int start_event, int num_events );
     //    bool  Delete( int start_event, int num_events);
     //    void  Sort();
 
-    bool Expand(int increase_amount = (MIDITrackChunkSize));
+    bool expand(int increase_amount = (MIDITrackChunkSize));
 
-    MIDITimedBigMessage* GetEventAddress(int event_num);
+    MIDITimedBigMessage* get_event_address(int event_num);
 
-    MIDITimedBigMessage const* GetEventAddress(int event_num) const;
+    MIDITimedBigMessage const* get_event_address(int event_num) const;
 
-    MIDITimedBigMessage const* GetEvent(int event_num) const;
-    MIDITimedBigMessage* GetEvent(int event_num);
-    bool GetEvent(int event_num, MIDITimedBigMessage* msg) const;
+    MIDITimedBigMessage const* get_event(int event_num) const;
+    MIDITimedBigMessage* get_event(int event_num);
+    bool get_event(int event_num, MIDITimedBigMessage* msg) const;
 
-    bool PutEvent(MIDITimedBigMessage const& msg);
-    bool PutEvent(MIDITimedMessage const& msg, MIDISystemExclusive* sysex);
-    bool SetEvent(int event_num, MIDITimedBigMessage const& msg);
+    bool put_event(MIDITimedBigMessage const& msg);
+    bool put_event(MIDITimedMessage const& msg, MIDISystemExclusive* sysex);
+    bool set_event(int event_num, MIDITimedBigMessage const& msg);
 
-    bool MakeEventNoOp(int event_num);
+    bool make_event_no_op(int event_num);
 
-    bool FindEventNumber(MIDIClockTime time, int* event_num) const;
+    bool find_event_number(MIDIClockTime time, int* event_num) const;
 
-    int GetBufferSize() const;
-    int GetNumEvents() const;
+    int get_buffer_size() const;
+    int get_num_events() const;
 
   private:
     // void  QSort( int left, int right );

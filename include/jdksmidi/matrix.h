@@ -51,28 +51,28 @@ class MIDIMatrix
     MIDIMatrix();
     virtual ~MIDIMatrix();
 
-    virtual bool Process(MIDIMessage const& m);
+    virtual bool process(MIDIMessage const& m);
 
-    virtual void Clear();
+    virtual void clear();
 
-    int GetTotalCount() const { return total_count; }
-    int GetChannelCount(int channel) const { return channel_count[channel]; }
+    int get_total_count() const { return total_count; }
+    int get_channel_count(int channel) const { return channel_count[channel]; }
 
-    int GetNoteCount(int channel, int note) const { return note_on_count[channel][note]; }
+    int get_note_count(int channel, int note) const { return note_on_count[channel][note]; }
 
-    bool GetHoldPedal(int channel) const { return hold_pedal[channel]; }
+    bool get_hold_pedal(int channel) const { return hold_pedal[channel]; }
 
   protected:
-    virtual void DecNoteCount(MIDIMessage const& m, int channel, int note);
-    virtual void IncNoteCount(MIDIMessage const& m, int channel, int note);
-    virtual void ClearChannel(int channel);
-    virtual void OtherMessage(MIDIMessage const& m);
+    virtual void dec_note_count(MIDIMessage const& m, int channel, int note);
+    virtual void inc_note_count(MIDIMessage const& m, int channel, int note);
+    virtual void clear_channel(int channel);
+    virtual void other_message(MIDIMessage const& m);
 
-    void SetNoteCount(std::uint8_t chan, std::uint8_t note, std::uint8_t val)
+    void set_note_count(std::uint8_t chan, std::uint8_t note, std::uint8_t val)
     {
         note_on_count[chan][note] = val;
     }
-    void SetChannelCount(std::uint8_t chan, int val) { channel_count[chan] = val; }
+    void set_channel_count(std::uint8_t chan, int val) { channel_count[chan] = val; }
 
   private:
     std::uint8_t note_on_count[16][128];

@@ -52,10 +52,10 @@ int main(int argc, char** argv)
         MIDISequencer seq(&tracks, &gui);
         MIDIDriverWin32 driver(128);
         MIDIManager mgr(&driver, &gui);
-        reader.Parse();
+        reader.parse();
         driver.StartTimer(20);
         driver.OpenMIDIOutPort(MIDI_MAPPER);
-        seq.GoToZero();
+        seq.go_to_zero();
         mgr.SetSeq(&seq);
         mgr.SetTimeOffset(timeGetTime());
         mgr.SeqPlay();

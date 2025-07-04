@@ -45,18 +45,18 @@
 
 namespace jdksmidi {
 
-void MIDIFileEvents::UpdateTime(MIDIClockTime delta_time)
+void MIDIFileEvents::update_time(MIDIClockTime delta_time)
 {}
 
-void MIDIFileEvents::ChanMessage(MIDITimedMessage const& msg)
+void MIDIFileEvents::chan_message(MIDITimedMessage const& msg)
 {
-    switch (msg.GetStatus() & 0xf0) {
+    switch (msg.get_status() & 0xf0) {
         case NOTE_OFF:
             mf_note_off(msg);
             break;
         case NOTE_ON:
 
-            if (msg.GetVelocity() == 0) {
+            if (msg.get_velocity() == 0) {
                 mf_note_off(msg);
             }
 
@@ -70,7 +70,7 @@ void MIDIFileEvents::ChanMessage(MIDITimedMessage const& msg)
             break;
         case CONTROL_CHANGE:
 
-            if (msg.GetByte2() > C_ALL_NOTES_OFF) {
+            if (msg.get_byte2() > C_ALL_NOTES_OFF) {
                 mf_system_mode(msg);
             }
 
@@ -91,7 +91,7 @@ void MIDIFileEvents::ChanMessage(MIDITimedMessage const& msg)
     }
 }
 
-void MIDIFileEvents::MetaEvent(MIDIClockTime time, int type, int leng, std::uint8_t* m)
+void MIDIFileEvents::meta_event(MIDIClockTime time, int type, int leng, std::uint8_t* m)
 {
     switch (type) {
         case MF_SEQUENCE_NUMBER:
@@ -240,10 +240,10 @@ void MIDIFileRead::mf_error(char const* e)
     abort_parse = true;
 }
 
-bool MIDIFileRead::Parse()
+bool MIDIFileRead::parse()
 {
     int n;
-    n = ReadHeader();
+    n = read_header();
 
     if (n <= 0) {
         mf_error("No Tracks");
@@ -251,7 +251,7 @@ bool MIDIFileRead::Parse()
     }
 
     for (cur_track = 0; cur_track < n; cur_track++) {
-        ReadTrack();
+        read_track();
 
         if (abort_parse) {
             return false;
@@ -261,17 +261,17 @@ bool MIDIFileRead::Parse()
     return true;
 }
 
-int MIDIFileRead::ReadMT(unsigned long type, int skip)
+int MIDIFileRead::read_mt(unsigned long type, int skip)
 {
     unsigned long read = 0;
     int c;
-    read = OSTYPE(EGetC(), EGetC(), EGetC(), EGetC());
+    read = OSTYPE(e_get_c(), e_get_c(), e_get_c(), e_get_c());
 
     if (type != read) {
         if (skip) {
             do {
                 read <<= 8;
-                c = EGetC();
+                c = e_get_c();
                 read |= c;
 
                 if (read == type)
@@ -291,22 +291,22 @@ int MIDIFileRead::ReadMT(unsigned long type, int skip)
     }
 }
 
-int MIDIFileRead::ReadHeader()
+int MIDIFileRead::read_header()
 {
     int the_format;
     int ntrks;
     int division;
 
-    if (ReadMT(_MThd, skip_init) == 0xffff)
+    if (read_mt(_MThd, skip_init) == 0xffff)
         return 0;
 
     if (abort_parse)
         return 0;
 
-    to_be_read = Read32Bit();
-    the_format = Read16Bit();
-    ntrks = Read16Bit();
-    division = Read16Bit();
+    to_be_read = read_32_bit();
+    the_format = read_16_bit();
+    ntrks = read_16_bit();
+    division = read_16_bit();
 
     if (abort_parse)
         return 0;
@@ -318,7 +318,7 @@ int MIDIFileRead::ReadHeader()
     // printf( "\nto be read = %d\n", to_be_read );
 
     while (to_be_read > 0)
-        EGetC();
+        e_get_c();
 
     return ntrks;
 }
@@ -327,7 +327,7 @@ int MIDIFileRead::ReadHeader()
 // read a track chunk
 //
 
-void MIDIFileRead::ReadTrack()
+void MIDIFileRead::read_track()
 {
     //
     // This array is indexed by the high half of a status byte.  Its
@@ -359,18 +359,18 @@ void MIDIFileRead::ReadTrack()
     int status = 0;         // (possible running) status byte
     int needed;
 
-    if (ReadMT(_MTrk, 0) == 0xffff)
+    if (read_mt(_MTrk, 0) == 0xffff)
         return;
 
-    to_be_read = Read32Bit();
+    to_be_read = read_32_bit();
     cur_time = 0;
     event_handler->mf_starttrack(cur_track);
 
     while (to_be_read > 0 && !abort_parse) {
-        unsigned long deltat = ReadVariableNum();
-        event_handler->UpdateTime(deltat);
+        unsigned long deltat = read_variable_num();
+        event_handler->update_time(deltat);
         cur_time += deltat;
-        c = EGetC();
+        c = e_get_c();
 
         if (c == -1)
             break;
@@ -408,34 +408,34 @@ void MIDIFileRead::ReadTrack()
                 c1 = c;
 
             else
-                c1 = EGetC();
+                c1 = e_get_c();
 
-            FormChanMessage(
-                (std::uint8_t)status, (std::uint8_t)c1, (std::uint8_t)((needed > 1) ? EGetC() : 0));
+            form_chan_message(
+                (std::uint8_t)status, (std::uint8_t)c1, (std::uint8_t)((needed > 1) ? e_get_c() : 0));
             continue;
         }
 
         switch (c) {
             case 0xff:  // meta-event
-                type = EGetC();
-                lng = ReadVariableNum();
+                type = e_get_c();
+                lng = read_variable_num();
                 lookfor = to_be_read - lng;
-                MsgInit();
+                msg_init();
 
                 while (to_be_read > lookfor) {
-                    MsgAdd(EGetC());
+                    msg_add(e_get_c());
                 }
 
-                event_handler->MetaEvent(cur_time, type, msg_index, message_buffer.data());
+                event_handler->meta_event(cur_time, type, msg_index, message_buffer.data());
                 break;
             case 0xf0:  // start of sys-ex
-                lng = ReadVariableNum();
+                lng = read_variable_num();
                 lookfor = to_be_read - lng;
-                MsgInit();
-                MsgAdd(0xf0);
+                msg_init();
+                msg_add(0xf0);
 
                 while (to_be_read > lookfor)
-                    MsgAdd(c = EGetC());
+                    msg_add(c = e_get_c());
 
                 if (c == 0xf7 || no_merge == 0) {
                     // make a sysex object out of the raw sysex data
@@ -451,14 +451,14 @@ void MIDIFileRead::ReadTrack()
                 break;
             case 0xf7:  // sysex continuation or
                 // arbitary stuff
-                lng = ReadVariableNum();
+                lng = read_variable_num();
                 lookfor = to_be_read - lng;
 
                 if (!sysexcontinue)
-                    MsgInit();
+                    msg_init();
 
                 while (to_be_read > lookfor)
-                    MsgAdd(c = EGetC());
+                    msg_add(c = e_get_c());
 
                 if (!sysexcontinue) {
                     event_handler->mf_arbitrary(cur_time, msg_index, message_buffer.data());
@@ -474,7 +474,7 @@ void MIDIFileRead::ReadTrack()
 
                 break;
             default:
-                BadByte(c);
+                bad_byte(c);
                 break;
         }
     }
@@ -483,11 +483,11 @@ void MIDIFileRead::ReadTrack()
     return;
 }
 
-unsigned long MIDIFileRead::ReadVariableNum()
+unsigned long MIDIFileRead::read_variable_num()
 {
     unsigned long value;
     int c;
-    c = EGetC();
+    c = e_get_c();
 
     if (c == -1) {
         return 0;
@@ -499,7 +499,7 @@ unsigned long MIDIFileRead::ReadVariableNum()
         value &= 0x7f;
 
         do {
-            c = EGetC();
+            c = e_get_c();
             value = (value << 7) + (c & 0x7f);
         } while (c & 0x80);
     }
@@ -507,28 +507,28 @@ unsigned long MIDIFileRead::ReadVariableNum()
     return value;
 }
 
-unsigned long MIDIFileRead::Read32Bit()
+unsigned long MIDIFileRead::read_32_bit()
 {
     int c1, c2, c3, c4;
-    c1 = EGetC();
-    c2 = EGetC();
-    c3 = EGetC();
-    c4 = EGetC();
+    c1 = e_get_c();
+    c2 = e_get_c();
+    c3 = e_get_c();
+    c4 = e_get_c();
     return To32Bit((std::uint8_t)c1, (std::uint8_t)c2, (std::uint8_t)c3, (std::uint8_t)c4);
 }
 
-int MIDIFileRead::Read16Bit()
+int MIDIFileRead::read_16_bit()
 {
     int c1, c2;
-    c1 = EGetC();
-    c2 = EGetC();
+    c1 = e_get_c();
+    c2 = e_get_c();
     return To16Bit((std::uint8_t)c1, (std::uint8_t)c2);
 }
 
-int MIDIFileRead::EGetC()
+int MIDIFileRead::e_get_c()
 {
     int c;
-    c = input_stream->ReadChar();
+    c = input_stream->read_char();
 
     if (c < 0) {
         mf_error("Unexpected Stream Error");
@@ -540,33 +540,33 @@ int MIDIFileRead::EGetC()
     return (int)c;
 }
 
-void MIDIFileRead::MsgAdd(int a)
+void MIDIFileRead::msg_add(int a)
 {
     if (msg_index < static_cast<int>(message_buffer.size()))
         message_buffer[msg_index++] = (std::uint8_t)a;
 }
 
-void MIDIFileRead::MsgInit()
+void MIDIFileRead::msg_init()
 {
     msg_index = 0;
 }
 
-void MIDIFileRead::BadByte(int c)
+void MIDIFileRead::bad_byte(int c)
 {
     mf_error("Unexpected Byte");
     abort_parse = true;
 }
 
-void MIDIFileRead::FormChanMessage(std::uint8_t st, std::uint8_t b1, std::uint8_t b2)
+void MIDIFileRead::form_chan_message(std::uint8_t st, std::uint8_t b1, std::uint8_t b2)
 {
     MIDITimedMessage m;
-    m.SetStatus(st);
-    m.SetByte1(b1);
-    m.SetByte2(b2);
-    m.SetTime(cur_time);
+    m.set_status(st);
+    m.set_byte1(b1);
+    m.set_byte2(b2);
+    m.set_time(cur_time);
 
     if (st >= 0x80 && st < 0xf0) {
-        event_handler->ChanMessage(m);
+        event_handler->chan_message(m);
     }
 }
 

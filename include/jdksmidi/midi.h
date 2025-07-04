@@ -195,10 +195,10 @@ extern bool const lut_is_white[12];
 
 ///
 /// Message Length function. Not valid for Meta-events (0xff). Returns -1 if you need to call
-/// GetSystemMessageLength() instead.
+/// get_system_message_length() instead.
 ///
 
-inline signed char GetMessageLength(std::uint8_t stat)
+inline signed char get_message_length(std::uint8_t stat)
 {
     return lut_msglen[stat >> 4];
 }
@@ -208,7 +208,7 @@ inline signed char GetMessageLength(std::uint8_t stat)
 /// length is unknown until parsing is complete.
 ///
 
-inline signed char GetSystemMessageLength(std::uint8_t stat)
+inline signed char get_system_message_length(std::uint8_t stat)
 {
     return lut_sysmsglen[stat - 0xf0];
 }
@@ -217,7 +217,7 @@ inline signed char GetSystemMessageLength(std::uint8_t stat)
 /// Piano key color white test
 ///
 
-inline bool IsNoteWhite(std::uint8_t note)
+inline bool is_note_white(std::uint8_t note)
 {
     return lut_is_white[note % 12];
 }
@@ -226,7 +226,7 @@ inline bool IsNoteWhite(std::uint8_t note)
 /// Piano key color black test
 ///
 
-inline bool IsNoteBlack(std::uint8_t note)
+inline bool is_note_black(std::uint8_t note)
 {
     return !lut_is_white[note % 12];
 }
@@ -235,7 +235,7 @@ inline bool IsNoteBlack(std::uint8_t note)
 /// Note # to standard octave conversion
 ///
 
-inline int GetNoteOctave(std::uint8_t note)
+inline int get_note_octave(std::uint8_t note)
 {
     return (note / 12) - 1;
 }

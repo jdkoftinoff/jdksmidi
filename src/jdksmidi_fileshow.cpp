@@ -111,70 +111,70 @@ void MIDIFileShow::show_time(MIDIClockTime time)
 
 void MIDIFileShow::mf_system_mode(MIDITimedMessage const& msg)
 {
-    show_time(msg.GetTime());
+    show_time(msg.get_time());
     char buf[64];
-    fprintf(out, "%s\n", msg.MsgToText(buf));
+    fprintf(out, "%s\n", msg.msg_to_text(buf));
 }
 
 void MIDIFileShow::mf_note_on(MIDITimedMessage const& msg)
 {
-    show_time(msg.GetTime());
+    show_time(msg.get_time());
     char buf[64];
-    fprintf(out, "%s\n", msg.MsgToText(buf));
+    fprintf(out, "%s\n", msg.msg_to_text(buf));
 }
 
 void MIDIFileShow::mf_note_off(MIDITimedMessage const& msg)
 {
-    show_time(msg.GetTime());
+    show_time(msg.get_time());
     char buf[64];
-    fprintf(out, "%s\n", msg.MsgToText(buf));
+    fprintf(out, "%s\n", msg.msg_to_text(buf));
 }
 
 void MIDIFileShow::mf_poly_after(MIDITimedMessage const& msg)
 {
-    show_time(msg.GetTime());
+    show_time(msg.get_time());
     char buf[64];
-    fprintf(out, "%s\n", msg.MsgToText(buf));
+    fprintf(out, "%s\n", msg.msg_to_text(buf));
 }
 
 void MIDIFileShow::mf_bender(MIDITimedMessage const& msg)
 {
-    show_time(msg.GetTime());
+    show_time(msg.get_time());
     char buf[64];
-    fprintf(out, "%s\n", msg.MsgToText(buf));
+    fprintf(out, "%s\n", msg.msg_to_text(buf));
 }
 
 void MIDIFileShow::mf_program(MIDITimedMessage const& msg)
 {
-    show_time(msg.GetTime());
+    show_time(msg.get_time());
     char buf[64];
-    fprintf(out, "%s\n", msg.MsgToText(buf));
+    fprintf(out, "%s\n", msg.msg_to_text(buf));
 }
 
 void MIDIFileShow::mf_chan_after(MIDITimedMessage const& msg)
 {
-    show_time(msg.GetTime());
+    show_time(msg.get_time());
     char buf[64];
-    fprintf(out, "%s\n", msg.MsgToText(buf));
+    fprintf(out, "%s\n", msg.msg_to_text(buf));
 }
 
 void MIDIFileShow::mf_control(MIDITimedMessage const& msg)
 {
-    show_time(msg.GetTime());
+    show_time(msg.get_time());
     char buf[64];
-    fprintf(out, "%s\n", msg.MsgToText(buf));
+    fprintf(out, "%s\n", msg.msg_to_text(buf));
 }
 
 void MIDIFileShow::mf_sysex(MIDIClockTime time, MIDISystemExclusive const& ex)
 {
     show_time(time);
-    fprintf(out, "SysEx     Length=%d\n", ex.GetLength());
+    fprintf(out, "SysEx     Length=%d\n", ex.get_length());
 
-    for (int i = 0; i < ex.GetLength(); ++i) {
+    for (int i = 0; i < ex.get_length(); ++i) {
         if ((i & 0x1f) == 0)
             fprintf(out, "\n");
 
-        fprintf(out, "%02x ", (int)ex.GetData(i));
+        fprintf(out, "%02x ", (int)ex.get_data(i));
     }
 
     fprintf(out, "\n");

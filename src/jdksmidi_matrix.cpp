@@ -69,9 +69,9 @@ MIDIMatrix::~MIDIMatrix()
     ENTER("MIDIMatrix::~MIDIMatrix()");
 }
 
-void MIDIMatrix::DecNoteCount(MIDIMessage const&, int channel, int note)
+void MIDIMatrix::dec_note_count(MIDIMessage const&, int channel, int note)
 {
-    ENTER("MIDIMatrix::DecNoteCount()");
+    ENTER("MIDIMatrix::dec_note_count()");
 
     if (note_on_count[channel][note] > 0) {
         --note_on_count[channel][note];
@@ -80,50 +80,50 @@ void MIDIMatrix::DecNoteCount(MIDIMessage const&, int channel, int note)
     }
 }
 
-void MIDIMatrix::IncNoteCount(MIDIMessage const&, int channel, int note)
+void MIDIMatrix::inc_note_count(MIDIMessage const&, int channel, int note)
 {
-    ENTER("MIDIMatrix::IncNoteCount()");
+    ENTER("MIDIMatrix::inc_note_count()");
     ++note_on_count[channel][note];
     ++channel_count[channel];
     ++total_count;
 }
 
-void MIDIMatrix::OtherMessage(MIDIMessage const&)
+void MIDIMatrix::other_message(MIDIMessage const&)
 {
-    ENTER("MIDIMatrix::OtherMessage()");
+    ENTER("MIDIMatrix::other_message()");
 }
 
-bool MIDIMatrix::Process(MIDIMessage const& m)
+bool MIDIMatrix::process(MIDIMessage const& m)
 {
-    ENTER("MIDIMatrix::Process()");
+    ENTER("MIDIMatrix::process()");
     bool status = false;
 
-    if (m.IsChannelMsg()) {
-        int channel = m.GetChannel();
-        int note = m.GetNote();
+    if (m.is_channel_msg()) {
+        int channel = m.get_channel();
+        int note = m.get_note();
 
-        if (m.IsAllNotesOff()) {
-            ClearChannel(channel);
+        if (m.is_all_notes_off()) {
+            clear_channel(channel);
             status = true;
         }
 
-        else if (m.IsNoteOn()) {
-            if (m.GetVelocity() != 0)
-                IncNoteCount(m, channel, note);
+        else if (m.is_note_on()) {
+            if (m.get_velocity() != 0)
+                inc_note_count(m, channel, note);
 
             else
-                DecNoteCount(m, channel, note);
+                dec_note_count(m, channel, note);
 
             status = true;
         }
 
-        else if (m.IsNoteOff()) {
-            DecNoteCount(m, channel, note);
+        else if (m.is_note_off()) {
+            dec_note_count(m, channel, note);
             status = true;
         }
 
-        else if (m.IsControlChange() && m.GetController() == C_DAMPER) {
-            if (m.GetControllerValue() & 0x40) {
+        else if (m.is_control_change() && m.get_controller() == C_DAMPER) {
+            if (m.get_controller_value() & 0x40) {
                 hold_pedal[channel] = true;
             }
 
@@ -133,26 +133,26 @@ bool MIDIMatrix::Process(MIDIMessage const& m)
         }
 
         else
-            OtherMessage(m);
+            other_message(m);
     }
 
     return status;
 }
 
-void MIDIMatrix::Clear()
+void MIDIMatrix::clear()
 {
-    ENTER("MIDIMatrix::Clear()");
+    ENTER("MIDIMatrix::clear()");
 
     for (int channel = 0; channel < 16; ++channel) {
-        ClearChannel(channel);
+        clear_channel(channel);
     }
 
     total_count = 0;
 }
 
-void MIDIMatrix::ClearChannel(int channel)
+void MIDIMatrix::clear_channel(int channel)
 {
-    ENTER("MIDIMatrix::ClearChannel()");
+    ENTER("MIDIMatrix::clear_channel()");
 
     for (int note = 0; note < 128; ++note) {
         total_count -= note_on_count[channel][note];

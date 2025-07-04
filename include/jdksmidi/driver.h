@@ -42,74 +42,74 @@ class MIDIDriver : public MIDITick
     MIDIDriver(int queue_size);
     virtual ~MIDIDriver();
 
-    virtual void Reset();
+    virtual void reset();
 
     // to get the midi in queue
-    MIDIQueue* InputQueue() { return &in_queue; }
+    MIDIQueue* input_queue() { return &in_queue; }
 
-    MIDIQueue const* InputQueue() const { return &in_queue; }
+    MIDIQueue const* input_queue() const { return &in_queue; }
 
     // to get the midi out queue
-    MIDIQueue* OutputQueue() { return &out_queue; }
+    MIDIQueue* output_queue() { return &out_queue; }
 
-    MIDIQueue const* OutputQueue() const { return &out_queue; }
+    MIDIQueue const* output_queue() const { return &out_queue; }
 
     //
     // returns true if the output queue is not full
-    bool CanOutputMessage() const { return out_queue.CanPut(); }
+    bool can_output_message() const { return out_queue.can_put(); }
 
     // processes message with the OutProcessor and then
     // puts the message in the out_queue
-    void OutputMessage(MIDITimedBigMessage& msg)
+    void output_message(MIDITimedBigMessage& msg)
     {
-        if ((out_proc && out_proc->Process(&msg)) || !out_proc) {
-            out_matrix.Process(msg);
+        if ((out_proc && out_proc->process(&msg)) || !out_proc) {
+            out_matrix.process(msg);
             out_queue.Put(msg);
         }
     }
 
-    void SetThruEnable(bool f) { thru_enable = f; }
+    void set_thru_enable(bool f) { thru_enable = f; }
 
-    bool GetThruEnable() const { return thru_enable; }
+    bool get_thru_enable() const { return thru_enable; }
 
     // to set the midi processors used for thru, out, and in
-    void SetThruProcessor(MIDIProcessor* proc) { thru_proc = proc; }
+    void set_thru_processor(MIDIProcessor* proc) { thru_proc = proc; }
 
-    void SetOutProcessor(MIDIProcessor* proc) { out_proc = proc; }
+    void set_out_processor(MIDIProcessor* proc) { out_proc = proc; }
 
-    void SetInProcessor(MIDIProcessor* proc) { in_proc = proc; }
+    void set_in_processor(MIDIProcessor* proc) { in_proc = proc; }
 
-    void SetTickProc(MIDITick* tick) { tick_proc = tick; }
+    void set_tick_proc(MIDITick* tick) { tick_proc = tick; }
 
     // to send all notes off on selected midi chanel
-    void AllNotesOff(int chan);
+    void all_notes_off(int chan);
 
     // to send all notes off on all midi channels
-    void AllNotesOff();
+    void all_notes_off();
 
     // call handle midi in when a parsed midi message
     // comes in to the system. Can be called by a callback function
-    // or by your TimeTick() function.
+    // or by your time_tick() function.
 
-    virtual bool HardwareMsgIn(MIDITimedBigMessage& msg);
+    virtual bool hardware_msg_in(MIDITimedBigMessage& msg);
 
-    // HardwareMsgOut() must be overriden by a subclass - It must
+    // hardware_msg_out() must be overriden by a subclass - It must
     // take
 
-    virtual bool HardwareMsgOut(MIDITimedBigMessage const& msg) = 0;
+    virtual bool hardware_msg_out(MIDITimedBigMessage const& msg) = 0;
 
     // the time tick procedure:
     //  manages in/out/thru to hardware
     // inherited from MIDITick.
     //
     // if you need to poll midi in hardware,
-    // you can override this method - Call MIDIDriver::TimeTick(t)
+    // you can override this method - Call MIDIDriver::time_tick(t)
     // first, You may then poll the midi in
     // hardware, parse the bytes, form a message, and give the
     // resulting message to HandleMsgIn to process it and put it in
     // the in_queue.
 
-    virtual void TimeTick(unsigned long sys_time);
+    virtual void time_tick(unsigned long sys_time);
 
   protected:
     // the in and out queues

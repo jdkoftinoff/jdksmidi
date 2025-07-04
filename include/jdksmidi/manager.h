@@ -42,7 +42,7 @@ class MIDIManager : public MIDITick
 
     virtual ~MIDIManager();
 
-    void Reset();
+    void reset();
 
     // to set and get the current sequencer
     void SetSeq(MIDISequencer* seq);
@@ -71,7 +71,7 @@ class MIDIManager : public MIDITick
     bool IsSeqRepeat() const;
 
     // inherited from MIDITick
-    virtual void TimeTick(unsigned long sys_time);
+    virtual void time_tick(unsigned long sys_time);
 
   protected:
     virtual void TimeTickPlayMode(unsigned long sys_time_);

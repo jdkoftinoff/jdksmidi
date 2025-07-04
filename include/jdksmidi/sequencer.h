@@ -63,7 +63,7 @@ class MIDISequencerGUIEvent
 
     operator unsigned long() const { return bits; }
 
-    void SetEvent(int group, int subgroup = 0, int item = 0)
+    void set_event(int group, int subgroup = 0, int item = 0)
     {
         bits = ((group & 0xff) << 24) | ((subgroup & 0xfff) << 12) | ((item & 0xfff) << 0);
     }
@@ -150,7 +150,7 @@ class MIDISequencerTrackNotifier : public MIDIProcessor
 
     virtual ~MIDISequencerTrackNotifier();
 
-    void SetNotifier(MIDISequencer* seq_, int trk, MIDISequencerGUIEventNotifier* n)
+    void set_notifier(MIDISequencer* seq_, int trk, MIDISequencerGUIEventNotifier* n)
     {
         seq = seq_;
         track_num = trk;
@@ -158,7 +158,7 @@ class MIDISequencerTrackNotifier : public MIDIProcessor
     }
 
     void Notify(int item);
-    void NotifyConductor(int item);
+    void notify_conductor(int item);
 
   private:
     MIDISequencer* seq;
@@ -172,8 +172,8 @@ class MIDISequencerTrackProcessor : public MIDIProcessor
     MIDISequencerTrackProcessor();
     virtual ~MIDISequencerTrackProcessor();
 
-    virtual void Reset();
-    virtual bool Process(MIDITimedBigMessage* msg);
+    virtual void reset();
+    virtual bool process(MIDITimedBigMessage* msg);
 
     bool mute;           // track is muted
     bool solo;           // track is solod
@@ -190,9 +190,9 @@ class MIDISequencerTrackState : public MIDISequencerTrackNotifier
     MIDISequencerTrackState(MIDISequencer* seq_, int trk, MIDISequencerGUIEventNotifier* n);
     virtual ~MIDISequencerTrackState();
 
-    virtual void GoToZero();
-    virtual void Reset();
-    virtual bool Process(MIDITimedBigMessage* msg);
+    virtual void go_to_zero();
+    virtual void reset();
+    virtual bool process(MIDITimedBigMessage* msg);
 
     float tempobpm;            // current tempo in beats per minute
     int pg;                    // current program change, or -1
@@ -238,45 +238,45 @@ class MIDISequencer
 
     virtual ~MIDISequencer();
 
-    void ResetTrack(int trk);
-    void ResetAllTracks();
+    void reset_track(int trk);
+    void reset_all_tracks();
 
-    MIDIClockTime GetCurrentMIDIClockTime() const;
-    double GetCurrentTimeInMs() const;
-    int GetCurrentBeat() const;
-    int GetCurrentMeasure() const;
+    MIDIClockTime get_current_midi_clock_time() const;
+    double get_current_time_in_ms() const;
+    int get_current_beat() const;
+    int get_current_measure() const;
 
-    double GetCurrentTempoScale() const;
-    double GetCurrentTempo() const;
+    double get_current_tempo_scale() const;
+    double get_current_tempo() const;
 
-    MIDISequencerState* GetState();
-    MIDISequencerState const* GetState() const;
+    MIDISequencerState* get_state();
+    MIDISequencerState const* get_state() const;
 
-    void SetState(MIDISequencerState*);
+    void set_state(MIDISequencerState*);
 
-    MIDISequencerTrackState* GetTrackState(int trk);
-    MIDISequencerTrackState const* GetTrackState(int trk) const;
+    MIDISequencerTrackState* get_track_state(int trk);
+    MIDISequencerTrackState const* get_track_state(int trk) const;
 
-    MIDISequencerTrackProcessor* GetTrackProcessor(int trk);
-    MIDISequencerTrackProcessor const* GetTrackProcessor(int trk) const;
+    MIDISequencerTrackProcessor* get_track_processor(int trk);
+    MIDISequencerTrackProcessor const* get_track_processor(int trk) const;
 
-    int GetNumTracks() const { return state.num_tracks; }
+    int get_num_tracks() const { return state.num_tracks; }
 
-    bool GetSoloMode() const;
+    bool get_solo_mode() const;
 
-    void SetCurrentTempoScale(float scale);
-    void SetSoloMode(bool m, int trk = -1);
+    void set_current_tempo_scale(float scale);
+    void set_solo_mode(bool m, int trk = -1);
 
-    void GoToZero();
-    bool GoToTime(MIDIClockTime time_clk);
-    bool GoToTimeMs(float time_ms);
-    bool GoToMeasure(int measure, int beat = 0);
+    void go_to_zero();
+    bool go_to_time(MIDIClockTime time_clk);
+    bool go_to_time_ms(float time_ms);
+    bool go_to_measure(int measure, int beat = 0);
 
-    bool GetNextEventTimeMs(float* t);
-    bool GetNextEventTime(MIDIClockTime* t);
-    bool GetNextEvent(int* tracknum, MIDITimedBigMessage* msg);
+    bool get_next_event_time_ms(float* t);
+    bool get_next_event_time(MIDIClockTime* t);
+    bool get_next_event(int* tracknum, MIDITimedBigMessage* msg);
 
-    void ScanEventsAtThisTime();
+    void scan_events_at_this_time();
 
   protected:
     MIDITimedBigMessage beat_marker_msg;

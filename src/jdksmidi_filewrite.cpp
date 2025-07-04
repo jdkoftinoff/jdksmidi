@@ -67,7 +67,7 @@ long MIDIFileWriteStreamFile::Seek(long pos, int whence)
     return fseek(f, pos, whence);
 }
 
-int MIDIFileWriteStreamFile::WriteChar(int c)
+int MIDIFileWriteStreamFile::write_char(int c)
 {
     if (fputc(c, f) == EOF) {
         return -1;
@@ -126,9 +126,9 @@ void MIDIFileWrite::WriteLong(unsigned long c)
     WriteCharacter((std::uint8_t)((c & 0xff)));
 }
 
-void MIDIFileWrite::WriteFileHeader(int format, int ntrks, int division)
+void MIDIFileWrite::write_file_header(int format, int ntrks, int division)
 {
-    ENTER("void MIDIFileWrite::WriteFileHeader()");
+    ENTER("void MIDIFileWrite::write_file_header()");
     WriteCharacter((std::uint8_t)'M');
     WriteCharacter((std::uint8_t)'T');
     WriteCharacter((std::uint8_t)'h');
@@ -140,9 +140,9 @@ void MIDIFileWrite::WriteFileHeader(int format, int ntrks, int division)
     file_length = 4 + 4 + 6;
 }
 
-void MIDIFileWrite::WriteTrackHeader(unsigned long length)
+void MIDIFileWrite::write_track_header(unsigned long length)
 {
-    ENTER("void MIDIFileWrite::WriteTrackHeader()");
+    ENTER("void MIDIFileWrite::write_track_header()");
     track_position = file_length;
     track_length = 0;
     track_time = 0;
@@ -197,29 +197,29 @@ void MIDIFileWrite::WriteDeltaTime(unsigned long abs_time)
     track_time = abs_time;
 }
 
-void MIDIFileWrite::WriteEvent(MIDITimedMessage const& m)
+void MIDIFileWrite::write_event(MIDITimedMessage const& m)
 {
-    ENTER("void    MIDIFileWrite::WriteEvent()");
+    ENTER("void    MIDIFileWrite::write_event()");
 
-    if (m.IsNoOp()) {
+    if (m.is_no_op()) {
         return;
     }
 
-    if (m.IsMetaEvent()) {
+    if (m.is_meta_event()) {
         // TO DO: add more meta events.
-        if (m.IsTempo()) {
-            unsigned long tempo = (60000000 / m.GetTempo32()) * 32;
-            WriteTempo(m.GetTime(), tempo);
+        if (m.is_tempo()) {
+            unsigned long tempo = (60000000 / m.get_tempo32()) * 32;
+            write_tempo(m.get_time(), tempo);
             return;
         }
 
-        if (m.IsDataEnd()) {
-            WriteEndOfTrack(m.GetTime());
+        if (m.is_data_end()) {
+            write_end_of_track(m.get_time());
             return;
         }
 
-        if (m.IsKeySig()) {
-            WriteKeySignature(m.GetTime(), m.GetKeySigSharpFlats(), m.GetKeySigMajorMinor());
+        if (m.is_key_sig()) {
+            write_key_signature(m.get_time(), m.get_key_sig_sharp_flats(), m.get_key_sig_major_minor());
             return;
         }
 
@@ -227,112 +227,112 @@ void MIDIFileWrite::WriteEvent(MIDITimedMessage const& m)
     }
 
     else {
-        short len = m.GetLength();
-        WriteDeltaTime(m.GetTime());
+        short len = m.get_length();
+        WriteDeltaTime(m.get_time());
 
-        if (m.GetStatus() != running_status) {
-            running_status = m.GetStatus();
+        if (m.get_status() != running_status) {
+            running_status = m.get_status();
             WriteCharacter((std::uint8_t)running_status);
             IncrementCounters(1);
         }
 
         if (len > 1) {
-            WriteCharacter((std::uint8_t)m.GetByte1());
+            WriteCharacter((std::uint8_t)m.get_byte1());
             IncrementCounters(1);
         }
 
         if (len > 2) {
-            WriteCharacter((std::uint8_t)m.GetByte2());
+            WriteCharacter((std::uint8_t)m.get_byte2());
             IncrementCounters(1);
         }
     }
 }
 
-void MIDIFileWrite::WriteEvent(MIDITimedBigMessage const& m)
+void MIDIFileWrite::write_event(MIDITimedBigMessage const& m)
 {
-    if (m.IsNoOp()) {
+    if (m.is_no_op()) {
         return;
     }
 
-    if (m.IsMetaEvent()) {
+    if (m.is_meta_event()) {
         // if this meta-event has a sysex buffer attached, this
         // buffer contains the raw midi file meta data
-        if (m.GetSysEx()) {
-            WriteMetaEvent(
-                m.GetTime(), m.GetMetaType(), m.GetSysEx()->GetBuf(), m.GetSysEx()->GetLength());
+        if (m.get_sys_ex()) {
+            write_meta_event(
+                m.get_time(), m.get_meta_type(), m.get_sys_ex()->get_buf(), m.get_sys_ex()->get_length());
         }
 
         else {
             // otherwise, it is a type of sysex that doesnt have
             // data...
-            if (m.IsTempo()) {
-                unsigned long tempo = (60000000 / m.GetTempo32()) * 32;
-                WriteTempo(m.GetTime(), tempo);
+            if (m.is_tempo()) {
+                unsigned long tempo = (60000000 / m.get_tempo32()) * 32;
+                write_tempo(m.get_time(), tempo);
             }
 
-            else if (m.IsDataEnd()) {
-                WriteEndOfTrack(m.GetTime());
+            else if (m.is_data_end()) {
+                write_end_of_track(m.get_time());
             }
 
-            else if (m.IsKeySig()) {
-                WriteKeySignature(m.GetTime(), m.GetKeySigSharpFlats(), m.GetKeySigMajorMinor());
+            else if (m.is_key_sig()) {
+                write_key_signature(m.get_time(), m.get_key_sig_sharp_flats(), m.get_key_sig_major_minor());
             }
 
-            else if (m.IsTimeSig()) {
-                WriteTimeSignature(m.GetTime(), m.GetTimeSigNumerator(), m.GetTimeSigDenominator());
+            else if (m.is_time_sig()) {
+                write_time_signature(m.get_time(), m.get_time_sig_numerator(), m.get_time_sig_denominator());
             }
         }
     }
 
     else {
-        short len = m.GetLength();
+        short len = m.get_length();
 
-        if (m.IsSysEx() && m.GetSysEx()) {
-            WriteEvent(m.GetTime(), m.GetSysEx());
+        if (m.is_sys_ex() && m.get_sys_ex()) {
+            write_event(m.get_time(), m.get_sys_ex());
         }
 
         else if (len > 0) {
-            WriteDeltaTime(m.GetTime());
+            WriteDeltaTime(m.get_time());
 
-            if (m.GetStatus() != running_status) {
-                running_status = m.GetStatus();
+            if (m.get_status() != running_status) {
+                running_status = m.get_status();
                 WriteCharacter((std::uint8_t)running_status);
                 IncrementCounters(1);
             }
 
             if (len > 1) {
-                WriteCharacter((std::uint8_t)m.GetByte1());
+                WriteCharacter((std::uint8_t)m.get_byte1());
                 IncrementCounters(1);
             }
 
             if (len > 2) {
-                WriteCharacter((std::uint8_t)m.GetByte2());
+                WriteCharacter((std::uint8_t)m.get_byte2());
                 IncrementCounters(1);
             }
         }
     }
 }
 
-void MIDIFileWrite::WriteEvent(unsigned long time, MIDISystemExclusive const* e)
+void MIDIFileWrite::write_event(unsigned long time, MIDISystemExclusive const* e)
 {
-    ENTER("void MIDIFileWrite::WriteEvent()");
-    int len = e->GetLength();
+    ENTER("void MIDIFileWrite::write_event()");
+    int len = e->get_length();
     WriteDeltaTime(time);
     WriteCharacter((std::uint8_t)SYSEX_START);
     IncrementCounters(WriteVariableNum(len - 1));
 
     for (int i = 1; i < len; i++)  // skip the initial 0xF0
     {
-        WriteCharacter((std::uint8_t)(e->GetData(i)));
+        WriteCharacter((std::uint8_t)(e->get_data(i)));
     }
 
     IncrementCounters(len);
     running_status = 0;
 }
 
-void MIDIFileWrite::WriteEvent(unsigned long time, unsigned short text_type, char const* text)
+void MIDIFileWrite::write_event(unsigned long time, unsigned short text_type, char const* text)
 {
-    ENTER("void MIDIFileWrite::WriteEvent()");
+    ENTER("void MIDIFileWrite::write_event()");
     WriteDeltaTime(time);
     WriteCharacter((std::uint8_t)0xff);       // META-Event
     WriteCharacter((std::uint8_t)text_type);  // Text event type
@@ -348,10 +348,10 @@ void MIDIFileWrite::WriteEvent(unsigned long time, unsigned short text_type, cha
     running_status = 0;
 }
 
-void MIDIFileWrite::WriteMetaEvent(
+void MIDIFileWrite::write_meta_event(
     unsigned long time, std::uint8_t type, std::uint8_t const* data, long length)
 {
-    ENTER("void MIDIFileWrite::WriteMetaEvent()");
+    ENTER("void MIDIFileWrite::write_meta_event()");
     WriteDeltaTime(time);
     WriteCharacter((std::uint8_t)0xff);  // META-Event
     WriteCharacter((std::uint8_t)type);  // Meta-event type
@@ -366,9 +366,9 @@ void MIDIFileWrite::WriteMetaEvent(
     running_status = 0;
 }
 
-void MIDIFileWrite::WriteTempo(unsigned long time, long tempo)
+void MIDIFileWrite::write_tempo(unsigned long time, long tempo)
 {
-    ENTER("void MIDIFileWrite::WriteTempo()");
+    ENTER("void MIDIFileWrite::write_tempo()");
     WriteDeltaTime(time);
     WriteCharacter((std::uint8_t)0xff);  // Meta-Event
     WriteCharacter((std::uint8_t)0x51);  // Tempo event
@@ -378,9 +378,9 @@ void MIDIFileWrite::WriteTempo(unsigned long time, long tempo)
     running_status = 0;
 }
 
-void MIDIFileWrite::WriteKeySignature(unsigned long time, char sharp_flat, char minor)
+void MIDIFileWrite::write_key_signature(unsigned long time, char sharp_flat, char minor)
 {
-    ENTER("void MIDIFileWrite::WriteKeySignature()");
+    ENTER("void MIDIFileWrite::write_key_signature()");
     WriteDeltaTime(time);
     WriteCharacter((std::uint8_t)0xff);        // Meta-Event
     WriteCharacter((std::uint8_t)0x59);        // Key Sig
@@ -391,14 +391,14 @@ void MIDIFileWrite::WriteKeySignature(unsigned long time, char sharp_flat, char 
     running_status = 0;
 }
 
-void MIDIFileWrite::WriteTimeSignature(
+void MIDIFileWrite::write_time_signature(
     unsigned long time,
     char numerator,
     char denominator_power,
     char midi_clocks_per_metronome,
     char num_32nd_per_midi_quarter_note)
 {
-    ENTER("void MIDIFileWrite::WriteTimeSignature()");
+    ENTER("void MIDIFileWrite::write_time_signature()");
     WriteDeltaTime(time);
     WriteCharacter((std::uint8_t)0xff);  // Meta-Event
     WriteCharacter((std::uint8_t)0x58);  // time signature
@@ -411,9 +411,9 @@ void MIDIFileWrite::WriteTimeSignature(
     running_status = 0;
 }
 
-void MIDIFileWrite::WriteEndOfTrack(unsigned long time)
+void MIDIFileWrite::write_end_of_track(unsigned long time)
 {
-    ENTER("void MIDIFileWrite::WriteEndOfTrack()");
+    ENTER("void MIDIFileWrite::write_end_of_track()");
 
     if (within_track == true) {
         if (time == 0)
@@ -429,9 +429,9 @@ void MIDIFileWrite::WriteEndOfTrack(unsigned long time)
     }
 }
 
-void MIDIFileWrite::RewriteTrackLength()
+void MIDIFileWrite::rewrite_track_length()
 {
-    ENTER("void MIDIFileWrite::RewriteTrackLength()");
+    ENTER("void MIDIFileWrite::rewrite_track_length()");
     // go back and patch in the tracks length into the track chunk
     // header, now that we know the proper value.
     // then make sure we go back to the end of the file

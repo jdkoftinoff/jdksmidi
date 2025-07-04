@@ -52,16 +52,16 @@ class MIDIMultiTrack
     MIDIMultiTrack(int max_num_tracks_ = 64, bool deletable_ = true);
     virtual ~MIDIMultiTrack();
 
-    void SetTrack(int trk, MIDITrack* t);
-    MIDITrack* GetTrack(int trk);
-    MIDITrack const* GetTrack(int trk) const;
-    int GetNumTracks() const { return num_tracks; }
+    void set_track(int trk, MIDITrack* t);
+    MIDITrack* get_track(int trk);
+    MIDITrack const* get_track(int trk) const;
+    int get_num_tracks() const { return num_tracks; }
 
-    void Clear();
+    void clear();
 
-    int GetClksPerBeat() const { return clks_per_beat; }
+    int get_clks_per_beat() const { return clks_per_beat; }
 
-    void SetClksPerBeat(int c) { clks_per_beat = c; }
+    void set_clks_per_beat(int c) { clks_per_beat = c; }
 
   protected:
     MIDITrack** tracks;
@@ -82,12 +82,12 @@ class MIDIMultiTrackIteratorState
 
     MIDIMultiTrackIteratorState const& operator=(MIDIMultiTrackIteratorState const& m);
 
-    int GetNumTracks() const { return num_tracks; }
-    int GetCurEventTrack() const { return cur_event_track; }
-    MIDIClockTime GetCurrentTime() const { return cur_time; }
+    int get_num_tracks() const { return num_tracks; }
+    int get_cur_event_track() const { return cur_event_track; }
+    MIDIClockTime get_current_time() const { return cur_time; }
 
-    void Reset();
-    int FindTrackOfFirstEvent();
+    void reset();
+    int find_track_of_first_event();
 
     MIDIClockTime cur_time;
     int cur_event_track;
@@ -102,22 +102,22 @@ class MIDIMultiTrackIterator
     MIDIMultiTrackIterator(MIDIMultiTrack* mlt);
     virtual ~MIDIMultiTrackIterator();
 
-    void GoToTime(MIDIClockTime time);
+    void go_to_time(MIDIClockTime time);
 
-    bool GetCurEventTime(MIDIClockTime* t) const;
-    bool GetCurEvent(int* track, MIDITimedBigMessage** msg) const;
-    bool GoToNextEvent();
+    bool get_cur_event_time(MIDIClockTime* t) const;
+    bool get_cur_event(int* track, MIDITimedBigMessage** msg) const;
+    bool go_to_next_event();
 
-    bool GoToNextEventOnTrack(int track);
+    bool go_to_next_event_on_track(int track);
 
-    MIDIMultiTrackIteratorState const& GetState() const { return state; }
+    MIDIMultiTrackIteratorState const& get_state() const { return state; }
 
-    MIDIMultiTrackIteratorState& GetState() { return state; }
+    MIDIMultiTrackIteratorState& get_state() { return state; }
 
-    void SetState(MIDIMultiTrackIteratorState const& s) { state = s; }
+    void set_state(MIDIMultiTrackIteratorState const& s) { state = s; }
 
-    MIDIMultiTrack* GetMultiTrack() { return multitrack; }
-    MIDIMultiTrack const* GetMultiTrack() const { return multitrack; }
+    MIDIMultiTrack* get_multi_track() { return multitrack; }
+    MIDIMultiTrack const* get_multi_track() const { return multitrack; }
 
   protected:
     MIDIMultiTrack* multitrack;

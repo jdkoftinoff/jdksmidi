@@ -39,13 +39,13 @@ class MIDIQueue
     MIDIQueue(int num_msgs);
     virtual ~MIDIQueue();
 
-    void Clear();
+    void clear();
 
-    bool CanPut() const;
+    bool can_put() const;
 
-    bool CanGet() const;
+    bool can_get() const;
 
-    bool IsFull() const { return !CanPut(); }
+    bool is_full() const { return !can_put(); }
 
     void Put(MIDITimedBigMessage const& msg)
     {

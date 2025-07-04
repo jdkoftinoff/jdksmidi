@@ -54,7 +54,7 @@ int main(int argc, char** argv)
         // the object which parses the midifile and gives it to the multitrack loader
         jdksmidi::MIDIFileRead reader(&rs, &track_loader);
         // load the midifile into the multitrack object
-        reader.Parse();
+        reader.parse();
         // create the output stream
         jdksmidi::MIDIFileWriteStreamFileName out_stream(outfile_name);
 
@@ -62,8 +62,8 @@ int main(int argc, char** argv)
             // the object which takes the midi tracks and writes the midifile to the output stream
             jdksmidi::MIDIFileWriteMultiTrack writer(&tracks, &out_stream);
             // extract the original multitrack division and number of tracks
-            int num_tracks = reader.GetNumberTracks();
-            int division = reader.GetDivision();
+            int num_tracks = reader.get_number_tracks();
+            int division = reader.get_division();
 
             // write the output file
             if (writer.Write(num_tracks, division)) {

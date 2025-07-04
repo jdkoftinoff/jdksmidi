@@ -203,7 +203,7 @@ class MIDICue
         , num_values(3)
     {}
 
-    void Clear()
+    void clear()
     {
         v1 = 0;
         num_values = 1;
@@ -342,52 +342,52 @@ class MIDIShowControlPacket
   public:
     MIDIShowControlPacket();
 
-    void Put_Go() { Put_Simple0(MIDI_SC_GO); }
+    void put_go() { put_simple0(MIDI_SC_GO); }
 
-    void Put_Go(MIDICue const& q_number) { Put_Simple1(MIDI_SC_GO, q_number); }
+    void put_go(MIDICue const& q_number) { put_simple1(MIDI_SC_GO, q_number); }
 
-    void Put_Go(MIDICue const& q_number, MIDICue const& q_list)
+    void put_go(MIDICue const& q_number, MIDICue const& q_list)
     {
-        Put_Simple2(MIDI_SC_GO, q_number, q_list);
+        put_simple2(MIDI_SC_GO, q_number, q_list);
     }
 
-    void Put_Go(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
+    void put_go(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
     {
-        Put_Simple3(MIDI_SC_GO, q_number, q_list, q_path);
+        put_simple3(MIDI_SC_GO, q_number, q_list, q_path);
     }
 
-    void Put_Stop() { Put_Simple0(MIDI_SC_STOP); }
+    void put_stop() { put_simple0(MIDI_SC_STOP); }
 
-    void Put_Stop(MIDICue const& q_number) { Put_Simple1(MIDI_SC_STOP, q_number); }
+    void put_stop(MIDICue const& q_number) { put_simple1(MIDI_SC_STOP, q_number); }
 
-    void Put_Stop(MIDICue const& q_number, MIDICue const& q_list)
+    void put_stop(MIDICue const& q_number, MIDICue const& q_list)
     {
-        Put_Simple2(MIDI_SC_STOP, q_number, q_list);
+        put_simple2(MIDI_SC_STOP, q_number, q_list);
     }
 
-    void Put_Stop(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
+    void put_stop(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
     {
-        Put_Simple3(MIDI_SC_STOP, q_number, q_list, q_path);
+        put_simple3(MIDI_SC_STOP, q_number, q_list, q_path);
     }
 
-    void Put_Resume() { Put_Simple0(MIDI_SC_RESUME); }
+    void put_resume() { put_simple0(MIDI_SC_RESUME); }
 
-    void Put_Resume(MIDICue const& q_number) { Put_Simple1(MIDI_SC_RESUME, q_number); }
+    void put_resume(MIDICue const& q_number) { put_simple1(MIDI_SC_RESUME, q_number); }
 
-    void Put_Resume(MIDICue const& q_number, MIDICue const& q_list)
+    void put_resume(MIDICue const& q_number, MIDICue const& q_list)
     {
-        Put_Simple2(MIDI_SC_RESUME, q_number, q_list);
+        put_simple2(MIDI_SC_RESUME, q_number, q_list);
     }
 
-    void Put_Resume(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
+    void put_resume(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
     {
-        Put_Simple3(MIDI_SC_RESUME, q_number, q_list, q_path);
+        put_simple3(MIDI_SC_RESUME, q_number, q_list, q_path);
     }
 
-    void Put_TimedGo(
+    void put_timed_go(
         std::uint8_t hr, std::uint8_t mn, std::uint8_t sc, std::uint8_t fr, std::uint8_t ff)
     {
-        Put_Simple0(MIDI_SC_TIMED_GO);
+        put_simple0(MIDI_SC_TIMED_GO);
         SetHours(hr);
         SetMinutes(mn);
         SetSeconds(sc);
@@ -396,7 +396,7 @@ class MIDIShowControlPacket
         SetHasTime(true);
     }
 
-    void Put_TimedGo(
+    void put_timed_go(
         std::uint8_t hr,
         std::uint8_t mn,
         std::uint8_t sc,
@@ -404,7 +404,7 @@ class MIDIShowControlPacket
         std::uint8_t ff,
         MIDICue const& q_number)
     {
-        Put_Simple1(MIDI_SC_TIMED_GO, q_number);
+        put_simple1(MIDI_SC_TIMED_GO, q_number);
         SetHours(hr);
         SetMinutes(mn);
         SetSeconds(sc);
@@ -413,7 +413,7 @@ class MIDIShowControlPacket
         SetHasTime(true);
     }
 
-    void Put_TimedGo(
+    void put_timed_go(
         std::uint8_t hr,
         std::uint8_t mn,
         std::uint8_t sc,
@@ -422,7 +422,7 @@ class MIDIShowControlPacket
         MIDICue const& q_number,
         MIDICue const& q_list)
     {
-        Put_Simple2(MIDI_SC_TIMED_GO, q_number, q_list);
+        put_simple2(MIDI_SC_TIMED_GO, q_number, q_list);
         SetHours(hr);
         SetMinutes(mn);
         SetSeconds(sc);
@@ -431,7 +431,7 @@ class MIDIShowControlPacket
         SetHasTime(true);
     }
 
-    void Put_TimedGo(
+    void put_timed_go(
         std::uint8_t hr,
         std::uint8_t mn,
         std::uint8_t sc,
@@ -441,7 +441,7 @@ class MIDIShowControlPacket
         MIDICue const& q_list,
         MIDICue const& q_path)
     {
-        Put_Simple3(MIDI_SC_TIMED_GO, q_number, q_list, q_path);
+        put_simple3(MIDI_SC_TIMED_GO, q_number, q_list, q_path);
         SetHours(hr);
         SetMinutes(mn);
         SetSeconds(sc);
@@ -450,26 +450,26 @@ class MIDIShowControlPacket
         SetHasTime(true);
     }
 
-    void Put_Load(MIDICue const& q_number) { Put_Simple1(MIDI_SC_LOAD, q_number); }
+    void put_load(MIDICue const& q_number) { put_simple1(MIDI_SC_LOAD, q_number); }
 
-    void Put_Load(MIDICue const& q_number, MIDICue const& q_list)
+    void put_load(MIDICue const& q_number, MIDICue const& q_list)
     {
-        Put_Simple2(MIDI_SC_LOAD, q_number, q_list);
+        put_simple2(MIDI_SC_LOAD, q_number, q_list);
     }
 
-    void Put_Load(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
+    void put_load(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
     {
-        Put_Simple3(MIDI_SC_LOAD, q_number, q_list, q_path);
+        put_simple3(MIDI_SC_LOAD, q_number, q_list, q_path);
     }
 
-    void Put_Set(std::uint32_t ctrl_num, std::uint32_t ctrl_val)
+    void put_set(std::uint32_t ctrl_num, std::uint32_t ctrl_val)
     {
-        Put_Simple0(MIDI_SC_SET);
+        put_simple0(MIDI_SC_SET);
         SetControlNum(ctrl_num);
         SetControlVal(ctrl_val);
     }
 
-    void Put_Set(
+    void put_set(
         std::uint32_t ctrl_num,
         std::uint32_t ctrl_val,
         std::uint8_t hr,
@@ -478,7 +478,7 @@ class MIDIShowControlPacket
         std::uint8_t fr,
         std::uint8_t ff)
     {
-        Put_Simple0(MIDI_SC_SET);
+        put_simple0(MIDI_SC_SET);
         SetControlNum(ctrl_num);
         SetControlVal(ctrl_val);
         SetHours(hr);
@@ -489,112 +489,112 @@ class MIDIShowControlPacket
         SetHasTime(true);
     }
 
-    void Put_Fire(std::uint8_t macro_num)
+    void put_fire(std::uint8_t macro_num)
     {
-        Put_Simple0(MIDI_SC_ALL_OFF);
+        put_simple0(MIDI_SC_ALL_OFF);
         SetMacroNum(macro_num);
     }
 
-    void Put_AllOff() { Put_Simple0(MIDI_SC_ALL_OFF); }
+    void put_all_off() { put_simple0(MIDI_SC_ALL_OFF); }
 
-    void Put_Restore() { Put_Simple0(MIDI_SC_RESTORE); }
+    void put_restore() { put_simple0(MIDI_SC_RESTORE); }
 
-    void Put_Reset() { Put_Simple0(MIDI_SC_RESET); }
+    void put_reset() { put_simple0(MIDI_SC_RESET); }
 
-    void Put_GoOff() { Put_Simple0(MIDI_SC_GO_OFF); }
+    void put_go_off() { put_simple0(MIDI_SC_GO_OFF); }
 
-    void Put_GoOff(MIDICue const& q_number) { Put_Simple1(MIDI_SC_GO_OFF, q_number); }
+    void put_go_off(MIDICue const& q_number) { put_simple1(MIDI_SC_GO_OFF, q_number); }
 
-    void Put_GoOff(MIDICue const& q_number, MIDICue const& q_list)
+    void put_go_off(MIDICue const& q_number, MIDICue const& q_list)
     {
-        Put_Simple2(MIDI_SC_GO_OFF, q_number, q_list);
+        put_simple2(MIDI_SC_GO_OFF, q_number, q_list);
     }
 
-    void Put_GoOff(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
+    void put_go_off(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
     {
-        Put_Simple3(MIDI_SC_GO_OFF, q_number, q_list, q_path);
+        put_simple3(MIDI_SC_GO_OFF, q_number, q_list, q_path);
     }
 
-    void Put_GoJam() { Put_Simple0(MIDI_SC_GO_JAM); }
+    void put_go_jam() { put_simple0(MIDI_SC_GO_JAM); }
 
-    void Put_GoJam(MIDICue const& q_number) { Put_Simple1(MIDI_SC_GO_JAM, q_number); }
+    void put_go_jam(MIDICue const& q_number) { put_simple1(MIDI_SC_GO_JAM, q_number); }
 
-    void Put_GoJam(MIDICue const& q_number, MIDICue const& q_list)
+    void put_go_jam(MIDICue const& q_number, MIDICue const& q_list)
     {
-        Put_Simple2(MIDI_SC_GO_JAM, q_number, q_list);
+        put_simple2(MIDI_SC_GO_JAM, q_number, q_list);
     }
 
-    void Put_GoJam(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
+    void put_go_jam(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
     {
-        Put_Simple3(MIDI_SC_GO_JAM, q_number, q_list, q_path);
+        put_simple3(MIDI_SC_GO_JAM, q_number, q_list, q_path);
     }
 
-    void Put_StandbyPlus() { Put_Simple0(MIDI_SC_STANDBY_PLUS); }
+    void put_standby_plus() { put_simple0(MIDI_SC_STANDBY_PLUS); }
 
-    void Put_StandbyPlus(MIDICue const& q_list)
+    void put_standby_plus(MIDICue const& q_list)
     {
-        Put_Simple0(MIDI_SC_STANDBY_PLUS);
+        put_simple0(MIDI_SC_STANDBY_PLUS);
         SetQList(q_list);
         SetHasQList(true);
     }
-    void Put_StandbyMinus() { Put_Simple0(MIDI_SC_STANDBY_MINUS); }
+    void put_standby_minus() { put_simple0(MIDI_SC_STANDBY_MINUS); }
 
-    void Put_StandbyMinus(MIDICue const& q_list)
+    void put_standby_minus(MIDICue const& q_list)
     {
-        Put_Simple0(MIDI_SC_STANDBY_MINUS);
-        SetQList(q_list);
-        SetHasQList(true);
-    }
-
-    void Put_SequencePlus() { Put_Simple0(MIDI_SC_SEQUENCE_PLUS); }
-
-    void Put_SequencePlus(MIDICue const& q_list)
-    {
-        Put_Simple0(MIDI_SC_SEQUENCE_PLUS);
+        put_simple0(MIDI_SC_STANDBY_MINUS);
         SetQList(q_list);
         SetHasQList(true);
     }
 
-    void Put_SequenceMinus() { Put_Simple0(MIDI_SC_SEQUENCE_MINUS); }
+    void put_sequence_plus() { put_simple0(MIDI_SC_SEQUENCE_PLUS); }
 
-    void Put_SequenceMinus(MIDICue const& q_list)
+    void put_sequence_plus(MIDICue const& q_list)
     {
-        Put_Simple0(MIDI_SC_SEQUENCE_MINUS);
+        put_simple0(MIDI_SC_SEQUENCE_PLUS);
         SetQList(q_list);
         SetHasQList(true);
     }
 
-    void Put_StartClock() { Put_Simple0(MIDI_SC_START_CLOCK); }
+    void put_sequence_minus() { put_simple0(MIDI_SC_SEQUENCE_MINUS); }
 
-    void Put_StartClock(MIDICue const& q_list)
+    void put_sequence_minus(MIDICue const& q_list)
     {
-        Put_Simple0(MIDI_SC_START_CLOCK);
+        put_simple0(MIDI_SC_SEQUENCE_MINUS);
         SetQList(q_list);
         SetHasQList(true);
     }
 
-    void Put_StopClock() { Put_Simple0(MIDI_SC_STOP_CLOCK); }
+    void put_start_clock() { put_simple0(MIDI_SC_START_CLOCK); }
 
-    void Put_StopClock(MIDICue const& q_list)
+    void put_start_clock(MIDICue const& q_list)
     {
-        Put_Simple0(MIDI_SC_STOP_CLOCK);
+        put_simple0(MIDI_SC_START_CLOCK);
         SetQList(q_list);
         SetHasQList(true);
     }
 
-    void Put_ZeroClock() { Put_Simple0(MIDI_SC_ZERO_CLOCK); }
+    void put_stop_clock() { put_simple0(MIDI_SC_STOP_CLOCK); }
 
-    void Put_ZeroClock(MIDICue const& q_list)
+    void put_stop_clock(MIDICue const& q_list)
     {
-        Put_Simple0(MIDI_SC_ZERO_CLOCK);
+        put_simple0(MIDI_SC_STOP_CLOCK);
         SetQList(q_list);
         SetHasQList(true);
     }
 
-    void Put_SetClock(
+    void put_zero_clock() { put_simple0(MIDI_SC_ZERO_CLOCK); }
+
+    void put_zero_clock(MIDICue const& q_list)
+    {
+        put_simple0(MIDI_SC_ZERO_CLOCK);
+        SetQList(q_list);
+        SetHasQList(true);
+    }
+
+    void put_set_clock(
         std::uint8_t hr, std::uint8_t mn, std::uint8_t sc, std::uint8_t fr, std::uint8_t ff)
     {
-        Put_Simple0(MIDI_SC_SET_CLOCK);
+        put_simple0(MIDI_SC_SET_CLOCK);
         SetHours(hr);
         SetMinutes(mn);
         SetSeconds(sc);
@@ -603,7 +603,7 @@ class MIDIShowControlPacket
         SetHasTime(true);
     }
 
-    void Put_SetClock(
+    void put_set_clock(
         std::uint8_t hr,
         std::uint8_t mn,
         std::uint8_t sc,
@@ -611,7 +611,7 @@ class MIDIShowControlPacket
         std::uint8_t ff,
         MIDICue const& q_list)
     {
-        Put_Simple0(MIDI_SC_SET_CLOCK);
+        put_simple0(MIDI_SC_SET_CLOCK);
         SetHours(hr);
         SetMinutes(mn);
         SetSeconds(sc);
@@ -622,92 +622,92 @@ class MIDIShowControlPacket
         SetHasQList(true);
     }
 
-    void Put_MTCChaseOn() { Put_Simple0(MIDI_SC_MTC_CHASE_ON); }
+    void put_mtc_chase_on() { put_simple0(MIDI_SC_MTC_CHASE_ON); }
 
-    void Put_MTCChaseOn(MIDICue const& q_list)
+    void put_mtc_chase_on(MIDICue const& q_list)
     {
-        Put_Simple0(MIDI_SC_MTC_CHASE_ON);
+        put_simple0(MIDI_SC_MTC_CHASE_ON);
         SetQList(q_list);
         SetHasQList(true);
     }
-    void Put_MTCChaseOff() { Put_Simple0(MIDI_SC_MTC_CHASE_OFF); }
+    void put_mtc_chase_off() { put_simple0(MIDI_SC_MTC_CHASE_OFF); }
 
-    void Put_MTCChaseOff(MIDICue const& q_list)
+    void put_mtc_chase_off(MIDICue const& q_list)
     {
-        Put_Simple0(MIDI_SC_MTC_CHASE_OFF);
-        SetQList(q_list);
-        SetHasQList(true);
-    }
-
-    void Put_OpenQList(MIDICue const& q_list)
-    {
-        Put_Simple0(MIDI_SC_OPEN_Q_LIST);
+        put_simple0(MIDI_SC_MTC_CHASE_OFF);
         SetQList(q_list);
         SetHasQList(true);
     }
 
-    void Put_CloseQList(MIDICue const& q_list)
+    void put_open_q_list(MIDICue const& q_list)
     {
-        Put_Simple0(MIDI_SC_CLOSE_Q_LIST);
+        put_simple0(MIDI_SC_OPEN_Q_LIST);
         SetQList(q_list);
         SetHasQList(true);
     }
 
-    void Put_OpenQPath(MIDICue const& q_path)
+    void put_close_q_list(MIDICue const& q_list)
     {
-        Put_Simple0(MIDI_SC_OPEN_Q_PATH);
+        put_simple0(MIDI_SC_CLOSE_Q_LIST);
+        SetQList(q_list);
+        SetHasQList(true);
+    }
+
+    void put_open_q_path(MIDICue const& q_path)
+    {
+        put_simple0(MIDI_SC_OPEN_Q_PATH);
         SetQPath(q_path);
         SetHasQPath(true);
     }
 
-    void Put_CloseQPath(MIDICue const& q_path)
+    void put_close_q_path(MIDICue const& q_path)
     {
-        Put_Simple0(MIDI_SC_CLOSE_Q_PATH);
+        put_simple0(MIDI_SC_CLOSE_Q_PATH);
         SetQPath(q_path);
         SetHasQPath(true);
     }
 
-    bool ParseEntireSysEx(MIDISystemExclusive const* e);
-    bool StoreToSysEx(MIDISystemExclusive* e) const;
+    bool parse_entire_sys_ex(MIDISystemExclusive const* e);
+    bool store_to_sys_ex(MIDISystemExclusive* e) const;
 
   protected:
-    bool StoreTime(MIDISystemExclusive* e) const;
-    bool ParseTime(MIDISystemExclusive const* e, int* pos);
-    bool Store3Param(MIDISystemExclusive* e) const;
-    bool Parse3Param(MIDISystemExclusive const* e, int* pos);
-    bool StoreSet(MIDISystemExclusive* e) const;
-    bool ParseSet(MIDISystemExclusive const* e, int* pos);
-    bool StoreFire(MIDISystemExclusive* e) const;
-    bool ParseFire(MIDISystemExclusive const* e, int* pos);
-    bool StoreQPath(MIDISystemExclusive* e) const;
-    bool ParseQPath(MIDISystemExclusive const* e, int* pos);
-    bool StoreQList(MIDISystemExclusive* e) const;
-    bool ParseQList(MIDISystemExclusive const* e, int* pos);
-    bool StoreAscii(MIDISystemExclusive* e, char const* str) const;
+    bool store_time(MIDISystemExclusive* e) const;
+    bool parse_time(MIDISystemExclusive const* e, int* pos);
+    bool store_3_param(MIDISystemExclusive* e) const;
+    bool parse_3_param(MIDISystemExclusive const* e, int* pos);
+    bool store_set(MIDISystemExclusive* e) const;
+    bool parse_set(MIDISystemExclusive const* e, int* pos);
+    bool store_fire(MIDISystemExclusive* e) const;
+    bool parse_fire(MIDISystemExclusive const* e, int* pos);
+    bool store_q_path(MIDISystemExclusive* e) const;
+    bool parse_q_path(MIDISystemExclusive const* e, int* pos);
+    bool store_q_list(MIDISystemExclusive* e) const;
+    bool parse_q_list(MIDISystemExclusive const* e, int* pos);
+    bool store_ascii(MIDISystemExclusive* e, char const* str) const;
 
-    bool StoreAsciiNum(MIDISystemExclusive* e, MIDICue const& num) const;
-    bool ParseAsciiNum(MIDISystemExclusive const* e, int* pos, MIDICue* num);
-    bool ParseAsciiNum(MIDISystemExclusive const* e, int* pos, std::uint32_t* num);
+    bool store_ascii_num(MIDISystemExclusive* e, MIDICue const& num) const;
+    bool parse_ascii_num(MIDISystemExclusive const* e, int* pos, MIDICue* num);
+    bool parse_ascii_num(MIDISystemExclusive const* e, int* pos, std::uint32_t* num);
 
-    void ClearVariableStuff();
+    void clear_variable_stuff();
 
-    void Put_Simple0(MIDIShowCommand cmd)
+    void put_simple0(MIDIShowCommand cmd)
     {
-        ClearVariableStuff();
+        clear_variable_stuff();
         SetCommand(cmd);
     }
 
-    void Put_Simple1(MIDIShowCommand cmd, MIDICue const& q_number)
+    void put_simple1(MIDIShowCommand cmd, MIDICue const& q_number)
     {
-        ClearVariableStuff();
+        clear_variable_stuff();
         SetCommand(cmd);
         SetQNumber(q_number);
         SetHasQNumber(true);
     }
 
-    void Put_Simple2(MIDIShowCommand cmd, MIDICue const& q_number, MIDICue const& q_list)
+    void put_simple2(MIDIShowCommand cmd, MIDICue const& q_number, MIDICue const& q_list)
     {
-        ClearVariableStuff();
+        clear_variable_stuff();
         SetCommand(cmd);
         SetQNumber(q_number);
         SetHasQNumber(true);
@@ -715,10 +715,10 @@ class MIDIShowControlPacket
         SetHasQList(true);
     }
 
-    void Put_Simple3(
+    void put_simple3(
         MIDIShowCommand cmd, MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
     {
-        ClearVariableStuff();
+        clear_variable_stuff();
         SetCommand(cmd);
         SetQNumber(q_number);
         SetHasQNumber(true);

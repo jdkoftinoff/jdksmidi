@@ -38,7 +38,7 @@ using namespace jdksmidi;
 
 void PrintSysEx(FILE* f, MIDISystemExclusive* ex)
 {
-    int l = ex->GetLength();
+    int l = ex->get_length();
     fprintf(f, "Sysex Len=%d", l);
 
     for (int i = 0; i < l; ++i) {
@@ -46,7 +46,7 @@ void PrintSysEx(FILE* f, MIDISystemExclusive* ex)
             fprintf(f, "\n");
         }
 
-        fprintf(f, "%02" PRIx8 " ", ex->GetData(i));
+        fprintf(f, "%02" PRIx8 " ", ex->get_data(i));
     }
 
     fprintf(f, "\n");
@@ -55,23 +55,23 @@ void PrintSysEx(FILE* f, MIDISystemExclusive* ex)
 
 void PrintMsg(FILE* f, MIDIMessage* m)
 {
-    int l = m->GetLength();
+    int l = m->get_length();
     fprintf(f, "Msg : ");
 
     if (l == 1) {
-        fprintf(f, " %02x \t=", m->GetStatus());
+        fprintf(f, " %02x \t=", m->get_status());
     }
 
     else if (l == 2) {
-        fprintf(f, " %02x %02x \t=", m->GetStatus(), m->GetByte1());
+        fprintf(f, " %02x %02x \t=", m->get_status(), m->get_byte1());
     }
 
     else if (l == 3) {
-        fprintf(f, " %02x %02x %02x \t=", m->GetStatus(), m->GetByte1(), m->GetByte2());
+        fprintf(f, " %02x %02x %02x \t=", m->get_status(), m->get_byte1(), m->get_byte2());
     }
 
     char buf[129];
-    m->MsgToText(buf);
+    m->msg_to_text(buf);
     fprintf(f, "%s\n", buf);
     fflush(f);
 }
@@ -89,9 +89,9 @@ int main(int argc, char** argv)
         if (c == EOF)
             break;
 
-        if (p.Parse(static_cast<std::uint8_t>(c), &m)) {
-            if (m.IsSysEx()) {
-                PrintSysEx(stdout, p.GetSystemExclusive());
+        if (p.parse(static_cast<std::uint8_t>(c), &m)) {
+            if (m.is_sys_ex()) {
+                PrintSysEx(stdout, p.get_system_exclusive());
             }
 
             else {

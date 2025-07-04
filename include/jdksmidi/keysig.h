@@ -54,7 +54,7 @@ class MIDIKeySignature
     MIDIKeySignature();
     MIDIKeySignature(MIDIKeySignature const& k);
 
-    void Reset();
+    void reset();
 
     bool IsMajor() { return major; }
 
@@ -62,7 +62,7 @@ class MIDIKeySignature
     {
         sharp_flat = sf;
         major = maj;
-        Reset();
+        reset();
     }
 
     int GetSharpFlats() { return sharp_flat; }

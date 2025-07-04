@@ -43,7 +43,7 @@ class MIDIProcessor
     MIDIProcessor();
     virtual ~MIDIProcessor();
 
-    virtual bool Process(MIDITimedBigMessage* msg) = 0;
+    virtual bool process(MIDITimedBigMessage* msg) = 0;
 };
 
 class MIDIMultiProcessor : public MIDIProcessor
@@ -55,13 +55,13 @@ class MIDIMultiProcessor : public MIDIProcessor
     // MIDIProcessors given to a MIDIMultiProcessor are NOT owned
     // by MIDIMultiProcessor.
 
-    void SetProcessor(int position, MIDIProcessor* proc) { processors[position] = proc; }
+    void set_processor(int position, MIDIProcessor* proc) { processors[position] = proc; }
 
-    MIDIProcessor* GetProcessor(int position) { return processors[position]; }
+    MIDIProcessor* get_processor(int position) { return processors[position]; }
 
-    MIDIProcessor const* GetProcessor(int position) const { return processors[position]; }
+    MIDIProcessor const* get_processor(int position) const { return processors[position]; }
 
-    virtual bool Process(MIDITimedBigMessage* msg);
+    virtual bool process(MIDITimedBigMessage* msg);
 
   private:
     MIDIProcessor** processors;
@@ -74,13 +74,13 @@ class MIDIProcessorTransposer : public MIDIProcessor
     MIDIProcessorTransposer();
     virtual ~MIDIProcessorTransposer();
 
-    void SetTransposeChannel(int chan, int trans) { trans_amount[chan] = trans; }
+    void set_transpose_channel(int chan, int trans) { trans_amount[chan] = trans; }
 
-    int GetTransposeChannel(int chan) const { return trans_amount[chan]; }
+    int get_transpose_channel(int chan) const { return trans_amount[chan]; }
 
-    void SetAllTranspose(int trans);
+    void set_all_transpose(int trans);
 
-    virtual bool Process(MIDITimedBigMessage* msg);
+    virtual bool process(MIDITimedBigMessage* msg);
 
   private:
     int trans_amount[16];
@@ -92,13 +92,13 @@ class MIDIProcessorRechannelizer : public MIDIProcessor
     MIDIProcessorRechannelizer();
     virtual ~MIDIProcessorRechannelizer();
 
-    void SetRechanMap(int src_chan, int dest_chan) { rechan_map[src_chan] = dest_chan; }
+    void set_rechan_map(int src_chan, int dest_chan) { rechan_map[src_chan] = dest_chan; }
 
-    int GetRechanMap(int src_chan) const { return rechan_map[src_chan]; }
+    int get_rechan_map(int src_chan) const { return rechan_map[src_chan]; }
 
-    void SetAllRechan(int dest_chan);
+    void set_all_rechan(int dest_chan);
 
-    virtual bool Process(MIDITimedBigMessage* msg);
+    virtual bool process(MIDITimedBigMessage* msg);
 
   private:
     int rechan_map[16];

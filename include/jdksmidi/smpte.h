@@ -139,7 +139,7 @@ class SMPTE
         return sample_number;
     }
 
-    void SetTime(
+    void set_time(
         std::uint8_t h, std::uint8_t m, std::uint8_t s, std::uint8_t f = 0, std::uint8_t sf = 0)
     {
         hours = h;
@@ -209,7 +209,7 @@ class SMPTE
 
     const SMPTE& operator=(const SMPTE& s)
     {
-        Copy(s);
+        copy(s);
         return *this;
     }
     bool operator==(SMPTE& s) { return Compare(s) == 0; }
@@ -234,7 +234,7 @@ class SMPTE
     void SampleToTime();
     void TimeToSample();
 
-    void Copy(const SMPTE& s);
+    void copy(const SMPTE& s);
     int Compare(SMPTE& s);
     void Add(SMPTE& s);
     void Subtract(SMPTE& s);

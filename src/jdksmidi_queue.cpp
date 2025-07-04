@@ -42,18 +42,18 @@ MIDIQueue::~MIDIQueue()
     delete[] buf;
 }
 
-void MIDIQueue::Clear()
+void MIDIQueue::clear()
 {
     next_in = 0;
     next_out = 0;
 }
 
-bool MIDIQueue::CanPut() const
+bool MIDIQueue::can_put() const
 {
     return next_out != ((next_in + 1) % bufsize);
 }
 
-bool MIDIQueue::CanGet() const
+bool MIDIQueue::can_get() const
 {
     return next_in != next_out;
 }

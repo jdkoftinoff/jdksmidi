@@ -48,28 +48,28 @@ bool MIDIFileWriteMultiTrack::Write(int num_tracks, int division)
     }
 
     // first, write the header.
-    writer.WriteFileHeader((num_tracks > 0), num_tracks, division);
+    writer.write_file_header((num_tracks > 0), num_tracks, division);
     // now write each track
 
     for (int i = 0; i < num_tracks; ++i) {
-        if (writer.ErrorOccurred()) {
+        if (writer.error_occurred()) {
             f = false;
             break;
         }
 
-        auto t = multitrack->GetTrack(i);
+        auto t = multitrack->get_track(i);
 
-        writer.WriteTrackHeader(0);  // will be rewritten later
+        writer.write_track_header(0);  // will be rewritten later
 
         if (t) {
-            for (int event_num = 0; event_num < t->GetNumEvents(); ++event_num) {
-                auto ev = t->GetEventAddress(event_num);
+            for (int event_num = 0; event_num < t->get_num_events(); ++event_num) {
+                auto ev = t->get_event_address(event_num);
 
-                if (ev && !ev->IsNoOp()) {
-                    if (!ev->IsDataEnd()) {
-                        writer.WriteEvent(*ev);
+                if (ev && !ev->is_no_op()) {
+                    if (!ev->is_data_end()) {
+                        writer.write_event(*ev);
 
-                        if (writer.ErrorOccurred()) {
+                        if (writer.error_occurred()) {
                             f = false;
                             break;
                         }
@@ -78,8 +78,8 @@ bool MIDIFileWriteMultiTrack::Write(int num_tracks, int division)
             }
         }
 
-        writer.WriteEndOfTrack(0);
-        writer.RewriteTrackLength();
+        writer.write_end_of_track(0);
+        writer.rewrite_track_length();
     }
 
     if (!PostWrite()) {

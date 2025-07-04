@@ -63,7 +63,7 @@ class MIDIEditTrack
     // Process applies a MIDI process to all events that are matched
     //
 
-    void Process(
+    void process(
         MIDIClockTime start_time,
         MIDIClockTime end_time,
         MIDIProcessor* process,

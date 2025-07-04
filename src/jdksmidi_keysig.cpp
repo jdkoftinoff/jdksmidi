@@ -58,7 +58,7 @@ MIDIKeySignature::MIDIKeySignature()
     use_sharps = true;
     sharp_flat = 0;
     major = true;
-    Reset();
+    reset();
 }
 
 MIDIKeySignature::MIDIKeySignature(MIDIKeySignature const& k)
@@ -67,17 +67,17 @@ MIDIKeySignature::MIDIKeySignature(MIDIKeySignature const& k)
     use_sharps = k.use_sharps;
     sharp_flat = k.sharp_flat;
     major = k.major;
-    Reset();
+    reset();
 }
 
 //
-// Reset() generates the sharp/flat list based on sharp_flat, major,
+// reset() generates the sharp/flat list based on sharp_flat, major,
 // and use_sharps.
 //
 
-void MIDIKeySignature::Reset()
+void MIDIKeySignature::reset()
 {
-    ENTER("MIDIKeySignature::Reset()");
+    ENTER("MIDIKeySignature::reset()");
 
     if (sharp_flat < -7)
         sharp_flat = -7;

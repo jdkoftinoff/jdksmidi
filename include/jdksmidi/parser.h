@@ -53,11 +53,11 @@ class MIDIParser
     MIDIParser(std::uint16_t max_sysex_size = 384);
     virtual ~MIDIParser();
 
-    void Clear() { state = FIND_STATUS; }
+    void clear() { state = FIND_STATUS; }
 
-    virtual bool Parse(std::uint8_t b, MIDIMessage* msg);
+    virtual bool parse(std::uint8_t b, MIDIMessage* msg);
 
-    MIDISystemExclusive* GetSystemExclusive() const { return sysex.get(); }
+    MIDISystemExclusive* get_system_exclusive() const { return sysex.get(); }
 
   protected:
     //
@@ -79,9 +79,9 @@ class MIDIParser
     std::unique_ptr<MIDISystemExclusive> sysex;
     State state;
 
-    bool ParseSystemByte(std::uint8_t b, MIDIMessage* msg);
-    bool ParseDataByte(std::uint8_t b, MIDIMessage* msg);
-    void ParseStatusByte(std::uint8_t b);
+    bool parse_system_byte(std::uint8_t b, MIDIMessage* msg);
+    bool parse_data_byte(std::uint8_t b, MIDIMessage* msg);
+    void parse_status_byte(std::uint8_t b);
 };
 
 }  // namespace jdksmidi

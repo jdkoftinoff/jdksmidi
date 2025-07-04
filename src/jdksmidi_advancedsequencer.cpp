@@ -85,7 +85,7 @@ void AdvancedSequencer::CloseMIDI()
     Stop();
 #if 0
     driver.StopTimer();
-    driver.AllNotesOff();
+    driver.all_notes_off();
     Sleep ( 100 );
     driver.CloseMIDIInPort();
     driver.CloseMIDIOutPort();
@@ -94,34 +94,34 @@ void AdvancedSequencer::CloseMIDI()
 
 void AdvancedSequencer::SetMIDIThruEnable(bool f)
 {
-    driver.SetThruEnable(f);
+    driver.set_thru_enable(f);
 }
 
 bool AdvancedSequencer::GetMIDIThruEnable() const
 {
-    return driver.GetThruEnable();
+    return driver.get_thru_enable();
 }
 
 void AdvancedSequencer::SetMIDIThruChannel(int chan)
 {
-    thru_rechannelizer.SetAllRechan(chan);
-    driver.AllNotesOff();
+    thru_rechannelizer.set_all_rechan(chan);
+    driver.all_notes_off();
 }
 
 int AdvancedSequencer::GetMIDIThruChannel() const
 {
-    return thru_rechannelizer.GetRechanMap(0);
+    return thru_rechannelizer.get_rechan_map(0);
 }
 
 void AdvancedSequencer::SetMIDIThruTranspose(int val)
 {
-    thru_transposer.SetAllTranspose(val);
-    driver.AllNotesOff();
+    thru_transposer.set_all_transpose(val);
+    driver.all_notes_off();
 }
 
 int AdvancedSequencer::GetMIDIThruTranspose() const
 {
-    return thru_transposer.GetTransposeChannel(0);
+    return thru_transposer.get_transpose_channel(0);
 }
 
 bool AdvancedSequencer::Load(char const* fname)
@@ -142,14 +142,14 @@ bool AdvancedSequencer::Load(char const* fname)
     MIDIFileReadMultiTrack track_loader(&tracks);
     MIDIFileRead reader(&mfreader_stream, &track_loader);
     Stop();
-    driver.AllNotesOff();
-    tracks.Clear();
-    seq.ResetAllTracks();
+    driver.all_notes_off();
+    tracks.clear();
+    seq.reset_all_tracks();
 
-    if (reader.Parse()) {
+    if (reader.parse()) {
         file_loaded = true;
-        Reset();
-        GoToMeasure(0);
+        reset();
+        go_to_measure(0);
         ExtractWarpPositions();
     }
 
@@ -160,31 +160,31 @@ bool AdvancedSequencer::Load(char const* fname)
     return file_loaded;
 }
 
-void AdvancedSequencer::Reset()
+void AdvancedSequencer::reset()
 {
     Stop();
-    driver.AllNotesOff();
+    driver.all_notes_off();
     UnmuteAllTracks();
     UnSoloTrack();
     SetTempoScale(1.00);
-    seq.ResetAllTracks();
-    GoToMeasure(0);
+    seq.reset_all_tracks();
+    go_to_measure(0);
 }
 
-void AdvancedSequencer::GoToTime(MIDIClockTime t)
+void AdvancedSequencer::go_to_time(MIDIClockTime t)
 {
     if (mgr.IsSeqPlay()) {
         Stop();
-        seq.GoToTime(t + 1);
+        seq.go_to_time(t + 1);
         Play();
     }
 
     else {
-        seq.GoToTime(t + 1);
+        seq.go_to_time(t + 1);
     }
 }
 
-void AdvancedSequencer::GoToMeasure(int measure, int beat)
+void AdvancedSequencer::go_to_measure(int measure, int beat)
 {
     if (!file_loaded) {
         return;
@@ -205,22 +205,22 @@ void AdvancedSequencer::GoToMeasure(int measure, int beat)
         Stop();
 
         if (warp_positions[warp_to_item]) {
-            seq.SetState(warp_positions[warp_to_item]);
+            seq.set_state(warp_positions[warp_to_item]);
         }
 
-        seq.GoToMeasure(measure, beat);
+        seq.go_to_measure(measure, beat);
         Play();
     }
 
     else {
         if (warp_positions[warp_to_item]) {
-            seq.SetState(warp_positions[warp_to_item]);
+            seq.set_state(warp_positions[warp_to_item]);
         }
 
-        seq.GoToMeasure(measure, beat);
+        seq.go_to_measure(measure, beat);
 
-        for (int i = 0; i < seq.GetNumTracks(); ++i) {
-            seq.GetTrackState(i)->note_matrix.Clear();
+        for (int i = 0; i < seq.get_num_tracks(); ++i) {
+            seq.get_track_state(i)->note_matrix.clear();
         }
     }
 }
@@ -233,21 +233,21 @@ void AdvancedSequencer::Play(int clock_offset)
 
     Stop();
 
-    for (int i = 0; i < seq.GetNumTracks(); ++i) {
-        seq.GetTrackState(i)->note_matrix.Clear();
+    for (int i = 0; i < seq.get_num_tracks(); ++i) {
+        seq.get_track_state(i)->note_matrix.clear();
     }
 
     if (repeat_play_mode) {
-        seq.GoToMeasure(repeat_start_measure);
+        seq.go_to_measure(repeat_start_measure);
     }
 
-    MIDIClockTime cur_time = seq.GetCurrentMIDIClockTime();
+    MIDIClockTime cur_time = seq.get_current_midi_clock_time();
 
     if ((long)cur_time > -clock_offset)
         cur_time += clock_offset;
 
-    seq.GoToTime(cur_time);
-    mgr.SetSeqOffset((unsigned long)seq.GetCurrentTimeInMs());
+    seq.go_to_time(cur_time);
+    mgr.SetSeqOffset((unsigned long)seq.get_current_time_in_ms());
     mgr.SetTimeOffset(0);
     mgr.SeqPlay();
 }
@@ -288,10 +288,10 @@ void AdvancedSequencer::Stop()
 
     if (!mgr.IsSeqStop()) {
         mgr.SeqStop();
-        driver.AllNotesOff();
+        driver.all_notes_off();
 
-        for (int i = 0; i < seq.GetNumTracks(); ++i) {
-            seq.GetTrackState(i)->note_matrix.Clear();
+        for (int i = 0; i < seq.get_num_tracks(); ++i) {
+            seq.get_track_state(i)->note_matrix.clear();
         }
     }
 }
@@ -302,14 +302,14 @@ void AdvancedSequencer::UnmuteAllTracks()
         return;
     }
 
-    for (int i = 0; i < seq.GetNumTracks(); ++i) {
-        if (seq.GetTrackProcessor(i)->mute) {
-            seq.GetTrackState(i)->note_matrix.Clear();
-            seq.GetTrackProcessor(i)->mute = false;
+    for (int i = 0; i < seq.get_num_tracks(); ++i) {
+        if (seq.get_track_processor(i)->mute) {
+            seq.get_track_state(i)->note_matrix.clear();
+            seq.get_track_processor(i)->mute = false;
         }
     }
 
-    driver.AllNotesOff();
+    driver.all_notes_off();
 }
 
 void AdvancedSequencer::SoloTrack(int trk)
@@ -319,20 +319,20 @@ void AdvancedSequencer::SoloTrack(int trk)
     }
 
     if (trk == -1) {
-        seq.SetSoloMode(false);
-        driver.AllNotesOff();
+        seq.set_solo_mode(false);
+        driver.all_notes_off();
 
-        for (int i = 0; i < seq.GetNumTracks(); ++i) {
-            seq.GetTrackState(i)->note_matrix.Clear();
+        for (int i = 0; i < seq.get_num_tracks(); ++i) {
+            seq.get_track_state(i)->note_matrix.clear();
         }
     }
 
     else {
-        seq.SetSoloMode(true, trk);
-        driver.AllNotesOff();
+        seq.set_solo_mode(true, trk);
+        driver.all_notes_off();
 
-        for (int i = 0; i < seq.GetNumTracks(); ++i) {
-            seq.GetTrackState(i)->note_matrix.Clear();
+        for (int i = 0; i < seq.get_num_tracks(); ++i) {
+            seq.get_track_state(i)->note_matrix.clear();
         }
     }
 }
@@ -343,11 +343,11 @@ void AdvancedSequencer::UnSoloTrack()
         return;
     }
 
-    seq.SetSoloMode(false);
-    driver.AllNotesOff();
+    seq.set_solo_mode(false);
+    driver.all_notes_off();
 
-    for (int i = 0; i < seq.GetNumTracks(); ++i) {
-        seq.GetTrackState(i)->note_matrix.Clear();
+    for (int i = 0; i < seq.get_num_tracks(); ++i) {
+        seq.get_track_state(i)->note_matrix.clear();
     }
 }
 
@@ -357,8 +357,8 @@ void AdvancedSequencer::SetTrackMute(int trk, bool f)
         return;
     }
 
-    seq.GetTrackProcessor(trk)->mute = f;
-    driver.AllNotesOff();
+    seq.get_track_processor(trk)->mute = f;
+    driver.all_notes_off();
 }
 
 void AdvancedSequencer::SetTempoScale(double scale)
@@ -367,17 +367,17 @@ void AdvancedSequencer::SetTempoScale(double scale)
         return;
     }
 
-    seq.SetCurrentTempoScale(static_cast<float>(scale));
+    seq.set_current_tempo_scale(static_cast<float>(scale));
 }
 
 double AdvancedSequencer::GetTempoWithoutScale() const
 {
-    return seq.GetCurrentTempo();
+    return seq.get_current_tempo();
 }
 
 double AdvancedSequencer::GetTempoWithScale() const
 {
-    return seq.GetCurrentTempo() * seq.GetCurrentTempoScale();
+    return seq.get_current_tempo() * seq.get_current_tempo_scale();
 }
 
 int AdvancedSequencer::GetMeasure() const
@@ -386,7 +386,7 @@ int AdvancedSequencer::GetMeasure() const
         return 0;
     }
 
-    return seq.GetCurrentMeasure();
+    return seq.get_current_measure();
 }
 
 int AdvancedSequencer::GetBeat() const
@@ -395,25 +395,25 @@ int AdvancedSequencer::GetBeat() const
         return 0;
     }
 
-    return seq.GetCurrentBeat();
+    return seq.get_current_beat();
 }
 
-int AdvancedSequencer::GetTimeSigNumerator() const
+int AdvancedSequencer::get_time_sig_numerator() const
 {
     if (!file_loaded) {
         return 4;
     }
 
-    return seq.GetTrackState(0)->timesig_numerator;
+    return seq.get_track_state(0)->timesig_numerator;
 }
 
-int AdvancedSequencer::GetTimeSigDenominator() const
+int AdvancedSequencer::get_time_sig_denominator() const
 {
     if (!file_loaded) {
         return 4;
     }
 
-    return seq.GetTrackState(0)->timesig_denominator;
+    return seq.get_track_state(0)->timesig_denominator;
 }
 
 int AdvancedSequencer::GetTrackNoteCount(int trk) const
@@ -427,7 +427,7 @@ int AdvancedSequencer::GetTrackNoteCount(int trk) const
     }
 
     else {
-        return seq.GetTrackState(trk)->note_matrix.GetTotalCount();
+        return seq.get_track_state(trk)->note_matrix.get_total_count();
     }
 }
 
@@ -437,7 +437,7 @@ char const* AdvancedSequencer::GetTrackName(int trk) const
         return "";
     }
 
-    return seq.GetTrackState(trk)->track_name;
+    return seq.get_track_state(trk)->track_name;
 }
 
 int AdvancedSequencer::GetTrackVolume(int trk) const
@@ -446,7 +446,7 @@ int AdvancedSequencer::GetTrackVolume(int trk) const
         return 100;
     }
 
-    return seq.GetTrackState(trk)->volume;
+    return seq.get_track_state(trk)->volume;
 }
 
 void AdvancedSequencer::SetTrackVelocityScale(int trk, int scale)
@@ -455,7 +455,7 @@ void AdvancedSequencer::SetTrackVelocityScale(int trk, int scale)
         return;
     }
 
-    seq.GetTrackProcessor(trk)->velocity_scale = scale;
+    seq.get_track_processor(trk)->velocity_scale = scale;
 }
 
 int AdvancedSequencer::GetTrackVelocityScale(int trk) const
@@ -464,7 +464,7 @@ int AdvancedSequencer::GetTrackVelocityScale(int trk) const
         return 100;
     }
 
-    return seq.GetTrackProcessor(trk)->velocity_scale;
+    return seq.get_track_processor(trk)->velocity_scale;
 }
 
 void AdvancedSequencer::SetTrackRechannelize(int trk, int chan)
@@ -473,9 +473,9 @@ void AdvancedSequencer::SetTrackRechannelize(int trk, int chan)
         return;
     }
 
-    seq.GetTrackProcessor(trk)->rechannel = chan;
-    driver.AllNotesOff();
-    seq.GetTrackState(trk)->note_matrix.Clear();
+    seq.get_track_processor(trk)->rechannel = chan;
+    driver.all_notes_off();
+    seq.get_track_state(trk)->note_matrix.clear();
 }
 
 int AdvancedSequencer::GetTrackRechannelize(int trk) const
@@ -484,7 +484,7 @@ int AdvancedSequencer::GetTrackRechannelize(int trk) const
         return -1;
     }
 
-    return seq.GetTrackProcessor(trk)->rechannel;
+    return seq.get_track_processor(trk)->rechannel;
 }
 
 void AdvancedSequencer::SetTrackTranspose(int trk, int trans)
@@ -501,21 +501,21 @@ void AdvancedSequencer::SetTrackTranspose(int trk, int trans)
     }
 
     if (trk == -1) {
-        for (trk = 0; trk < tracks.GetNumTracks(); ++trk) {
-            seq.GetTrackProcessor(trk)->transpose = trans;
+        for (trk = 0; trk < tracks.get_num_tracks(); ++trk) {
+            seq.get_track_processor(trk)->transpose = trans;
         }
     }
 
     else {
-        seq.GetTrackProcessor(trk)->transpose = trans;
+        seq.get_track_processor(trk)->transpose = trans;
     }
 
     if (was_playing) {
 #if 0
         driver.ResetMIDIOut();
-        driver.AllNotesOff();
+        driver.all_notes_off();
 #endif
-        seq.GetTrackState(trk)->note_matrix.Clear();
+        seq.get_track_state(trk)->note_matrix.clear();
         mgr.SeqPlay();
     }
 }
@@ -526,7 +526,7 @@ int AdvancedSequencer::GetTrackTranspose(int trk) const
         return 0;
     }
 
-    return seq.GetTrackProcessor(trk)->transpose;
+    return seq.get_track_processor(trk)->transpose;
 }
 
 void AdvancedSequencer::ExtractMarkers(std::vector<std::string>* list)
@@ -537,7 +537,7 @@ void AdvancedSequencer::ExtractMarkers(std::vector<std::string>* list)
         return;
     }
 
-    MIDITrack* t = tracks.GetTrack(0);
+    MIDITrack* t = tracks.get_track(0);
     list->clear();
     int cnt = 0;
     int measure = 0;
@@ -545,14 +545,14 @@ void AdvancedSequencer::ExtractMarkers(std::vector<std::string>* list)
     int timesig_numerator = 4;
     int timesig_denominator = 4;
     MIDIClockTime last_beat_time = 0;
-    int clks_per_beat = tracks.GetClksPerBeat();
+    int clks_per_beat = tracks.get_clks_per_beat();
 
-    for (int i = 0; i < t->GetNumEvents(); ++i) {
-        auto m = t->GetEventAddress(i);
+    for (int i = 0; i < t->get_num_events(); ++i) {
+        auto m = t->get_event_address(i);
 
         if (m) {
             // how many beats have gone by since the last event?
-            long beats_gone_by = (m->GetTime() - last_beat_time) / clks_per_beat;
+            long beats_gone_by = (m->get_time() - last_beat_time) / clks_per_beat;
 
             if (beats_gone_by > 0) {
                 // calculate what our new measure/beat is
@@ -563,23 +563,23 @@ void AdvancedSequencer::ExtractMarkers(std::vector<std::string>* list)
                 last_beat_time += (clks_per_beat * beats_gone_by);
             }
 
-            if (m->IsMetaEvent() && m->IsTimeSig()) {
-                timesig_numerator = m->GetTimeSigNumerator();
-                timesig_denominator = m->GetTimeSigDenominator();
-                clks_per_beat = tracks.GetClksPerBeat() * 4 / timesig_denominator;
+            if (m->is_meta_event() && m->is_time_sig()) {
+                timesig_numerator = m->get_time_sig_numerator();
+                timesig_denominator = m->get_time_sig_denominator();
+                clks_per_beat = tracks.get_clks_per_beat() * 4 / timesig_denominator;
             }
 
-            if (m->IsTextEvent() && m->GetSysEx()) {
-                if ((m->GetMetaType() == META_GENERIC_TEXT) ||
-                    m->GetMetaType() == META_MARKER_TEXT || m->GetMetaType() == META_CUE_TEXT) {
+            if (m->is_text_event() && m->get_sys_ex()) {
+                if ((m->get_meta_type() == META_GENERIC_TEXT) ||
+                    m->get_meta_type() == META_MARKER_TEXT || m->get_meta_type() == META_CUE_TEXT) {
                     char buf[256];
                     char line[256];
-                    memcpy(buf, m->GetSysEx()->GetBuf(), m->GetSysEx()->GetLength());
-                    buf[m->GetSysEx()->GetLength()] = '\0';
+                    memcpy(buf, m->get_sys_ex()->get_buf(), m->get_sys_ex()->get_length());
+                    buf[m->get_sys_ex()->get_length()] = '\0';
                     FixQuotes(buf);
                     snprintf(line, sizeof(line), "%03d:%d        %s", measure + 1, beat + 1, buf);
                     list->push_back(std::string(line));
-                    marker_times[cnt++] = m->GetTime();
+                    marker_times[cnt++] = m->get_time();
                 }
             }
         }
@@ -596,7 +596,7 @@ int AdvancedSequencer::GetCurrentMarker() const
 
     // find marker with largest time that
     // is before cur_time
-    MIDIClockTime cur_time = seq.GetCurrentMIDIClockTime();
+    MIDIClockTime cur_time = seq.get_current_midi_clock_time();
     cur_time += 20;
     int last = -1;
 
@@ -620,18 +620,18 @@ int AdvancedSequencer::FindFirstChannelOnTrack(int trk)
     }
 
     int first_channel = -1;
-    MIDITrack* t = tracks.GetTrack(trk);
+    MIDITrack* t = tracks.get_track(trk);
 
     if (t) {
         // go through all events
         // until we find a channel message
         // and then return the channel number plus 1
-        for (int i = 0; i < t->GetNumEvents(); ++i) {
-            auto m = t->GetEventAddress(i);
+        for (int i = 0; i < t->get_num_events(); ++i) {
+            auto m = t->get_event_address(i);
 
             if (m) {
-                if (m->IsChannelMsg()) {
-                    first_channel = m->GetChannel() + 1;
+                if (m->is_channel_msg()) {
+                    first_channel = m->get_channel() + 1;
                     break;
                 }
             }
@@ -662,15 +662,15 @@ void AdvancedSequencer::ExtractWarpPositions()
     num_warp_positions = 0;
 
     while (num_warp_positions < MAX_WARP_POSITIONS) {
-        if (!seq.GoToMeasure(num_warp_positions * MEASURES_PER_WARP, 0)) {
+        if (!seq.go_to_measure(num_warp_positions * MEASURES_PER_WARP, 0)) {
             break;
         }
 
         // save current sequencer state at this position
-        warp_positions[num_warp_positions++] = new MIDISequencerState(*seq.GetState());
+        warp_positions[num_warp_positions++] = new MIDISequencerState(*seq.get_state());
     }
 
-    seq.GoToMeasure(0, 0);
+    seq.go_to_measure(0, 0);
 }
 
 }  // namespace jdksmidi

@@ -10,20 +10,20 @@ TEST_CASE("MIDITrack basic functionality")
 
     SUBCASE("Initial state")
     {
-        CHECK(track.GetNumEvents() == 0);
-        CHECK(track.GetBufferSize() == 0);
+        CHECK(track.get_num_events() == 0);
+        CHECK(track.get_buffer_size() == 0);
     }
 
     SUBCASE("Clear functionality")
     {
         MIDITimedBigMessage msg;
-        msg.SetNoteOn(0, 60, 127);
-        msg.SetTime(100);
-        track.PutEvent(msg);
+        msg.set_note_on(0, 60, 127);
+        msg.set_time(100);
+        track.put_event(msg);
 
-        CHECK(track.GetNumEvents() == 1);
-        track.Clear();
-        CHECK(track.GetNumEvents() == 0);
+        CHECK(track.get_num_events() == 1);
+        track.clear();
+        CHECK(track.get_num_events() == 0);
     }
 }
 
@@ -34,63 +34,63 @@ TEST_CASE("MIDITrack event management")
 
     SUBCASE("Single event insertion")
     {
-        msg.SetNoteOn(1, 60, 127);
-        msg.SetTime(100);
-        bool result = track.PutEvent(msg);
+        msg.set_note_on(1, 60, 127);
+        msg.set_time(100);
+        bool result = track.put_event(msg);
 
         CHECK(result == true);
-        CHECK(track.GetNumEvents() == 1);
+        CHECK(track.get_num_events() == 1);
     }
 
     SUBCASE("Multiple events in chronological order")
     {
-        msg.SetNoteOn(1, 60, 127);
-        msg.SetTime(100);
-        track.PutEvent(msg);
+        msg.set_note_on(1, 60, 127);
+        msg.set_time(100);
+        track.put_event(msg);
 
-        msg.SetNoteOff(1, 60, 64);
-        msg.SetTime(200);
-        track.PutEvent(msg);
+        msg.set_note_off(1, 60, 64);
+        msg.set_time(200);
+        track.put_event(msg);
 
-        msg.SetNoteOn(1, 64, 100);
-        msg.SetTime(300);
-        track.PutEvent(msg);
+        msg.set_note_on(1, 64, 100);
+        msg.set_time(300);
+        track.put_event(msg);
 
-        CHECK(track.GetNumEvents() == 3);
+        CHECK(track.get_num_events() == 3);
     }
 
     SUBCASE("Multiple events out of chronological order")
     {
-        msg.SetNoteOn(1, 60, 127);
-        msg.SetTime(300);
-        track.PutEvent(msg);
+        msg.set_note_on(1, 60, 127);
+        msg.set_time(300);
+        track.put_event(msg);
 
-        msg.SetNoteOff(1, 64, 64);
-        msg.SetTime(100);
-        track.PutEvent(msg);
+        msg.set_note_off(1, 64, 64);
+        msg.set_time(100);
+        track.put_event(msg);
 
-        msg.SetNoteOn(1, 64, 100);
-        msg.SetTime(200);
-        track.PutEvent(msg);
+        msg.set_note_on(1, 64, 100);
+        msg.set_time(200);
+        track.put_event(msg);
 
-        CHECK(track.GetNumEvents() == 3);
+        CHECK(track.get_num_events() == 3);
     }
 
     SUBCASE("Events at same timestamp")
     {
-        msg.SetNoteOn(1, 60, 127);
-        msg.SetTime(100);
-        track.PutEvent(msg);
+        msg.set_note_on(1, 60, 127);
+        msg.set_time(100);
+        track.put_event(msg);
 
-        msg.SetNoteOn(2, 64, 100);
-        msg.SetTime(100);
-        track.PutEvent(msg);
+        msg.set_note_on(2, 64, 100);
+        msg.set_time(100);
+        track.put_event(msg);
 
-        msg.SetNoteOn(3, 67, 80);
-        msg.SetTime(100);
-        track.PutEvent(msg);
+        msg.set_note_on(3, 67, 80);
+        msg.set_time(100);
+        track.put_event(msg);
 
-        CHECK(track.GetNumEvents() == 3);
+        CHECK(track.get_num_events() == 3);
     }
 }
 
@@ -101,78 +101,78 @@ TEST_CASE("MIDITrack event access")
 
     SUBCASE("GetEvent functionality")
     {
-        msg.SetNoteOn(1, 60, 127);
-        msg.SetTime(100);
-        track.PutEvent(msg);
+        msg.set_note_on(1, 60, 127);
+        msg.set_time(100);
+        track.put_event(msg);
 
-        msg.SetNoteOff(1, 60, 64);
-        msg.SetTime(200);
-        track.PutEvent(msg);
+        msg.set_note_off(1, 60, 64);
+        msg.set_time(200);
+        track.put_event(msg);
 
-        msg.SetControlChange(1, 7, 100);
-        msg.SetTime(300);
-        track.PutEvent(msg);
+        msg.set_control_change(1, 7, 100);
+        msg.set_time(300);
+        track.put_event(msg);
 
         // Access first event
-        MIDITimedBigMessage const* event = track.GetEvent(0);
+        MIDITimedBigMessage const* event = track.get_event(0);
         CHECK(event != nullptr);
-        CHECK(event->GetTime() == 100);
-        CHECK(event->IsNoteOn() == true);
-        CHECK(event->GetNote() == 60);
+        CHECK(event->get_time() == 100);
+        CHECK(event->is_note_on() == true);
+        CHECK(event->get_note() == 60);
 
         // Access second event
-        event = track.GetEvent(1);
+        event = track.get_event(1);
         CHECK(event != nullptr);
-        CHECK(event->GetTime() == 200);
-        CHECK(event->IsNoteOff() == true);
-        CHECK(event->GetNote() == 60);
+        CHECK(event->get_time() == 200);
+        CHECK(event->is_note_off() == true);
+        CHECK(event->get_note() == 60);
 
         // Access third event
-        event = track.GetEvent(2);
+        event = track.get_event(2);
         CHECK(event != nullptr);
-        CHECK(event->GetTime() == 300);
-        CHECK(event->IsControlChange() == true);
-        CHECK(event->GetController() == 7);
+        CHECK(event->get_time() == 300);
+        CHECK(event->is_control_change() == true);
+        CHECK(event->get_controller() == 7);
 
         // Access out of bounds
-        event = track.GetEvent(3);
+        event = track.get_event(3);
         CHECK(event == nullptr);
     }
 
     SUBCASE("FindEventNumber functionality")
     {
-        msg.SetNoteOn(1, 60, 127);
-        msg.SetTime(100);
-        track.PutEvent(msg);
+        msg.set_note_on(1, 60, 127);
+        msg.set_time(100);
+        track.put_event(msg);
 
-        msg.SetNoteOff(1, 60, 64);
-        msg.SetTime(200);
-        track.PutEvent(msg);
+        msg.set_note_off(1, 60, 64);
+        msg.set_time(200);
+        track.put_event(msg);
 
-        msg.SetControlChange(1, 7, 100);
-        msg.SetTime(300);
-        track.PutEvent(msg);
+        msg.set_control_change(1, 7, 100);
+        msg.set_time(300);
+        track.put_event(msg);
 
         int event_num;
         bool found;
 
         // Find exact time
-        found = track.FindEventNumber(200, &event_num);
+        found = track.find_event_number(200, &event_num);
         CHECK(found == true);
         CHECK(event_num == 1);
 
         // Find time between events
-        found = track.FindEventNumber(150, &event_num);
+        found = track.find_event_number(150, &event_num);
         CHECK(found == true);
         CHECK(event_num == 1);
 
         // Find time before first event
-        found = track.FindEventNumber(50, &event_num);
+        found = track.find_event_number(50, &event_num);
         CHECK(found == true);
         CHECK(event_num == 0);
 
         // Find time after last event
-        found = track.FindEventNumber(400, &event_num);
+        found = track.find_event_number(400, &event_num);
         CHECK(found == false);
         CHECK(event_num == 3);
     }
@@ -185,92 +185,92 @@ TEST_CASE("MIDITrack event types")
 
     SUBCASE("Note messages")
     {
-        msg.SetNoteOn(5, 72, 120);
-        msg.SetTime(100);
-        track.PutEvent(msg);
+        msg.set_note_on(5, 72, 120);
+        msg.set_time(100);
+        track.put_event(msg);
 
-        msg.SetNoteOff(5, 72, 64);
-        msg.SetTime(200);
-        track.PutEvent(msg);
+        msg.set_note_off(5, 72, 64);
+        msg.set_time(200);
+        track.put_event(msg);
 
-        CHECK(track.GetNumEvents() == 2);
+        CHECK(track.get_num_events() == 2);
 
-        MIDITimedBigMessage const* event = track.GetEvent(0);
-        CHECK(event->IsNoteOn() == true);
-        CHECK(event->GetChannel() == 5);
-        CHECK(event->GetNote() == 72);
-        CHECK(event->GetVelocity() == 120);
+        MIDITimedBigMessage const* event = track.get_event(0);
+        CHECK(event->is_note_on() == true);
+        CHECK(event->get_channel() == 5);
+        CHECK(event->get_note() == 72);
+        CHECK(event->get_velocity() == 120);
 
-        event = track.GetEvent(1);
-        CHECK(event->IsNoteOff() == true);
-        CHECK(event->GetChannel() == 5);
-        CHECK(event->GetNote() == 72);
-        CHECK(event->GetVelocity() == 64);
+        event = track.get_event(1);
+        CHECK(event->is_note_off() == true);
+        CHECK(event->get_channel() == 5);
+        CHECK(event->get_note() == 72);
+        CHECK(event->get_velocity() == 64);
     }
 
     SUBCASE("Control change messages")
     {
-        msg.SetControlChange(3, C_MODULATION, 64);
-        msg.SetTime(150);
-        track.PutEvent(msg);
+        msg.set_control_change(3, C_MODULATION, 64);
+        msg.set_time(150);
+        track.put_event(msg);
 
-        msg.SetControlChange(3, C_MAIN_VOLUME, 100);
-        msg.SetTime(250);
-        track.PutEvent(msg);
+        msg.set_control_change(3, C_MAIN_VOLUME, 100);
+        msg.set_time(250);
+        track.put_event(msg);
 
-        CHECK(track.GetNumEvents() == 2);
+        CHECK(track.get_num_events() == 2);
 
-        MIDITimedBigMessage const* event = track.GetEvent(0);
-        CHECK(event->IsControlChange() == true);
-        CHECK(event->GetChannel() == 3);
-        CHECK(event->GetController() == C_MODULATION);
-        CHECK(event->GetControllerValue() == 64);
+        MIDITimedBigMessage const* event = track.get_event(0);
+        CHECK(event->is_control_change() == true);
+        CHECK(event->get_channel() == 3);
+        CHECK(event->get_controller() == C_MODULATION);
+        CHECK(event->get_controller_value() == 64);
 
-        event = track.GetEvent(1);
-        CHECK(event->IsControlChange() == true);
-        CHECK(event->GetController() == C_MAIN_VOLUME);
-        CHECK(event->GetControllerValue() == 100);
+        event = track.get_event(1);
+        CHECK(event->is_control_change() == true);
+        CHECK(event->get_controller() == C_MAIN_VOLUME);
+        CHECK(event->get_controller_value() == 100);
     }
 
     SUBCASE("Program change messages")
     {
-        msg.SetProgramChange(7, 42);
-        msg.SetTime(300);
-        track.PutEvent(msg);
+        msg.set_program_change(7, 42);
+        msg.set_time(300);
+        track.put_event(msg);
 
-        CHECK(track.GetNumEvents() == 1);
+        CHECK(track.get_num_events() == 1);
 
-        MIDITimedBigMessage const* event = track.GetEvent(0);
-        CHECK(event->IsProgramChange() == true);
-        CHECK(event->GetChannel() == 7);
-        CHECK(event->GetPGValue() == 42);
+        MIDITimedBigMessage const* event = track.get_event(0);
+        CHECK(event->is_program_change() == true);
+        CHECK(event->get_channel() == 7);
+        CHECK(event->get_pg_value() == 42);
     }
 
     SUBCASE("Pitch bend messages")
     {
-        msg.SetPitchBend(2, 1000);
-        msg.SetTime(400);
-        track.PutEvent(msg);
+        msg.set_pitch_bend(2, 1000);
+        msg.set_time(400);
+        track.put_event(msg);
 
-        CHECK(track.GetNumEvents() == 1);
+        CHECK(track.get_num_events() == 1);
 
-        MIDITimedBigMessage const* event = track.GetEvent(0);
-        CHECK(event->IsPitchBend() == true);
-        CHECK(event->GetChannel() == 2);
-        CHECK(event->GetBenderValue() == 1000);
+        MIDITimedBigMessage const* event = track.get_event(0);
+        CHECK(event->is_pitch_bend() == true);
+        CHECK(event->get_channel() == 2);
+        CHECK(event->get_bender_value() == 1000);
     }
 
     SUBCASE("System messages")
     {
-        msg.SetSongSelect(5);
-        msg.SetTime(500);
-        track.PutEvent(msg);
+        msg.set_song_select(5);
+        msg.set_time(500);
+        track.put_event(msg);
 
-        CHECK(track.GetNumEvents() == 1);
+        CHECK(track.get_num_events() == 1);
 
-        MIDITimedBigMessage const* event = track.GetEvent(0);
-        CHECK(event->IsSongSelect() == true);
-        CHECK(event->GetByte1() == 5);
+        MIDITimedBigMessage const* event = track.get_event(0);
+        CHECK(event->is_song_select() == true);
+        CHECK(event->get_byte1() == 5);
     }
 }
 
@@ -281,58 +281,58 @@ TEST_CASE("MIDITrack event modification")
 
     SUBCASE("SetEvent functionality")
     {
-        msg.SetNoteOn(1, 60, 127);
-        msg.SetTime(100);
-        track.PutEvent(msg);
+        msg.set_note_on(1, 60, 127);
+        msg.set_time(100);
+        track.put_event(msg);
 
-        msg.SetNoteOff(1, 60, 64);
-        msg.SetTime(200);
-        track.PutEvent(msg);
+        msg.set_note_off(1, 60, 64);
+        msg.set_time(200);
+        track.put_event(msg);
 
-        CHECK(track.GetNumEvents() == 2);
+        CHECK(track.get_num_events() == 2);
 
         // Modify first event
         MIDITimedBigMessage new_msg;
-        new_msg.SetControlChange(2, C_MAIN_VOLUME, 100);
-        new_msg.SetTime(150);
-        bool result = track.SetEvent(0, new_msg);
+        new_msg.set_control_change(2, C_MAIN_VOLUME, 100);
+        new_msg.set_time(150);
+        bool result = track.set_event(0, new_msg);
 
         CHECK(result == true);
-        MIDITimedBigMessage const* event = track.GetEvent(0);
-        CHECK(event->IsControlChange() == true);
-        CHECK(event->GetChannel() == 2);
-        CHECK(event->GetTime() == 150);
+        MIDITimedBigMessage const* event = track.get_event(0);
+        CHECK(event->is_control_change() == true);
+        CHECK(event->get_channel() == 2);
+        CHECK(event->get_time() == 150);
 
         // Try to set out of bounds event
-        result = track.SetEvent(5, new_msg);
+        result = track.set_event(5, new_msg);
         CHECK(result == false);
     }
 
     SUBCASE("MakeEventNoOp functionality")
     {
-        msg.SetNoteOn(1, 60, 127);
-        msg.SetTime(100);
-        track.PutEvent(msg);
+        msg.set_note_on(1, 60, 127);
+        msg.set_time(100);
+        track.put_event(msg);
 
-        msg.SetNoteOff(1, 60, 64);
-        msg.SetTime(200);
-        track.PutEvent(msg);
+        msg.set_note_off(1, 60, 64);
+        msg.set_time(200);
+        track.put_event(msg);
 
-        CHECK(track.GetNumEvents() == 2);
+        CHECK(track.get_num_events() == 2);
 
         // Make first event NoOp
-        bool result = track.MakeEventNoOp(0);
+        bool result = track.make_event_no_op(0);
         CHECK(result == true);
 
-        MIDITimedBigMessage const* event = track.GetEvent(0);
-        CHECK(event->IsNoOp() == true);
+        MIDITimedBigMessage const* event = track.get_event(0);
+        CHECK(event->is_no_op() == true);
 
         // Second event should be unchanged
-        event = track.GetEvent(1);
-        CHECK(event->IsNoteOff() == true);
+        event = track.get_event(1);
+        CHECK(event->is_note_off() == true);
 
         // Try to make out of bounds event NoOp
-        result = track.MakeEventNoOp(5);
+        result = track.make_event_no_op(5);
         CHECK(result == false);
     }
 }
@@ -344,64 +344,64 @@ TEST_CASE("MIDITrack edge cases")
 
     SUBCASE("Zero timestamp events")
     {
-        msg.SetNoteOn(0, 60, 127);
-        msg.SetTime(0);
-        track.PutEvent(msg);
+        msg.set_note_on(0, 60, 127);
+        msg.set_time(0);
+        track.put_event(msg);
 
-        msg.SetNoteOff(0, 60, 64);
-        msg.SetTime(0);
-        track.PutEvent(msg);
+        msg.set_note_off(0, 60, 64);
+        msg.set_time(0);
+        track.put_event(msg);
 
-        CHECK(track.GetNumEvents() == 2);
+        CHECK(track.get_num_events() == 2);
 
-        MIDITimedBigMessage const* event = track.GetEvent(0);
+        MIDITimedBigMessage const* event = track.get_event(0);
         CHECK(event != nullptr);
-        CHECK(event->GetTime() == 0);
+        CHECK(event->get_time() == 0);
     }
 
     SUBCASE("Large timestamp values")
     {
-        msg.SetNoteOn(0, 60, 127);
-        msg.SetTime(1000000);
-        track.PutEvent(msg);
+        msg.set_note_on(0, 60, 127);
+        msg.set_time(1000000);
+        track.put_event(msg);
 
-        CHECK(track.GetNumEvents() == 1);
+        CHECK(track.get_num_events() == 1);
 
-        MIDITimedBigMessage const* event = track.GetEvent(0);
-        CHECK(event->GetTime() == 1000000);
+        MIDITimedBigMessage const* event = track.get_event(0);
+        CHECK(event->get_time() == 1000000);
     }
 
     SUBCASE("All channels (0-15)")
     {
         for (int channel = 0; channel < 16; ++channel) {
-            msg.SetNoteOn(channel, 60, 127);
-            msg.SetTime(channel * 100);
-            track.PutEvent(msg);
+            msg.set_note_on(channel, 60, 127);
+            msg.set_time(channel * 100);
+            track.put_event(msg);
         }
 
-        CHECK(track.GetNumEvents() == 16);
+        CHECK(track.get_num_events() == 16);
 
         for (int channel = 0; channel < 16; ++channel) {
-            MIDITimedBigMessage const* event = track.GetEvent(channel);
-            CHECK(event->GetChannel() == channel);
-            CHECK(event->GetTime() == channel * 100);
+            MIDITimedBigMessage const* event = track.get_event(channel);
+            CHECK(event->get_channel() == channel);
+            CHECK(event->get_time() == channel * 100);
         }
     }
 
     SUBCASE("All note range (0-127)")
     {
         for (int note = 0; note < 128; note += 8) {
-            msg.SetNoteOn(0, note, 127);
-            msg.SetTime(note * 10);
-            track.PutEvent(msg);
+            msg.set_note_on(0, note, 127);
+            msg.set_time(note * 10);
+            track.put_event(msg);
         }
 
-        CHECK(track.GetNumEvents() == 16);
+        CHECK(track.get_num_events() == 16);
 
         for (int i = 0; i < 16; ++i) {
-            MIDITimedBigMessage const* event = track.GetEvent(i);
-            CHECK(event->GetNote() == i * 8);
-            CHECK(event->GetTime() == i * 8 * 10);
+            MIDITimedBigMessage const* event = track.get_event(i);
+            CHECK(event->get_note() == i * 8);
+            CHECK(event->get_time() == i * 8 * 10);
         }
     }
 
@@ -409,13 +409,13 @@ TEST_CASE("MIDITrack edge cases")
     {
         // Add enough events to trigger expansion
         for (int i = 0; i < MIDITrackChunkSize + 10; ++i) {
-            msg.SetNoteOn(0, 60, 127);
-            msg.SetTime(i);
-            bool result = track.PutEvent(msg);
+            msg.set_note_on(0, 60, 127);
+            msg.set_time(i);
+            bool result = track.put_event(msg);
             CHECK(result == true);
         }
 
-        CHECK(track.GetNumEvents() == MIDITrackChunkSize + 10);
-        CHECK(track.GetBufferSize() >= MIDITrackChunkSize + 10);
+        CHECK(track.get_num_events() == MIDITrackChunkSize + 10);
+        CHECK(track.get_buffer_size() >= MIDITrackChunkSize + 10);
     }
 }

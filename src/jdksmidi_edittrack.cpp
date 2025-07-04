@@ -66,7 +66,7 @@ MIDIEditTrack::~MIDIEditTrack()
     ENTER("MIDIEditTrack::~MIDIEditTrack()");
 }
 
-void MIDIEditTrack::Process(
+void MIDIEditTrack::process(
     MIDIClockTime start_time,
     MIDIClockTime end_time,
     MIDIProcessor* process,
@@ -181,8 +181,8 @@ static int cmpmsgtime ( const void *a, const void *b )
     // Compare the event times
     //
     std::uint32_t t1, t2;
-    t1 = m1->GetTime();
-    t2 = m2->GetTime();
+    t1 = m1->get_time();
+    t2 = m2->get_time();
 
     if ( t1 < t2 )
         return -1;
@@ -192,10 +192,10 @@ static int cmpmsgtime ( const void *a, const void *b )
 
     // the times are the same. put note ons first.
 
-    if ( m1->GetStatus() == M_NOTE_ON && m1->byte2 != 0 )
+    if ( m1->get_status() == M_NOTE_ON && m1->byte2 != 0 )
         return -1;
 
-    if ( m2->GetStatus() == M_NOTE_ON && m2->byte2 != 0 )
+    if ( m2->get_status() == M_NOTE_ON && m2->byte2 != 0 )
         return 1;
 
     return 0;
@@ -217,11 +217,11 @@ void EMIDITrack::Sort()
     // buffer[last_event].  Set the last event ( the data end event)
     // to the maximum time.
     //
-    std::uint32_t t1 = buffer[last_event-1].GetTime();
-    std::uint32_t t2 = buffer[last_event].GetTime();
+    std::uint32_t t1 = buffer[last_event-1].get_time();
+    std::uint32_t t2 = buffer[last_event].get_time();
 
     if ( t1 > t2 )
-        buffer[last_event].SetTime ( t1 );
+        buffer[last_event].set_time ( t1 );
 }
 
 
@@ -231,7 +231,7 @@ void EMIDITrack::CopyEvent ( MIDITrack *t, unsigned int ev )
     // Get the event from the other track.
     //
     TimedMIDIMessage m;
-    t->GetEvent ( ev, m );
+    t->get_event ( ev, m );
     //
     // is it a mark?
     //
@@ -241,7 +241,7 @@ void EMIDITrack::CopyEvent ( MIDITrack *t, unsigned int ev )
         //
         // Is it Sys-Ex?
         //
-        //if( m.IsSysEx() )
+        //if( m.is_sys_ex() )
         //{
         //
         // yes, make a new sys-ex buffer and copy the
@@ -269,7 +269,7 @@ void EMIDITrack::CopyEvent ( MIDITrack *t, unsigned int ev )
         //
         // Is it a DataEnd event?
         //
-        if ( m.IsDataEnd() )
+        if ( m.is_data_end() )
         {
             //
             // Yes, ignore it.
@@ -367,10 +367,10 @@ void EMIDITrack::Truncate ( std::uint32_t start_time )
 
     for ( ev = 0; ev < last_event; ev++ )
     {
-        if ( buffer[ev].IsDataEnd() )
+        if ( buffer[ev].is_data_end() )
             break;
 
-        if ( buffer[ev].GetTime() >= start_time )
+        if ( buffer[ev].get_time() >= start_time )
             break;
     }
 
@@ -382,8 +382,8 @@ void EMIDITrack::Truncate ( std::uint32_t start_time )
     // and free the memory for those as well.
     //
     last_event = ev;
-    buffer[ev].SetDataEnd();
-    buffer[ev].SetTime ( start_time );
+    buffer[ev].set_data_end();
+    buffer[ev].set_time ( start_time );
     FixNotes();
 }
 
@@ -398,13 +398,13 @@ void EMIDITrack::FixNotes()
 
     for ( unsigned int ev = 0; ev <= last_event; ev++ )
     {
-        if ( buffer[ev].IsDataEnd() )
+        if ( buffer[ev].is_data_end() )
         {
-            m.SetTime ( buffer[ev].GetTime() );
+            m.set_time ( buffer[ev].get_time() );
             break;
         }
 
-        matrix->Process ( buffer[ev] );
+        matrix->process ( buffer[ev] );
     }
 
     //
@@ -414,11 +414,11 @@ void EMIDITrack::FixNotes()
 
     for ( std::uint8_t channel = 0; channel < 16; channel++ )
     {
-        if ( matrix->GetChannelCount ( channel ) > 0 )
+        if ( matrix->get_channel_count ( channel ) > 0 )
         {
             for ( std::uint8_t note = 0; note < 128; note++ )
             {
-                std::uint8_t num = matrix->GetNoteCount ( channel, note );
+                std::uint8_t num = matrix->get_note_count ( channel, note );
 
                 for ( std::uint8_t c = 0; c < num; c++ )
                 {
@@ -438,11 +438,11 @@ void EMIDITrack::FixNotes()
 
 void EMIDITrack::Merge ( MIDITrack *trk1, MIDITrack *trk2 )
 {
-    Clear();
+    clear();
     unsigned int trk1_ev = 0;
     unsigned int trk2_ev = 0;
-    unsigned int trk1_max = trk1->GetNumEvents();
-    unsigned int trk2_max = trk2->GetNumEvents();
+    unsigned int trk1_max = trk1->get_num_events();
+    unsigned int trk2_max = trk2->get_num_events();
     //
     // loop until all events of both tracks are transferred
     //
@@ -487,10 +487,10 @@ void EMIDITrack::Merge ( MIDITrack *trk1, MIDITrack *trk2 )
         // first.
         //
         TimedMIDIMessage m1, m2;
-        trk1->GetEvent ( trk1_ev, m1 );
-        trk2->GetEvent ( trk2_ev, m2 );
+        trk1->get_event ( trk1_ev, m1 );
+        trk2->get_event ( trk2_ev, m2 );
 
-        if ( m1.GetTime() < m2.GetTime() )
+        if ( m1.get_time() < m2.get_time() )
         {
             //
             // track 1 event came first. copy it over.
@@ -511,7 +511,7 @@ void EMIDITrack::Merge ( MIDITrack *trk1, MIDITrack *trk2 )
 
 void EMIDITrack::Merge ( MIDITrack *trk )
 {
-    for ( unsigned int ev = 0; ev < trk->GetNumEvents(); ev++ )
+    for ( unsigned int ev = 0; ev < trk->get_num_events(); ev++ )
     {
         CopyEvent ( trk, ev );
     }
@@ -569,7 +569,7 @@ void EMIDITrack::Erase ( std::uint32_t start, std::uint32_t end, Boolean jagged 
 
     for ( unsigned int ev = 0; ev < last_event; ev++ )
     {
-        std::uint32_t time = buffer[ev].GetTime();
+        std::uint32_t time = buffer[ev].get_time();
         //
         // if the event is before our erase region,
         // then give it to the before_matrix object
@@ -577,7 +577,7 @@ void EMIDITrack::Erase ( std::uint32_t start, std::uint32_t end, Boolean jagged 
 
         if ( time < start )
         {
-            before_matrix->Process ( buffer[ev] );
+            before_matrix->process ( buffer[ev] );
             continue;
         }
 
@@ -596,20 +596,20 @@ void EMIDITrack::Erase ( std::uint32_t start, std::uint32_t end, Boolean jagged 
             // give this event to our during_matrix object
             // to keep track of note on's
             //
-            during_matrix->Process ( buffer[ev] );
+            during_matrix->process ( buffer[ev] );
 
             if ( buffer[ev].IsMark() )
             {
                 //
                 // Is this event a Sys-Ex event?
                 //
-                if ( m.IsSysEx() )
+                if ( m.is_sys_ex() )
                 {
                     //
                     // yep. we delete it as well as the
                     // sys-ex message itself.
                     //
-                    unsigned int s = m.GetSysEx();
+                    unsigned int s = m.get_sys_ex();
                     exclusives.Delete ( s );
                 }
 
@@ -642,25 +642,25 @@ void EMIDITrack::Erase ( std::uint32_t start, std::uint32_t end, Boolean jagged 
                 // corresponding note on event was before
                 // the start time.
                 //
-                if ( ( buffer[ev].GetStatus() == M_NOTE_ON &&
-                        buffer[ev].GetVelocity() == 0 )
-                        || buffer[ev].GetStatus() == M_NOTE_OFF )
+                if ( ( buffer[ev].get_status() == M_NOTE_ON &&
+                        buffer[ev].get_velocity() == 0 )
+                        || buffer[ev].get_status() == M_NOTE_OFF )
                 {
                     //
                     // ok, it was a note off event.
                     // see if it needs to be deleted.
                     //
-                    std::uint8_t channel = buffer[ev].GetChannel();
-                    std::uint8_t note = buffer[ev].GetNote();
+                    std::uint8_t channel = buffer[ev].get_channel();
+                    std::uint8_t note = buffer[ev].get_note();
 
-                    if ( before_matrix->GetNoteCount ( channel, note ) != 0 )
+                    if ( before_matrix->get_note_count ( channel, note ) != 0 )
                     {
                         //
                         // do not delete the note off.
                         // we need it. first process it
                         // so we know that note is now off.
                         //
-                        before_matrix->Process ( buffer[ev] );
+                        before_matrix->process ( buffer[ev] );
                         //
                         // if a non-jagged edit was requested,
                         // then we shall move this note off to
@@ -669,7 +669,7 @@ void EMIDITrack::Erase ( std::uint32_t start, std::uint32_t end, Boolean jagged 
 
                         if ( !jagged )
                         {
-                            buffer[ev].SetTime ( start );
+                            buffer[ev].set_time ( start );
                         }
                     }
 
@@ -686,7 +686,7 @@ void EMIDITrack::Erase ( std::uint32_t start, std::uint32_t end, Boolean jagged 
                     // ok, it wasn't a note off message.
                     // give it to the during_matrix object.
                     //
-                    during_matrix->Process ( buffer[ev] );
+                    during_matrix->process ( buffer[ev] );
                     //
                     // and now delete it.
                     //
@@ -713,25 +713,25 @@ void EMIDITrack::Erase ( std::uint32_t start, std::uint32_t end, Boolean jagged 
                 //
                 // is it a note off message?
                 //
-                if ( buffer[ev].GetStatus() == M_NOTE_OFF
-                        || ( buffer[ev].GetStatus() == M_NOTE_ON &&
-                             buffer[ev].GetVelocity() == 0 ) )
+                if ( buffer[ev].get_status() == M_NOTE_OFF
+                        || ( buffer[ev].get_status() == M_NOTE_ON &&
+                             buffer[ev].get_velocity() == 0 ) )
                 {
                     //
                     // ok, it is a note off message,
                     // was the corresponding note on
                     // deleted?
                     //
-                    std::uint8_t channel = buffer[ev].GetChannel();
-                    std::uint8_t note = buffer[ev].GetNote();
+                    std::uint8_t channel = buffer[ev].get_channel();
+                    std::uint8_t note = buffer[ev].get_note();
 
-                    if ( during_matrix->GetNoteCount ( channel, note ) )
+                    if ( during_matrix->get_note_count ( channel, note ) )
                     {
                         //
                         // yes, it was, so we gotta NOP this event.
                         // give it to during_matrix so it knows
                         // that the note is off now.
-                        during_matrix->Process ( buffer[ev] );
+                        during_matrix->process ( buffer[ev] );
                         buffer[ev].SetNOP();
                         changed = TRUE;
                     }
@@ -785,7 +785,7 @@ void    EMIDITrack::Delete ( std::uint32_t start, std::uint32_t end, Boolean jag
         //
         // get the event's time.
         //
-        std::uint32_t time = buffer[ev].GetTime();
+        std::uint32_t time = buffer[ev].get_time();
         //
         // is it after the end time?
         //
@@ -796,7 +796,7 @@ void    EMIDITrack::Delete ( std::uint32_t start, std::uint32_t end, Boolean jag
             // yes, change the event time to what it is
             // supposed to be.
             //
-            buffer[ev].SetTime ( time - diff );
+            buffer[ev].set_time ( time - diff );
         }
     }
 }
@@ -822,7 +822,7 @@ void EMIDITrack::Insert ( std::uint32_t start, std::uint32_t end )
         //
         // Get the event's time.
         //
-        std::uint32_t time = buffer[ev].GetTime();
+        std::uint32_t time = buffer[ev].get_time();
         //
         // is it after 'start' time?
         //
@@ -832,7 +832,7 @@ void EMIDITrack::Insert ( std::uint32_t start, std::uint32_t end )
             //
             // move the event forward in time by 'diff' clicks.
             //
-            buffer[ev].SetTime ( time + diff );
+            buffer[ev].set_time ( time + diff );
         }
     }
 }

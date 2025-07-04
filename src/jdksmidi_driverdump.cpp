@@ -38,17 +38,17 @@ MIDIDriverDump::MIDIDriverDump(int queue_size, FILE* outfile)
 MIDIDriverDump::~MIDIDriverDump()
 {}
 
-bool MIDIDriverDump::HardwareMsgOut(MIDITimedBigMessage const& msg)
+bool MIDIDriverDump::hardware_msg_out(MIDITimedBigMessage const& msg)
 {
     char buf[256];
-    fprintf(f, "OUTPUT: %s\n", msg.MsgToText(buf));
+    fprintf(f, "OUTPUT: %s\n", msg.msg_to_text(buf));
     return true;
 }
 
-void MIDIDriverDump::TimeTick(unsigned long sys_time)
+void MIDIDriverDump::time_tick(unsigned long sys_time)
 {
     fprintf(f, "TICK  : %8ld\n", sys_time);
-    MIDIDriver::TimeTick(sys_time);
+    MIDIDriver::time_tick(sys_time);
 }
 
 }  // namespace jdksmidi

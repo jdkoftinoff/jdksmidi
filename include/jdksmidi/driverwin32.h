@@ -71,7 +71,7 @@ class MIDIDriverWin32 : public MIDIDriver
     void CloseMIDIInPort();
     void CloseMIDIOutPort();
 
-    bool HardwareMsgOut(MIDITimedBigMessage const& msg);
+    bool hardware_msg_out(MIDITimedBigMessage const& msg);
 
   protected:
     static void CALLBACK win32_timer(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dw1, DWORD dw2);

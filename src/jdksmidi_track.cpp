@@ -51,12 +51,12 @@
 
 namespace jdksmidi {
 
-MIDITimedBigMessage const* MIDITrackChunk::GetEventAddress(int event_num) const
+MIDITimedBigMessage const* MIDITrackChunk::get_event_address(int event_num) const
 {
     return &buf[event_num];
 }
 
-MIDITimedBigMessage* MIDITrackChunk::GetEventAddress(int event_num)
+MIDITimedBigMessage* MIDITrackChunk::get_event_address(int event_num)
 {
     return &buf[event_num];
 }
@@ -70,7 +70,7 @@ MIDITrack::MIDITrack(int size)
         chunk[i] = nullptr;
 
     if (size) {
-        Expand(size);
+        expand(size);
     }
 }
 
@@ -79,63 +79,63 @@ MIDITrack::MIDITrack(MIDITrack const& t)
     buf_size = 0;
     num_events = 0;
 
-    for (int i = 0; i < t.GetNumEvents(); ++i) {
+    for (int i = 0; i < t.get_num_events(); ++i) {
         MIDITimedBigMessage const* src;
-        src = t.GetEventAddress(i);
-        PutEvent(*src);
+        src = t.get_event_address(i);
+        put_event(*src);
     }
 }
 
 MIDITrack::~MIDITrack()
 {}
 
-void MIDITrack::Clear()
+void MIDITrack::clear()
 {
     num_events = 0;
 }
 
-void MIDITrack::ClearAndMerge(MIDITrack const* src1, MIDITrack const* src2)
+void MIDITrack::clear_and_merge(MIDITrack const* src1, MIDITrack const* src2)
 {
-    Clear();
+    clear();
     int cur_trk1ev = 0;
-    int num_trk1ev = src1->GetNumEvents();
+    int num_trk1ev = src1->get_num_events();
     int cur_trk2ev = 0;
-    int num_trk2ev = src2->GetNumEvents();
+    int num_trk2ev = src2->get_num_events();
     MIDIClockTime last_data_end_time = 0;
 
     while (cur_trk1ev < num_trk1ev || cur_trk2ev < num_trk2ev) {
         // skip any NOPs on track 1
-        auto ev1 = src1->GetEventAddress(cur_trk1ev);
-        auto ev2 = src2->GetEventAddress(cur_trk2ev);
+        auto ev1 = src1->get_event_address(cur_trk1ev);
+        auto ev2 = src2->get_event_address(cur_trk2ev);
         bool has_ev1 = (cur_trk1ev < num_trk1ev) && ev1;
         bool has_ev2 = (cur_trk2ev < num_trk2ev) && ev2;
 
-        if (has_ev1 && ev1->IsNoOp()) {
+        if (has_ev1 && ev1->is_no_op()) {
             cur_trk1ev++;
             continue;
         }
 
         // skip any NOPs on track 2
 
-        if (has_ev2 && ev2->IsNoOp()) {
+        if (has_ev2 && ev2->is_no_op()) {
             cur_trk2ev++;
             continue;
         }
 
         // skip all data end
 
-        if (has_ev1 && ev1->IsDataEnd()) {
-            if (ev1->GetTime() > last_data_end_time) {
-                last_data_end_time = ev1->GetTime();
+        if (has_ev1 && ev1->is_data_end()) {
+            if (ev1->get_time() > last_data_end_time) {
+                last_data_end_time = ev1->get_time();
             }
 
             cur_trk1ev++;
             continue;
         }
 
-        if (has_ev2 && ev2->IsDataEnd()) {
-            if (ev2->GetTime() > last_data_end_time) {
-                last_data_end_time = ev2->GetTime();
+        if (has_ev2 && ev2->is_data_end()) {
+            if (ev2->get_time() > last_data_end_time) {
+                last_data_end_time = ev2->get_time();
             }
 
             cur_trk2ev++;
@@ -144,20 +144,20 @@ void MIDITrack::ClearAndMerge(MIDITrack const* src1, MIDITrack const* src2)
 
         if ((has_ev1 && !has_ev2)) {
             // nothing left on trk 2
-            if (!ev1->IsNoOp()) {
-                if (ev1->GetTime() > last_data_end_time) {
-                    last_data_end_time = ev1->GetTime();
+            if (!ev1->is_no_op()) {
+                if (ev1->get_time() > last_data_end_time) {
+                    last_data_end_time = ev1->get_time();
                 }
 
-                PutEvent(*ev1);
+                put_event(*ev1);
                 ++cur_trk1ev;
             }
         }
 
         else if ((!has_ev1 && has_ev2)) {
             // nothing left on trk 1
-            if (!ev2->IsNoOp()) {
-                PutEvent(*ev2);
+            if (!ev2->is_no_op()) {
+                put_event(*ev2);
                 ++cur_trk2ev;
             }
         }
@@ -165,7 +165,7 @@ void MIDITrack::ClearAndMerge(MIDITrack const* src1, MIDITrack const* src2)
         else if (has_ev1 && has_ev2) {
             int trk = 1;
 
-            if ((ev1->GetTime() <= ev2->GetTime())) {
+            if ((ev1->get_time() <= ev2->get_time())) {
                 trk = 1;
             }
 
@@ -174,20 +174,20 @@ void MIDITrack::ClearAndMerge(MIDITrack const* src1, MIDITrack const* src2)
             }
 
             if (trk == 1) {
-                if (ev1->GetTime() > last_data_end_time) {
-                    last_data_end_time = ev1->GetTime();
+                if (ev1->get_time() > last_data_end_time) {
+                    last_data_end_time = ev1->get_time();
                 }
 
-                PutEvent(*ev1);
+                put_event(*ev1);
                 ++cur_trk1ev;
             }
 
             else {
-                if (ev2->GetTime() > last_data_end_time) {
-                    last_data_end_time = ev2->GetTime();
+                if (ev2->get_time() > last_data_end_time) {
+                    last_data_end_time = ev2->get_time();
                 }
 
-                PutEvent(*ev2);
+                put_event(*ev2);
                 ++cur_trk2ev;
             }
         }
@@ -195,9 +195,9 @@ void MIDITrack::ClearAndMerge(MIDITrack const* src1, MIDITrack const* src2)
 
     // put single final data end event
     MIDITimedBigMessage dataend;
-    dataend.SetTime(last_data_end_time);
-    dataend.SetDataEnd();
-    PutEvent(dataend);
+    dataend.set_time(last_data_end_time);
+    dataend.set_data_end();
+    put_event(dataend);
 }
 
 #if 0
@@ -224,41 +224,41 @@ void MIDITrack::QSort ( int left, int right )
 
     for ( ; pos <= right; ++pos )
     {
-        x = GetEventAddress ( pos );
+        x = get_event_address ( pos );
 
-        if ( x && !x->IsNoOp() )
+        if ( x && !x->is_no_op() )
             break;
     }
 
-    if ( GetEventAddress ( pos )->IsNoOp() )
+    if ( get_event_address ( pos )->is_no_op() )
     {
         for ( pos = ( left + right ) / 2; pos >= left; --pos )
         {
-            x = GetEventAddress ( pos );
+            x = get_event_address ( pos );
 
-            if ( x && !x->IsNoOp() )
+            if ( x && !x->is_no_op() )
                 break;
         }
     }
 
-    if ( x && x->IsNoOp() )
+    if ( x && x->is_no_op() )
         return;
 
     do
     {
-        while ( MIDITimedMessage::CompareEvents ( *GetEventAddress ( i ), *x ) == 2 &&
+        while ( MIDITimedMessage::compare_events ( *get_event_address ( i ), *x ) == 2 &&
                 i < right )
             ++i;
 
-        while ( MIDITimedMessage::CompareEvents ( *x, *GetEventAddress ( j ) ) == 2 &&
+        while ( MIDITimedMessage::compare_events ( *x, *get_event_address ( j ) ) == 2 &&
                 j > left )
             --j;
 
         if ( i <= j )
         {
-            y = *GetEventAddress ( i );
-            *GetEventAddress ( i ) = *GetEventAddress ( j );
-            *GetEventAddress ( j ) = y;
+            y = *get_event_address ( i );
+            *get_event_address ( i ) = *get_event_address ( j );
+            *get_event_address ( j ) = y;
             ++i;
             --j;
         }
@@ -293,9 +293,9 @@ void MIDITrack::Sort()
     {
         first_out_of_order_item = i + 1;
 
-        if ( MIDITimedMessage::CompareEvents (
-                    *GetEventAddress ( i ),
-                    *GetEventAddress ( first_out_of_order_item )
+        if ( MIDITimedMessage::compare_events (
+                    *get_event_address ( i ),
+                    *get_event_address ( first_out_of_order_item )
                 ) == 1 )
             break;
     }
@@ -310,7 +310,7 @@ void MIDITrack::Sort()
 
 #endif
 
-void MIDITrack::Shrink()
+void MIDITrack::shrink()
 {
     int num_chunks_used = (int)((num_events / MIDITrackChunkSize) + 1);
     int num_chunks_alloced = (int)(buf_size / MIDITrackChunkSize);
@@ -324,7 +324,7 @@ void MIDITrack::Shrink()
     }
 }
 
-bool MIDITrack::Expand(int increase_amount)
+bool MIDITrack::expand(int increase_amount)
 {
     int num_chunks_to_expand = (int)((increase_amount / MIDITrackChunkSize) + 1);
     int num_chunks_alloced = (int)(buf_size / MIDITrackChunkSize);
@@ -347,94 +347,94 @@ bool MIDITrack::Expand(int increase_amount)
     return true;
 }
 
-MIDITimedBigMessage* MIDITrack::GetEventAddress(int event_num)
+MIDITimedBigMessage* MIDITrack::get_event_address(int event_num)
 {
-    return chunk[event_num / (MIDITrackChunkSize)]->GetEventAddress(
+    return chunk[event_num / (MIDITrackChunkSize)]->get_event_address(
         (event_num % MIDITrackChunkSize));
 }
 
-MIDITimedBigMessage const* MIDITrack::GetEventAddress(int event_num) const
+MIDITimedBigMessage const* MIDITrack::get_event_address(int event_num) const
 {
-    return chunk[event_num / (MIDITrackChunkSize)]->GetEventAddress(
+    return chunk[event_num / (MIDITrackChunkSize)]->get_event_address(
         (event_num % MIDITrackChunkSize));
 }
 
-bool MIDITrack::PutEvent(MIDITimedBigMessage const& msg)
+bool MIDITrack::put_event(MIDITimedBigMessage const& msg)
 {
     if (num_events >= buf_size) {
-        if (!Expand())
+        if (!expand())
             return false;
     }
 
-    GetEventAddress(num_events++)->Copy(msg);
+    get_event_address(num_events++)->copy(msg);
     return true;
 }
 
-bool MIDITrack::PutEvent(MIDITimedMessage const& msg, MIDISystemExclusive* sysex)
+bool MIDITrack::put_event(MIDITimedMessage const& msg, MIDISystemExclusive* sysex)
 {
     if (num_events >= buf_size) {
-        if (!Expand())
+        if (!expand())
             return false;
     }
 
-    MIDITimedBigMessage* e = GetEventAddress(num_events);
-    e->Copy(msg);
-    e->CopySysEx(sysex);
+    MIDITimedBigMessage* e = get_event_address(num_events);
+    e->copy(msg);
+    e->copy_sys_ex(sysex);
     ++num_events;
     return true;
 }
 
-bool MIDITrack::GetEvent(int event_num, MIDITimedBigMessage* msg) const
+bool MIDITrack::get_event(int event_num, MIDITimedBigMessage* msg) const
 {
     if (event_num >= num_events) {
         return false;
     }
 
     else {
-        msg->Copy(*GetEventAddress(event_num));
+        msg->copy(*get_event_address(event_num));
         return true;
     }
 }
 
-bool MIDITrack::SetEvent(int event_num, MIDITimedBigMessage const& msg)
+bool MIDITrack::set_event(int event_num, MIDITimedBigMessage const& msg)
 {
     if (event_num >= num_events) {
         return false;
     }
 
     else {
-        GetEventAddress(event_num)->Copy(msg);
+        get_event_address(event_num)->copy(msg);
         return true;
     }
 }
 
-bool MIDITrack::MakeEventNoOp(int event_num)
+bool MIDITrack::make_event_no_op(int event_num)
 {
     if (event_num >= num_events) {
         return false;
     }
 
     else {
-        MIDITimedBigMessage* ev = GetEventAddress(event_num);
+        MIDITimedBigMessage* ev = get_event_address(event_num);
 
         if (ev) {
-            ev->ClearSysEx();
-            ev->SetNoOp();
+            ev->clear_sys_ex();
+            ev->set_no_op();
         }
 
         return true;
     }
 }
 
-bool MIDITrack::FindEventNumber(MIDIClockTime time, int* event_num) const
+bool MIDITrack::find_event_number(MIDIClockTime time, int* event_num) const
 {
-    ENTER("MIDITrack::FindEventNumber( int , int * )");
+    ENTER("MIDITrack::find_event_number( int , int * )");
     // TO DO: try make this a binary search
 
     for (int i = 0; i < num_events; ++i) {
-        MIDITimedBigMessage const* msg = GetEventAddress(i);
+        MIDITimedBigMessage const* msg = get_event_address(i);
 
-        if (msg->GetTime() >= time) {
+        if (msg->get_time() >= time) {
             *event_num = i;
             return true;
         }
@@ -444,34 +444,34 @@ bool MIDITrack::FindEventNumber(MIDIClockTime time, int* event_num) const
     return false;
 }
 
-MIDITimedBigMessage const* MIDITrack::GetEvent(int event_num) const
+MIDITimedBigMessage const* MIDITrack::get_event(int event_num) const
 {
     if (event_num >= num_events) {
         return 0;
     }
 
     else {
-        return GetEventAddress(event_num);
+        return get_event_address(event_num);
     }
 }
 
-MIDITimedBigMessage* MIDITrack::GetEvent(int event_num)
+MIDITimedBigMessage* MIDITrack::get_event(int event_num)
 {
     if (event_num >= num_events) {
         return 0;
     }
 
     else {
-        return GetEventAddress(event_num);
+        return get_event_address(event_num);
     }
 }
 
-int MIDITrack::GetBufferSize() const
+int MIDITrack::get_buffer_size() const
 {
     return buf_size;
 }
 
-int MIDITrack::GetNumEvents() const
+int MIDITrack::get_num_events() const
 {
     return num_events;
 }

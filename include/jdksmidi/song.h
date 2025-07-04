@@ -43,9 +43,9 @@ class MIDISong
 
     // bool Save( const char *fname );
 
-    MIDIMultiTrack* GetMultiTrack() { return multitrack; }
+    MIDIMultiTrack* get_multi_track() { return multitrack; }
 
-    MIDIMultiTrack const* GetMultiTrack() const { return multitrack; }
+    MIDIMultiTrack const* get_multi_track() const { return multitrack; }
 
     MIDISequencer* GetSeq() { return sequencer; }
 

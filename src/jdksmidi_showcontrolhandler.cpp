@@ -198,7 +198,7 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
             e = Restore();
             break;
         case MIDI_SC_RESET:
-            e = Reset();
+            e = reset();
             break;
         case MIDI_SC_STANDBY_PLUS:
 
@@ -517,7 +517,7 @@ bool MIDISCHandle::Restore()
     return e;
 }
 
-bool MIDISCHandle::Reset()
+bool MIDISCHandle::reset()
 {
     bool e;
     e = false;

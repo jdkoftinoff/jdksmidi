@@ -63,57 +63,57 @@ class MIDISystemExclusive
 
     virtual ~MIDISystemExclusive();
 
-    void Clear()
+    void clear()
     {
         buffer.clear();
         chk_sum = 0;
     }
-    void ClearChecksum() { chk_sum = 0; }
+    void clear_checksum() { chk_sum = 0; }
 
-    void PutSysByte(std::uint8_t b)  // does not add to chksum
+    void put_sys_byte(std::uint8_t b)  // does not add to chksum
     {
         buffer.push_back(b);
     }
 
-    void PutByte(std::uint8_t b)
+    void put_byte(std::uint8_t b)
     {
-        PutSysByte(b);
+        put_sys_byte(b);
         chk_sum += b;
     }
 
-    void PutEXC() { PutSysByte(SYSEX_START); }
-    void PutEOX() { PutSysByte(SYSEX_END); }
+    void put_exc() { put_sys_byte(SYSEX_START); }
+    void put_eox() { put_sys_byte(SYSEX_END); }
 
     // low nibble first
-    void PutNibblizedByte(std::uint8_t b)
+    void put_nibblized_byte(std::uint8_t b)
     {
-        PutByte((std::uint8_t)(b & 0xf));
-        PutByte((std::uint8_t)(b >> 4));
+        put_byte((std::uint8_t)(b & 0xf));
+        put_byte((std::uint8_t)(b >> 4));
     }
 
     // high nibble first
-    void PutNibblizedByte2(std::uint8_t b)
+    void put_nibblized_byte2(std::uint8_t b)
     {
-        PutByte((std::uint8_t)(b >> 4));
-        PutByte((std::uint8_t)(b & 0xf));
+        put_byte((std::uint8_t)(b >> 4));
+        put_byte((std::uint8_t)(b & 0xf));
     }
 
-    void PutChecksum() { PutByte((std::uint8_t)(chk_sum & 0x7f)); }
+    void put_checksum() { put_byte((std::uint8_t)(chk_sum & 0x7f)); }
 
-    std::uint8_t GetChecksum() const { return (std::uint8_t)(chk_sum & 0x7f); }
+    std::uint8_t get_checksum() const { return (std::uint8_t)(chk_sum & 0x7f); }
 
-    int GetLength() const { return static_cast<int>(buffer.size()); }
+    int get_length() const { return static_cast<int>(buffer.size()); }
 
-    std::uint8_t GetData(int i) const
+    std::uint8_t get_data(int i) const
     {
         return (i >= 0 && i < static_cast<int>(buffer.size())) ? buffer[i] : 0;
     }
 
-    bool IsFull() const { return false; }
+    bool is_full() const { return false; }
 
-    std::uint8_t* GetBuf() { return buffer.empty() ? nullptr : buffer.data(); }
+    std::uint8_t* get_buf() { return buffer.empty() ? nullptr : buffer.data(); }
 
-    std::uint8_t const* GetBuf() const { return buffer.empty() ? nullptr : buffer.data(); }
+    std::uint8_t const* get_buf() const { return buffer.empty() ? nullptr : buffer.data(); }
 
   private:
     std::vector<std::uint8_t> buffer;

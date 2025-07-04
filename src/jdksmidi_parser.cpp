@@ -63,9 +63,9 @@ MIDIParser::~MIDIParser()
     ENTER("MIDIParser::~MIDIParser");
 }
 
-bool MIDIParser::Parse(std::uint8_t b, MIDIMessage* msg)
+bool MIDIParser::parse(std::uint8_t b, MIDIMessage* msg)
 {
-    ENTER("MIDIParser::Parse()");
+    ENTER("MIDIParser::parse()");
     //
     // No matter what state we are currently in we must deal
     // with bytes with the high bit set first.
@@ -80,16 +80,16 @@ bool MIDIParser::Parse(std::uint8_t b, MIDIMessage* msg)
         if (stat == 0xf0) {
             //
             // System messages get parsed by
-            // ParseSystemByte()
+            // parse_system_byte()
             //
-            return ParseSystemByte(b, msg);
+            return parse_system_byte(b, msg);
         }
 
         else {
             //
             // Otherwise, this is a new status byte.
             //
-            ParseStatusByte(b);
+            parse_status_byte(b);
             return false;
         }
     }
@@ -98,11 +98,11 @@ bool MIDIParser::Parse(std::uint8_t b, MIDIMessage* msg)
         //
         // Try to parse the data byte
         //
-        return ParseDataByte(b, msg);
+        return parse_data_byte(b, msg);
     }
 }
 
-bool MIDIParser::ParseSystemByte(std::uint8_t b, MIDIMessage* msg)
+bool MIDIParser::parse_system_byte(std::uint8_t b, MIDIMessage* msg)
 {
     ENTER("MIDIParser::ParseSystemByte");
 
@@ -123,8 +123,8 @@ bool MIDIParser::ParseSystemByte(std::uint8_t b, MIDIMessage* msg)
             //
             // Prepare sysex buffer.
             //
-            sysex->Clear();
-            sysex->PutEXC();
+            sysex->clear();
+            sysex->put_exc();
             return false;
         }
         case SYSEX_END: {
@@ -146,13 +146,13 @@ bool MIDIParser::ParseSystemByte(std::uint8_t b, MIDIMessage* msg)
             //
             // finish up sysex buffer
             //
-            sysex->PutEOX();
+            sysex->put_eox();
             //
             // return a MIDIMessage with status=SYSEX_START
             // so calling program can know to look at
-            // the sysex buffer with GetSystemExclusive().
+            // the sysex buffer with get_system_exclusive().
             //
-            msg->SetStatus(SYSEX_START);
+            msg->set_status(SYSEX_START);
             return true;
         }
         case MTC: {
@@ -161,7 +161,7 @@ bool MIDIParser::ParseSystemByte(std::uint8_t b, MIDIMessage* msg)
             // this is required because MTC (F1) is not
             // allowed to be running status.
             //
-            tmp_msg.SetStatus(MTC);
+            tmp_msg.set_status(MTC);
             state = FIRST_OF_ONE_NORUN;
             return false;
         }
@@ -171,7 +171,7 @@ bool MIDIParser::ParseSystemByte(std::uint8_t b, MIDIMessage* msg)
             // FIRST_OF_TWO state.
             //
             state = FIRST_OF_TWO;
-            tmp_msg.SetStatus(SONG_POSITION);
+            tmp_msg.set_status(SONG_POSITION);
             return false;
         }
         case SONG_SELECT: {
@@ -180,7 +180,7 @@ bool MIDIParser::ParseSystemByte(std::uint8_t b, MIDIMessage* msg)
             // the FIRST_OF_ONE state.
             //
             state = FIRST_OF_ONE;
-            tmp_msg.SetStatus(SONG_SELECT);
+            tmp_msg.set_status(SONG_SELECT);
             return false;
         }
         //
@@ -196,7 +196,7 @@ bool MIDIParser::ParseSystemByte(std::uint8_t b, MIDIMessage* msg)
         case CONTINUE:
         case STOP:
         case ACTIVE_SENSE: {
-            msg->SetStatus(b);
+            msg->set_status(b);
             return true;
         }
         default: {
@@ -213,28 +213,28 @@ bool MIDIParser::ParseSystemByte(std::uint8_t b, MIDIMessage* msg)
     }
 }
 
-void MIDIParser::ParseStatusByte(std::uint8_t b)
+void MIDIParser::parse_status_byte(std::uint8_t b)
 {
     ENTER("MIDIParser::ParseStatusByte");
-    char len = GetMessageLength(b);
+    char len = get_message_length(b);
 
     if (len == 2) {
         state = FIRST_OF_ONE;
-        tmp_msg.SetStatus(b);
+        tmp_msg.set_status(b);
     }
 
     else if (len == 3) {
         state = FIRST_OF_TWO;
-        tmp_msg.SetStatus(b);
+        tmp_msg.set_status(b);
     }
 
     else {
         state = FIND_STATUS;
-        tmp_msg.SetStatus(0);
+        tmp_msg.set_status(0);
     }
 }
 
-bool MIDIParser::ParseDataByte(std::uint8_t b, MIDIMessage* msg)
+bool MIDIParser::parse_data_byte(std::uint8_t b, MIDIMessage* msg)
 {
     ENTER("MIDIParser::ParseDataByte");
 
@@ -250,7 +250,7 @@ bool MIDIParser::ParseDataByte(std::uint8_t b, MIDIMessage* msg)
             // this is the only data byte of a message.
             // form the message and return it.
             //
-            tmp_msg.SetByte1(b);
+            tmp_msg.set_byte1(b);
             *msg = tmp_msg;
             //
             // stay in this state for running status
@@ -263,7 +263,7 @@ bool MIDIParser::ParseDataByte(std::uint8_t b, MIDIMessage* msg)
             // read it in. go to SECOND_OF_TWO state. do not
             // return anything.
             //
-            tmp_msg.SetByte1(b);
+            tmp_msg.set_byte1(b);
             state = SECOND_OF_TWO;
             return false;
         }
@@ -274,7 +274,7 @@ bool MIDIParser::ParseDataByte(std::uint8_t b, MIDIMessage* msg)
             // go back to FIRST_OF_TWO state to allow
             // running status.
             //
-            tmp_msg.SetByte2(b);
+            tmp_msg.set_byte2(b);
             state = FIRST_OF_TWO;
             *msg = tmp_msg;
             return true;
@@ -285,7 +285,7 @@ bool MIDIParser::ParseDataByte(std::uint8_t b, MIDIMessage* msg)
             // form the message, return it, and go to FIND_STATUS
             // state. Do not allow running status.
             //
-            tmp_msg.SetByte1(b);
+            tmp_msg.set_byte1(b);
             state = FIND_STATUS;
             *msg = tmp_msg;
             return true;
@@ -296,7 +296,7 @@ bool MIDIParser::ParseDataByte(std::uint8_t b, MIDIMessage* msg)
             // in this state. Only a status byte can
             // change our state.
             //
-            sysex->PutByte(b);
+            sysex->put_byte(b);
             return false;
         }
         default: {

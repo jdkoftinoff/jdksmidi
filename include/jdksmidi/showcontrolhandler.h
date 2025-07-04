@@ -100,7 +100,7 @@ class MIDISCHandle
     virtual bool Fire(std::uint8_t macro_num);
     virtual bool AllOff();
     virtual bool Restore();
-    virtual bool Reset();
+    virtual bool reset();
     virtual bool GoOff();
     virtual bool GoOff(MIDICue const& q_number);
     virtual bool GoOff(MIDICue const& q_number, MIDICue const& q_list);

@@ -40,10 +40,10 @@ using namespace jdksmidi;
 
 void DumpTrackNames(MIDISequencer* seq)
 {
-    fprintf(stdout, "TEMPO = %f\n", seq->GetTrackState(0)->tempobpm);
+    fprintf(stdout, "TEMPO = %f\n", seq->get_track_state(0)->tempobpm);
 
-    for (int i = 0; i < seq->GetNumTracks(); ++i) {
-        fprintf(stdout, "TRK #%2d : NAME = '%s'\n", i, seq->GetTrackState(i)->track_name);
+    for (int i = 0; i < seq->get_num_tracks(); ++i) {
+        fprintf(stdout, "TRK #%2d : NAME = '%s'\n", i, seq->get_track_state(i)->track_name);
     }
 }
 
@@ -51,16 +51,16 @@ void PlayDumpManager(MIDIManager* mgr)
 {
     MIDISequencer* seq = mgr->GetSeq();
     double pretend_clock_time = 0.0;
-    seq->GoToTime((unsigned long)pretend_clock_time);
+    seq->go_to_time((unsigned long)pretend_clock_time);
     mgr->SeqPlay();
     // simulate a clock going forward with 10ms resolution for 1 minute
 
     for (pretend_clock_time = 0.0; pretend_clock_time < 60.0 * 1000.0; pretend_clock_time += 100) {
-        mgr->GetDriver()->TimeTick((unsigned long)pretend_clock_time);
+        mgr->GetDriver()->time_tick((unsigned long)pretend_clock_time);
     }
 
     mgr->SeqStop();
-    mgr->GetDriver()->AllNotesOff();
+    mgr->GetDriver()->all_notes_off();
 }
 
 int main(int argc, char** argv)
@@ -74,8 +74,8 @@ int main(int argc, char** argv)
         MIDISequencer seq(&tracks, &gui);
         MIDIDriverDump driver(128, stdout);
         MIDIManager mgr(&driver, &gui);
-        reader.Parse();
-        seq.GoToZero();
+        reader.parse();
+        seq.go_to_zero();
         mgr.SetSeq(&seq);
         DumpTrackNames(&seq);
         PlayDumpManager(&mgr);

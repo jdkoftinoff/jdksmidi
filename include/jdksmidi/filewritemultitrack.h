@@ -42,8 +42,8 @@ class MIDIFileWriteMultiTrack
 
     bool Write(int num_tracks, int division);
 
-    bool Write(int num_tracks) { return Write(num_tracks, multitrack->GetClksPerBeat()); }
-    bool Write() { return Write(multitrack->GetNumTracks(), multitrack->GetClksPerBeat()); }
+    bool Write(int num_tracks) { return Write(num_tracks, multitrack->get_clks_per_beat()); }
+    bool Write() { return Write(multitrack->get_num_tracks(), multitrack->get_clks_per_beat()); }
 
   private:
     virtual bool PreWrite();

@@ -83,7 +83,7 @@ SMPTE::SMPTE(SMPTE_RATE smpte_rate_, SAMPLE_RATE sample_rate_)
 
 SMPTE::SMPTE(const SMPTE& s)
 {
-    Copy(s);
+    copy(s);
 }
 
 void SMPTE::AddHours(char h)
@@ -251,7 +251,7 @@ void SMPTE::TimeToSample()
     sample_number = (std::uint32_t)tmp_sample;
 }
 
-void SMPTE::Copy(const SMPTE& s)
+void SMPTE::copy(const SMPTE& s)
 {
     smpte_rate = s.smpte_rate;
     sample_rate = s.sample_rate;
