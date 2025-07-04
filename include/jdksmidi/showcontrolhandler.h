@@ -41,30 +41,30 @@ class MIDISCHandle
     MIDISCHandle();
     virtual ~MIDISCHandle();
 
-    virtual bool Dispatch(MIDIShowControlPacket const& p);
+    virtual bool dispatch(MIDIShowControlPacket const& p);
 
-    virtual bool Go();
-    virtual bool Go(MIDICue const& q_number);
-    virtual bool Go(MIDICue const& q_number, MIDICue const& q_list);
-    virtual bool Go(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path);
-    virtual bool Stop();
-    virtual bool Stop(MIDICue const& q_number);
-    virtual bool Stop(MIDICue const& q_number, MIDICue const& q_list);
-    virtual bool Stop(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path);
-    virtual bool Resume();
-    virtual bool Resume(MIDICue const& q_number);
-    virtual bool Resume(MIDICue const& q_number, MIDICue const& q_list);
-    virtual bool Resume(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path);
-    virtual bool TimedGo(
+    virtual bool go();
+    virtual bool go(MIDICue const& q_number);
+    virtual bool go(MIDICue const& q_number, MIDICue const& q_list);
+    virtual bool go(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path);
+    virtual bool stop();
+    virtual bool stop(MIDICue const& q_number);
+    virtual bool stop(MIDICue const& q_number, MIDICue const& q_list);
+    virtual bool stop(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path);
+    virtual bool resume();
+    virtual bool resume(MIDICue const& q_number);
+    virtual bool resume(MIDICue const& q_number, MIDICue const& q_list);
+    virtual bool resume(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path);
+    virtual bool timed_go(
         std::uint8_t hr, std::uint8_t mn, std::uint8_t sc, std::uint8_t fr, std::uint8_t ff);
-    virtual bool TimedGo(
+    virtual bool timed_go(
         std::uint8_t hr,
         std::uint8_t mn,
         std::uint8_t sc,
         std::uint8_t fr,
         std::uint8_t ff,
         MIDICue const& q_number);
-    virtual bool TimedGo(
+    virtual bool timed_go(
         std::uint8_t hr,
         std::uint8_t mn,
         std::uint8_t sc,
@@ -73,7 +73,7 @@ class MIDISCHandle
         MIDICue const& q_number,
         MIDICue const& q_list);
 
-    virtual bool TimedGo(
+    virtual bool timed_go(
         std::uint8_t hr,
         std::uint8_t mn,
         std::uint8_t sc,
@@ -83,12 +83,12 @@ class MIDISCHandle
         MIDICue const& q_list,
         MIDICue const& q_path);
 
-    virtual bool Load(MIDICue const& q_number);
-    virtual bool Load(MIDICue const& q_number, MIDICue const& q_list);
-    virtual bool Load(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path);
-    virtual bool Set(std::uint32_t ctrl_num, std::uint32_t ctrl_val);
+    virtual bool load(MIDICue const& q_number);
+    virtual bool load(MIDICue const& q_number, MIDICue const& q_list);
+    virtual bool load(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path);
+    virtual bool set(std::uint32_t ctrl_num, std::uint32_t ctrl_val);
 
-    virtual bool Set(
+    virtual bool set(
         std::uint32_t ctrl_num,
         std::uint32_t ctrl_val,
         std::uint8_t hr,
@@ -97,49 +97,49 @@ class MIDISCHandle
         std::uint8_t fr,
         std::uint8_t ff);
 
-    virtual bool Fire(std::uint8_t macro_num);
-    virtual bool AllOff();
-    virtual bool Restore();
+    virtual bool fire(std::uint8_t macro_num);
+    virtual bool all_off();
+    virtual bool restore();
     virtual bool reset();
-    virtual bool GoOff();
-    virtual bool GoOff(MIDICue const& q_number);
-    virtual bool GoOff(MIDICue const& q_number, MIDICue const& q_list);
-    virtual bool GoOff(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path);
-    virtual bool GoJam();
-    virtual bool GoJam(MIDICue const& q_number);
-    virtual bool GoJam(MIDICue const& q_number, MIDICue const& q_list);
-    virtual bool GoJam(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path);
-    virtual bool StandbyPlus();
-    virtual bool StandbyPlus(MIDICue const& q_list);
-    virtual bool StandbyMinus();
-    virtual bool StandbyMinus(MIDICue const& q_list);
-    virtual bool SequencePlus();
-    virtual bool SequencePlus(MIDICue const& q_list);
-    virtual bool SequenceMinus();
-    virtual bool SequenceMinus(MIDICue const& q_list);
-    virtual bool StartClock();
-    virtual bool StartClock(MIDICue const& q_list);
-    virtual bool StopClock();
-    virtual bool StopClock(MIDICue const& q_list);
-    virtual bool ZeroClock();
-    virtual bool ZeroClock(MIDICue const& q_list);
-    virtual bool SetClock(
+    virtual bool go_off();
+    virtual bool go_off(MIDICue const& q_number);
+    virtual bool go_off(MIDICue const& q_number, MIDICue const& q_list);
+    virtual bool go_off(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path);
+    virtual bool go_jam();
+    virtual bool go_jam(MIDICue const& q_number);
+    virtual bool go_jam(MIDICue const& q_number, MIDICue const& q_list);
+    virtual bool go_jam(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path);
+    virtual bool standby_plus();
+    virtual bool standby_plus(MIDICue const& q_list);
+    virtual bool standby_minus();
+    virtual bool standby_minus(MIDICue const& q_list);
+    virtual bool sequence_plus();
+    virtual bool sequence_plus(MIDICue const& q_list);
+    virtual bool sequence_minus();
+    virtual bool sequence_minus(MIDICue const& q_list);
+    virtual bool start_clock();
+    virtual bool start_clock(MIDICue const& q_list);
+    virtual bool stop_clock();
+    virtual bool stop_clock(MIDICue const& q_list);
+    virtual bool zero_clock();
+    virtual bool zero_clock(MIDICue const& q_list);
+    virtual bool set_clock(
         std::uint8_t hr, std::uint8_t mn, std::uint8_t sc, std::uint8_t fr, std::uint8_t ff);
-    virtual bool SetClock(
+    virtual bool set_clock(
         std::uint8_t hr,
         std::uint8_t mn,
         std::uint8_t sc,
         std::uint8_t fr,
         std::uint8_t ff,
         MIDICue const& q_list);
-    virtual bool MTCChaseOn();
-    virtual bool MTCChaseOn(MIDICue const& q_list);
-    virtual bool MTCChaseOff();
-    virtual bool MTCChaseOff(MIDICue const& q_list);
-    virtual bool OpenQList(MIDICue const& q_list);
-    virtual bool CloseQList(MIDICue const& q_list);
-    virtual bool OpenQPath(MIDICue const& q_path);
-    virtual bool CloseQPath(MIDICue const& q_path);
+    virtual bool mtc_chase_on();
+    virtual bool mtc_chase_on(MIDICue const& q_list);
+    virtual bool mtc_chase_off();
+    virtual bool mtc_chase_off(MIDICue const& q_list);
+    virtual bool open_q_list(MIDICue const& q_list);
+    virtual bool close_q_list(MIDICue const& q_list);
+    virtual bool open_q_path(MIDICue const& q_path);
+    virtual bool close_q_path(MIDICue const& q_path);
 };
 
 }  // namespace jdksmidi

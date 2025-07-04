@@ -39,7 +39,7 @@ class MIDISong
     MIDISong(int max_tracks);
     virtual ~MIDISong();
 
-    bool Load(char const* fname);
+    bool load(char const* fname);
 
     // bool Save( const char *fname );
 

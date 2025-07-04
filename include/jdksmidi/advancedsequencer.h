@@ -74,7 +74,7 @@ class AdvancedSequencer
     void SetMIDIThruTranspose(int val);
     int GetMIDIThruTranspose() const;
 
-    bool Load(char const* fname);
+    bool load(char const* fname);
     void reset();
 
     void go_to_measure(int measure, int beat = 0);
@@ -82,7 +82,7 @@ class AdvancedSequencer
     void Play(int clock_offset = 0);
     void RepeatPlay(bool enable, int start_measure, int end_measure);
     void Pause();
-    void Stop();
+    void stop();
 
     bool IsPlay() { return mgr.IsSeqPlay(); }
 

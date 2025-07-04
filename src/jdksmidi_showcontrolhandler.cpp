@@ -37,7 +37,7 @@ MIDISCHandle::MIDISCHandle()
 MIDISCHandle::~MIDISCHandle()
 {}
 
-bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
+bool MIDISCHandle::dispatch(MIDIShowControlPacket const& p)
 {
     bool e;
 
@@ -45,94 +45,94 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
         case MIDI_SC_GO:
 
             if (p.get_has_q_path())
-                e = Go(p.get_q_number(), p.get_q_list(), p.get_q_path());
+                e = go(p.get_q_number(), p.get_q_list(), p.get_q_path());
 
             else if (p.get_has_q_list())
-                e = Go(p.get_q_number(), p.get_q_list());
+                e = go(p.get_q_number(), p.get_q_list());
 
             else if (p.get_has_q_number())
-                e = Go(p.get_q_number());
+                e = go(p.get_q_number());
 
             else
-                e = Go();
+                e = go();
 
             break;
         case MIDI_SC_STOP:
 
             if (p.get_has_q_path())
-                e = Stop(p.get_q_number(), p.get_q_list(), p.get_q_path());
+                e = stop(p.get_q_number(), p.get_q_list(), p.get_q_path());
 
             else if (p.get_has_q_list())
-                e = Stop(p.get_q_number(), p.get_q_list());
+                e = stop(p.get_q_number(), p.get_q_list());
 
             else if (p.get_has_q_number())
-                e = Stop(p.get_q_number());
+                e = stop(p.get_q_number());
 
             else
-                e = Stop();
+                e = stop();
 
             break;
         case MIDI_SC_RESUME:
 
             if (p.get_has_q_path())
-                e = Resume(p.get_q_number(), p.get_q_list(), p.get_q_path());
+                e = resume(p.get_q_number(), p.get_q_list(), p.get_q_path());
 
             else if (p.get_has_q_list())
-                e = Resume(p.get_q_number(), p.get_q_list());
+                e = resume(p.get_q_number(), p.get_q_list());
 
             else if (p.get_has_q_number())
-                e = Resume(p.get_q_number());
+                e = resume(p.get_q_number());
 
             else
-                e = Resume();
+                e = resume();
 
             break;
         case MIDI_SC_LOAD:
 
             if (p.get_has_q_path())
-                e = Load(p.get_q_number(), p.get_q_list(), p.get_q_path());
+                e = load(p.get_q_number(), p.get_q_list(), p.get_q_path());
 
             else if (p.get_has_q_list())
-                e = Load(p.get_q_number(), p.get_q_list());
+                e = load(p.get_q_number(), p.get_q_list());
 
             else
-                e = Load(p.get_q_number());
+                e = load(p.get_q_number());
 
             break;
         case MIDI_SC_GO_OFF:
 
             if (p.get_has_q_path())
-                e = GoOff(p.get_q_number(), p.get_q_list(), p.get_q_path());
+                e = go_off(p.get_q_number(), p.get_q_list(), p.get_q_path());
 
             else if (p.get_has_q_list())
-                e = GoOff(p.get_q_number(), p.get_q_list());
+                e = go_off(p.get_q_number(), p.get_q_list());
 
             else if (p.get_has_q_number())
-                e = GoOff(p.get_q_number());
+                e = go_off(p.get_q_number());
 
             else
-                e = GoOff();
+                e = go_off();
 
             break;
         case MIDI_SC_GO_JAM:
 
             if (p.get_has_q_path())
-                e = GoJam(p.get_q_number(), p.get_q_list(), p.get_q_path());
+                e = go_jam(p.get_q_number(), p.get_q_list(), p.get_q_path());
 
             else if (p.get_has_q_list())
-                e = GoJam(p.get_q_number(), p.get_q_list());
+                e = go_jam(p.get_q_number(), p.get_q_list());
 
             else if (p.get_has_q_number())
-                e = GoJam(p.get_q_number());
+                e = go_jam(p.get_q_number());
 
             else
-                e = GoJam();
+                e = go_jam();
 
             break;
         case MIDI_SC_TIMED_GO:
 
             if (p.get_has_q_path())
-                e = TimedGo(
+                e = timed_go(
                     p.get_hours(),
                     p.get_minutes(),
                     p.get_seconds(),
@@ -143,7 +143,7 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
                     p.get_q_path());
 
             else if (p.get_has_q_list())
-                e = TimedGo(
+                e = timed_go(
                     p.get_hours(),
                     p.get_minutes(),
                     p.get_seconds(),
@@ -153,7 +153,7 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
                     p.get_q_list());
 
             else if (p.get_has_q_number())
-                e = TimedGo(
+                e = timed_go(
                     p.get_hours(),
                     p.get_minutes(),
                     p.get_seconds(),
@@ -162,7 +162,7 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
                     p.get_q_number());
 
             else
-                e = TimedGo(
+                e = timed_go(
                     p.get_hours(),
                     p.get_minutes(),
                     p.get_seconds(),
@@ -173,12 +173,12 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
         case MIDI_SC_SET:
 
             if (!p.get_has_time()) {
-                e = Set(p.get_control_num(), p.get_control_val());
+                e = set(p.get_control_num(), p.get_control_val());
             }
 
             else {
                 e =
-                    Set(p.get_control_num(),
+                    set(p.get_control_num(),
                         p.get_control_val(),
                         p.get_hours(),
                         p.get_minutes(),
@@ -189,13 +189,13 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
 
             break;
         case MIDI_SC_FIRE:
-            e = Fire((std::uint8_t)p.get_macro_num());
+            e = fire((std::uint8_t)p.get_macro_num());
             break;
         case MIDI_SC_ALL_OFF:
-            e = AllOff();
+            e = all_off();
             break;
         case MIDI_SC_RESTORE:
-            e = Restore();
+            e = restore();
             break;
         case MIDI_SC_RESET:
             e = reset();
@@ -203,88 +203,88 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
         case MIDI_SC_STANDBY_PLUS:
 
             if (p.get_has_q_list())
-                e = StandbyPlus(p.get_q_list());
+                e = standby_plus(p.get_q_list());
 
             else
-                e = StandbyPlus();
+                e = standby_plus();
 
             break;
         case MIDI_SC_STANDBY_MINUS:
 
             if (p.get_has_q_list())
-                e = StandbyMinus(p.get_q_list());
+                e = standby_minus(p.get_q_list());
 
             else
-                e = StandbyMinus();
+                e = standby_minus();
 
             break;
         case MIDI_SC_SEQUENCE_PLUS:
 
             if (p.get_has_q_list())
-                e = SequencePlus(p.get_q_list());
+                e = sequence_plus(p.get_q_list());
 
             else
-                e = SequencePlus();
+                e = sequence_plus();
 
             break;
         case MIDI_SC_SEQUENCE_MINUS:
 
             if (p.get_has_q_list())
-                e = SequenceMinus(p.get_q_list());
+                e = sequence_minus(p.get_q_list());
 
             else
-                e = SequenceMinus();
+                e = sequence_minus();
 
             break;
         case MIDI_SC_START_CLOCK:
 
             if (p.get_has_q_list())
-                e = StartClock(p.get_q_list());
+                e = start_clock(p.get_q_list());
 
             else
-                e = StartClock();
+                e = start_clock();
 
             break;
         case MIDI_SC_STOP_CLOCK:
 
             if (p.get_has_q_list())
-                e = StopClock(p.get_q_list());
+                e = stop_clock(p.get_q_list());
 
             else
-                e = StopClock();
+                e = stop_clock();
 
             break;
         case MIDI_SC_ZERO_CLOCK:
 
             if (p.get_has_q_list())
-                e = ZeroClock(p.get_q_list());
+                e = zero_clock(p.get_q_list());
 
             else
-                e = ZeroClock();
+                e = zero_clock();
 
             break;
         case MIDI_SC_MTC_CHASE_ON:
 
             if (p.get_has_q_list())
-                e = MTCChaseOn(p.get_q_list());
+                e = mtc_chase_on(p.get_q_list());
 
             else
-                e = MTCChaseOn();
+                e = mtc_chase_on();
 
             break;
         case MIDI_SC_MTC_CHASE_OFF:
 
             if (p.get_has_q_list())
-                e = MTCChaseOff(p.get_q_list());
+                e = mtc_chase_off(p.get_q_list());
 
             else
-                e = MTCChaseOff();
+                e = mtc_chase_off();
 
             break;
         case MIDI_SC_SET_CLOCK:
 
             if (p.get_has_q_list())
-                e = SetClock(
+                e = set_clock(
                     p.get_hours(),
                     p.get_minutes(),
                     p.get_seconds(),
@@ -293,7 +293,7 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
                     p.get_q_list());
 
             else
-                e = SetClock(
+                e = set_clock(
                     p.get_hours(),
                     p.get_minutes(),
                     p.get_seconds(),
@@ -301,16 +301,16 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
                     p.get_fract_frames());
 
         case MIDI_SC_OPEN_Q_LIST:
-            e = OpenQList(p.get_q_list());
+            e = open_q_list(p.get_q_list());
             break;
         case MIDI_SC_CLOSE_Q_LIST:
-            e = CloseQList(p.get_q_list());
+            e = close_q_list(p.get_q_list());
             break;
         case MIDI_SC_OPEN_Q_PATH:
-            e = OpenQPath(p.get_q_path());
+            e = open_q_path(p.get_q_path());
             break;
         case MIDI_SC_CLOSE_Q_PATH:
-            e = CloseQPath(p.get_q_path());
+            e = close_q_path(p.get_q_path());
             break;
         default:
             e = false;
@@ -320,91 +320,91 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
     return e;
 }
 
-bool MIDISCHandle::Go()
+bool MIDISCHandle::go()
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::Go(MIDICue const& q_number)
+bool MIDISCHandle::go(MIDICue const& q_number)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::Go(MIDICue const& q_number, MIDICue const& q_list)
+bool MIDISCHandle::go(MIDICue const& q_number, MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::Go(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
+bool MIDISCHandle::go(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::Stop()
+bool MIDISCHandle::stop()
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::Stop(MIDICue const& q_number)
+bool MIDISCHandle::stop(MIDICue const& q_number)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::Stop(MIDICue const& q_number, MIDICue const& q_list)
+bool MIDISCHandle::stop(MIDICue const& q_number, MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::Stop(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
+bool MIDISCHandle::stop(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::Resume()
+bool MIDISCHandle::resume()
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::Resume(MIDICue const& q_number)
+bool MIDISCHandle::resume(MIDICue const& q_number)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::Resume(MIDICue const& q_number, MIDICue const& q_list)
+bool MIDISCHandle::resume(MIDICue const& q_number, MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::Resume(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
+bool MIDISCHandle::resume(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::TimedGo(
+bool MIDISCHandle::timed_go(
     std::uint8_t hr, std::uint8_t mn, std::uint8_t sc, std::uint8_t fr, std::uint8_t ff)
 {
     bool e;
@@ -412,7 +412,7 @@ bool MIDISCHandle::TimedGo(
     return e;
 }
 
-bool MIDISCHandle::TimedGo(
+bool MIDISCHandle::timed_go(
     std::uint8_t hr,
     std::uint8_t mn,
     std::uint8_t sc,
@@ -425,7 +425,7 @@ bool MIDISCHandle::TimedGo(
     return e;
 }
 
-bool MIDISCHandle::TimedGo(
+bool MIDISCHandle::timed_go(
     std::uint8_t hr,
     std::uint8_t mn,
     std::uint8_t sc,
@@ -439,7 +439,7 @@ bool MIDISCHandle::TimedGo(
     return e;
 }
 
-bool MIDISCHandle::TimedGo(
+bool MIDISCHandle::timed_go(
     std::uint8_t hr,
     std::uint8_t mn,
     std::uint8_t sc,
@@ -454,35 +454,35 @@ bool MIDISCHandle::TimedGo(
     return e;
 }
 
-bool MIDISCHandle::Load(MIDICue const& q_number)
+bool MIDISCHandle::load(MIDICue const& q_number)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::Load(MIDICue const& q_number, MIDICue const& q_list)
+bool MIDISCHandle::load(MIDICue const& q_number, MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::Load(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
+bool MIDISCHandle::load(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::Set(std::uint32_t ctrl_num, std::uint32_t ctrl_val)
+bool MIDISCHandle::set(std::uint32_t ctrl_num, std::uint32_t ctrl_val)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::Set(
+bool MIDISCHandle::set(
     std::uint32_t ctrl_num,
     std::uint32_t ctrl_val,
     std::uint8_t hr,
@@ -496,21 +496,21 @@ bool MIDISCHandle::Set(
     return e;
 }
 
-bool MIDISCHandle::Fire(std::uint8_t macro_num)
+bool MIDISCHandle::fire(std::uint8_t macro_num)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::AllOff()
+bool MIDISCHandle::all_off()
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::Restore()
+bool MIDISCHandle::restore()
 {
     bool e;
     e = false;
@@ -524,161 +524,161 @@ bool MIDISCHandle::reset()
     return e;
 }
 
-bool MIDISCHandle::GoOff()
+bool MIDISCHandle::go_off()
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::GoOff(MIDICue const& q_number)
+bool MIDISCHandle::go_off(MIDICue const& q_number)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::GoOff(MIDICue const& q_number, MIDICue const& q_list)
+bool MIDISCHandle::go_off(MIDICue const& q_number, MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::GoOff(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
+bool MIDISCHandle::go_off(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::GoJam()
+bool MIDISCHandle::go_jam()
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::GoJam(MIDICue const& q_number)
+bool MIDISCHandle::go_jam(MIDICue const& q_number)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::GoJam(MIDICue const& q_number, MIDICue const& q_list)
+bool MIDISCHandle::go_jam(MIDICue const& q_number, MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::GoJam(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
+bool MIDISCHandle::go_jam(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::StandbyPlus()
+bool MIDISCHandle::standby_plus()
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::StandbyPlus(MIDICue const& q_list)
+bool MIDISCHandle::standby_plus(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::StandbyMinus()
+bool MIDISCHandle::standby_minus()
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::StandbyMinus(MIDICue const& q_list)
+bool MIDISCHandle::standby_minus(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::SequencePlus()
+bool MIDISCHandle::sequence_plus()
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::SequencePlus(MIDICue const& q_list)
+bool MIDISCHandle::sequence_plus(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::SequenceMinus()
+bool MIDISCHandle::sequence_minus()
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::SequenceMinus(MIDICue const& q_list)
+bool MIDISCHandle::sequence_minus(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::StartClock()
+bool MIDISCHandle::start_clock()
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::StartClock(MIDICue const& q_list)
+bool MIDISCHandle::start_clock(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::StopClock()
+bool MIDISCHandle::stop_clock()
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::StopClock(MIDICue const& q_list)
+bool MIDISCHandle::stop_clock(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::ZeroClock()
+bool MIDISCHandle::zero_clock()
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::ZeroClock(MIDICue const& q_list)
+bool MIDISCHandle::zero_clock(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::SetClock(
+bool MIDISCHandle::set_clock(
     std::uint8_t hr, std::uint8_t mn, std::uint8_t sc, std::uint8_t fr, std::uint8_t ff)
 {
     bool e;
@@ -686,7 +686,7 @@ bool MIDISCHandle::SetClock(
     return e;
 }
 
-bool MIDISCHandle::SetClock(
+bool MIDISCHandle::set_clock(
     std::uint8_t hr,
     std::uint8_t mn,
     std::uint8_t sc,
@@ -699,56 +699,56 @@ bool MIDISCHandle::SetClock(
     return e;
 }
 
-bool MIDISCHandle::MTCChaseOn()
+bool MIDISCHandle::mtc_chase_on()
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::MTCChaseOn(MIDICue const& q_list)
+bool MIDISCHandle::mtc_chase_on(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::MTCChaseOff()
+bool MIDISCHandle::mtc_chase_off()
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::MTCChaseOff(MIDICue const& q_list)
+bool MIDISCHandle::mtc_chase_off(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::OpenQList(MIDICue const& q_list)
+bool MIDISCHandle::open_q_list(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::CloseQList(MIDICue const& q_list)
+bool MIDISCHandle::close_q_list(MIDICue const& q_list)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::OpenQPath(MIDICue const& q_path)
+bool MIDISCHandle::open_q_path(MIDICue const& q_path)
 {
     bool e;
     e = false;
     return e;
 }
 
-bool MIDISCHandle::CloseQPath(MIDICue const& q_path)
+bool MIDISCHandle::close_q_path(MIDICue const& q_path)
 {
     bool e;
     e = false;

@@ -42,7 +42,7 @@ AdvancedSequencer::AdvancedSequencer()
 
 AdvancedSequencer::~AdvancedSequencer()
 {
-    Stop();
+    stop();
     CloseMIDI();
 
     for (int i = 0; i < num_warp_positions; ++i) {
@@ -82,7 +82,7 @@ bool AdvancedSequencer::OpenMIDI(int in_port, int out_port, int timer_resolution
 
 void AdvancedSequencer::CloseMIDI()
 {
-    Stop();
+    stop();
 #if 0
     driver.StopTimer();
     driver.all_notes_off();
@@ -124,7 +124,7 @@ int AdvancedSequencer::GetMIDIThruTranspose() const
     return thru_transposer.get_transpose_channel(0);
 }
 
-bool AdvancedSequencer::Load(char const* fname)
+bool AdvancedSequencer::load(char const* fname)
 {
     char realname[1024];
     strcpy(realname, fname);
@@ -141,7 +141,7 @@ bool AdvancedSequencer::Load(char const* fname)
     MIDIFileReadStreamFile mfreader_stream(realname);
     MIDIFileReadMultiTrack track_loader(&tracks);
     MIDIFileRead reader(&mfreader_stream, &track_loader);
-    Stop();
+    stop();
     driver.all_notes_off();
     tracks.clear();
     seq.reset_all_tracks();
@@ -162,7 +162,7 @@ bool AdvancedSequencer::Load(char const* fname)
 
 void AdvancedSequencer::reset()
 {
-    Stop();
+    stop();
     driver.all_notes_off();
     UnmuteAllTracks();
     UnSoloTrack();
@@ -174,7 +174,7 @@ void AdvancedSequencer::reset()
 void AdvancedSequencer::go_to_time(MIDIClockTime t)
 {
     if (mgr.IsSeqPlay()) {
-        Stop();
+        stop();
         seq.go_to_time(t + 1);
         Play();
     }
@@ -202,7 +202,7 @@ void AdvancedSequencer::go_to_measure(int measure, int beat)
         warp_to_item = 0;
 
     if (mgr.IsSeqPlay()) {
-        Stop();
+        stop();
 
         if (warp_positions[warp_to_item]) {
             seq.set_state(warp_positions[warp_to_item]);
@@ -231,7 +231,7 @@ void AdvancedSequencer::Play(int clock_offset)
         return;
     }
 
-    Stop();
+    stop();
 
     for (int i = 0; i < seq.get_num_tracks(); ++i) {
         seq.get_track_state(i)->note_matrix.clear();
@@ -277,10 +277,10 @@ void AdvancedSequencer::Pause()
         return;
     }
 
-    Stop();
+    stop();
 }
 
-void AdvancedSequencer::Stop()
+void AdvancedSequencer::stop()
 {
     if (!file_loaded) {
         return;
@@ -652,7 +652,7 @@ void AdvancedSequencer::ExtractWarpPositions()
         return;
     }
 
-    Stop();
+    stop();
     // delete all our current warp positions
 
     for (int i = 0; i < num_warp_positions; ++i) {
