@@ -219,7 +219,8 @@ void MIDIFileWrite::write_event(MIDITimedMessage const& m)
         }
 
         if (m.is_key_sig()) {
-            write_key_signature(m.get_time(), m.get_key_sig_sharp_flats(), m.get_key_sig_major_minor());
+            write_key_signature(
+                m.get_time(), m.get_key_sig_sharp_flats(), m.get_key_sig_major_minor());
             return;
         }
 
@@ -259,7 +260,10 @@ void MIDIFileWrite::write_event(MIDITimedBigMessage const& m)
         // buffer contains the raw midi file meta data
         if (m.get_sys_ex()) {
             write_meta_event(
-                m.get_time(), m.get_meta_type(), m.get_sys_ex()->get_buf(), m.get_sys_ex()->get_length());
+                m.get_time(),
+                m.get_meta_type(),
+                m.get_sys_ex()->get_buf(),
+                m.get_sys_ex()->get_length());
         }
 
         else {
@@ -275,11 +279,13 @@ void MIDIFileWrite::write_event(MIDITimedBigMessage const& m)
             }
 
             else if (m.is_key_sig()) {
-                write_key_signature(m.get_time(), m.get_key_sig_sharp_flats(), m.get_key_sig_major_minor());
+                write_key_signature(
+                    m.get_time(), m.get_key_sig_sharp_flats(), m.get_key_sig_major_minor());
             }
 
             else if (m.is_time_sig()) {
-                write_time_signature(m.get_time(), m.get_time_sig_numerator(), m.get_time_sig_denominator());
+                write_time_signature(
+                    m.get_time(), m.get_time_sig_numerator(), m.get_time_sig_denominator());
             }
         }
     }

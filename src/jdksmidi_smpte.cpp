@@ -101,8 +101,8 @@ void SMPTE::add_minutes(char m)
 {
     add_samples(
         get_sample_rate_long() * m *  // samples per second times 10
-        (60                        // seconds per minute
-         / 10)                     // compensate for freq*10
+        (60                           // seconds per minute
+         / 10)                        // compensate for freq*10
     );
 }
 
@@ -110,8 +110,8 @@ void SMPTE::add_seconds(char s)
 {
     add_samples(
         get_sample_rate_long()  // samples per second times 10
-        * s                  // number of seconds
-        / 10                 // compensate for freq*10
+        * s                     // number of seconds
+        / 10                    // compensate for freq*10
     );
 }
 
@@ -119,8 +119,8 @@ void SMPTE::add_frames(char f)
 {
     add_samples(
         get_sample_rate_long()   // samples per second times 10
-        * f                   // number of frames
-        * 10                  // times 10
+        * f                      // number of frames
+        * 10                     // times 10
         / get_smpte_rate_long()  // divide by smpte rate (frames per second) times 100
     );
 }
@@ -129,9 +129,9 @@ void SMPTE::add_sub_frames(char sf)
 {
     add_samples(
         get_sample_rate_long()   // samples per second times 10
-        * sf                  // number of sub frames
+        * sf                     // number of sub frames
         / get_smpte_rate_long()  // divide by smpte rate (frames per second) times 100
-        / 10                  // divide by 10 to get hundredths of a frame
+        / 10                     // divide by 10 to get hundredths of a frame
     );
 }
 

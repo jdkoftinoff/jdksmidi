@@ -174,7 +174,8 @@ void MIDIFileReadMultiTrack::mf_text(MIDIClockTime time, int type, int len, std:
 {
     MIDITimedMessage msg;
     msg.set_status(META_EVENT);
-    msg.set_meta_type((std::uint8_t)type);  // remember - MF_*_TEXT* id codes match META_*_TEXT codes
+    msg.set_meta_type(
+        (std::uint8_t)type);  // remember - MF_*_TEXT* id codes match META_*_TEXT codes
     msg.set_time(time);
     auto sysex = new MIDISystemExclusive(len);
 

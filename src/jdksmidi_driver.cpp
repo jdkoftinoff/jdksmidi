@@ -59,7 +59,8 @@ void MIDIDriver::all_notes_off(int chan)
         for (int note = 0; note < 128; ++note) {
             while (out_matrix.get_note_count(chan, note) > 0) {
                 // make a note off with note on msg, velocity 0
-                msg.set_note_on(static_cast<std::uint8_t>(chan), static_cast<std::uint8_t>(note), 0);
+                msg.set_note_on(
+                    static_cast<std::uint8_t>(chan), static_cast<std::uint8_t>(note), 0);
                 output_message(msg);
             }
         }

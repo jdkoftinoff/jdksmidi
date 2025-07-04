@@ -487,7 +487,7 @@ void MIDIMessage::set_channel_pressure(std::uint8_t chan, std::uint8_t val)
 void MIDIMessage::set_pitch_bend(std::uint8_t chan, short val)
 {
     _status = static_cast<std::uint8_t>(chan | PITCH_BEND);
-    val += static_cast<short>(0x2000);              // center value
+    val += static_cast<short>(0x2000);               // center value
     _byte1 = static_cast<std::uint8_t>(val & 0x7f);  // 7 bit bytes
     _byte2 = static_cast<std::uint8_t>((val >> 7) & 0x7f);
     _byte3 = 0;
@@ -995,7 +995,8 @@ void MIDITimedBigMessage::set_time(MIDIClockTime t)
     _time = t;
 }
 
-int MIDITimedBigMessage::compare_events(MIDITimedBigMessage const& m1, MIDITimedBigMessage const& m2)
+int MIDITimedBigMessage::compare_events(
+    MIDITimedBigMessage const& m1, MIDITimedBigMessage const& m2)
 {
     bool n1 = m1.is_no_op();
     bool n2 = m2.is_no_op();

@@ -35,10 +35,9 @@
 namespace jdksmidi {
 //
 // This file previously used JDKSMIDI_ATTRIBUTE family macros to generate
-// getter/setter methods. These have been replaced with explicit method 
+// getter/setter methods. These have been replaced with explicit method
 // definitions for better code clarity and maintainability.
 //
-
 
 class MIDICue
 {
@@ -599,7 +598,7 @@ class MIDIShowControlPacket
     std::uint8_t get_device_id() const { return device_id; }
     void set_device_id(std::uint8_t a) { device_id = a; }
 
-    // command_fmt attribute  
+    // command_fmt attribute
     std::uint8_t get_command_fmt() const { return command_fmt; }
     void set_command_fmt(std::uint8_t a) { command_fmt = a; }
 
@@ -644,16 +643,16 @@ class MIDIShowControlPacket
     void set_fract_frames(std::uint8_t a) { fract_frames = a; }
 
     // q_number attribute (reference)
-    const MIDICue& get_q_number() const { return q_number; }
-    void set_q_number(const MIDICue& a) { q_number = a; }
+    MIDICue const& get_q_number() const { return q_number; }
+    void set_q_number(MIDICue const& a) { q_number = a; }
 
     // q_list attribute (reference)
-    const MIDICue& get_q_list() const { return q_list; }
-    void set_q_list(const MIDICue& a) { q_list = a; }
+    MIDICue const& get_q_list() const { return q_list; }
+    void set_q_list(MIDICue const& a) { q_list = a; }
 
     // q_path attribute (reference)
-    const MIDICue& get_q_path() const { return q_path; }
-    void set_q_path(const MIDICue& a) { q_path = a; }
+    MIDICue const& get_q_path() const { return q_path; }
+    void set_q_path(MIDICue const& a) { q_path = a; }
 
     // val1 attribute
     std::uint32_t get_val1() const { return val1; }

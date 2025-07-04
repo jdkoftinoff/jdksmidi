@@ -349,7 +349,7 @@ class MIDIMessage
     std::uint8_t _byte1;
     std::uint8_t _byte2;
     std::uint8_t _byte3;  ///< byte 3 is only used for meta-events and to round out the structure
-                         ///< size to 32 bits
+                          ///< size to 32 bits
 };
 
 ///

@@ -411,7 +411,9 @@ void MIDIFileRead::read_track()
                 c1 = e_get_c();
 
             form_chan_message(
-                (std::uint8_t)status, (std::uint8_t)c1, (std::uint8_t)((needed > 1) ? e_get_c() : 0));
+                (std::uint8_t)status,
+                (std::uint8_t)c1,
+                (std::uint8_t)((needed > 1) ? e_get_c() : 0));
             continue;
         }
 
