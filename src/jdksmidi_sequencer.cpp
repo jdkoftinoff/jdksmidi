@@ -897,7 +897,8 @@ void MIDISequencer::scan_events_at_this_time()
     MIDITimedBigMessage ev;
 
     while (get_next_event_time(&t) && t == orig_clock && get_next_event(&trk, &ev)) {
-        ;
+        // Process the event through the track state to update tempo, time signature, etc.
+        state.track_state[trk]->process(&ev);
     }
 
     // restore the iterator state
