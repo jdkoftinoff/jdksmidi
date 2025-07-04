@@ -150,33 +150,33 @@ class SMPTE
         sample_number_dirty = true;
     }
 
-    std::uint8_t GetHours() { return hours; }
-    std::uint8_t GetMinutes() { return minutes; }
-    std::uint8_t GetSeconds() { return seconds; }
-    std::uint8_t GetFrames() { return frames; }
-    std::uint8_t GetSubFrames() { return sub_frames; }
+    std::uint8_t get_hours() { return hours; }
+    std::uint8_t get_minutes() { return minutes; }
+    std::uint8_t get_seconds() { return seconds; }
+    std::uint8_t get_frames() { return frames; }
+    std::uint8_t get_sub_frames() { return sub_frames; }
 
-    void SetHours(std::uint8_t h)
+    void set_hours(std::uint8_t h)
     {
         hours = h;
         sample_number_dirty = true;
     }
-    void SetMinutes(std::uint8_t m)
+    void set_minutes(std::uint8_t m)
     {
         minutes = m;
         sample_number_dirty = true;
     }
-    void SetSeconds(std::uint8_t s)
+    void set_seconds(std::uint8_t s)
     {
         seconds = s;
         sample_number_dirty = true;
     }
-    void SetFrames(std::uint8_t f)
+    void set_frames(std::uint8_t f)
     {
         frames = f;
         sample_number_dirty = true;
     }
-    void SetSubFrames(std::uint8_t sf)
+    void set_sub_frames(std::uint8_t sf)
     {
         sub_frames = sf;
         sample_number_dirty = true;

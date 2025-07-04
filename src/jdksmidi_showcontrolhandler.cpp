@@ -41,17 +41,17 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
 {
     bool e;
 
-    switch (p.GetCommand()) {
+    switch (p.get_command()) {
         case MIDI_SC_GO:
 
-            if (p.GetHasQPath())
-                e = Go(p.GetQNumber(), p.GetQList(), p.GetQPath());
+            if (p.get_has_q_path())
+                e = Go(p.get_q_number(), p.get_q_list(), p.get_q_path());
 
-            else if (p.GetHasQList())
-                e = Go(p.GetQNumber(), p.GetQList());
+            else if (p.get_has_q_list())
+                e = Go(p.get_q_number(), p.get_q_list());
 
-            else if (p.GetHasQNumber())
-                e = Go(p.GetQNumber());
+            else if (p.get_has_q_number())
+                e = Go(p.get_q_number());
 
             else
                 e = Go();
@@ -59,14 +59,14 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
             break;
         case MIDI_SC_STOP:
 
-            if (p.GetHasQPath())
-                e = Stop(p.GetQNumber(), p.GetQList(), p.GetQPath());
+            if (p.get_has_q_path())
+                e = Stop(p.get_q_number(), p.get_q_list(), p.get_q_path());
 
-            else if (p.GetHasQList())
-                e = Stop(p.GetQNumber(), p.GetQList());
+            else if (p.get_has_q_list())
+                e = Stop(p.get_q_number(), p.get_q_list());
 
-            else if (p.GetHasQNumber())
-                e = Stop(p.GetQNumber());
+            else if (p.get_has_q_number())
+                e = Stop(p.get_q_number());
 
             else
                 e = Stop();
@@ -74,14 +74,14 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
             break;
         case MIDI_SC_RESUME:
 
-            if (p.GetHasQPath())
-                e = Resume(p.GetQNumber(), p.GetQList(), p.GetQPath());
+            if (p.get_has_q_path())
+                e = Resume(p.get_q_number(), p.get_q_list(), p.get_q_path());
 
-            else if (p.GetHasQList())
-                e = Resume(p.GetQNumber(), p.GetQList());
+            else if (p.get_has_q_list())
+                e = Resume(p.get_q_number(), p.get_q_list());
 
-            else if (p.GetHasQNumber())
-                e = Resume(p.GetQNumber());
+            else if (p.get_has_q_number())
+                e = Resume(p.get_q_number());
 
             else
                 e = Resume();
@@ -89,26 +89,26 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
             break;
         case MIDI_SC_LOAD:
 
-            if (p.GetHasQPath())
-                e = Load(p.GetQNumber(), p.GetQList(), p.GetQPath());
+            if (p.get_has_q_path())
+                e = Load(p.get_q_number(), p.get_q_list(), p.get_q_path());
 
-            else if (p.GetHasQList())
-                e = Load(p.GetQNumber(), p.GetQList());
+            else if (p.get_has_q_list())
+                e = Load(p.get_q_number(), p.get_q_list());
 
             else
-                e = Load(p.GetQNumber());
+                e = Load(p.get_q_number());
 
             break;
         case MIDI_SC_GO_OFF:
 
-            if (p.GetHasQPath())
-                e = GoOff(p.GetQNumber(), p.GetQList(), p.GetQPath());
+            if (p.get_has_q_path())
+                e = GoOff(p.get_q_number(), p.get_q_list(), p.get_q_path());
 
-            else if (p.GetHasQList())
-                e = GoOff(p.GetQNumber(), p.GetQList());
+            else if (p.get_has_q_list())
+                e = GoOff(p.get_q_number(), p.get_q_list());
 
-            else if (p.GetHasQNumber())
-                e = GoOff(p.GetQNumber());
+            else if (p.get_has_q_number())
+                e = GoOff(p.get_q_number());
 
             else
                 e = GoOff();
@@ -116,14 +116,14 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
             break;
         case MIDI_SC_GO_JAM:
 
-            if (p.GetHasQPath())
-                e = GoJam(p.GetQNumber(), p.GetQList(), p.GetQPath());
+            if (p.get_has_q_path())
+                e = GoJam(p.get_q_number(), p.get_q_list(), p.get_q_path());
 
-            else if (p.GetHasQList())
-                e = GoJam(p.GetQNumber(), p.GetQList());
+            else if (p.get_has_q_list())
+                e = GoJam(p.get_q_number(), p.get_q_list());
 
-            else if (p.GetHasQNumber())
-                e = GoJam(p.GetQNumber());
+            else if (p.get_has_q_number())
+                e = GoJam(p.get_q_number());
 
             else
                 e = GoJam();
@@ -131,65 +131,65 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
             break;
         case MIDI_SC_TIMED_GO:
 
-            if (p.GetHasQPath())
+            if (p.get_has_q_path())
                 e = TimedGo(
-                    p.GetHours(),
-                    p.GetMinutes(),
-                    p.GetSeconds(),
-                    p.GetFrames(),
-                    p.GetFractFrames(),
-                    p.GetQNumber(),
-                    p.GetQList(),
-                    p.GetQPath());
+                    p.get_hours(),
+                    p.get_minutes(),
+                    p.get_seconds(),
+                    p.get_frames(),
+                    p.get_fract_frames(),
+                    p.get_q_number(),
+                    p.get_q_list(),
+                    p.get_q_path());
 
-            else if (p.GetHasQList())
+            else if (p.get_has_q_list())
                 e = TimedGo(
-                    p.GetHours(),
-                    p.GetMinutes(),
-                    p.GetSeconds(),
-                    p.GetFrames(),
-                    p.GetFractFrames(),
-                    p.GetQNumber(),
-                    p.GetQList());
+                    p.get_hours(),
+                    p.get_minutes(),
+                    p.get_seconds(),
+                    p.get_frames(),
+                    p.get_fract_frames(),
+                    p.get_q_number(),
+                    p.get_q_list());
 
-            else if (p.GetHasQNumber())
+            else if (p.get_has_q_number())
                 e = TimedGo(
-                    p.GetHours(),
-                    p.GetMinutes(),
-                    p.GetSeconds(),
-                    p.GetFrames(),
-                    p.GetFractFrames(),
-                    p.GetQNumber());
+                    p.get_hours(),
+                    p.get_minutes(),
+                    p.get_seconds(),
+                    p.get_frames(),
+                    p.get_fract_frames(),
+                    p.get_q_number());
 
             else
                 e = TimedGo(
-                    p.GetHours(),
-                    p.GetMinutes(),
-                    p.GetSeconds(),
-                    p.GetFrames(),
-                    p.GetFractFrames());
+                    p.get_hours(),
+                    p.get_minutes(),
+                    p.get_seconds(),
+                    p.get_frames(),
+                    p.get_fract_frames());
 
             break;
         case MIDI_SC_SET:
 
-            if (!p.GetHasTime()) {
-                e = Set(p.GetControlNum(), p.GetControlVal());
+            if (!p.get_has_time()) {
+                e = Set(p.get_control_num(), p.get_control_val());
             }
 
             else {
                 e =
-                    Set(p.GetControlNum(),
-                        p.GetControlVal(),
-                        p.GetHours(),
-                        p.GetMinutes(),
-                        p.GetSeconds(),
-                        p.GetFrames(),
-                        p.GetFractFrames());
+                    Set(p.get_control_num(),
+                        p.get_control_val(),
+                        p.get_hours(),
+                        p.get_minutes(),
+                        p.get_seconds(),
+                        p.get_frames(),
+                        p.get_fract_frames());
             }
 
             break;
         case MIDI_SC_FIRE:
-            e = Fire((std::uint8_t)p.GetMacroNum());
+            e = Fire((std::uint8_t)p.get_macro_num());
             break;
         case MIDI_SC_ALL_OFF:
             e = AllOff();
@@ -202,8 +202,8 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
             break;
         case MIDI_SC_STANDBY_PLUS:
 
-            if (p.GetHasQList())
-                e = StandbyPlus(p.GetQList());
+            if (p.get_has_q_list())
+                e = StandbyPlus(p.get_q_list());
 
             else
                 e = StandbyPlus();
@@ -211,8 +211,8 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
             break;
         case MIDI_SC_STANDBY_MINUS:
 
-            if (p.GetHasQList())
-                e = StandbyMinus(p.GetQList());
+            if (p.get_has_q_list())
+                e = StandbyMinus(p.get_q_list());
 
             else
                 e = StandbyMinus();
@@ -220,8 +220,8 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
             break;
         case MIDI_SC_SEQUENCE_PLUS:
 
-            if (p.GetHasQList())
-                e = SequencePlus(p.GetQList());
+            if (p.get_has_q_list())
+                e = SequencePlus(p.get_q_list());
 
             else
                 e = SequencePlus();
@@ -229,8 +229,8 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
             break;
         case MIDI_SC_SEQUENCE_MINUS:
 
-            if (p.GetHasQList())
-                e = SequenceMinus(p.GetQList());
+            if (p.get_has_q_list())
+                e = SequenceMinus(p.get_q_list());
 
             else
                 e = SequenceMinus();
@@ -238,8 +238,8 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
             break;
         case MIDI_SC_START_CLOCK:
 
-            if (p.GetHasQList())
-                e = StartClock(p.GetQList());
+            if (p.get_has_q_list())
+                e = StartClock(p.get_q_list());
 
             else
                 e = StartClock();
@@ -247,8 +247,8 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
             break;
         case MIDI_SC_STOP_CLOCK:
 
-            if (p.GetHasQList())
-                e = StopClock(p.GetQList());
+            if (p.get_has_q_list())
+                e = StopClock(p.get_q_list());
 
             else
                 e = StopClock();
@@ -256,8 +256,8 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
             break;
         case MIDI_SC_ZERO_CLOCK:
 
-            if (p.GetHasQList())
-                e = ZeroClock(p.GetQList());
+            if (p.get_has_q_list())
+                e = ZeroClock(p.get_q_list());
 
             else
                 e = ZeroClock();
@@ -265,8 +265,8 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
             break;
         case MIDI_SC_MTC_CHASE_ON:
 
-            if (p.GetHasQList())
-                e = MTCChaseOn(p.GetQList());
+            if (p.get_has_q_list())
+                e = MTCChaseOn(p.get_q_list());
 
             else
                 e = MTCChaseOn();
@@ -274,8 +274,8 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
             break;
         case MIDI_SC_MTC_CHASE_OFF:
 
-            if (p.GetHasQList())
-                e = MTCChaseOff(p.GetQList());
+            if (p.get_has_q_list())
+                e = MTCChaseOff(p.get_q_list());
 
             else
                 e = MTCChaseOff();
@@ -283,34 +283,34 @@ bool MIDISCHandle::Dispatch(MIDIShowControlPacket const& p)
             break;
         case MIDI_SC_SET_CLOCK:
 
-            if (p.GetHasQList())
+            if (p.get_has_q_list())
                 e = SetClock(
-                    p.GetHours(),
-                    p.GetMinutes(),
-                    p.GetSeconds(),
-                    p.GetFrames(),
-                    p.GetFractFrames(),
-                    p.GetQList());
+                    p.get_hours(),
+                    p.get_minutes(),
+                    p.get_seconds(),
+                    p.get_frames(),
+                    p.get_fract_frames(),
+                    p.get_q_list());
 
             else
                 e = SetClock(
-                    p.GetHours(),
-                    p.GetMinutes(),
-                    p.GetSeconds(),
-                    p.GetFrames(),
-                    p.GetFractFrames());
+                    p.get_hours(),
+                    p.get_minutes(),
+                    p.get_seconds(),
+                    p.get_frames(),
+                    p.get_fract_frames());
 
         case MIDI_SC_OPEN_Q_LIST:
-            e = OpenQList(p.GetQList());
+            e = OpenQList(p.get_q_list());
             break;
         case MIDI_SC_CLOSE_Q_LIST:
-            e = CloseQList(p.GetQList());
+            e = CloseQList(p.get_q_list());
             break;
         case MIDI_SC_OPEN_Q_PATH:
-            e = OpenQPath(p.GetQPath());
+            e = OpenQPath(p.get_q_path());
             break;
         case MIDI_SC_CLOSE_Q_PATH:
-            e = CloseQPath(p.GetQPath());
+            e = CloseQPath(p.get_q_path());
             break;
         default:
             e = false;

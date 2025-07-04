@@ -34,43 +34,43 @@
 namespace jdksmidi {
 
 MIDIShowControlPacket::MIDIShowControlPacket()
-    : QNumber(0)
-    , QList(0)
-    , QPath(0)
+    : q_number(0)
+    , q_list(0)
+    , q_path(0)
 {
-    DeviceId = 0;
-    CommandFmt = 0;
-    Command = MIDI_SC_GO;
-    HasTime = false;
-    HasQNumber = false;
-    HasQList = false;
-    HasQPath = false;
-    Hours = 0;
-    Minutes = 0;
-    Seconds = 0;
-    Frames = 0;
-    FractFrames = 0;
-    Val1 = 0;
-    Val2 = 0;
+    device_id = 0;
+    command_fmt = 0;
+    command = MIDI_SC_GO;
+    has_time = false;
+    has_q_number = false;
+    has_q_list = false;
+    has_q_path = false;
+    hours = 0;
+    minutes = 0;
+    seconds = 0;
+    frames = 0;
+    fract_frames = 0;
+    val1 = 0;
+    val2 = 0;
 }
 
 void MIDIShowControlPacket::clear_variable_stuff()
 {
-    QNumber.clear();
-    QList.clear();
-    QPath.clear();
-    Command = MIDI_SC_GO;
-    HasTime = false;
-    HasQNumber = false;
-    HasQList = false;
-    HasQPath = false;
-    Hours = 0;
-    Minutes = 0;
-    Seconds = 0;
-    Frames = 0;
-    FractFrames = 0;
-    Val1 = 0;
-    Val2 = 0;
+    q_number.clear();
+    q_list.clear();
+    q_path.clear();
+    command = MIDI_SC_GO;
+    has_time = false;
+    has_q_number = false;
+    has_q_list = false;
+    has_q_path = false;
+    hours = 0;
+    minutes = 0;
+    seconds = 0;
+    frames = 0;
+    fract_frames = 0;
+    val1 = 0;
+    val2 = 0;
 }
 
 bool MIDIShowControlPacket::parse_entire_sys_ex(MIDISystemExclusive const* e)
@@ -85,15 +85,15 @@ bool MIDIShowControlPacket::parse_entire_sys_ex(MIDISystemExclusive const* e)
         return false;
 
     clear_variable_stuff();
-    DeviceId = e->get_data(pos++);
+    device_id = e->get_data(pos++);
 
     if (e->get_data(pos++) != 0x02)
         return false;
 
-    CommandFmt = e->get_data(pos++);
-    Command = (MIDIShowCommand)e->get_data(pos++);
+    command_fmt = e->get_data(pos++);
+    command = (MIDIShowCommand)e->get_data(pos++);
 
-    switch (Command) {
+    switch (command) {
         case MIDI_SC_GO:
         case MIDI_SC_STOP:
         case MIDI_SC_RESUME:
@@ -161,12 +161,12 @@ bool MIDIShowControlPacket::store_to_sys_ex(MIDISystemExclusive* e) const
     e->clear();
     e->put_exc();
     e->put_byte(0x7f);
-    e->put_byte(DeviceId);
+    e->put_byte(device_id);
     e->put_byte(0x02);
-    e->put_byte(CommandFmt);
-    e->put_byte(Command);
+    e->put_byte(command_fmt);
+    e->put_byte(command);
 
-    switch (Command) {
+    switch (command) {
         case MIDI_SC_GO:
         case MIDI_SC_STOP:
         case MIDI_SC_RESUME:
@@ -199,13 +199,13 @@ bool MIDIShowControlPacket::store_to_sys_ex(MIDISystemExclusive* e) const
         case MIDI_SC_ZERO_CLOCK:
         case MIDI_SC_MTC_CHASE_ON:
         case MIDI_SC_MTC_CHASE_OFF: {
-            if (HasQList)
+            if (has_q_list)
                 f &= store_q_list(e);
         } break;
         case MIDI_SC_SET_CLOCK: {
             f &= store_time(e);
 
-            if (HasQList)
+            if (has_q_list)
                 f &= store_q_list(e);
         } break;
         case MIDI_SC_OPEN_Q_LIST:
@@ -231,12 +231,12 @@ bool MIDIShowControlPacket::store_to_sys_ex(MIDISystemExclusive* e) const
 
 bool MIDIShowControlPacket::store_time(MIDISystemExclusive* e) const
 {
-    if (HasTime) {
-        e->put_byte(Hours);
-        e->put_byte(Minutes);
-        e->put_byte(Seconds);
-        e->put_byte(Frames);
-        e->put_byte(FractFrames);
+    if (has_time) {
+        e->put_byte(hours);
+        e->put_byte(minutes);
+        e->put_byte(seconds);
+        e->put_byte(frames);
+        e->put_byte(fract_frames);
         return true;
     }
 
@@ -247,11 +247,11 @@ bool MIDIShowControlPacket::store_time(MIDISystemExclusive* e) const
 
 bool MIDIShowControlPacket::parse_time(MIDISystemExclusive const* e, int* pos)
 {
-    Hours = e->get_data((*pos)++);
-    Minutes = e->get_data((*pos)++);
-    Seconds = e->get_data((*pos)++);
-    Frames = e->get_data((*pos)++);
-    FractFrames = e->get_data((*pos)++);
+    hours = e->get_data((*pos)++);
+    minutes = e->get_data((*pos)++);
+    seconds = e->get_data((*pos)++);
+    frames = e->get_data((*pos)++);
+    fract_frames = e->get_data((*pos)++);
     return true;
 }
 
@@ -259,16 +259,16 @@ bool MIDIShowControlPacket::store_3_param(MIDISystemExclusive* e) const
 {
     bool f = true;
 
-    if (HasQNumber) {
-        f &= store_ascii_num(e, GetQNumber());
+    if (has_q_number) {
+        f &= store_ascii_num(e, get_q_number());
 
-        if (HasQList) {
+        if (has_q_list) {
             e->put_byte(0);
-            f &= store_ascii_num(e, GetQList());
+            f &= store_ascii_num(e, get_q_list());
 
-            if (HasQPath) {
+            if (has_q_path) {
                 e->put_byte(0);
-                f &= store_ascii_num(e, GetQPath());
+                f &= store_ascii_num(e, get_q_path());
             }
         }
     }
@@ -288,8 +288,8 @@ bool MIDIShowControlPacket::parse_3_param(MIDISystemExclusive const* e, int* pos
         f = parse_ascii_num(e, pos, &v);
 
         if (f) {
-            HasQNumber = true;
-            SetQNumber(v);
+            has_q_number = true;
+            set_q_number(v);
 
             if (*pos < e->get_length()) {
                 //
@@ -298,8 +298,8 @@ bool MIDIShowControlPacket::parse_3_param(MIDISystemExclusive const* e, int* pos
                 f = parse_ascii_num(e, pos, &v);
 
                 if (f) {
-                    HasQList = true;
-                    SetQList(v);
+                    has_q_list = true;
+                    set_q_list(v);
 
                     if (*pos < e->get_length()) {
                         //
@@ -308,8 +308,8 @@ bool MIDIShowControlPacket::parse_3_param(MIDISystemExclusive const* e, int* pos
                         f = parse_ascii_num(e, pos, &v);
 
                         if (f) {
-                            HasQPath = true;
-                            SetQPath(v);
+                            has_q_path = true;
+                            set_q_path(v);
                         }
                     }
                 }
@@ -323,12 +323,12 @@ bool MIDIShowControlPacket::parse_3_param(MIDISystemExclusive const* e, int* pos
 bool MIDIShowControlPacket::store_set(MIDISystemExclusive* e) const
 {
     bool f = true;
-    e->put_byte(static_cast<std::uint8_t>(GetControlNum() & 0x7f));
-    e->put_byte(static_cast<std::uint8_t>((GetControlNum() >> 7) & 0x7f));
-    e->put_byte(static_cast<std::uint8_t>(GetControlVal() & 0x7f));
-    e->put_byte(static_cast<std::uint8_t>((GetControlVal() >> 7) & 0x7f));
+    e->put_byte(static_cast<std::uint8_t>(get_control_num() & 0x7f));
+    e->put_byte(static_cast<std::uint8_t>((get_control_num() >> 7) & 0x7f));
+    e->put_byte(static_cast<std::uint8_t>(get_control_val() & 0x7f));
+    e->put_byte(static_cast<std::uint8_t>((get_control_val() >> 7) & 0x7f));
 
-    if (HasTime) {
+    if (has_time) {
         f = store_time(e);
     }
 
@@ -340,10 +340,10 @@ bool MIDIShowControlPacket::parse_set(MIDISystemExclusive const* e, int* pos)
     std::uint32_t v;
     v = e->get_data((*pos)++);
     v += (e->get_data((*pos)++) << 7);
-    SetControlNum(v);
+    set_control_num(v);
     v = e->get_data((*pos)++);
     v += (e->get_data((*pos)++) << 7);
-    SetControlVal(v);
+    set_control_val(v);
 
     if (e->get_data(*pos) != 0xf7) {
         return parse_time(e, pos);
@@ -356,7 +356,7 @@ bool MIDIShowControlPacket::parse_set(MIDISystemExclusive const* e, int* pos)
 
 bool MIDIShowControlPacket::store_fire(MIDISystemExclusive* e) const
 {
-    e->put_byte(static_cast<std::uint8_t>(GetMacroNum()));
+    e->put_byte(static_cast<std::uint8_t>(get_macro_num()));
     return true;
 }
 
@@ -364,14 +364,14 @@ bool MIDIShowControlPacket::parse_fire(MIDISystemExclusive const* e, int* pos)
 {
     int v;
     v = e->get_data((*pos)++);
-    SetMacroNum(v);
+    set_macro_num(v);
     return true;
 }
 
 bool MIDIShowControlPacket::store_q_path(MIDISystemExclusive* e) const
 {
-    if (HasQPath) {
-        return store_ascii_num(e, GetQPath());
+    if (has_q_path) {
+        return store_ascii_num(e, get_q_path());
     }
 
     else {
@@ -389,8 +389,8 @@ bool MIDIShowControlPacket::parse_q_path(MIDISystemExclusive const* e, int* pos)
         // Read the Q Path
         //
         f = parse_ascii_num(e, pos, &v);
-        SetQPath(v);
-        HasQPath = true;
+        set_q_path(v);
+        has_q_path = true;
         return f;
     }
 
@@ -401,8 +401,8 @@ bool MIDIShowControlPacket::parse_q_path(MIDISystemExclusive const* e, int* pos)
 
 bool MIDIShowControlPacket::store_q_list(MIDISystemExclusive* e) const
 {
-    if (HasQList) {
-        return store_ascii_num(e, GetQList());
+    if (has_q_list) {
+        return store_ascii_num(e, get_q_list());
     }
 
     else {
@@ -420,8 +420,8 @@ bool MIDIShowControlPacket::parse_q_list(MIDISystemExclusive const* e, int* pos)
         // Read the Q list
         //
         f = parse_ascii_num(e, pos, &v);
-        SetQList(v);
-        HasQList = true;
+        set_q_list(v);
+        has_q_list = true;
         return f;
     }
 
@@ -445,24 +445,24 @@ bool MIDIShowControlPacket::store_ascii_num(MIDISystemExclusive* e, MIDICue cons
     bool f = false;
     *buf = '\0';
 
-    switch (num.GetNumValues()) {
+    switch (num.get_num_values()) {
         default:
         case 0:
             break;
         case 1:
-            snprintf(buf, sizeof(buf), "%" PRIu32, num.GetV1());
+            snprintf(buf, sizeof(buf), "%" PRIu32, num.get_v1());
             break;
         case 2:
-            snprintf(buf, sizeof(buf), "%" PRIu32 ".%" PRIu32, num.GetV1(), num.GetV2());
+            snprintf(buf, sizeof(buf), "%" PRIu32 ".%" PRIu32, num.get_v1(), num.get_v2());
             break;
         case 3:
             snprintf(
                 buf,
                 sizeof(buf),
                 "%" PRIu32 ".%" PRIu32 ".%" PRIu32,
-                num.GetV1(),
-                num.GetV2(),
-                num.GetV3());
+                num.get_v1(),
+                num.get_v2(),
+                num.get_v3());
             break;
     }
 
@@ -486,8 +486,8 @@ bool MIDIShowControlPacket::parse_ascii_num(MIDISystemExclusive const* e, int* p
     f = parse_ascii_num(e, pos, &v);
 
     if (f) {
-        num->SetNumValues(1);
-        num->SetV1(v);
+        num->set_num_values(1);
+        num->set_v1(v);
     }
 
     //
@@ -503,8 +503,8 @@ bool MIDIShowControlPacket::parse_ascii_num(MIDISystemExclusive const* e, int* p
         f = parse_ascii_num(e, pos, &v);
 
         if (f) {
-            num->SetNumValues(2);
-            num->SetV2(v);
+            num->set_num_values(2);
+            num->set_v2(v);
         }
 
         //
@@ -520,8 +520,8 @@ bool MIDIShowControlPacket::parse_ascii_num(MIDISystemExclusive const* e, int* p
             f = parse_ascii_num(e, pos, &v);
 
             if (f) {
-                num->SetNumValues(2);
-                num->SetV3(v);
+                num->set_num_values(2);
+                num->set_v3(v);
             }
 
             //
