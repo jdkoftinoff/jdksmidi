@@ -605,7 +605,8 @@ bool MIDISequencer::go_to_time(MIDIClockTime time_clk)
     int trk;
     MIDITimedBigMessage ev;
 
-    while (get_next_event_time(&t) && t < time_clk && get_next_event(&trk, &ev)) {
+    while (get_next_event_time(&t) && t <= time_clk && get_next_event(&trk, &ev)) {
+        // Continue processing events up to and including the target time
         ;
     }
 
@@ -892,13 +893,25 @@ void MIDISequencer::scan_events_at_this_time()
     // process all messages up to and including this time only
     MIDIClockTime orig_clock = state.cur_clock;
     double orig_time_ms = state.cur_time_ms;
-    MIDIClockTime t = 0;
-    int trk;
-    MIDITimedBigMessage ev;
 
-    while (get_next_event_time(&t) && t == orig_clock && get_next_event(&trk, &ev)) {
-        // Process the event through the track state to update tempo, time signature, etc.
-        state.track_state[trk]->process(&ev);
+    // The iterator has a limitation: it only returns one event per timestamp
+    // even when multiple tracks have events at the same time.
+    // To work around this, we manually scan all tracks for events at the current time.
+    // Note: Events in tracks are stored in insertion order, not necessarily sorted by time.
+    for (int track_num = 0; track_num < state.num_tracks; ++track_num) {
+        auto track = state.multitrack->get_track(track_num);
+        if (track) {
+            // Scan through ALL events in this track to find ones at the current time
+            // We can't assume they're sorted, so we must check every event
+            for (int event_idx = 0; event_idx < track->get_num_events(); ++event_idx) {
+                auto event = track->get_event(event_idx);
+                if (event && event->get_time() == orig_clock) {
+                    // Found an event at the current time - process it
+                    MIDITimedBigMessage ev = *event;
+                    state.track_state[track_num]->process(&ev);
+                }
+            }
+        }
     }
 
     // restore the iterator state
