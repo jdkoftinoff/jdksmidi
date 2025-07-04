@@ -55,20 +55,20 @@ class MIDIMultiTrack
     void set_track(int trk, MIDITrack* t);
     MIDITrack* get_track(int trk);
     MIDITrack const* get_track(int trk) const;
-    int get_num_tracks() const { return num_tracks; }
+    int get_num_tracks() const { return _num_tracks; }
 
     void clear();
 
-    int get_clks_per_beat() const { return clks_per_beat; }
+    int get_clks_per_beat() const { return _clks_per_beat; }
 
-    void set_clks_per_beat(int c) { clks_per_beat = c; }
+    void set_clks_per_beat(int c) { _clks_per_beat = c; }
 
   protected:
-    MIDITrack** tracks;
-    int const num_tracks;
-    bool deletable;
+    MIDITrack** _tracks;
+    int const _num_tracks;
+    bool _deletable;
 
-    int clks_per_beat;
+    int _clks_per_beat;
 
   private:
 };
@@ -82,18 +82,21 @@ class MIDIMultiTrackIteratorState
 
     MIDIMultiTrackIteratorState const& operator=(MIDIMultiTrackIteratorState const& m);
 
-    int get_num_tracks() const { return num_tracks; }
-    int get_cur_event_track() const { return cur_event_track; }
-    MIDIClockTime get_current_time() const { return cur_time; }
+    int get_num_tracks() const { return _num_tracks; }
+    int get_cur_event_track() const { return _cur_event_track; }
+    MIDIClockTime get_current_time() const { return _cur_time; }
 
     void reset();
     int find_track_of_first_event();
 
-    MIDIClockTime cur_time;
-    int cur_event_track;
-    int num_tracks;
-    int* next_event_number;
-    MIDIClockTime* next_event_time;
+  protected:
+    friend class MIDIMultiTrackIterator;
+    
+    MIDIClockTime _cur_time;
+    int _cur_event_track;
+    int _num_tracks;
+    int* _next_event_number;
+    MIDIClockTime* _next_event_time;
 };
 
 class MIDIMultiTrackIterator
