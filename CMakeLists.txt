@@ -7,6 +7,13 @@ project(jdksmidi
     LANGUAGES CXX
 )
 
+set(CMAKE_WARN_DEPRECATED
+    OFF
+    CACHE BOOL "" FORCE)
+set(DOCTEST_NO_INSTALL
+    ON
+    CACHE BOOL "" FORCE)
+
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
