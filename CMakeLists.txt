@@ -241,12 +241,12 @@ if(JDKSMIDI_BUILD_EXAMPLES)
     # List of example programs
     set(JDKSMIDI_EXAMPLES
         jdksmidi_rewrite_midifile
-        jdksmidi_test_drv
-        jdksmidi_test_multitrack
-        jdksmidi_test_multitrack1
-        jdksmidi_test_parse
-        jdksmidi_test_sequencer
-        jdksmidi_test_show
+        jdksmidi_example_drv
+        jdksmidi_example_multitrack
+        jdksmidi_example_multitrack1
+        jdksmidi_example_parse
+        jdksmidi_example_sequencer
+        jdksmidi_example_show
     )
 
     # Create example executables

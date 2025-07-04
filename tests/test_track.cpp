@@ -200,7 +200,7 @@ TEST_CASE("MIDITrack event types") {
         msg.SetTime(150);
         track.PutEvent(msg);
         
-        msg.SetControlChange(3, C_VOLUME, 100);
+        msg.SetControlChange(3, C_MAIN_VOLUME, 100);
         msg.SetTime(250);
         track.PutEvent(msg);
         
@@ -214,7 +214,7 @@ TEST_CASE("MIDITrack event types") {
         
         event = track.GetEvent(1);
         CHECK(event->IsControlChange() == true);
-        CHECK(event->GetController() == C_VOLUME);
+        CHECK(event->GetController() == C_MAIN_VOLUME);
         CHECK(event->GetControllerValue() == 100);
     }
 
@@ -274,7 +274,7 @@ TEST_CASE("MIDITrack event modification") {
         
         // Modify first event
         MIDITimedBigMessage new_msg;
-        new_msg.SetControlChange(2, C_VOLUME, 100);
+        new_msg.SetControlChange(2, C_MAIN_VOLUME, 100);
         new_msg.SetTime(150);
         bool result = track.SetEvent(0, new_msg);
         
