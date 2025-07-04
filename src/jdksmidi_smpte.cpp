@@ -69,7 +69,7 @@ long const smpte_sample_rates_long[] = {
     480000,
     (long)(480000.0 * 1.001)};
 
-SMPTE::SMPTE(SMPTE_RATE smpte_rate_, SAMPLE_RATE sample_rate_)
+SMPTE::SMPTE(SMPTEFormat smpte_rate_, SAMPLE_RATE sample_rate_)
     : smpte_rate(smpte_rate_)
     , sample_rate(sample_rate_)
     , sample_number(0)

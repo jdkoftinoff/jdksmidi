@@ -42,7 +42,7 @@
 
 namespace jdksmidi {
 
-enum SMPTE_RATE
+enum SMPTEFormat
 {
     SMPTE_RATE_24 = 0,
     SMPTE_RATE_25,
@@ -63,21 +63,21 @@ enum SAMPLE_RATE
 };
 
 //
-// MDGetSMPTERateFrequency() converts the SMPTE_RATE enum to a double frequency.
+// MDGetSMPTERateFrequency() converts the SMPTEFormat enum to a double frequency.
 //
 
-inline double get_smpte_rate_frequency(SMPTE_RATE r)
+inline double get_smpte_rate_frequency(SMPTEFormat r)
 {
     extern double const smpte_smpte_rates[];
     return smpte_smpte_rates[static_cast<int>(r)];
 }
 
 //
-// MDGetSMPTERateFrequencyLong() convert the SMPTE_RATE enum to an int
+// MDGetSMPTERateFrequencyLong() convert the SMPTEFormat enum to an int
 // frequency times 100
 //
 
-inline long get_smpte_rate_frequency_long(SMPTE_RATE r)
+inline long get_smpte_rate_frequency_long(SMPTEFormat r)
 {
     extern double const smpte_smpte_rates_long[];
     return static_cast<long>(smpte_smpte_rates_long[static_cast<int>(r)]);
@@ -108,16 +108,16 @@ inline long get_sample_rate_frequency_long(SAMPLE_RATE r)
 class SMPTE
 {
   public:
-    SMPTE(SMPTE_RATE smpte_rate = SMPTE_RATE_30, SAMPLE_RATE sample_rate = SAMPLE_48000);
+    SMPTE(SMPTEFormat smpte_rate = SMPTE_RATE_30, SAMPLE_RATE sample_rate = SAMPLE_48000);
 
     SMPTE(const SMPTE& s);
 
-    void set_smpte_rate(SMPTE_RATE r)
+    void set_smpte_rate(SMPTEFormat r)
     {
         smpte_rate = r;
         sample_number_dirty = true;
     }
-    SMPTE_RATE get_smpte_rate() { return smpte_rate; }
+    SMPTEFormat get_smpte_rate() { return smpte_rate; }
 
     void set_sample_rate(SAMPLE_RATE r)
     {
@@ -244,7 +244,7 @@ class SMPTE
     int get_smpte_rate_long() { return get_smpte_rate_frequency_long(smpte_rate); }
 
   private:
-    SMPTE_RATE smpte_rate;
+    SMPTEFormat smpte_rate;
     SAMPLE_RATE sample_rate;
     std::uint32_t sample_number;
 
