@@ -50,7 +50,7 @@ class MIDIManager : public MIDITick
     MIDISequencer const* get_seq() const;
 
     // to get the driver that we use
-    MIDIDriver* get_driver() { return driver; }
+    MIDIDriver* get_driver() { return _driver; }
 
     // to set and get the system time offset
     void set_time_offset(unsigned long off);
@@ -77,21 +77,21 @@ class MIDIManager : public MIDITick
     virtual void time_tick_play_mode(unsigned long sys_time_);
     virtual void time_tick_stop_mode(unsigned long sys_time_);
 
-    MIDIDriver* driver;
+    MIDIDriver* _driver;
 
-    MIDISequencer* sequencer;
+    MIDISequencer* _sequencer;
 
-    unsigned long sys_time_offset;
-    unsigned long seq_time_offset;
+    unsigned long _sys_time_offset;
+    unsigned long _seq_time_offset;
 
-    bool volatile play_mode;
-    bool volatile stop_mode;
+    bool volatile _play_mode;
+    bool volatile _stop_mode;
 
-    MIDISequencerGUIEventNotifier* notifier;
+    MIDISequencerGUIEventNotifier* _notifier;
 
-    bool volatile repeat_play_mode;
-    long repeat_start_measure;
-    long repeat_end_measure;
+    bool volatile _repeat_play_mode;
+    long _repeat_start_measure;
+    long _repeat_end_measure;
 };
 
 }  // namespace jdksmidi
