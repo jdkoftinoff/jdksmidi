@@ -55,12 +55,12 @@ class MIDIMatrix
 
     virtual void clear();
 
-    int get_total_count() const { return total_count; }
-    int get_channel_count(int channel) const { return channel_count[channel]; }
+    int get_total_count() const { return _total_count; }
+    int get_channel_count(int channel) const { return _channel_count[channel]; }
 
-    int get_note_count(int channel, int note) const { return note_on_count[channel][note]; }
+    int get_note_count(int channel, int note) const { return _note_on_count[channel][note]; }
 
-    bool get_hold_pedal(int channel) const { return hold_pedal[channel]; }
+    bool get_hold_pedal(int channel) const { return _hold_pedal[channel]; }
 
   protected:
     virtual void dec_note_count(MIDIMessage const& m, int channel, int note);
@@ -70,15 +70,15 @@ class MIDIMatrix
 
     void set_note_count(std::uint8_t chan, std::uint8_t note, std::uint8_t val)
     {
-        note_on_count[chan][note] = val;
+        _note_on_count[chan][note] = val;
     }
-    void set_channel_count(std::uint8_t chan, int val) { channel_count[chan] = val; }
+    void set_channel_count(std::uint8_t chan, int val) { _channel_count[chan] = val; }
 
   private:
-    std::uint8_t note_on_count[16][128];
-    int channel_count[16];
-    bool hold_pedal[16];
-    int total_count;
+    std::uint8_t _note_on_count[16][128];
+    int _channel_count[16];
+    bool _hold_pedal[16];
+    int _total_count;
 };
 
 }  // namespace jdksmidi

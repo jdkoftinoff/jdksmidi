@@ -91,17 +91,17 @@ char const* MIDIMessage::msg_to_text(char* txt) const
             sizeof(buf),
             "Ch %2d  All Notes Off  (ctrl=%3d)",
             static_cast<int>(get_channel()) + 1,
-            static_cast<int>(byte1));
+            static_cast<int>(_byte1));
         strcat(txt, buf);
     }
 
     else {
-        int type = (status & 0xf0) >> 4;
+        int type = (_status & 0xf0) >> 4;
         //
         // if it is a note on with vel=0, call it a NOTE OFF
         //
 
-        if (type == 9 && byte2 == 0)
+        if (type == 9 && _byte2 == 0)
             type = 8;
 
         if (type != 0xf) {
@@ -111,21 +111,21 @@ char const* MIDIMessage::msg_to_text(char* txt) const
 
         strcat(txt, chan_msg_name[type]);
 
-        if (status >= 0xf0) {
-            strcat(txt, sys_msg_name[status - 0xf0]);
+        if (_status >= 0xf0) {
+            strcat(txt, sys_msg_name[_status - 0xf0]);
 
             if (len > 1) {
-                snprintf(buf, sizeof(buf), "%02x", static_cast<int>(byte1));
+                snprintf(buf, sizeof(buf), "%02x", static_cast<int>(_byte1));
                 strcat(txt, buf);
             }
 
             if (len > 2) {
-                snprintf(buf, sizeof(buf), ",%02x", static_cast<int>(byte2));
+                snprintf(buf, sizeof(buf), ",%02x", static_cast<int>(_byte2));
                 strcat(txt, buf);
             }
 
             if (len > 3) {
-                snprintf(buf, sizeof(buf), ",%02x", static_cast<int>(byte3));
+                snprintf(buf, sizeof(buf), ",%02x", static_cast<int>(_byte3));
                 strcat(txt, buf);
             }
         }
@@ -133,19 +133,19 @@ char const* MIDIMessage::msg_to_text(char* txt) const
         else {
             char* endtxt = txt + strlen(txt);
 
-            switch (status & 0xf0) {
+            switch (_status & 0xf0) {
                 case NOTE_ON:
 
-                    if (byte2 == 0)
-                        snprintf(endtxt, 64, "Note %3d", static_cast<int>(byte1));
+                    if (_byte2 == 0)
+                        snprintf(endtxt, 64, "Note %3d", static_cast<int>(_byte1));
 
                     else
                         snprintf(
                             endtxt,
                             64,
                             "Note %3d  Vel  %3d  ",
-                            static_cast<int>(byte1),
-                            static_cast<int>(byte2));
+                            static_cast<int>(_byte1),
+                            static_cast<int>(_byte2));
 
                     break;
                 case NOTE_OFF:
@@ -153,30 +153,30 @@ char const* MIDIMessage::msg_to_text(char* txt) const
                         endtxt,
                         64,
                         "Note %3d  Vel  %3d  ",
-                        static_cast<int>(byte1),
-                        static_cast<int>(byte2));
+                        static_cast<int>(_byte1),
+                        static_cast<int>(_byte2));
                     break;
                 case POLY_PRESSURE:
                     snprintf(
                         endtxt,
                         64,
                         "Note %3d  Pres %3d  ",
-                        static_cast<int>(byte1),
-                        static_cast<int>(byte2));
+                        static_cast<int>(_byte1),
+                        static_cast<int>(_byte2));
                     break;
                 case CONTROL_CHANGE:
                     snprintf(
                         endtxt,
                         64,
                         "Ctrl %3d  Val  %3d  ",
-                        static_cast<int>(byte1),
-                        static_cast<int>(byte2));
+                        static_cast<int>(_byte1),
+                        static_cast<int>(_byte2));
                     break;
                 case PROGRAM_CHANGE:
-                    snprintf(endtxt, 64, "PG   %3d  ", static_cast<int>(byte1));
+                    snprintf(endtxt, 64, "PG   %3d  ", static_cast<int>(_byte1));
                     break;
                 case CHANNEL_PRESSURE:
-                    snprintf(endtxt, 64, "Pres %3d  ", static_cast<int>(byte1));
+                    snprintf(endtxt, 64, "Pres %3d  ", static_cast<int>(_byte1));
                     break;
                 case PITCH_BEND:
                     snprintf(endtxt, 64, "Val %5d", static_cast<int>(get_bender_value()));
@@ -204,34 +204,34 @@ char const* MIDIMessage::msg_to_text(char* txt) const
 
 MIDIMessage::MIDIMessage()
 {
-    status = 0;
-    byte1 = 0;
-    byte2 = 0;
-    byte3 = 0;
+    _status = 0;
+    _byte1 = 0;
+    _byte2 = 0;
+    _byte3 = 0;
 }
 
 MIDIMessage::MIDIMessage(MIDIMessage const& m)
 {
-    status = m.status;
-    byte1 = m.byte1;
-    byte2 = m.byte2;
-    byte3 = m.byte3;
+    _status = m._status;
+    _byte1 = m._byte1;
+    _byte2 = m._byte2;
+    _byte3 = m._byte3;
 }
 
 void MIDIMessage::clear()
 {
-    status = 0;
-    byte1 = 0;
-    byte2 = 0;
-    byte3 = 0;
+    _status = 0;
+    _byte1 = 0;
+    _byte2 = 0;
+    _byte3 = 0;
 }
 
 void MIDIMessage::copy(MIDIMessage const& m)
 {
-    status = m.status;
-    byte1 = m.byte1;
-    byte2 = m.byte2;
-    byte3 = m.byte3;
+    _status = m._status;
+    _byte1 = m._byte1;
+    _byte2 = m._byte2;
+    _byte3 = m._byte3;
 }
 
 //
@@ -240,172 +240,172 @@ void MIDIMessage::copy(MIDIMessage const& m)
 
 MIDIMessage const& MIDIMessage::operator=(MIDIMessage const& m)
 {
-    status = m.status;
-    byte1 = m.byte1;
-    byte2 = m.byte2;
-    byte3 = m.byte3;
+    _status = m._status;
+    _byte1 = m._byte1;
+    _byte2 = m._byte2;
+    _byte3 = m._byte3;
     return *this;
 }
 
 char MIDIMessage::get_length() const
 {
-    if ((status & 0xf0) == 0xf0) {
-        return get_system_message_length(status);
+    if ((_status & 0xf0) == 0xf0) {
+        return get_system_message_length(_status);
     }
 
     else {
-        return get_message_length(status);
+        return get_message_length(_status);
     }
 }
 
 short MIDIMessage::get_bender_value() const
 {
-    return (short)(((byte2 << 7) | byte1) - 8192);
+    return (short)(((_byte2 << 7) | _byte1) - 8192);
 }
 
 unsigned short MIDIMessage::get_meta_value() const
 {
-    return (unsigned short)((byte3 << 8) | byte2);
+    return (unsigned short)((_byte3 << 8) | _byte2);
 }
 
 std::uint8_t MIDIMessage::get_time_sig_numerator() const
 {
-    return byte2;
+    return _byte2;
 }
 
 std::uint8_t MIDIMessage::get_time_sig_denominator() const
 {
-    return byte3;
+    return _byte3;
 }
 
 signed char MIDIMessage::get_key_sig_sharp_flats() const
 {
-    return (signed char)byte2;
+    return (signed char)_byte2;
 }
 
 std::uint8_t MIDIMessage::get_key_sig_major_minor() const
 {
-    return byte3;
+    return _byte3;
 }
 
 bool MIDIMessage::is_channel_msg() const
 {
-    return (status >= 0x80) && (status < 0xf0);
+    return (_status >= 0x80) && (_status < 0xf0);
 }
 
 bool MIDIMessage::is_note_on() const
 {
-    return ((status & 0xf0) == NOTE_ON) && byte2;
+    return ((_status & 0xf0) == NOTE_ON) && _byte2;
 }
 
 bool MIDIMessage::is_note_off() const
 {
-    return ((status & 0xf0) == NOTE_OFF) || (((status & 0xf0) == NOTE_ON) && byte2 == 0);
+    return ((_status & 0xf0) == NOTE_OFF) || (((_status & 0xf0) == NOTE_ON) && _byte2 == 0);
 }
 
 bool MIDIMessage::is_poly_pressure() const
 {
-    return ((status & 0xf0) == POLY_PRESSURE);
+    return ((_status & 0xf0) == POLY_PRESSURE);
 }
 
 bool MIDIMessage::is_control_change() const
 {
-    return ((status & 0xf0) == CONTROL_CHANGE);
+    return ((_status & 0xf0) == CONTROL_CHANGE);
 }
 
 bool MIDIMessage::is_program_change() const
 {
-    return ((status & 0xf0) == PROGRAM_CHANGE);
+    return ((_status & 0xf0) == PROGRAM_CHANGE);
 }
 
 bool MIDIMessage::is_channel_pressure() const
 {
-    return ((status & 0xf0) == CHANNEL_PRESSURE);
+    return ((_status & 0xf0) == CHANNEL_PRESSURE);
 }
 
 bool MIDIMessage::is_pitch_bend() const
 {
-    return ((status & 0xf0) == PITCH_BEND);
+    return ((_status & 0xf0) == PITCH_BEND);
 }
 
 bool MIDIMessage::is_system_message() const
 {
-    return (status & 0xf0) == 0xf0;
+    return (_status & 0xf0) == 0xf0;
 }
 
 bool MIDIMessage::is_sys_ex() const
 {
-    return (status == SYSEX_START);
+    return (_status == SYSEX_START);
 }
 
 short MIDIMessage::get_sys_ex_num() const
 {
-    return (short)((byte3 << 8) | byte2);
+    return (short)((_byte3 << 8) | _byte2);
 }
 
 bool MIDIMessage::is_mtc() const
 {
-    return (status == MTC);
+    return (_status == MTC);
 }
 
 bool MIDIMessage::is_song_position() const
 {
-    return (status == SONG_POSITION);
+    return (_status == SONG_POSITION);
 }
 
 bool MIDIMessage::is_song_select() const
 {
-    return (status == SONG_SELECT);
+    return (_status == SONG_SELECT);
 }
 
 bool MIDIMessage::is_tune_request() const
 {
-    return (status == TUNE_REQUEST);
+    return (_status == TUNE_REQUEST);
 }
 
 bool MIDIMessage::is_meta_event() const
 {
-    return (status == META_EVENT);
+    return (_status == META_EVENT);
 }
 
 bool MIDIMessage::is_text_event() const
 {
-    return (status == META_EVENT) && (byte1 >= 0x1 && byte1 <= 0xf);
+    return (_status == META_EVENT) && (_byte1 >= 0x1 && _byte1 <= 0xf);
 }
 
 bool MIDIMessage::is_all_notes_off() const
 {
-    return ((status & 0xf0) == CONTROL_CHANGE) && (byte1 >= C_ALL_NOTES_OFF);
+    return ((_status & 0xf0) == CONTROL_CHANGE) && (_byte1 >= C_ALL_NOTES_OFF);
 }
 
 bool MIDIMessage::is_no_op() const
 {
-    return (status == META_EVENT) && (byte1 == META_NO_OPERATION);
+    return (_status == META_EVENT) && (_byte1 == META_NO_OPERATION);
 }
 
 bool MIDIMessage::is_tempo() const
 {
-    return (status == META_EVENT) && (byte1 == META_TEMPO);
+    return (_status == META_EVENT) && (_byte1 == META_TEMPO);
 }
 
 bool MIDIMessage::is_data_end() const
 {
-    return (status == META_EVENT) && (byte1 == META_DATA_END);
+    return (_status == META_EVENT) && (_byte1 == META_DATA_END);
 }
 
 bool MIDIMessage::is_time_sig() const
 {
-    return (status == META_EVENT) && (byte1 == META_TIMESIG);
+    return (_status == META_EVENT) && (_byte1 == META_TIMESIG);
 }
 
 bool MIDIMessage::is_key_sig() const
 {
-    return (status == META_EVENT) && (byte1 == META_KEYSIG);
+    return (_status == META_EVENT) && (_byte1 == META_KEYSIG);
 }
 
 bool MIDIMessage::is_beat_marker() const
 {
-    return (status == META_EVENT) && (byte1 == META_BEAT_MARKER);
+    return (_status == META_EVENT) && (_byte1 == META_BEAT_MARKER);
 }
 
 unsigned short MIDIMessage::get_tempo32() const
@@ -421,165 +421,165 @@ unsigned short MIDIMessage::get_loop_number() const
 void MIDIMessage::set_bender_value(short v)
 {
     short x = static_cast<short>(v + 8192);
-    byte1 = static_cast<std::uint8_t>(x & 0x7f);
-    byte2 = static_cast<std::uint8_t>((x >> 7) & 0x7f);
+    _byte1 = static_cast<std::uint8_t>(x & 0x7f);
+    _byte2 = static_cast<std::uint8_t>((x >> 7) & 0x7f);
 }
 
 void MIDIMessage::set_meta_type(std::uint8_t t)
 {
-    byte1 = t;
+    _byte1 = t;
 }
 
 void MIDIMessage::set_meta_value(unsigned short v)
 {
-    byte2 = static_cast<std::uint8_t>(v & 0xff);
-    byte3 = static_cast<std::uint8_t>((v >> 8) & 0xff);
+    _byte2 = static_cast<std::uint8_t>(v & 0xff);
+    _byte3 = static_cast<std::uint8_t>((v >> 8) & 0xff);
 }
 
 void MIDIMessage::set_note_on(std::uint8_t chan, std::uint8_t note, std::uint8_t vel)
 {
-    status = static_cast<std::uint8_t>(chan | NOTE_ON);
-    byte1 = note;
-    byte2 = vel;
-    byte3 = 0;
+    _status = static_cast<std::uint8_t>(chan | NOTE_ON);
+    _byte1 = note;
+    _byte2 = vel;
+    _byte3 = 0;
 }
 
 void MIDIMessage::set_note_off(std::uint8_t chan, std::uint8_t note, std::uint8_t vel)
 {
-    status = static_cast<std::uint8_t>(chan | NOTE_OFF);
-    byte1 = note;
-    byte2 = vel;
-    byte3 = 0;
+    _status = static_cast<std::uint8_t>(chan | NOTE_OFF);
+    _byte1 = note;
+    _byte2 = vel;
+    _byte3 = 0;
 }
 
 void MIDIMessage::set_poly_pressure(std::uint8_t chan, std::uint8_t note, std::uint8_t pres)
 {
-    status = static_cast<std::uint8_t>(chan | POLY_PRESSURE);
-    byte1 = note;
-    byte2 = pres;
-    byte3 = 0;
+    _status = static_cast<std::uint8_t>(chan | POLY_PRESSURE);
+    _byte1 = note;
+    _byte2 = pres;
+    _byte3 = 0;
 }
 
 void MIDIMessage::set_control_change(std::uint8_t chan, std::uint8_t ctrl, std::uint8_t val)
 {
-    status = static_cast<std::uint8_t>(chan | CONTROL_CHANGE);
-    byte1 = ctrl;
-    byte2 = val;
-    byte3 = 0;
+    _status = static_cast<std::uint8_t>(chan | CONTROL_CHANGE);
+    _byte1 = ctrl;
+    _byte2 = val;
+    _byte3 = 0;
 }
 
 void MIDIMessage::set_program_change(std::uint8_t chan, std::uint8_t val)
 {
-    status = static_cast<std::uint8_t>(chan | PROGRAM_CHANGE);
-    byte1 = val;
-    byte2 = 0;
-    byte3 = 0;
+    _status = static_cast<std::uint8_t>(chan | PROGRAM_CHANGE);
+    _byte1 = val;
+    _byte2 = 0;
+    _byte3 = 0;
 }
 
 void MIDIMessage::set_channel_pressure(std::uint8_t chan, std::uint8_t val)
 {
-    status = static_cast<std::uint8_t>(chan | CHANNEL_PRESSURE);
-    byte1 = val;
-    byte2 = 0;
-    byte3 = 0;
+    _status = static_cast<std::uint8_t>(chan | CHANNEL_PRESSURE);
+    _byte1 = val;
+    _byte2 = 0;
+    _byte3 = 0;
 }
 
 void MIDIMessage::set_pitch_bend(std::uint8_t chan, short val)
 {
-    status = static_cast<std::uint8_t>(chan | PITCH_BEND);
+    _status = static_cast<std::uint8_t>(chan | PITCH_BEND);
     val += static_cast<short>(0x2000);              // center value
-    byte1 = static_cast<std::uint8_t>(val & 0x7f);  // 7 bit bytes
-    byte2 = static_cast<std::uint8_t>((val >> 7) & 0x7f);
-    byte3 = 0;
+    _byte1 = static_cast<std::uint8_t>(val & 0x7f);  // 7 bit bytes
+    _byte2 = static_cast<std::uint8_t>((val >> 7) & 0x7f);
+    _byte3 = 0;
 }
 
 void MIDIMessage::set_pitch_bend(std::uint8_t chan, std::uint8_t low, std::uint8_t high)
 {
-    status = static_cast<std::uint8_t>(chan | PITCH_BEND);
-    byte1 = static_cast<std::uint8_t>(low);
-    byte2 = static_cast<std::uint8_t>(high);
-    byte3 = 0;
+    _status = static_cast<std::uint8_t>(chan | PITCH_BEND);
+    _byte1 = static_cast<std::uint8_t>(low);
+    _byte2 = static_cast<std::uint8_t>(high);
+    _byte3 = 0;
 }
 
 void MIDIMessage::set_sys_ex()
 {
-    status = SYSEX_START;
-    byte1 = 0;
+    _status = SYSEX_START;
+    _byte1 = 0;
     int num = 0;
-    byte2 = static_cast<std::uint8_t>(num & 0xff);
-    byte3 = static_cast<std::uint8_t>((num >> 8) & 0xff);
+    _byte2 = static_cast<std::uint8_t>(num & 0xff);
+    _byte3 = static_cast<std::uint8_t>((num >> 8) & 0xff);
 }
 
 void MIDIMessage::set_mtc(std::uint8_t field, std::uint8_t v)
 {
-    status = MTC;
-    byte1 = static_cast<std::uint8_t>((field << 4) | v);
-    byte2 = 0;
-    byte3 = 0;
+    _status = MTC;
+    _byte1 = static_cast<std::uint8_t>((field << 4) | v);
+    _byte2 = 0;
+    _byte3 = 0;
 }
 
 void MIDIMessage::set_song_position(short pos)
 {
-    status = SONG_POSITION;
-    byte1 = static_cast<std::uint8_t>(pos & 0x7f);
-    byte2 = static_cast<std::uint8_t>((pos >> 7) & 0x7f);
-    byte3 = 0;
+    _status = SONG_POSITION;
+    _byte1 = static_cast<std::uint8_t>(pos & 0x7f);
+    _byte2 = static_cast<std::uint8_t>((pos >> 7) & 0x7f);
+    _byte3 = 0;
 }
 
 void MIDIMessage::set_song_select(std::uint8_t sng)
 {
-    status = SONG_SELECT;
-    byte1 = sng;
-    byte2 = 0;
-    byte3 = 0;
+    _status = SONG_SELECT;
+    _byte1 = sng;
+    _byte2 = 0;
+    _byte3 = 0;
 }
 
 void MIDIMessage::set_tune_request()
 {
-    status = TUNE_REQUEST;
-    byte1 = 0;
-    byte2 = 0;
-    byte3 = 0;
+    _status = TUNE_REQUEST;
+    _byte1 = 0;
+    _byte2 = 0;
+    _byte3 = 0;
 }
 
 void MIDIMessage::set_meta_event(std::uint8_t type, std::uint8_t v1, std::uint8_t v2)
 {
-    status = META_EVENT;
-    byte1 = type;
-    byte2 = v1;
-    byte3 = v2;
+    _status = META_EVENT;
+    _byte1 = type;
+    _byte2 = v1;
+    _byte3 = v2;
 }
 
 void MIDIMessage::set_meta_event(std::uint8_t type, unsigned short v)
 {
-    status = META_EVENT;
-    byte1 = type;
-    byte2 = static_cast<std::uint8_t>(v & 0xff);
-    byte3 = static_cast<std::uint8_t>((v >> 8) & 0xff);
+    _status = META_EVENT;
+    _byte1 = type;
+    _byte2 = static_cast<std::uint8_t>(v & 0xff);
+    _byte3 = static_cast<std::uint8_t>((v >> 8) & 0xff);
 }
 
 void MIDIMessage::set_all_notes_off(std::uint8_t chan, std::uint8_t type)
 {
-    status = static_cast<std::uint8_t>(chan | CONTROL_CHANGE);
-    byte1 = type;
-    byte2 = 0x7f;
-    byte3 = 0;
+    _status = static_cast<std::uint8_t>(chan | CONTROL_CHANGE);
+    _byte1 = type;
+    _byte2 = 0x7f;
+    _byte3 = 0;
 }
 
 void MIDIMessage::set_local(std::uint8_t chan, std::uint8_t v)
 {
-    status = static_cast<std::uint8_t>(chan | CONTROL_CHANGE);
-    byte1 = C_LOCAL;
-    byte2 = v;
-    byte3 = 0;
+    _status = static_cast<std::uint8_t>(chan | CONTROL_CHANGE);
+    _byte1 = C_LOCAL;
+    _byte2 = v;
+    _byte3 = 0;
 }
 
 void MIDIMessage::set_no_op()
 {
-    status = META_EVENT;
-    byte1 = META_NO_OPERATION;
-    byte2 = 0;
-    byte3 = 0;
+    _status = META_EVENT;
+    _byte1 = META_NO_OPERATION;
+    _byte2 = 0;
+    _byte3 = 0;
 }
 
 void MIDIMessage::set_tempo32(unsigned short tempo_times_32)
@@ -749,28 +749,28 @@ void MIDIBigMessage::clear_sys_ex()
 //
 
 MIDITimedMessage::MIDITimedMessage()
-    : time(0)
+    : _time(0)
 {}
 
 MIDITimedMessage::MIDITimedMessage(MIDITimedMessage const& m)
     : MIDIMessage(m)
-    , time(m.get_time())
+    , _time(m.get_time())
 {}
 
 MIDITimedMessage::MIDITimedMessage(MIDIMessage const& m)
     : MIDIMessage(m)
-    , time(0)
+    , _time(0)
 {}
 
 void MIDITimedMessage::clear()
 {
-    time = 0;
+    _time = 0;
     MIDIMessage::clear();
 }
 
 void MIDITimedMessage::copy(MIDITimedMessage const& m)
 {
-    time = m.get_time();
+    _time = m.get_time();
     MIDIMessage::copy(m);
 }
 
@@ -780,14 +780,14 @@ void MIDITimedMessage::copy(MIDITimedMessage const& m)
 
 MIDITimedMessage const& MIDITimedMessage::operator=(MIDITimedMessage const& m)
 {
-    time = m.get_time();
+    _time = m.get_time();
     MIDIMessage::operator=(m);
     return *this;
 }
 
 MIDITimedMessage const& MIDITimedMessage::operator=(MIDIMessage const& m)
 {
-    time = 0;
+    _time = 0;
     MIDIMessage::operator=(m);
     return *this;
 }
@@ -798,7 +798,7 @@ MIDITimedMessage const& MIDITimedMessage::operator=(MIDIMessage const& m)
 
 MIDIClockTime MIDITimedMessage::get_time() const
 {
-    return time;
+    return _time;
 }
 
 //
@@ -807,7 +807,7 @@ MIDIClockTime MIDITimedMessage::get_time() const
 
 void MIDITimedMessage::set_time(MIDIClockTime t)
 {
-    time = t;
+    _time = t;
 }
 
 int MIDITimedMessage::compare_events(MIDITimedMessage const& m1, MIDITimedMessage const& m2)
@@ -831,42 +831,42 @@ int MIDITimedMessage::compare_events(MIDITimedMessage const& m1, MIDITimedMessag
     if (m2.get_time() > m1.get_time())
         return 2;  // m2 is larger
 
-    // if times are the same, a note off is always larger
+    // if _times are the same, a note off is always larger
 
-    if (m1.byte1 == m2.byte1 && m1.get_status() == NOTE_ON &&
-        ((m2.get_status() == NOTE_ON && m2.byte2 == 0) || (m2.get_status() == NOTE_OFF)))
+    if (m1._byte1 == m2._byte1 && m1.get_status() == NOTE_ON &&
+        ((m2.get_status() == NOTE_ON && m2._byte2 == 0) || (m2.get_status() == NOTE_OFF)))
         return 2;  // m2 is larger
 
-    if (m1.byte1 == m2.byte1 && m2.get_status() == NOTE_ON &&
-        ((m1.get_status() == NOTE_ON && m1.byte2 == 0) || (m1.get_status() == NOTE_OFF)))
+    if (m1._byte1 == m2._byte1 && m2.get_status() == NOTE_ON &&
+        ((m1.get_status() == NOTE_ON && m1._byte2 == 0) || (m1.get_status() == NOTE_OFF)))
         return 1;  // m1 is larger
 
     return 0;  // both are equal.
 }
 
 MIDIDeltaTimedMessage::MIDIDeltaTimedMessage()
-    : dtime(0)
+    : _d_time(0)
 {}
 
 MIDIDeltaTimedMessage::MIDIDeltaTimedMessage(MIDIDeltaTimedMessage const& m)
     : MIDIMessage(m)
-    , dtime(m.get_delta_time())
+    , _d_time(m.get_delta_time())
 {}
 
 MIDIDeltaTimedMessage::MIDIDeltaTimedMessage(MIDIMessage const& m)
     : MIDIMessage(m)
-    , dtime(0)
+    , _d_time(0)
 {}
 
 void MIDIDeltaTimedMessage::clear()
 {
-    dtime = 0;
+    _d_time = 0;
     MIDIMessage::clear();
 }
 
 void MIDIDeltaTimedMessage::copy(MIDIDeltaTimedMessage const& m)
 {
-    dtime = m.get_delta_time();
+    _d_time = m.get_delta_time();
     MIDIMessage::copy(m);
 }
 
@@ -876,14 +876,14 @@ void MIDIDeltaTimedMessage::copy(MIDIDeltaTimedMessage const& m)
 
 MIDIDeltaTimedMessage const& MIDIDeltaTimedMessage::operator=(MIDIDeltaTimedMessage const& m)
 {
-    dtime = m.get_delta_time();
+    _d_time = m.get_delta_time();
     MIDIMessage::operator=(m);
     return *this;
 }
 
 MIDIDeltaTimedMessage const& MIDIDeltaTimedMessage::operator=(MIDIMessage const& m)
 {
-    dtime = 0;
+    _d_time = 0;
     MIDIMessage::operator=(m);
     return *this;
 }
@@ -894,7 +894,7 @@ MIDIDeltaTimedMessage const& MIDIDeltaTimedMessage::operator=(MIDIMessage const&
 
 MIDIClockTime MIDIDeltaTimedMessage::get_delta_time() const
 {
-    return dtime;
+    return _d_time;
 }
 
 //
@@ -903,7 +903,7 @@ MIDIClockTime MIDIDeltaTimedMessage::get_delta_time() const
 
 void MIDIDeltaTimedMessage::set_delta_time(MIDIClockTime t)
 {
-    dtime = t;
+    _d_time = t;
 }
 
 //
@@ -911,44 +911,44 @@ void MIDIDeltaTimedMessage::set_delta_time(MIDIClockTime t)
 //
 
 MIDITimedBigMessage::MIDITimedBigMessage()
-    : time(0)
+    : _time(0)
 {}
 
 MIDITimedBigMessage::MIDITimedBigMessage(MIDITimedBigMessage const& m)
     : MIDIBigMessage(m)
-    , time(m.get_time())
+    , _time(m.get_time())
 {}
 
 MIDITimedBigMessage::MIDITimedBigMessage(MIDIBigMessage const& m)
     : MIDIBigMessage(m)
-    , time(0)
+    , _time(0)
 {}
 
 MIDITimedBigMessage::MIDITimedBigMessage(MIDITimedMessage const& m)
     : MIDIBigMessage(m)
-    , time(m.get_time())
+    , _time(m.get_time())
 {}
 
 MIDITimedBigMessage::MIDITimedBigMessage(MIDIMessage const& m)
     : MIDIBigMessage(m)
-    , time(0)
+    , _time(0)
 {}
 
 void MIDITimedBigMessage::clear()
 {
-    time = 0;
+    _time = 0;
     MIDIBigMessage::clear();
 }
 
 void MIDITimedBigMessage::copy(MIDITimedBigMessage const& m)
 {
-    time = m.get_time();
+    _time = m.get_time();
     MIDIBigMessage::copy(m);
 }
 
 void MIDITimedBigMessage::copy(MIDITimedMessage const& m)
 {
-    time = m.get_time();
+    _time = m.get_time();
     MIDIBigMessage::copy(m);
 }
 
@@ -958,21 +958,21 @@ void MIDITimedBigMessage::copy(MIDITimedMessage const& m)
 
 MIDITimedBigMessage const& MIDITimedBigMessage::operator=(MIDITimedBigMessage const& m)
 {
-    time = m.get_time();
+    _time = m.get_time();
     MIDIBigMessage::operator=(m);
     return *this;
 }
 
 MIDITimedBigMessage const& MIDITimedBigMessage::operator=(MIDITimedMessage const& m)
 {
-    time = m.get_time();
+    _time = m.get_time();
     MIDIBigMessage::operator=(m);
     return *this;
 }
 
 MIDITimedBigMessage const& MIDITimedBigMessage::operator=(MIDIMessage const& m)
 {
-    time = 0;
+    _time = 0;
     MIDIBigMessage::operator=(m);
     return *this;
 }
@@ -983,7 +983,7 @@ MIDITimedBigMessage const& MIDITimedBigMessage::operator=(MIDIMessage const& m)
 
 MIDIClockTime MIDITimedBigMessage::get_time() const
 {
-    return time;
+    return _time;
 }
 
 //
@@ -992,7 +992,7 @@ MIDIClockTime MIDITimedBigMessage::get_time() const
 
 void MIDITimedBigMessage::set_time(MIDIClockTime t)
 {
-    time = t;
+    _time = t;
 }
 
 int MIDITimedBigMessage::compare_events(MIDITimedBigMessage const& m1, MIDITimedBigMessage const& m2)
@@ -1016,14 +1016,14 @@ int MIDITimedBigMessage::compare_events(MIDITimedBigMessage const& m1, MIDITimed
     if (m2.get_time() > m1.get_time())
         return 2;  // m2 is larger
 
-    // if times are the same, a note off is always larger
+    // if _times are the same, a note off is always larger
 
-    if (m1.byte1 == m2.byte1 && m1.get_status() == NOTE_ON &&
-        ((m2.get_status() == NOTE_ON && m2.byte2 == 0) || (m2.get_status() == NOTE_OFF)))
+    if (m1._byte1 == m2._byte1 && m1.get_status() == NOTE_ON &&
+        ((m2.get_status() == NOTE_ON && m2._byte2 == 0) || (m2.get_status() == NOTE_OFF)))
         return 2;  // m2 is larger
 
-    if (m1.byte1 == m2.byte1 && m2.get_status() == NOTE_ON &&
-        ((m1.get_status() == NOTE_ON && m1.byte2 == 0) || (m1.get_status() == NOTE_OFF)))
+    if (m1._byte1 == m2._byte1 && m2.get_status() == NOTE_ON &&
+        ((m1.get_status() == NOTE_ON && m1._byte2 == 0) || (m1.get_status() == NOTE_OFF)))
         return 1;  // m1 is larger
 
     return 0;  // both are equal.
@@ -1034,44 +1034,44 @@ int MIDITimedBigMessage::compare_events(MIDITimedBigMessage const& m1, MIDITimed
 //
 
 MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage()
-    : dtime(0)
+    : _d_time(0)
 {}
 
 MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage(MIDIDeltaTimedBigMessage const& m)
     : MIDIBigMessage(m)
-    , dtime(m.get_delta_time())
+    , _d_time(m.get_delta_time())
 {}
 
 MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage(MIDIBigMessage const& m)
     : MIDIBigMessage(m)
-    , dtime(0)
+    , _d_time(0)
 {}
 
 MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage(MIDIMessage const& m)
     : MIDIBigMessage(m)
-    , dtime(0)
+    , _d_time(0)
 {}
 
 MIDIDeltaTimedBigMessage::MIDIDeltaTimedBigMessage(MIDIDeltaTimedMessage const& m)
     : MIDIBigMessage(m)
-    , dtime(m.get_delta_time())
+    , _d_time(m.get_delta_time())
 {}
 
 void MIDIDeltaTimedBigMessage::clear()
 {
-    dtime = 0;
+    _d_time = 0;
     MIDIBigMessage::clear();
 }
 
 void MIDIDeltaTimedBigMessage::copy(MIDIDeltaTimedBigMessage const& m)
 {
-    dtime = m.get_delta_time();
+    _d_time = m.get_delta_time();
     MIDIBigMessage::copy(m);
 }
 
 void MIDIDeltaTimedBigMessage::copy(MIDIDeltaTimedMessage const& m)
 {
-    dtime = m.get_delta_time();
+    _d_time = m.get_delta_time();
     MIDIBigMessage::copy(m);
 }
 
@@ -1082,21 +1082,21 @@ void MIDIDeltaTimedBigMessage::copy(MIDIDeltaTimedMessage const& m)
 MIDIDeltaTimedBigMessage const& MIDIDeltaTimedBigMessage::operator=(
     MIDIDeltaTimedBigMessage const& m)
 {
-    dtime = m.get_delta_time();
+    _d_time = m.get_delta_time();
     MIDIBigMessage::operator=(m);
     return *this;
 }
 
 MIDIDeltaTimedBigMessage const& MIDIDeltaTimedBigMessage::operator=(MIDIDeltaTimedMessage const& m)
 {
-    dtime = m.get_delta_time();
+    _d_time = m.get_delta_time();
     MIDIBigMessage::operator=(m);
     return *this;
 }
 
 MIDIDeltaTimedBigMessage const& MIDIDeltaTimedBigMessage::operator=(MIDIMessage const& m)
 {
-    dtime = 0;
+    _d_time = 0;
     MIDIBigMessage::operator=(m);
     return *this;
 }
@@ -1107,7 +1107,7 @@ MIDIDeltaTimedBigMessage const& MIDIDeltaTimedBigMessage::operator=(MIDIMessage 
 
 MIDIClockTime MIDIDeltaTimedBigMessage::get_delta_time() const
 {
-    return dtime;
+    return _d_time;
 }
 
 //
@@ -1116,7 +1116,7 @@ MIDIClockTime MIDIDeltaTimedBigMessage::get_delta_time() const
 
 void MIDIDeltaTimedBigMessage::set_delta_time(MIDIClockTime t)
 {
-    dtime = t;
+    _d_time = t;
 }
 
 }  // namespace jdksmidi

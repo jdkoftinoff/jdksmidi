@@ -49,21 +49,21 @@ class MIDIQueue
 
     void put(MIDITimedBigMessage const& msg)
     {
-        buf[next_in] = msg;
-        next_in = (next_in + 1) % bufsize;
+        _buf[_next_in] = msg;
+        _next_in = (_next_in + 1) % _bufsize;
     }
 
-    MIDITimedBigMessage get() const { return MIDITimedBigMessage(buf[next_out]); }
+    MIDITimedBigMessage get() const { return MIDITimedBigMessage(_buf[_next_out]); }
 
-    void next() { next_out = (next_out + 1) % bufsize; }
+    void next() { _next_out = (_next_out + 1) % _bufsize; }
 
-    MIDITimedBigMessage const* peek() const { return &buf[next_out]; }
+    MIDITimedBigMessage const* peek() const { return &_buf[_next_out]; }
 
   protected:
-    MIDITimedBigMessage* buf;
-    int bufsize;
-    int volatile next_in;
-    int volatile next_out;
+    MIDITimedBigMessage* _buf;
+    int _bufsize;
+    int volatile _next_in;
+    int volatile _next_out;
 };
 
 }  // namespace jdksmidi

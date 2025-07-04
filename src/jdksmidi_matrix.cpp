@@ -54,14 +54,14 @@ MIDIMatrix::MIDIMatrix()
     ENTER("MIDIMatrix::MIDIMatrix()");
 
     for (int channel = 0; channel < 16; channel++) {
-        channel_count[channel] = 0;
-        hold_pedal[channel] = false;
+        _channel_count[channel] = 0;
+        _hold_pedal[channel] = false;
 
         for (std::uint8_t note = 0; note < 128; note++)
-            note_on_count[channel][note] = 0;
+            _note_on_count[channel][note] = 0;
     }
 
-    total_count = 0;
+    _total_count = 0;
 }
 
 MIDIMatrix::~MIDIMatrix()
@@ -73,19 +73,19 @@ void MIDIMatrix::dec_note_count(MIDIMessage const&, int channel, int note)
 {
     ENTER("MIDIMatrix::dec_note_count()");
 
-    if (note_on_count[channel][note] > 0) {
-        --note_on_count[channel][note];
-        --channel_count[channel];
-        --total_count;
+    if (_note_on_count[channel][note] > 0) {
+        --_note_on_count[channel][note];
+        --_channel_count[channel];
+        --_total_count;
     }
 }
 
 void MIDIMatrix::inc_note_count(MIDIMessage const&, int channel, int note)
 {
     ENTER("MIDIMatrix::inc_note_count()");
-    ++note_on_count[channel][note];
-    ++channel_count[channel];
-    ++total_count;
+    ++_note_on_count[channel][note];
+    ++_channel_count[channel];
+    ++_total_count;
 }
 
 void MIDIMatrix::other_message(MIDIMessage const&)
@@ -124,11 +124,11 @@ bool MIDIMatrix::process(MIDIMessage const& m)
 
         else if (m.is_control_change() && m.get_controller() == C_DAMPER) {
             if (m.get_controller_value() & 0x40) {
-                hold_pedal[channel] = true;
+                _hold_pedal[channel] = true;
             }
 
             else {
-                hold_pedal[channel] = false;
+                _hold_pedal[channel] = false;
             }
         }
 
@@ -147,7 +147,7 @@ void MIDIMatrix::clear()
         clear_channel(channel);
     }
 
-    total_count = 0;
+    _total_count = 0;
 }
 
 void MIDIMatrix::clear_channel(int channel)
@@ -155,12 +155,12 @@ void MIDIMatrix::clear_channel(int channel)
     ENTER("MIDIMatrix::clear_channel()");
 
     for (int note = 0; note < 128; ++note) {
-        total_count -= note_on_count[channel][note];
-        note_on_count[channel][note] = 0;
+        _total_count -= _note_on_count[channel][note];
+        _note_on_count[channel][note] = 0;
     }
 
-    channel_count[channel] = 0;
-    hold_pedal[channel] = 0;
+    _channel_count[channel] = 0;
+    _hold_pedal[channel] = 0;
 }
 
 }  // namespace jdksmidi

@@ -57,7 +57,7 @@ class MIDIDeltaTimedBigMessage;
 
 ///
 /// The MIDIMessage class is a simple, lightweight container which can hold a single
-/// MIDI Message that can fit within 3 bytes plus status byte.  It can also hold some
+/// MIDI Message that can fit within 3 bytes plus _status byte.  It can also hold some
 /// non-MIDI messages, known as Meta messages like No-op, Key signature, Time Signature, etc,
 /// which are useful for internal processing.
 ///
@@ -65,7 +65,7 @@ class MIDIDeltaTimedBigMessage;
 /// for a number of MIDIMessage variants, such as the MIDIBigMessage, MIDITimedMessage,
 /// MIDITimedBigMessage, and MIDIDeltaTimedBigMessage.  This could be a good candidate
 /// for using a mix-in architecture ( see http://en.wikipedia.org/wiki/Mixin ) via
-/// multiple inheritance, but at the time this was written in 1990, C++ compilers typically
+/// multiple inheritance, but at the _time this was written in 1990, C++ compilers typically
 /// had problems with MI.
 ///
 
@@ -98,50 +98,50 @@ class MIDIMessage
 
     char get_length() const;  ///< Get the length in bytes of the entire message.
 
-    /// Get the status byte of the message.
-    std::uint8_t get_status() const { return (std::uint8_t)status; }
+    /// Get the _status byte of the message.
+    std::uint8_t get_status() const { return (std::uint8_t)_status; }
 
     /// If the message is a channel message, this method returns the MIDI channel that the message
     /// is on.
-    std::uint8_t get_channel() const { return (std::uint8_t)(status & 0x0f); }
+    std::uint8_t get_channel() const { return (std::uint8_t)(_status & 0x0f); }
 
     /// If the message is a channel message, this method returns the relevant top 4 bits which
     /// describe what type of channel message it is.
-    std::uint8_t get_type() const { return (std::uint8_t)(status & 0xf0); }
+    std::uint8_t get_type() const { return (std::uint8_t)(_status & 0xf0); }
 
     /// If the message is some sort of meta-message, then GetMetaType returns the type byte.
-    std::uint8_t get_meta_type() const { return byte1; }
+    std::uint8_t get_meta_type() const { return _byte1; }
 
-    /// Access to the raw byte1 of the message
-    std::uint8_t get_byte1() const { return byte1; }
+    /// Access to the raw _byte1 of the message
+    std::uint8_t get_byte1() const { return _byte1; }
 
-    /// Access to the raw byte2 of the message
-    std::uint8_t get_byte2() const { return byte2; }
+    /// Access to the raw _byte2 of the message
+    std::uint8_t get_byte2() const { return _byte2; }
 
-    /// Access to the raw byte3 of the message
-    std::uint8_t get_byte3() const { return byte3; }
+    /// Access to the raw _byte3 of the message
+    std::uint8_t get_byte3() const { return _byte3; }
 
     /// If the message is a note on, note off, or poly aftertouch message, get_note() returns the
     /// note number
-    std::uint8_t get_note() const { return byte1; }
+    std::uint8_t get_note() const { return _byte1; }
 
     /// If the message is a note on, note off, or poly aftertouch message, get_velocity() returns the
     /// velocity or pressure
-    std::uint8_t get_velocity() const { return byte2; }
+    std::uint8_t get_velocity() const { return _byte2; }
 
     /// If the message is a channel pressure message, get_channel_pressure() returns the pressure
     /// value.
-    std::uint8_t get_channel_pressure() const { return byte1; }
+    std::uint8_t get_channel_pressure() const { return _byte1; }
 
     /// If the message is a 7 bit program change value, get_pg_value() returns the program number.
-    std::uint8_t get_pg_value() const { return byte1; }
+    std::uint8_t get_pg_value() const { return _byte1; }
 
     /// If the message is a control change message, get_controller() returns the controller number.
-    std::uint8_t get_controller() const { return byte1; }
+    std::uint8_t get_controller() const { return _byte1; }
 
     /// If the message is a control change message, get_controller_value() returns the 7 bit
     /// controller value.
-    std::uint8_t get_controller_value() const { return byte2; }
+    std::uint8_t get_controller_value() const { return _byte2; }
 
     /// If the message is a bender message, get_bender_value() returns the signed 14 bit bender value.
     short get_bender_value() const;
@@ -149,12 +149,12 @@ class MIDIMessage
     /// If the message is a meta-message, get_meta_value() returns the unsigned 14 bit value attached.
     unsigned short get_meta_value() const;
 
-    /// If the message is a time signature meta-message, get_time_sig_numerator() returns the numerator
-    /// of the time signature.
+    /// If the message is a _time signature meta-message, get_time_sig_numerator() returns the numerator
+    /// of the _time signature.
     std::uint8_t get_time_sig_numerator() const;
 
-    /// If the message is a time signature meta-message, get_time_sig_denominator() returns the
-    /// denominator of the time signature.
+    /// If the message is a _time signature meta-message, get_time_sig_denominator() returns the
+    /// denominator of the _time signature.
     std::uint8_t get_time_sig_denominator() const;
 
     /// If the message is a key signature meta-message, get_key_sig_sharp_flats() returns to standard
@@ -166,7 +166,7 @@ class MIDIMessage
     /// midi file form of the key major/minor flag. 0 means a major key, 1 means a minor key.
     std::uint8_t get_key_sig_major_minor() const;
 
-    /// If the message is some sort of real time channel message, is_channel_msg() will return true.
+    /// If the message is some sort of real _time channel message, is_channel_msg() will return true.
     /// You can then call get_channel() for more information.
     bool is_channel_msg() const;
 
@@ -200,7 +200,7 @@ class MIDIMessage
     /// get_channel() and get_bender_value() for further information
     bool is_pitch_bend() const;
 
-    /// If the message is a system message (the status byte is 0xf0 or higher), is_system_message()
+    /// If the message is a system message (the _status byte is 0xf0 or higher), is_system_message()
     /// will return true.
     bool is_system_message() const;
 
@@ -249,38 +249,38 @@ class MIDIMessage
     ///@name The 'Set' methods
     //@{
 
-    /// Set all bits of the status byte
-    void set_status(std::uint8_t s) { status = s; }
+    /// Set all bits of the _status byte
+    void set_status(std::uint8_t s) { _status = s; }
 
-    /// set just the lower 4 bits of the status byte without changing the upper 4 bits
-    void set_channel(std::uint8_t s) { status = (std::uint8_t)((status & 0xf0) | s); }
+    /// set just the lower 4 bits of the _status byte without changing the upper 4 bits
+    void set_channel(std::uint8_t s) { _status = (std::uint8_t)((_status & 0xf0) | s); }
 
-    /// set just the upper 4 bits of the status byte without changing the lower 4 bits
-    void set_type(std::uint8_t s) { status = (std::uint8_t)((status & 0x0f) | s); }
+    /// set just the upper 4 bits of the _status byte without changing the lower 4 bits
+    void set_type(std::uint8_t s) { _status = (std::uint8_t)((_status & 0x0f) | s); }
 
     /// Set the value of the data byte 1
-    void set_byte1(std::uint8_t b) { byte1 = b; }
+    void set_byte1(std::uint8_t b) { _byte1 = b; }
 
     /// Set the value of the data byte 2
-    void set_byte2(std::uint8_t b) { byte2 = b; }
+    void set_byte2(std::uint8_t b) { _byte2 = b; }
 
     /// Set the value of the data byte 3
-    void set_byte3(std::uint8_t b) { byte3 = b; }
+    void set_byte3(std::uint8_t b) { _byte3 = b; }
 
     /// Set the note number for note on, note off, and polyphonic aftertouch messages
-    void set_note(std::uint8_t n) { byte1 = n; }
+    void set_note(std::uint8_t n) { _byte1 = n; }
 
     /// Set the velocity of a note on or note off message
-    void set_velocity(std::uint8_t v) { byte2 = v; }
+    void set_velocity(std::uint8_t v) { _byte2 = v; }
 
     /// Set the program number of a program change message
-    void set_pg_value(std::uint8_t v) { byte1 = v; }
+    void set_pg_value(std::uint8_t v) { _byte1 = v; }
 
     /// Set the controller number of a control change message
-    void set_controller(std::uint8_t c) { byte1 = c; }
+    void set_controller(std::uint8_t c) { _byte1 = c; }
 
     /// Set the 7 bit controller value of a control change message
-    void set_controller_value(std::uint8_t v) { byte2 = v; }
+    void set_controller_value(std::uint8_t v) { _byte2 = v; }
 
     /// Set the signed 14 bit bender value of a pitch bend message
     void set_bender_value(short v);
@@ -345,10 +345,10 @@ class MIDIMessage
     static char const* sys_msg_name[16];   ///< Simple ascii text strings describing each system
                                            ///< message type (0xf0 to 0xff)
 
-    std::uint8_t status;
-    std::uint8_t byte1;
-    std::uint8_t byte2;
-    std::uint8_t byte3;  ///< byte 3 is only used for meta-events and to round out the structure
+    std::uint8_t _status;
+    std::uint8_t _byte1;
+    std::uint8_t _byte2;
+    std::uint8_t _byte3;  ///< byte 3 is only used for meta-events and to round out the structure
                          ///< size to 32 bits
 };
 
@@ -438,13 +438,13 @@ class MIDITimedMessage : public MIDIMessage
     void set_time(MIDIClockTime t);
 
     //
-    // Compare method for sorting. Not just comparing time.
+    // Compare method for sorting. Not just comparing _time.
     //
 
     static int compare_events(MIDITimedMessage const& a, MIDITimedMessage const& b);
 
   protected:
-    MIDIClockTime time;
+    MIDIClockTime _time;
 };
 
 class MIDIDeltaTimedMessage : public MIDIMessage
@@ -485,7 +485,7 @@ class MIDIDeltaTimedMessage : public MIDIMessage
     void set_delta_time(MIDIClockTime t);
 
   protected:
-    MIDIClockTime dtime;
+    MIDIClockTime _d_time;
 };
 
 class MIDITimedBigMessage : public MIDIBigMessage
@@ -534,13 +534,13 @@ class MIDITimedBigMessage : public MIDIBigMessage
     void set_time(MIDIClockTime t);
 
     //
-    // Compare method, for sorting. Not just comparing time.
+    // Compare method, for sorting. Not just comparing _time.
     //
 
     static int compare_events(MIDITimedBigMessage const& a, MIDITimedBigMessage const& b);
 
   protected:
-    MIDIClockTime time;
+    MIDIClockTime _time;
 };
 
 class MIDIDeltaTimedBigMessage : public MIDIBigMessage
@@ -589,7 +589,7 @@ class MIDIDeltaTimedBigMessage : public MIDIBigMessage
     void set_delta_time(MIDIClockTime t);
 
   protected:
-    MIDIClockTime dtime;
+    MIDIClockTime _d_time;
 };
 
 }  // namespace jdksmidi

@@ -31,31 +31,31 @@
 namespace jdksmidi {
 
 MIDIQueue::MIDIQueue(int num_msgs)
-    : buf(new MIDITimedBigMessage[num_msgs])
-    , bufsize(num_msgs)
-    , next_in(0)
-    , next_out(0)
+    : _buf(new MIDITimedBigMessage[num_msgs])
+    , _bufsize(num_msgs)
+    , _next_in(0)
+    , _next_out(0)
 {}
 
 MIDIQueue::~MIDIQueue()
 {
-    delete[] buf;
+    delete[] _buf;
 }
 
 void MIDIQueue::clear()
 {
-    next_in = 0;
-    next_out = 0;
+    _next_in = 0;
+    _next_out = 0;
 }
 
 bool MIDIQueue::can_put() const
 {
-    return next_out != ((next_in + 1) % bufsize);
+    return _next_out != ((_next_in + 1) % _bufsize);
 }
 
 bool MIDIQueue::can_get() const
 {
-    return next_in != next_out;
+    return _next_in != _next_out;
 }
 
 }  // namespace jdksmidi
