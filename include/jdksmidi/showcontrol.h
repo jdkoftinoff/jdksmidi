@@ -34,145 +34,11 @@
 
 namespace jdksmidi {
 //
-// Hacked defines that really should just go away:
+// This file previously used JDKSMIDI_ATTRIBUTE family macros to generate
+// getter/setter methods. These have been replaced with explicit method 
+// definitions for better code clarity and maintainability.
 //
 
-// Simple macros to make Setter and Getter methods easier
-// in an object.
-//
-// examples:
-//
-// JDKSMIDI_ATTRIBUTE(long,Position)
-//
-// would generate a private 'long Position;'
-// a 'long GetPosition() const;' method
-// and a 'void SetPosition( long a );' method
-//
-//
-//
-// JDKSMIDI_ATTRIBUTE_REF( long, Position )
-//
-// would generate a private 'long Position;'
-// a 'const long &GetPosition() const;' method
-// and a 'void SetPosition( const long &a );' method
-//
-//
-//
-// JDKSMIDI_ACCESS( double, DPosition, Position )
-//
-// Is used to access an attribute with a different type.
-// It would generate just the methods:
-// 'double GetDPosition() const { return Position; }
-// 'void SetDPosition( double a ) { Position=a; }
-//
-//
-// JDKSMIDI_ACCESS_REF( double, DPosition, Position )
-//
-// Is used to access an attribute with a different type.
-// It would generate just the methods:
-// 'const double &GetDPosition() const { return Position; }
-// 'void SetDPosition( const double &a ) { Position=a; }
-//
-
-#define JDKSMIDI_ATTRIBUTE(TYPE, NAME)                                                             \
-  public:                                                                                          \
-    TYPE Get##NAME() const                                                                         \
-    {                                                                                              \
-        return NAME;                                                                               \
-    }                                                                                              \
-    void Set##NAME(TYPE a)                                                                         \
-    {                                                                                              \
-        NAME = a;                                                                                  \
-    }                                                                                              \
-                                                                                                   \
-  private:                                                                                         \
-    TYPE NAME
-
-#define JDKSMIDI_ATTRIBUTE_REF(TYPE, NAME)                                                         \
-  public:                                                                                          \
-    const TYPE& Get##NAME() const                                                                  \
-    {                                                                                              \
-        return NAME;                                                                               \
-    }                                                                                              \
-    void Set##NAME(const TYPE& a)                                                                  \
-    {                                                                                              \
-        NAME = a;                                                                                  \
-    }                                                                                              \
-                                                                                                   \
-  private:                                                                                         \
-    TYPE NAME
-
-#define JDKSMIDI_ACCESS(TYPE, NAME1, NAME2)                                                        \
-  public:                                                                                          \
-    TYPE Get##NAME1() const                                                                        \
-    {                                                                                              \
-        return NAME2;                                                                              \
-    }                                                                                              \
-    void Set##NAME1(TYPE a)                                                                        \
-    {                                                                                              \
-        NAME2 = a;                                                                                 \
-    }
-
-#define JDKSMIDI_ACCESS_REF(TYPE, NAME1, NAME2)                                                    \
-  public:                                                                                          \
-    const TYPE& Get##NAME1() const                                                                 \
-    {                                                                                              \
-        return NAME2;                                                                              \
-    }                                                                                              \
-    void Set##NAME1(const TYPE& a)                                                                 \
-    {                                                                                              \
-        NAME2 = a;                                                                                 \
-    }
-
-#define JDKSMIDI_PATTRIBUTE(TYPE, NAME)                                                            \
-  protected:                                                                                       \
-    const TYPE* Get##NAME() const                                                                  \
-    {                                                                                              \
-        return NAME;                                                                               \
-    }                                                                                              \
-    void Set##NAME(TYPE* a)                                                                        \
-    {                                                                                              \
-        NAME = a;                                                                                  \
-    }                                                                                              \
-                                                                                                   \
-  private:                                                                                         \
-    TYPE NAME
-
-#define JDKSMIDI_PATTRIBUTE_REF(TYPE, NAME)                                                        \
-  protected:                                                                                       \
-    const TYPE& Get##NAME() const                                                                  \
-    {                                                                                              \
-        return NAME;                                                                               \
-    }                                                                                              \
-    void Set##NAME(const TYPE& a)                                                                  \
-    {                                                                                              \
-        NAME = a;                                                                                  \
-    }                                                                                              \
-                                                                                                   \
-  private:                                                                                         \
-    TYPE NAME
-
-#define JDKSMIDI_PACCESS(TYPE, NAME1, NAME2)                                                       \
-  protected:                                                                                       \
-    const TYPE Get##NAME1() const                                                                  \
-    {                                                                                              \
-        return NAME2;                                                                              \
-    }                                                                                              \
-    void Set##NAME1(const TYPE a)                                                                  \
-    {                                                                                              \
-        NAME2 = a;                                                                                 \
-    }
-
-#define JDKSMIDI_PACCESS_REF(TYPE, NAME1, NAME2)                                                   \
-  protected:                                                                                       \
-    const TYPE& Get##NAME1() const                                                                 \
-    {                                                                                              \
-        return NAME2;                                                                              \
-    }                                                                                              \
-    void Set##NAME1(const TYPE& a)                                                                 \
-    {                                                                                              \
-        NAME2 = a;                                                                                 \
-    }
 
 class MIDICue
 {
@@ -728,40 +594,108 @@ class MIDIShowControlPacket
         SetHasQPath(true);
     }
 
-    JDKSMIDI_ATTRIBUTE(std::uint8_t, DeviceId);
-    JDKSMIDI_ATTRIBUTE(std::uint8_t, CommandFmt);
-    JDKSMIDI_ATTRIBUTE(MIDIShowCommand, Command);
-    JDKSMIDI_ATTRIBUTE(bool, HasTime);
-    JDKSMIDI_ATTRIBUTE(bool, HasQNumber);
-    JDKSMIDI_ATTRIBUTE(bool, HasQList);
-    JDKSMIDI_ATTRIBUTE(bool, HasQPath);
-    JDKSMIDI_ATTRIBUTE(std::uint8_t, Hours);
-    JDKSMIDI_ATTRIBUTE(std::uint8_t, Minutes);
-    JDKSMIDI_ATTRIBUTE(std::uint8_t, Seconds);
-    JDKSMIDI_ATTRIBUTE(std::uint8_t, Frames);
-    JDKSMIDI_ATTRIBUTE(std::uint8_t, FractFrames);
+  public:
+    // DeviceId attribute
+    std::uint8_t GetDeviceId() const { return DeviceId; }
+    void SetDeviceId(std::uint8_t a) { DeviceId = a; }
 
-    JDKSMIDI_ATTRIBUTE_REF(MIDICue, QNumber);
-    JDKSMIDI_ATTRIBUTE_REF(MIDICue, QList);
-    JDKSMIDI_ATTRIBUTE_REF(MIDICue, QPath);
+    // CommandFmt attribute  
+    std::uint8_t GetCommandFmt() const { return CommandFmt; }
+    void SetCommandFmt(std::uint8_t a) { CommandFmt = a; }
 
-    JDKSMIDI_ATTRIBUTE(std::uint32_t, Val1);
-    JDKSMIDI_ATTRIBUTE(std::uint32_t, Val2);
+    // Command attribute
+    MIDIShowCommand GetCommand() const { return Command; }
+    void SetCommand(MIDIShowCommand a) { Command = a; }
 
-    JDKSMIDI_ACCESS(std::uint32_t, MacroNum, Val1);
-    JDKSMIDI_ACCESS(std::uint32_t, ControlNum, Val1);
-    JDKSMIDI_ACCESS(std::uint32_t, ControlVal, Val2);
+    // HasTime attribute
+    bool GetHasTime() const { return HasTime; }
+    void SetHasTime(bool a) { HasTime = a; }
+
+    // HasQNumber attribute
+    bool GetHasQNumber() const { return HasQNumber; }
+    void SetHasQNumber(bool a) { HasQNumber = a; }
+
+    // HasQList attribute
+    bool GetHasQList() const { return HasQList; }
+    void SetHasQList(bool a) { HasQList = a; }
+
+    // HasQPath attribute
+    bool GetHasQPath() const { return HasQPath; }
+    void SetHasQPath(bool a) { HasQPath = a; }
+
+    // Hours attribute
+    std::uint8_t GetHours() const { return Hours; }
+    void SetHours(std::uint8_t a) { Hours = a; }
+
+    // Minutes attribute
+    std::uint8_t GetMinutes() const { return Minutes; }
+    void SetMinutes(std::uint8_t a) { Minutes = a; }
+
+    // Seconds attribute
+    std::uint8_t GetSeconds() const { return Seconds; }
+    void SetSeconds(std::uint8_t a) { Seconds = a; }
+
+    // Frames attribute
+    std::uint8_t GetFrames() const { return Frames; }
+    void SetFrames(std::uint8_t a) { Frames = a; }
+
+    // FractFrames attribute
+    std::uint8_t GetFractFrames() const { return FractFrames; }
+    void SetFractFrames(std::uint8_t a) { FractFrames = a; }
+
+    // QNumber attribute (reference)
+    const MIDICue& GetQNumber() const { return QNumber; }
+    void SetQNumber(const MIDICue& a) { QNumber = a; }
+
+    // QList attribute (reference)
+    const MIDICue& GetQList() const { return QList; }
+    void SetQList(const MIDICue& a) { QList = a; }
+
+    // QPath attribute (reference)
+    const MIDICue& GetQPath() const { return QPath; }
+    void SetQPath(const MIDICue& a) { QPath = a; }
+
+    // Val1 attribute
+    std::uint32_t GetVal1() const { return Val1; }
+    void SetVal1(std::uint32_t a) { Val1 = a; }
+
+    // Val2 attribute
+    std::uint32_t GetVal2() const { return Val2; }
+    void SetVal2(std::uint32_t a) { Val2 = a; }
+
+    // MacroNum access (aliases Val1)
+    std::uint32_t GetMacroNum() const { return Val1; }
+    void SetMacroNum(std::uint32_t a) { Val1 = a; }
+
+    // ControlNum access (aliases Val1)
+    std::uint32_t GetControlNum() const { return Val1; }
+    void SetControlNum(std::uint32_t a) { Val1 = a; }
+
+    // ControlVal access (aliases Val2)
+    std::uint32_t GetControlVal() const { return Val2; }
+    void SetControlVal(std::uint32_t a) { Val2 = a; }
+
+  private:
+    std::uint8_t DeviceId;
+    std::uint8_t CommandFmt;
+    MIDIShowCommand Command;
+    bool HasTime;
+    bool HasQNumber;
+    bool HasQList;
+    bool HasQPath;
+    std::uint8_t Hours;
+    std::uint8_t Minutes;
+    std::uint8_t Seconds;
+    std::uint8_t Frames;
+    std::uint8_t FractFrames;
+    MIDICue QNumber;
+    MIDICue QList;
+    MIDICue QPath;
+    std::uint32_t Val1;
+    std::uint32_t Val2;
 };
 
-// unlearn the brain damage
-#undef JDKSMIDI_ATTRIBUTE
-#undef JDKSMIDI_ATTRIBUTE_REF
-#undef JDKSMIDI_ACCESS
-#undef JDKSMIDI_ACCESS_REF
-#undef JDKSMIDI_PATTRIBUTE
-#undef JDKSMIDI_PATTRIBUTE_REF
-#undef JDKSMIDI_PACCESS
-#undef JDKSMIDI_PACCESS_REF
+// Macros have been removed and replaced with explicit method definitions
 
 }  // namespace jdksmidi
 
