@@ -38,6 +38,8 @@
 #include "jdksmidi/track.h"
 #include "jdksmidi/world.h"
 
+#include <cinttypes>
+
 using namespace jdksmidi;
 
 void DumpMIDIBigMessage(MIDITimedBigMessage* msg)
@@ -56,7 +58,7 @@ void DumpMIDITimedBigMessage(MIDITimedBigMessage* msg)
 {
     if (msg) {
         char msgbuf[1024];
-        fprintf(stdout, "%8ld : %s\n", msg->get_time(), msg->msg_to_text(msgbuf));
+        fprintf(stdout, "%8" PRIu32 " : %s\n", msg->get_time(), msg->msg_to_text(msgbuf));
 
         if (msg->is_sys_ex()) {
             fprintf(stdout, "\tSYSEX length: %d\n", msg->get_sys_ex()->get_length());
