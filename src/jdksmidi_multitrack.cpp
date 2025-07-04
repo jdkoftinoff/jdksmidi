@@ -52,6 +52,7 @@ namespace jdksmidi {
 MIDIMultiTrack::MIDIMultiTrack(int num_tracks_, bool deletable_)
     : _num_tracks(num_tracks_)
     , _deletable(deletable_)
+    , _clks_per_beat(480)
 {
     ENTER("MIDIMultiTrack::MIDIMultiTrack()");
     _tracks = new MIDITrack*[_num_tracks];
