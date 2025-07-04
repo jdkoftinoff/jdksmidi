@@ -68,11 +68,11 @@ class MIDISequencerGUIEvent
         bits = ((group & 0xff) << 24) | ((subgroup & 0xfff) << 12) | ((item & 0xfff) << 0);
     }
 
-    int GetEventGroup() const { return static_cast<int>((bits >> 24) & 0xff); }
+    int get_event_group() const { return static_cast<int>((bits >> 24) & 0xff); }
 
-    int GetEventSubGroup() const { return static_cast<int>((bits >> 12) & 0xfff); }
+    int get_event_sub_group() const { return static_cast<int>((bits >> 12) & 0xfff); }
 
-    int GetEventItem() const { return static_cast<int>((bits >> 0) & 0xfff); }
+    int get_event_item() const { return static_cast<int>((bits >> 0) & 0xfff); }
 
     // main groups
     enum
@@ -122,9 +122,9 @@ class MIDISequencerGUIEventNotifier
 
     virtual ~MIDISequencerGUIEventNotifier();
 
-    virtual void Notify(MIDISequencer const* seq, MIDISequencerGUIEvent e) = 0;
-    virtual bool GetEnable() const = 0;
-    virtual void SetEnable(bool f) = 0;
+    virtual void notify(MIDISequencer const* seq, MIDISequencerGUIEvent e) = 0;
+    virtual bool get_enable() const = 0;
+    virtual void set_enable(bool f) = 0;
 };
 
 class MIDISequencerGUIEventNotifierText : public MIDISequencerGUIEventNotifier
@@ -134,9 +134,9 @@ class MIDISequencerGUIEventNotifierText : public MIDISequencerGUIEventNotifier
 
     virtual ~MIDISequencerGUIEventNotifierText();
 
-    virtual void Notify(MIDISequencer const* seq, MIDISequencerGUIEvent e);
-    virtual bool GetEnable() const;
-    virtual void SetEnable(bool f);
+    virtual void notify(MIDISequencer const* seq, MIDISequencerGUIEvent e);
+    virtual bool get_enable() const;
+    virtual void set_enable(bool f);
 
   private:
     FILE* f;
@@ -157,7 +157,7 @@ class MIDISequencerTrackNotifier : public MIDIProcessor
         notifier = n;
     }
 
-    void Notify(int item);
+    void notify(int item);
     void notify_conductor(int item);
 
   private:

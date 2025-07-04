@@ -57,7 +57,7 @@ class MIDIFileWriteStream
     MIDIFileWriteStream();
     virtual ~MIDIFileWriteStream();
 
-    virtual long Seek(long pos, int whence = SEEK_SET) = 0;
+    virtual long seek(long pos, int whence = SEEK_SET) = 0;
     virtual int write_char(int c) = 0;
 };
 
@@ -67,7 +67,7 @@ class MIDIFileWriteStreamFile : public MIDIFileWriteStream
     MIDIFileWriteStreamFile(FILE* f_);
     virtual ~MIDIFileWriteStreamFile();
 
-    long Seek(long pos, int whence = SEEK_SET);
+    long seek(long pos, int whence = SEEK_SET);
     int write_char(int c);
 
   protected:
@@ -81,7 +81,7 @@ class MIDIFileWriteStreamFileName : public MIDIFileWriteStreamFile
         : MIDIFileWriteStreamFile(fopen(fname, "wb"))
     {}
 
-    bool IsValid() { return f != 0; }
+    bool is_valid() { return f != 0; }
 
     virtual ~MIDIFileWriteStreamFileName()
     {
@@ -128,33 +128,33 @@ class MIDIFileWrite : protected MIDIFile
     virtual void rewrite_track_length();
 
   protected:
-    virtual void Error(char* s);
+    virtual void error_handler(char* s);
 
-    void WriteCharacter(std::uint8_t c)
+    void write_character(std::uint8_t c)
     {
         if (out_stream->write_char(c) < 0)
             error = true;
     }
 
-    void Seek(long pos)
+    void seek(long pos)
     {
-        if (out_stream->Seek(pos) < 0)
+        if (out_stream->seek(pos) < 0)
             error = true;
     }
 
-    void IncrementCounters(int c)
+    void increment_counters(int c)
     {
         track_length += c;
         file_length += c;
     }
 
-    void WriteShort(unsigned short c);
-    void Write3Char(long c);
-    void WriteLong(unsigned long c);
+    void write_short(unsigned short c);
+    void write_3_char(long c);
+    void write_long(unsigned long c);
 
-    int WriteVariableNum(unsigned long n);
+    int write_variable_num(unsigned long n);
 
-    void WriteDeltaTime(unsigned long time);
+    void write_delta_time(unsigned long time);
 
   private:
     bool error;

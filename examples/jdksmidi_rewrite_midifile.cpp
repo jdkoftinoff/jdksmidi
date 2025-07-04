@@ -58,7 +58,7 @@ int main(int argc, char** argv)
         // create the output stream
         jdksmidi::MIDIFileWriteStreamFileName out_stream(outfile_name);
 
-        if (out_stream.IsValid()) {
+        if (out_stream.is_valid()) {
             // the object which takes the midi tracks and writes the midifile to the output stream
             jdksmidi::MIDIFileWriteMultiTrack writer(&tracks, &out_stream);
             // extract the original multitrack division and number of tracks
@@ -66,7 +66,7 @@ int main(int argc, char** argv)
             int division = reader.get_division();
 
             // write the output file
-            if (writer.Write(num_tracks, division)) {
+            if (writer.write(num_tracks, division)) {
                 return_code = 0;
             }
 

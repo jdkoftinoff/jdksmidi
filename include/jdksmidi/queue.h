@@ -47,17 +47,17 @@ class MIDIQueue
 
     bool is_full() const { return !can_put(); }
 
-    void Put(MIDITimedBigMessage const& msg)
+    void put(MIDITimedBigMessage const& msg)
     {
         buf[next_in] = msg;
         next_in = (next_in + 1) % bufsize;
     }
 
-    MIDITimedBigMessage Get() const { return MIDITimedBigMessage(buf[next_out]); }
+    MIDITimedBigMessage get() const { return MIDITimedBigMessage(buf[next_out]); }
 
-    void Next() { next_out = (next_out + 1) % bufsize; }
+    void next() { next_out = (next_out + 1) % bufsize; }
 
-    MIDITimedBigMessage const* Peek() const { return &buf[next_out]; }
+    MIDITimedBigMessage const* peek() const { return &buf[next_out]; }
 
   protected:
     MIDITimedBigMessage* buf;

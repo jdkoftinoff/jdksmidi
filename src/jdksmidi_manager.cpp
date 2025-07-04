@@ -50,67 +50,67 @@ MIDIManager::~MIDIManager()
 
 void MIDIManager::reset()
 {
-    SeqStop();
+    seq_stop();
     sys_time_offset = 0;
     seq_time_offset = 0;
     play_mode = false;
     stop_mode = true;
 
     if (notifier) {
-        notifier->Notify(sequencer, MIDISequencerGUIEvent(MIDISequencerGUIEvent::GROUP_ALL));
+        notifier->notify(sequencer, MIDISequencerGUIEvent(MIDISequencerGUIEvent::GROUP_ALL));
     }
 }
 
 // to set and get the current sequencer
-void MIDIManager::SetSeq(MIDISequencer* seq)
+void MIDIManager::set_seq(MIDISequencer* seq)
 {
     if (notifier) {
-        notifier->Notify(sequencer, MIDISequencerGUIEvent(MIDISequencerGUIEvent::GROUP_ALL));
+        notifier->notify(sequencer, MIDISequencerGUIEvent(MIDISequencerGUIEvent::GROUP_ALL));
     }
 
     sequencer = seq;
 }
 
-MIDISequencer* MIDIManager::GetSeq()
+MIDISequencer* MIDIManager::get_seq()
 {
     return sequencer;
 }
 
-MIDISequencer const* MIDIManager::GetSeq() const
+MIDISequencer const* MIDIManager::get_seq() const
 {
     return sequencer;
 }
 
 // to set and get the system time offset
-void MIDIManager::SetTimeOffset(unsigned long off)
+void MIDIManager::set_time_offset(unsigned long off)
 {
     sys_time_offset = off;
 }
 
-unsigned long MIDIManager::GetTimeOffset()
+unsigned long MIDIManager::get_time_offset()
 {
     return sys_time_offset;
 }
 
 // to set and get the sequencer time offset
-void MIDIManager::SetSeqOffset(unsigned long seqoff)
+void MIDIManager::set_seq_offset(unsigned long seqoff)
 {
     seq_time_offset = seqoff;
 }
 
-unsigned long MIDIManager::GetSeqOffset()
+unsigned long MIDIManager::get_seq_offset()
 {
     return seq_time_offset;
 }
 
 // to manage the playback of the sequencer
-void MIDIManager::SeqPlay()
+void MIDIManager::seq_play()
 {
     stop_mode = false;
     play_mode = true;
 
     if (notifier) {
-        notifier->Notify(
+        notifier->notify(
             sequencer,
             MIDISequencerGUIEvent(
                 MIDISequencerGUIEvent::GROUP_TRANSPORT,
@@ -120,7 +120,7 @@ void MIDIManager::SeqPlay()
 }
 
 // to manage the repeat playback of the sequencer
-void MIDIManager::SetRepeatPlay(bool flag, unsigned long start_measure, unsigned long end_measure)
+void MIDIManager::set_repeat_play(bool flag, unsigned long start_measure, unsigned long end_measure)
 {
     // shut off repeat play while we muck with values
     repeat_play_mode = false;
@@ -130,13 +130,13 @@ void MIDIManager::SetRepeatPlay(bool flag, unsigned long start_measure, unsigned
     repeat_play_mode = flag;
 }
 
-void MIDIManager::SeqStop()
+void MIDIManager::seq_stop()
 {
     play_mode = false;
     stop_mode = true;
 
     if (notifier) {
-        notifier->Notify(
+        notifier->notify(
             sequencer,
             MIDISequencerGUIEvent(
                 MIDISequencerGUIEvent::GROUP_TRANSPORT,
@@ -146,17 +146,17 @@ void MIDIManager::SeqStop()
 }
 
 // status request functions
-bool MIDIManager::IsSeqPlay() const
+bool MIDIManager::is_seq_play() const
 {
     return play_mode;
 }
 
-bool MIDIManager::IsSeqStop() const
+bool MIDIManager::is_seq_stop() const
 {
     return stop_mode;
 }
 
-bool MIDIManager::IsSeqRepeat() const
+bool MIDIManager::is_seq_repeat() const
 {
     return repeat_play_mode && play_mode;
 }
@@ -164,15 +164,15 @@ bool MIDIManager::IsSeqRepeat() const
 void MIDIManager::time_tick(unsigned long sys_time_)
 {
     if (play_mode) {
-        TimeTickPlayMode(sys_time_);
+        time_tick_play_mode(sys_time_);
     }
 
     else if (stop_mode) {
-        TimeTickStopMode(sys_time_);
+        time_tick_stop_mode(sys_time_);
     }
 }
 
-void MIDIManager::TimeTickPlayMode(unsigned long sys_time_)
+void MIDIManager::time_tick_play_mode(unsigned long sys_time_)
 {
     double sys_time = (double)sys_time_ - (double)sys_time_offset;
     float next_event_time = 0.0;
@@ -217,13 +217,13 @@ void MIDIManager::TimeTickPlayMode(unsigned long sys_time_)
         play_mode = false;
 
         if (notifier) {
-            notifier->Notify(
+            notifier->notify(
                 sequencer,
                 MIDISequencerGUIEvent(
                     MIDISequencerGUIEvent::GROUP_TRANSPORT,
                     0,
                     MIDISequencerGUIEvent::GROUP_TRANSPORT_MODE));
-            notifier->Notify(
+            notifier->notify(
                 sequencer,
                 MIDISequencerGUIEvent(
                     MIDISequencerGUIEvent::GROUP_TRANSPORT,
@@ -233,6 +233,6 @@ void MIDIManager::TimeTickPlayMode(unsigned long sys_time_)
     }
 }
 
-void MIDIManager::TimeTickStopMode(unsigned long sys_time_)
+void MIDIManager::time_tick_stop_mode(unsigned long sys_time_)
 {}
 }  // namespace jdksmidi

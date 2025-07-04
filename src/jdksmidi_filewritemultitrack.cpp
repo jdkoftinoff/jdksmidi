@@ -39,11 +39,11 @@ MIDIFileWriteMultiTrack::MIDIFileWriteMultiTrack(
 MIDIFileWriteMultiTrack::~MIDIFileWriteMultiTrack()
 {}
 
-bool MIDIFileWriteMultiTrack::Write(int num_tracks, int division)
+bool MIDIFileWriteMultiTrack::write(int num_tracks, int division)
 {
     bool f = true;
 
-    if (!PreWrite()) {
+    if (!pre_write()) {
         return false;
     }
 
@@ -82,19 +82,19 @@ bool MIDIFileWriteMultiTrack::Write(int num_tracks, int division)
         writer.rewrite_track_length();
     }
 
-    if (!PostWrite()) {
+    if (!post_write()) {
         return false;
     }
 
     return f;
 }
 
-bool MIDIFileWriteMultiTrack::PreWrite()
+bool MIDIFileWriteMultiTrack::pre_write()
 {
     return true;
 }
 
-bool MIDIFileWriteMultiTrack::PostWrite()
+bool MIDIFileWriteMultiTrack::post_write()
 {
     return true;
 }

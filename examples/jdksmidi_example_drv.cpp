@@ -49,18 +49,18 @@ void DumpTrackNames(MIDISequencer* seq)
 
 void PlayDumpManager(MIDIManager* mgr)
 {
-    MIDISequencer* seq = mgr->GetSeq();
+    MIDISequencer* seq = mgr->get_seq();
     double pretend_clock_time = 0.0;
     seq->go_to_time((unsigned long)pretend_clock_time);
-    mgr->SeqPlay();
+    mgr->seq_play();
     // simulate a clock going forward with 10ms resolution for 1 minute
 
     for (pretend_clock_time = 0.0; pretend_clock_time < 60.0 * 1000.0; pretend_clock_time += 100) {
-        mgr->GetDriver()->time_tick((unsigned long)pretend_clock_time);
+        mgr->get_driver()->time_tick((unsigned long)pretend_clock_time);
     }
 
-    mgr->SeqStop();
-    mgr->GetDriver()->all_notes_off();
+    mgr->seq_stop();
+    mgr->get_driver()->all_notes_off();
 }
 
 int main(int argc, char** argv)
@@ -76,7 +76,7 @@ int main(int argc, char** argv)
         MIDIManager mgr(&driver, &gui);
         reader.parse();
         seq.go_to_zero();
-        mgr.SetSeq(&seq);
+        mgr.set_seq(&seq);
         DumpTrackNames(&seq);
         PlayDumpManager(&mgr);
     }

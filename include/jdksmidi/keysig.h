@@ -56,24 +56,24 @@ class MIDIKeySignature
 
     void reset();
 
-    bool IsMajor() { return major; }
+    bool is_major() { return major; }
 
-    void SetSharpFlats(int sf, bool maj = true)
+    void set_sharp_flats(int sf, bool maj = true)
     {
         sharp_flat = sf;
         major = maj;
         reset();
     }
 
-    int GetSharpFlats() { return sharp_flat; }
+    int get_sharp_flats() { return sharp_flat; }
 
-    MIDIAccidentalType GetNoteStatus(int white_note) { return state[white_note % 7]; }
+    MIDIAccidentalType get_note_status(int white_note) { return state[white_note % 7]; }
 
-    bool ConvertMIDINote(int in_note, int* out_note);
+    bool convert_midi_note(int in_note, int* out_note);
 
   protected:
-    bool ProcessWhiteNote(int in_note, int* out_note);
-    bool ProcessBlackNote(int in_note, int* out_note);
+    bool process_white_note(int in_note, int* out_note);
+    bool process_black_note(int in_note, int* out_note);
 
     MIDIAccidentalType state[7];
     bool use_sharps;

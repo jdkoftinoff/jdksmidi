@@ -108,17 +108,17 @@ class MIDIFile
     };
 
     //
-    // ConvertTempoToFreq() returns the frequency of the required
+    // convert_tempo_to_freq() returns the frequency of the required
     // tempo clock
     //
 
-    static unsigned long ConvertTempoToFreq(short division, MIDITempo& tempo);
+    static unsigned long convert_tempo_to_freq(short division, MIDITempo& tempo);
 
     //
     // Convert a four byte number to an unsigned long.
     //
 
-    static unsigned long To32Bit(std::uint8_t a, std::uint8_t b, std::uint8_t c, std::uint8_t d)
+    static unsigned long to_32_bit(std::uint8_t a, std::uint8_t b, std::uint8_t c, std::uint8_t d)
     {
         return ((unsigned long)a << 24) + ((unsigned long)b << 16) + ((unsigned long)c << 8) +
             ((unsigned long)d << 0);
@@ -128,14 +128,14 @@ class MIDIFile
     // Convert a two byte number to an unsigned short
     //
 
-    static unsigned short To16Bit(std::uint8_t a, std::uint8_t b)
+    static unsigned short to_16_bit(std::uint8_t a, std::uint8_t b)
     {
         return (unsigned short)(((unsigned short)a << 8) + ((unsigned short)b << 0));
     }
 
-    static unsigned long ReadVariableLengthNumber(std::uint8_t** in);
+    static unsigned long read_variable_length_number(std::uint8_t** in);
 
-    static std::uint8_t* WriteVariableLengthNumber(unsigned long num, std::uint8_t* out);
+    static std::uint8_t* write_variable_length_number(unsigned long num, std::uint8_t* out);
 };
 
 }  // namespace jdksmidi

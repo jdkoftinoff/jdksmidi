@@ -91,7 +91,7 @@ bool MIDIDriver::hardware_msg_in(MIDITimedBigMessage& msg)
     // stick input into in queue
 
     if (in_queue.can_put()) {
-        in_queue.Put(msg);
+        in_queue.put(msg);
     }
 
     else {
@@ -111,7 +111,7 @@ bool MIDIDriver::hardware_msg_in(MIDITimedBigMessage& msg)
         // stick this message into the out queue so the tick procedure
         // will play it out asap
         if (out_queue.can_put()) {
-            out_queue.Put(msg);
+            out_queue.put(msg);
         }
 
         else {
@@ -133,11 +133,11 @@ void MIDIDriver::time_tick(unsigned long sys_time)
     // as we can
 
     while (out_queue.can_get()) {
-        // use the Peek() function to avoid allocating memory for
+        // use the peek() function to avoid allocating memory for
         // a duplicate sysex
-        if (hardware_msg_out(*(out_queue.Peek())) == true) {
+        if (hardware_msg_out(*(out_queue.peek())) == true) {
             // ok, got and sent a message - update our out_queue now
-            out_queue.Next();
+            out_queue.next();
         }
 
         else {

@@ -95,7 +95,7 @@ void MIDIFileEvents::meta_event(MIDIClockTime time, int type, int leng, std::uin
 {
     switch (type) {
         case MF_SEQUENCE_NUMBER:
-            mf_seqnum(time, To16Bit(m[0], m[1]));
+            mf_seqnum(time, to_16_bit(m[0], m[1]));
             break;
         case MF_TEXT_EVENT:
         case MF_COPYRIGHT:
@@ -126,7 +126,7 @@ void MIDIFileEvents::meta_event(MIDIClockTime time, int type, int leng, std::uin
             mf_eot(time);
             break;
         case MF_TEMPO:  // Set Tempo
-            mf_tempo(time, To32Bit(0, m[0], m[1], m[2]));
+            mf_tempo(time, to_32_bit(0, m[0], m[1], m[2]));
             break;
         case MF_SMPTE:
             mf_smpte(time, m[0], m[1], m[2], m[3], m[4]);
@@ -514,7 +514,7 @@ unsigned long MIDIFileRead::read_32_bit()
     c2 = e_get_c();
     c3 = e_get_c();
     c4 = e_get_c();
-    return To32Bit((std::uint8_t)c1, (std::uint8_t)c2, (std::uint8_t)c3, (std::uint8_t)c4);
+    return to_32_bit((std::uint8_t)c1, (std::uint8_t)c2, (std::uint8_t)c3, (std::uint8_t)c4);
 }
 
 int MIDIFileRead::read_16_bit()
@@ -522,7 +522,7 @@ int MIDIFileRead::read_16_bit()
     int c1, c2;
     c1 = e_get_c();
     c2 = e_get_c();
-    return To16Bit((std::uint8_t)c1, (std::uint8_t)c2);
+    return to_16_bit((std::uint8_t)c1, (std::uint8_t)c2);
 }
 
 int MIDIFileRead::e_get_c()

@@ -45,37 +45,37 @@ class MIDIManager : public MIDITick
     void reset();
 
     // to set and get the current sequencer
-    void SetSeq(MIDISequencer* seq);
-    MIDISequencer* GetSeq();
-    MIDISequencer const* GetSeq() const;
+    void set_seq(MIDISequencer* seq);
+    MIDISequencer* get_seq();
+    MIDISequencer const* get_seq() const;
 
     // to get the driver that we use
-    MIDIDriver* GetDriver() { return driver; }
+    MIDIDriver* get_driver() { return driver; }
 
     // to set and get the system time offset
-    void SetTimeOffset(unsigned long off);
-    unsigned long GetTimeOffset();
+    void set_time_offset(unsigned long off);
+    unsigned long get_time_offset();
 
     // to set and get the sequencer time offset
-    void SetSeqOffset(unsigned long seqoff);
-    unsigned long GetSeqOffset();
+    void set_seq_offset(unsigned long seqoff);
+    unsigned long get_seq_offset();
 
     // to manage the playback of the sequencer
-    void SeqPlay();
-    void SeqStop();
-    void SetRepeatPlay(bool flag, unsigned long start_measure, unsigned long end_measure);
+    void seq_play();
+    void seq_stop();
+    void set_repeat_play(bool flag, unsigned long start_measure, unsigned long end_measure);
 
     // status request functions
-    bool IsSeqPlay() const;
-    bool IsSeqStop() const;
-    bool IsSeqRepeat() const;
+    bool is_seq_play() const;
+    bool is_seq_stop() const;
+    bool is_seq_repeat() const;
 
     // inherited from MIDITick
     virtual void time_tick(unsigned long sys_time);
 
   protected:
-    virtual void TimeTickPlayMode(unsigned long sys_time_);
-    virtual void TimeTickStopMode(unsigned long sys_time_);
+    virtual void time_tick_play_mode(unsigned long sys_time_);
+    virtual void time_tick_stop_mode(unsigned long sys_time_);
 
     MIDIDriver* driver;
 

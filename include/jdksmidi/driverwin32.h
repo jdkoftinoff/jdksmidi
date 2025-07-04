@@ -44,9 +44,9 @@ class MIDISequencerGUIEventNotifierWin32 : public MIDISequencerGUIEventNotifier
 
     virtual ~MIDISequencerGUIEventNotifierWin32();
 
-    virtual void Notify(MIDISequencer const* seq, MIDISequencerGUIEvent e);
-    virtual bool GetEnable() const;
-    virtual void SetEnable(bool f);
+    virtual void notify(MIDISequencer const* seq, MIDISequencerGUIEvent e);
+    virtual bool get_enable() const;
+    virtual void set_enable(bool f);
 
   private:
     HWND dest_window;
@@ -61,15 +61,15 @@ class MIDIDriverWin32 : public MIDIDriver
     MIDIDriverWin32(int queue_size);
     virtual ~MIDIDriverWin32();
 
-    void ResetMIDIOut();
+    void reset_midi_out();
 
-    bool StartTimer(int resolution_ms);
-    bool OpenMIDIInPort(int id);
-    bool OpenMIDIOutPort(int id);
+    bool start_timer(int resolution_ms);
+    bool open_midi_in_port(int id);
+    bool open_midi_out_port(int id);
 
-    void StopTimer();
-    void CloseMIDIInPort();
-    void CloseMIDIOutPort();
+    void stop_timer();
+    void close_midi_in_port();
+    void close_midi_out_port();
 
     bool hardware_msg_out(MIDITimedBigMessage const& msg);
 

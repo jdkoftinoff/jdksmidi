@@ -62,66 +62,66 @@ class AdvancedSequencer
     AdvancedSequencer();
     virtual ~AdvancedSequencer();
 
-    bool OpenMIDI(int in_port, int out_port, int timer_resolution = 5);
-    void CloseMIDI();
+    bool open_midi(int in_port, int out_port, int timer_resolution = 5);
+    void close_midi();
 
-    void SetMIDIThruEnable(bool f);
-    bool GetMIDIThruEnable() const;
+    void set_midi_thru_enable(bool f);
+    bool get_midi_thru_enable() const;
 
-    void SetMIDIThruChannel(int chan);
-    int GetMIDIThruChannel() const;
+    void set_midi_thru_channel(int chan);
+    int get_midi_thru_channel() const;
 
-    void SetMIDIThruTranspose(int val);
-    int GetMIDIThruTranspose() const;
+    void set_midi_thru_transpose(int val);
+    int get_midi_thru_transpose() const;
 
     bool load(char const* fname);
     void reset();
 
     void go_to_measure(int measure, int beat = 0);
     void go_to_time(MIDIClockTime t);
-    void Play(int clock_offset = 0);
-    void RepeatPlay(bool enable, int start_measure, int end_measure);
-    void Pause();
+    void play(int clock_offset = 0);
+    void repeat_play(bool enable, int start_measure, int end_measure);
+    void pause();
     void stop();
 
-    bool IsPlay() { return mgr.IsSeqPlay(); }
+    bool is_play() { return mgr.is_seq_play(); }
 
-    void UnmuteAllTracks();
-    void SoloTrack(int trk);
-    void UnSoloTrack();
-    void SetTrackMute(int trk, bool f);
+    void unmute_all_tracks();
+    void solo_track(int trk);
+    void unsolo_track();
+    void set_track_mute(int trk, bool f);
 
-    void SetTempoScale(double scale);
-    double GetTempoWithoutScale() const;
-    double GetTempoWithScale() const;
+    void set_tempo_scale(double scale);
+    double get_tempo_without_scale() const;
+    double get_tempo_with_scale() const;
 
-    int GetMeasure() const;
-    int GetBeat() const;
+    int get_measure() const;
+    int get_beat() const;
 
     int get_time_sig_numerator() const;
     int get_time_sig_denominator() const;
 
-    int GetTrackNoteCount(int trk) const;
-    char const* GetTrackName(int trk) const;
-    int GetTrackVolume(int trk) const;
+    int get_track_note_count(int trk) const;
+    char const* get_track_name(int trk) const;
+    int get_track_volume(int trk) const;
 
-    void SetTrackVelocityScale(int trk, int scale);
-    int GetTrackVelocityScale(int trk) const;
+    void set_track_velocity_scale(int trk, int scale);
+    int get_track_velocity_scale(int trk) const;
 
-    void SetTrackRechannelize(int trk, int chan);
-    int GetTrackRechannelize(int trk) const;
+    void set_track_rechannelize(int trk, int chan);
+    int get_track_rechannelize(int trk) const;
 
-    void SetTrackTranspose(int trk, int trans);
-    int GetTrackTranspose(int trk) const;
+    void set_track_transpose(int trk, int trans);
+    int get_track_transpose(int trk) const;
 
-    void ExtractMarkers(std::vector<std::string>* list);
-    int GetCurrentMarker() const;
+    void extract_markers(std::vector<std::string>* list);
+    int get_current_marker() const;
 
-    int FindFirstChannelOnTrack(int trk);
+    int find_first_channel_on_track(int trk);
 
-    void ExtractWarpPositions();
+    void extract_warp_positions();
 
-    bool IsChainMode() const { return chain_mode; }
+    bool is_chain_mode() const { return chain_mode; }
 
     MIDIMultiProcessor thru_processor;
     MIDIProcessorTransposer thru_transposer;

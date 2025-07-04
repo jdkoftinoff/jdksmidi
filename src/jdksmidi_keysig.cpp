@@ -119,9 +119,9 @@ void MIDIKeySignature::reset()
     }
 }
 
-bool MIDIKeySignature::ProcessWhiteNote(int in_note, int* out_note)
+bool MIDIKeySignature::process_white_note(int in_note, int* out_note)
 {
-    ENTER("MIDIKeySignature::ProcessWhiteNote()");
+    ENTER("MIDIKeySignature::process_white_note()");
     //
     // check to see if this white note is allowed in the current
     // state.
@@ -156,9 +156,9 @@ bool MIDIKeySignature::ProcessWhiteNote(int in_note, int* out_note)
     }
 }
 
-bool MIDIKeySignature::ProcessBlackNote(int in_note, int* out_note)
+bool MIDIKeySignature::process_black_note(int in_note, int* out_note)
 {
-    ENTER("MIDIKeySignature::ProcessBlackNote()");
+    ENTER("MIDIKeySignature::process_black_note()");
     //
     // if this note is already sharped,
     // return the note unchanged and return false
@@ -209,13 +209,13 @@ bool MIDIKeySignature::ProcessBlackNote(int in_note, int* out_note)
 }
 
 //
-// ConvertMIDINote() takes a real MIDI note number and converts it to a
+// convert_midi_note() takes a real MIDI note number and converts it to a
 // white-key note number. it returns true if an Accidental is required.
 //
 
-bool MIDIKeySignature::ConvertMIDINote(int in_note, int* out_note)
+bool MIDIKeySignature::convert_midi_note(int in_note, int* out_note)
 {
-    ENTER("MIDIKeySignature::ConvertMIDINote()");
+    ENTER("MIDIKeySignature::convert_midi_note()");
     int octave = in_note / 12;
     int midi_note = in_note % 12;
     int actual_note = 0;
@@ -223,40 +223,40 @@ bool MIDIKeySignature::ConvertMIDINote(int in_note, int* out_note)
 
     switch (midi_note) {
         case 0:  // C
-            changed = ProcessWhiteNote(0, &actual_note);
+            changed = process_white_note(0, &actual_note);
             break;
         case 2:  // D
-            changed = ProcessWhiteNote(1, &actual_note);
+            changed = process_white_note(1, &actual_note);
             break;
         case 4:  // E
-            changed = ProcessWhiteNote(2, &actual_note);
+            changed = process_white_note(2, &actual_note);
             break;
         case 5:  // F
-            changed = ProcessWhiteNote(3, &actual_note);
+            changed = process_white_note(3, &actual_note);
             break;
         case 7:  // G
-            changed = ProcessWhiteNote(4, &actual_note);
+            changed = process_white_note(4, &actual_note);
             break;
         case 9:  // A
-            changed = ProcessWhiteNote(5, &actual_note);
+            changed = process_white_note(5, &actual_note);
             break;
         case 11:  // B
-            changed = ProcessWhiteNote(6, &actual_note);
+            changed = process_white_note(6, &actual_note);
             break;
         case 1:  // C#
-            changed = ProcessBlackNote(0, &actual_note);
+            changed = process_black_note(0, &actual_note);
             break;
         case 3:  // D#
-            changed = ProcessBlackNote(1, &actual_note);
+            changed = process_black_note(1, &actual_note);
             break;
         case 6:  // F#
-            changed = ProcessBlackNote(3, &actual_note);
+            changed = process_black_note(3, &actual_note);
             break;
         case 8:  // G#
-            changed = ProcessBlackNote(4, &actual_note);
+            changed = process_black_note(4, &actual_note);
             break;
         case 10:  // A#
-            changed = ProcessBlackNote(5, &actual_note);
+            changed = process_black_note(5, &actual_note);
             break;
     };
 

@@ -201,13 +201,13 @@ void MIDITrack::clear_and_merge(MIDITrack const* src1, MIDITrack const* src2)
 }
 
 #if 0
-bool MIDITrack::Insert ( int start_event, int num )
+bool MIDITrack::insert ( int start_event, int num )
 {
     // TODO: Insert
     return true;
 }
 
-bool  MIDITrack::Delete ( int start_event, int num )
+bool  MIDITrack::delete ( int start_event, int num )
 {
     // TODO: Delete
     return true;

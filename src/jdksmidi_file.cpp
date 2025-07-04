@@ -51,7 +51,7 @@ MIDIFile::MIDIFile()
 MIDIFile::~MIDIFile()
 {}
 
-unsigned long MIDIFile::ConvertTempoToFreq(short division, MIDITempo& tempo)
+unsigned long MIDIFile::convert_tempo_to_freq(short division, MIDITempo& tempo)
 {
     if (division > 0) {
         long clocks_per_beat = (long)division * 1000;
@@ -65,7 +65,7 @@ unsigned long MIDIFile::ConvertTempoToFreq(short division, MIDITempo& tempo)
     }
 }
 
-unsigned long MIDIFile::ReadVariableLengthNumber(std::uint8_t** in)
+unsigned long MIDIFile::read_variable_length_number(std::uint8_t** in)
 {
     unsigned long num = 0;
     std::uint8_t* t = *in;
@@ -79,7 +79,7 @@ unsigned long MIDIFile::ReadVariableLengthNumber(std::uint8_t** in)
     return num;
 }
 
-std::uint8_t* MIDIFile::WriteVariableLengthNumber(unsigned long num, std::uint8_t* out)
+std::uint8_t* MIDIFile::write_variable_length_number(unsigned long num, std::uint8_t* out)
 {
     unsigned long buffer;
     buffer = num & 0x7f;

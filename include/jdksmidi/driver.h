@@ -64,7 +64,7 @@ class MIDIDriver : public MIDITick
     {
         if ((out_proc && out_proc->process(&msg)) || !out_proc) {
             out_matrix.process(msg);
-            out_queue.Put(msg);
+            out_queue.put(msg);
         }
     }
 

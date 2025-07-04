@@ -138,8 +138,8 @@ class MIDITrack
     ///
     void clear_and_merge(MIDITrack const* src1, MIDITrack const* src2);
 
-    // bool Insert( int start_event, int num_events );
-    //    bool  Delete( int start_event, int num_events);
+    // bool insert( int start_event, int num_events );
+    //    bool  delete( int start_event, int num_events);
     //    void  Sort();
 
     bool expand(int increase_amount = (MIDITrackChunkSize));

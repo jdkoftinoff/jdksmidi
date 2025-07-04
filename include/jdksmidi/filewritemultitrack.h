@@ -40,14 +40,14 @@ class MIDIFileWriteMultiTrack
 
     virtual ~MIDIFileWriteMultiTrack();
 
-    bool Write(int num_tracks, int division);
+    bool write(int num_tracks, int division);
 
-    bool Write(int num_tracks) { return Write(num_tracks, multitrack->get_clks_per_beat()); }
-    bool Write() { return Write(multitrack->get_num_tracks(), multitrack->get_clks_per_beat()); }
+    bool write(int num_tracks) { return write(num_tracks, multitrack->get_clks_per_beat()); }
+    bool write() { return write(multitrack->get_num_tracks(), multitrack->get_clks_per_beat()); }
 
   private:
-    virtual bool PreWrite();
-    virtual bool PostWrite();
+    virtual bool pre_write();
+    virtual bool post_write();
 
     MIDIMultiTrack const* multitrack;
     MIDIFileWrite writer;

@@ -50,7 +50,7 @@ class MIDIEditTrackEventMatcher
     MIDIEditTrackEventMatcher();
     virtual ~MIDIEditTrackEventMatcher();
 
-    virtual bool Match(MIDITimedBigMessage const& ev) = 0;
+    virtual bool match(MIDITimedBigMessage const& ev) = 0;
 };
 
 class MIDIEditTrack
@@ -73,13 +73,13 @@ class MIDIEditTrack
     // Truncate erases all events after a certain time. then
     // adds appropriate note off's
     //
-    void Truncate(MIDIClockTime start_time);
+    void truncate(MIDIClockTime start_time);
 
     //
     // this merge function merges two other tracks into this track.
     // this is the faster form of merge
     //
-    void Merge(
+    void merge(
         MIDITrack* trk1,
         MIDITrack* trk2,
         MIDIEditTrackEventMatcher* match1,
@@ -89,7 +89,7 @@ class MIDIEditTrack
     // this erase function will erase all events from start to end time
     // and can be jagged or not.
     //
-    void Erase(
+    void erase(
         MIDIClockTime start,
         MIDIClockTime end,
         bool jagged = true,
@@ -99,7 +99,7 @@ class MIDIEditTrack
     // this delete function will delete all events like erase and then
     // shift the events over
     //
-    void Delete(
+    void delete_events(
         MIDIClockTime start,
         MIDIClockTime end,
         bool jagged = true,
@@ -109,12 +109,12 @@ class MIDIEditTrack
     // this insert function will insert 'length' clicks starting at
     // the events at start time.
     //
-    void Insert(MIDIClockTime start, MIDIClockTime length);
+    void insert(MIDIClockTime start, MIDIClockTime length);
 
     //
     // this shift function will shift all event times by an offset.
     //
-    void Shift(signed long offset, MIDIEditTrackEventMatcher* match = 0);
+    void shift(signed long offset, MIDIEditTrackEventMatcher* match = 0);
 
   protected:
     MIDIMatrix matrix;

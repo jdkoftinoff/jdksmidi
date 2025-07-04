@@ -71,18 +71,18 @@ MIDISequencerGUIEventNotifierText::MIDISequencerGUIEventNotifierText(FILE* f_)
 MIDISequencerGUIEventNotifierText::~MIDISequencerGUIEventNotifierText()
 {}
 
-void MIDISequencerGUIEventNotifierText::Notify(MIDISequencer const* seq, MIDISequencerGUIEvent e)
+void MIDISequencerGUIEventNotifierText::notify(MIDISequencer const* seq, MIDISequencerGUIEvent e)
 {
     if (en) {
         fprintf(
             f,
             "GUI EVENT: G=%d, SG=%d, ITEM=%d\n",
-            e.GetEventGroup(),
-            e.GetEventSubGroup(),
-            e.GetEventItem());
+            e.get_event_group(),
+            e.get_event_sub_group(),
+            e.get_event_item());
 
-        if (e.GetEventGroup() == MIDISequencerGUIEvent::GROUP_TRANSPORT) {
-            if (e.GetEventItem() == MIDISequencerGUIEvent::GROUP_TRANSPORT_BEAT) {
+        if (e.get_event_group() == MIDISequencerGUIEvent::GROUP_TRANSPORT) {
+            if (e.get_event_item() == MIDISequencerGUIEvent::GROUP_TRANSPORT_BEAT) {
                 fprintf(
                     f,
                     "MEAS %3d BEAT %3d\n",
@@ -91,8 +91,8 @@ void MIDISequencerGUIEventNotifierText::Notify(MIDISequencer const* seq, MIDISeq
             }
         }
 
-        else if (e.GetEventGroup() == MIDISequencerGUIEvent::GROUP_CONDUCTOR) {
-            if (e.GetEventItem() == MIDISequencerGUIEvent::GROUP_CONDUCTOR_TIMESIG) {
+        else if (e.get_event_group() == MIDISequencerGUIEvent::GROUP_CONDUCTOR) {
+            if (e.get_event_item() == MIDISequencerGUIEvent::GROUP_CONDUCTOR_TIMESIG) {
                 fprintf(
                     f,
                     "TIMESIG: %d/%d\n",
@@ -100,19 +100,19 @@ void MIDISequencerGUIEventNotifierText::Notify(MIDISequencer const* seq, MIDISeq
                     seq->get_track_state(0)->timesig_denominator);
             }
 
-            if (e.GetEventItem() == MIDISequencerGUIEvent::GROUP_CONDUCTOR_TEMPO) {
+            if (e.get_event_item() == MIDISequencerGUIEvent::GROUP_CONDUCTOR_TEMPO) {
                 fprintf(f, "TEMPO: %3.2f\n", seq->get_track_state(0)->tempobpm);
             }
         }
     }
 }
 
-bool MIDISequencerGUIEventNotifierText::GetEnable() const
+bool MIDISequencerGUIEventNotifierText::get_enable() const
 {
     return en;
 }
 
-void MIDISequencerGUIEventNotifierText::SetEnable(bool f)
+void MIDISequencerGUIEventNotifierText::set_enable(bool f)
 {
     en = f;
 }
@@ -129,10 +129,10 @@ MIDISequencerTrackNotifier::MIDISequencerTrackNotifier(
 MIDISequencerTrackNotifier::~MIDISequencerTrackNotifier()
 {}
 
-void MIDISequencerTrackNotifier::Notify(int item)
+void MIDISequencerTrackNotifier::notify(int item)
 {
     if (notifier) {
-        notifier->Notify(
+        notifier->notify(
             seq, MIDISequencerGUIEvent(MIDISequencerGUIEvent::GROUP_TRACK, track_num, item));
     }
 }
@@ -141,7 +141,7 @@ void MIDISequencerTrackNotifier::notify_conductor(int item)
 {
     // only notify conductor if we are track #0
     if (notifier && track_num == 0) {
-        notifier->Notify(
+        notifier->notify(
             seq, MIDISequencerGUIEvent(MIDISequencerGUIEvent::GROUP_CONDUCTOR, 0, item));
     }
 }
@@ -299,7 +299,7 @@ bool MIDISequencerTrackState::process(MIDITimedBigMessage* msg)
             if (msg->get_controller() == C_MAIN_VOLUME) {
                 // yes, store the current volume level
                 volume = msg->get_controller_value();
-                Notify(MIDISequencerGUIEvent::GROUP_TRACK_VOLUME);
+                notify(MIDISequencerGUIEvent::GROUP_TRACK_VOLUME);
             }
         }
 
@@ -308,7 +308,7 @@ bool MIDISequencerTrackState::process(MIDITimedBigMessage* msg)
             // yes
             // update the current program change value
             pg = msg->get_pg_value();
-            Notify(MIDISequencerGUIEvent::GROUP_TRACK_PG);
+            notify(MIDISequencerGUIEvent::GROUP_TRACK_PG);
         }
     }
 
@@ -351,7 +351,7 @@ bool MIDISequencerTrackState::process(MIDITimedBigMessage* msg)
                         memcpy(track_name, msg->get_sys_ex()->get_buf(), len);
                         track_name[len] = '\0';
                         FixQuotes(track_name);
-                        Notify(MIDISequencerGUIEvent::GROUP_TRACK_NAME);
+                        notify(MIDISequencerGUIEvent::GROUP_TRACK_NAME);
                     }
         }
     }
@@ -366,7 +366,7 @@ bool MIDISequencerTrackState::process(MIDITimedBigMessage* msg)
             // yes, toggle our notes_are_on flag
             notes_are_on = !notes_are_on;
             // and notify the gui about the activity on this track
-            Notify(MIDISequencerGUIEvent::GROUP_TRACK_NOTE);
+            notify(MIDISequencerGUIEvent::GROUP_TRACK_NOTE);
         }
     }
 
@@ -581,8 +581,8 @@ bool MIDISequencer::go_to_time(MIDIClockTime time_clk)
     bool notifier_mode = false;
 
     if (state.notifier) {
-        notifier_mode = state.notifier->GetEnable();
-        state.notifier->SetEnable(false);
+        notifier_mode = state.notifier->get_enable();
+        state.notifier->set_enable(false);
     }
 
     if (time_clk < state.cur_clock || time_clk == 0) {
@@ -615,9 +615,9 @@ bool MIDISequencer::go_to_time(MIDIClockTime time_clk)
 
     // re-enable the gui notifier if it was enabled previously
     if (state.notifier) {
-        state.notifier->SetEnable(notifier_mode);
+        state.notifier->set_enable(notifier_mode);
         // cause a full gui refresh now
-        state.notifier->Notify(this, MIDISequencerGUIEvent::GROUP_ALL);
+        state.notifier->notify(this, MIDISequencerGUIEvent::GROUP_ALL);
     }
 
     return true;
@@ -629,8 +629,8 @@ bool MIDISequencer::go_to_time_ms(float time_ms)
     bool notifier_mode = false;
 
     if (state.notifier) {
-        notifier_mode = state.notifier->GetEnable();
-        state.notifier->SetEnable(false);
+        notifier_mode = state.notifier->get_enable();
+        state.notifier->set_enable(false);
     }
 
     if (time_ms < state.cur_time_ms || time_ms == 0.0) {
@@ -663,9 +663,9 @@ bool MIDISequencer::go_to_time_ms(float time_ms)
 
     // re-enable the gui notifier if it was enabled previously
     if (state.notifier) {
-        state.notifier->SetEnable(notifier_mode);
+        state.notifier->set_enable(notifier_mode);
         // cause a full gui refresh now
-        state.notifier->Notify(this, MIDISequencerGUIEvent::GROUP_ALL);
+        state.notifier->notify(this, MIDISequencerGUIEvent::GROUP_ALL);
     }
 
     return true;
@@ -677,8 +677,8 @@ bool MIDISequencer::go_to_measure(int measure, int beat)
     bool notifier_mode = false;
 
     if (state.notifier) {
-        notifier_mode = state.notifier->GetEnable();
-        state.notifier->SetEnable(false);
+        notifier_mode = state.notifier->get_enable();
+        state.notifier->set_enable(false);
     }
 
     if (measure < state.cur_measure || measure == 0) {
@@ -714,9 +714,9 @@ bool MIDISequencer::go_to_measure(int measure, int beat)
 
     // re-enable the gui notifier if it was enabled previously
     if (state.notifier) {
-        state.notifier->SetEnable(notifier_mode);
+        state.notifier->set_enable(notifier_mode);
         // cause a full gui refresh now
-        state.notifier->Notify(this, MIDISequencerGUIEvent::GROUP_ALL);
+        state.notifier->notify(this, MIDISequencerGUIEvent::GROUP_ALL);
     }
 
     // return true if we actually found the measure requested
@@ -819,7 +819,7 @@ bool MIDISequencer::get_next_event(int* tracknum, MIDITimedBigMessage* msg)
 
             // now notify the GUI that the beat number changed
             if (state.notifier) {
-                state.notifier->Notify(
+                state.notifier->notify(
                     this,
                     MIDISequencerGUIEvent(
                         MIDISequencerGUIEvent::GROUP_TRANSPORT,
@@ -829,7 +829,7 @@ bool MIDISequencer::get_next_event(int* tracknum, MIDITimedBigMessage* msg)
 
             // if the new beat number is 0 then the measure changed too
             if (state.cur_beat == 0 && state.notifier) {
-                state.notifier->Notify(
+                state.notifier->notify(
                     this,
                     MIDISequencerGUIEvent(
                         MIDISequencerGUIEvent::GROUP_TRANSPORT,

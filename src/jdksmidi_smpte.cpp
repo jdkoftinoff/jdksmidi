@@ -86,10 +86,10 @@ SMPTE::SMPTE(const SMPTE& s)
     copy(s);
 }
 
-void SMPTE::AddHours(char h)
+void SMPTE::add_hours(char h)
 {
-    AddSamples(
-        GetSampleRateLong()  // samples per second times 10
+    add_samples(
+        get_sample_rate_long()  // samples per second times 10
         * h *
         (60    // seconds per minute
          * 60  // minutes per hour
@@ -97,45 +97,45 @@ void SMPTE::AddHours(char h)
          ));
 }
 
-void SMPTE::AddMinutes(char m)
+void SMPTE::add_minutes(char m)
 {
-    AddSamples(
-        GetSampleRateLong() * m *  // samples per second times 10
+    add_samples(
+        get_sample_rate_long() * m *  // samples per second times 10
         (60                        // seconds per minute
          / 10)                     // compensate for freq*10
     );
 }
 
-void SMPTE::AddSeconds(char s)
+void SMPTE::add_seconds(char s)
 {
-    AddSamples(
-        GetSampleRateLong()  // samples per second times 10
+    add_samples(
+        get_sample_rate_long()  // samples per second times 10
         * s                  // number of seconds
         / 10                 // compensate for freq*10
     );
 }
 
-void SMPTE::AddFrames(char f)
+void SMPTE::add_frames(char f)
 {
-    AddSamples(
-        GetSampleRateLong()   // samples per second times 10
+    add_samples(
+        get_sample_rate_long()   // samples per second times 10
         * f                   // number of frames
         * 10                  // times 10
-        / GetSMPTERateLong()  // divide by smpte rate (frames per second) times 100
+        / get_smpte_rate_long()  // divide by smpte rate (frames per second) times 100
     );
 }
 
-void SMPTE::AddSubFrames(char sf)
+void SMPTE::add_sub_frames(char sf)
 {
-    AddSamples(
-        GetSampleRateLong()   // samples per second times 10
+    add_samples(
+        get_sample_rate_long()   // samples per second times 10
         * sf                  // number of sub frames
-        / GetSMPTERateLong()  // divide by smpte rate (frames per second) times 100
+        / get_smpte_rate_long()  // divide by smpte rate (frames per second) times 100
         / 10                  // divide by 10 to get hundredths of a frame
     );
 }
 
-void SMPTE::SampleToTime()
+void SMPTE::sample_to_time()
 {
     //
     // make a temporary copy of the sample number
@@ -198,7 +198,7 @@ void SMPTE::SampleToTime()
     hours = (std::uint8_t)((rounded_sub_frames / (100L * 60L * 24L * max_frame)) % 24);
 }
 
-void SMPTE::TimeToSample()
+void SMPTE::time_to_sample()
 {
     //
     // keep track of the actual rates in use in doubles.
@@ -264,10 +264,10 @@ void SMPTE::copy(const SMPTE& s)
     sample_number_dirty = s.sample_number_dirty;
 }
 
-int SMPTE::Compare(SMPTE& s)
+int SMPTE::compare(SMPTE& s)
 {
-    std::uint32_t a = GetSampleNumber();
-    std::uint32_t b = s.GetSampleNumber();
+    std::uint32_t a = get_sample_number();
+    std::uint32_t b = s.get_sample_number();
 
     if (a < b)
         return -1;
@@ -278,18 +278,18 @@ int SMPTE::Compare(SMPTE& s)
     return 0;
 }
 
-void SMPTE::Add(SMPTE& s)
+void SMPTE::add(SMPTE& s)
 {
-    std::uint32_t a = GetSampleNumber();
-    std::uint32_t b = s.GetSampleNumber();
-    SetSampleNumber(a + b);
+    std::uint32_t a = get_sample_number();
+    std::uint32_t b = s.get_sample_number();
+    set_sample_number(a + b);
 }
 
-void SMPTE::Subtract(SMPTE& s)
+void SMPTE::subtract(SMPTE& s)
 {
-    std::uint32_t a = GetSampleNumber();
-    std::uint32_t b = s.GetSampleNumber();
-    SetSampleNumber(a - b);
+    std::uint32_t a = get_sample_number();
+    std::uint32_t b = s.get_sample_number();
+    set_sample_number(a - b);
 }
 
 }  // namespace jdksmidi

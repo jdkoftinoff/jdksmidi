@@ -47,9 +47,9 @@ class MIDISong
 
     MIDIMultiTrack const* get_multi_track() const { return multitrack; }
 
-    MIDISequencer* GetSeq() { return sequencer; }
+    MIDISequencer* get_seq() { return sequencer; }
 
-    MIDISequencer const* GetSeq() const { return sequencer; }
+    MIDISequencer const* get_seq() const { return sequencer; }
 
   protected:
     MIDIMultiTrack track;

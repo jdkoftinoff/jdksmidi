@@ -66,7 +66,7 @@ enum SAMPLE_RATE
 // MDGetSMPTERateFrequency() converts the SMPTE_RATE enum to a double frequency.
 //
 
-inline double GetSMPTERateFrequency(SMPTE_RATE r)
+inline double get_smpte_rate_frequency(SMPTE_RATE r)
 {
     extern double const smpte_smpte_rates[];
     return smpte_smpte_rates[static_cast<int>(r)];
@@ -77,17 +77,17 @@ inline double GetSMPTERateFrequency(SMPTE_RATE r)
 // frequency times 100
 //
 
-inline long GetSMPTERateFrequencyLong(SMPTE_RATE r)
+inline long get_smpte_rate_frequency_long(SMPTE_RATE r)
 {
     extern double const smpte_smpte_rates_long[];
     return static_cast<long>(smpte_smpte_rates_long[static_cast<int>(r)]);
 }
 
 //
-// GetSampleRateFrequency() convert the SAMPLE_RATE enum to a double frequency
+// get_sample_rate_frequency() convert the SAMPLE_RATE enum to a double frequency
 //
 
-inline double GetSampleRateFrequency(SAMPLE_RATE r)
+inline double get_sample_rate_frequency(SAMPLE_RATE r)
 {
     extern double const smpte_sample_rates[];
     return smpte_sample_rates[static_cast<int>(r)];
@@ -98,7 +98,7 @@ inline double GetSampleRateFrequency(SAMPLE_RATE r)
 // frequency times 10
 //
 
-inline long GetSampleRateFrequencyLong(SAMPLE_RATE r)
+inline long get_sample_rate_frequency_long(SAMPLE_RATE r)
 {
     // return the sample rate as a long word of the frequency times 10.
     extern long const smpte_sample_rates_long[];
@@ -112,29 +112,29 @@ class SMPTE
 
     SMPTE(const SMPTE& s);
 
-    void SetSMPTERate(SMPTE_RATE r)
+    void set_smpte_rate(SMPTE_RATE r)
     {
         smpte_rate = r;
         sample_number_dirty = true;
     }
-    SMPTE_RATE GetSMPTERate() { return smpte_rate; }
+    SMPTE_RATE get_smpte_rate() { return smpte_rate; }
 
-    void SetSampleRate(SAMPLE_RATE r)
+    void set_sample_rate(SAMPLE_RATE r)
     {
         sample_rate = r;
         sample_number_dirty = true;
     }
-    SAMPLE_RATE GetSampleRate() { return sample_rate; }
+    SAMPLE_RATE get_sample_rate() { return sample_rate; }
 
-    void SetSampleNumber(std::uint32_t n)
+    void set_sample_number(std::uint32_t n)
     {
         sample_number = n;
-        SampleToTime();
+        sample_to_time();
     }
-    std::uint32_t GetSampleNumber()
+    std::uint32_t get_sample_number()
     {
         if (sample_number_dirty)
-            TimeToSample();
+            time_to_sample();
 
         return sample_number;
     }
@@ -182,66 +182,66 @@ class SMPTE
         sample_number_dirty = true;
     }
 
-    void AddHours(char h);
-    void AddMinutes(char m);
-    void AddSeconds(char s);
-    void AddFrames(char f);
-    void AddSubFrames(char sf);
-    void AddSamples(long n)
+    void add_hours(char h);
+    void add_minutes(char m);
+    void add_seconds(char s);
+    void add_frames(char f);
+    void add_sub_frames(char sf);
+    void add_samples(long n)
     {
-        sample_number = GetSampleNumber() + n;
-        SampleToTime();
+        sample_number = get_sample_number() + n;
+        sample_to_time();
     }
 
-    void IncHours() { AddHours(1); }
-    void IncMinutes() { AddMinutes(1); }
-    void IncSeconds() { AddSeconds(1); }
-    void IncFrames() { AddFrames(1); }
-    void IncSubFrames() { AddSubFrames(1); }
-    void IncSamples() { AddSamples(1); }
+    void inc_hours() { add_hours(1); }
+    void inc_minutes() { add_minutes(1); }
+    void inc_seconds() { add_seconds(1); }
+    void inc_frames() { add_frames(1); }
+    void inc_sub_frames() { add_sub_frames(1); }
+    void inc_samples() { add_samples(1); }
 
-    void DecHours() { AddHours(-1); }
-    void DecMinutes() { AddMinutes(-1); }
-    void DecSeconds() { AddSeconds(-1); }
-    void DecFrames() { AddFrames(-1); }
-    void DecSubFrames() { AddSubFrames(-1); }
-    void DecSamples() { AddSamples(-1); }
+    void dec_hours() { add_hours(-1); }
+    void dec_minutes() { add_minutes(-1); }
+    void dec_seconds() { add_seconds(-1); }
+    void dec_frames() { add_frames(-1); }
+    void dec_sub_frames() { add_sub_frames(-1); }
+    void dec_samples() { add_samples(-1); }
 
     const SMPTE& operator=(const SMPTE& s)
     {
         copy(s);
         return *this;
     }
-    bool operator==(SMPTE& s) { return Compare(s) == 0; }
-    bool operator!=(SMPTE& s) { return Compare(s) != 0; }
-    bool operator<(SMPTE& s) { return Compare(s) < 0; }
-    bool operator>(SMPTE& s) { return Compare(s) > 0; }
-    bool operator<=(SMPTE& s) { return Compare(s) <= 0; }
-    bool operator>=(SMPTE& s) { return Compare(s) >= 0; }
+    bool operator==(SMPTE& s) { return compare(s) == 0; }
+    bool operator!=(SMPTE& s) { return compare(s) != 0; }
+    bool operator<(SMPTE& s) { return compare(s) < 0; }
+    bool operator>(SMPTE& s) { return compare(s) > 0; }
+    bool operator<=(SMPTE& s) { return compare(s) <= 0; }
+    bool operator>=(SMPTE& s) { return compare(s) >= 0; }
 
     const SMPTE& operator+=(SMPTE& s)
     {
-        Add(s);
+        add(s);
         return *this;
     }
     const SMPTE& operator-=(SMPTE& s)
     {
-        Subtract(s);
+        subtract(s);
         return *this;
     }
 
   protected:
-    void SampleToTime();
-    void TimeToSample();
+    void sample_to_time();
+    void time_to_sample();
 
     void copy(const SMPTE& s);
-    int Compare(SMPTE& s);
-    void Add(SMPTE& s);
-    void Subtract(SMPTE& s);
+    int compare(SMPTE& s);
+    void add(SMPTE& s);
+    void subtract(SMPTE& s);
 
-    long GetSampleRateLong() { return GetSampleRateFrequencyLong(sample_rate); }
+    long get_sample_rate_long() { return get_sample_rate_frequency_long(sample_rate); }
 
-    int GetSMPTERateLong() { return GetSMPTERateFrequencyLong(smpte_rate); }
+    int get_smpte_rate_long() { return get_smpte_rate_frequency_long(smpte_rate); }
 
   private:
     SMPTE_RATE smpte_rate;

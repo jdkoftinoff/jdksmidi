@@ -43,29 +43,29 @@ AdvancedSequencer::AdvancedSequencer()
 AdvancedSequencer::~AdvancedSequencer()
 {
     stop();
-    CloseMIDI();
+    close_midi();
 
     for (int i = 0; i < num_warp_positions; ++i) {
         delete warp_positions[i];
     }
 }
 
-bool AdvancedSequencer::OpenMIDI(int in_port, int out_port, int timer_resolution)
+bool AdvancedSequencer::open_midi(int in_port, int out_port, int timer_resolution)
 {
 #if 0
-    CloseMIDI();
+    close_midi();
 
-    if ( !driver.StartTimer ( timer_resolution ) )
+    if ( !driver.start_timer ( timer_resolution ) )
     {
         return false;
     }
 
     if ( in_port != -1 )
     {
-        driver.OpenMIDIInPort ( in_port );
+        driver.open_midi_in_port ( in_port );
     }
 
-    if ( driver.OpenMIDIOutPort ( out_port ) )
+    if ( driver.open_midi_out_port ( out_port ) )
     {
         return true;
     }
@@ -80,46 +80,46 @@ bool AdvancedSequencer::OpenMIDI(int in_port, int out_port, int timer_resolution
 #endif
 }
 
-void AdvancedSequencer::CloseMIDI()
+void AdvancedSequencer::close_midi()
 {
     stop();
 #if 0
-    driver.StopTimer();
+    driver.stop_timer();
     driver.all_notes_off();
     Sleep ( 100 );
-    driver.CloseMIDIInPort();
-    driver.CloseMIDIOutPort();
+    driver.close_midi_in_port();
+    driver.close_midi_out_port();
 #endif
 }
 
-void AdvancedSequencer::SetMIDIThruEnable(bool f)
+void AdvancedSequencer::set_midi_thru_enable(bool f)
 {
     driver.set_thru_enable(f);
 }
 
-bool AdvancedSequencer::GetMIDIThruEnable() const
+bool AdvancedSequencer::get_midi_thru_enable() const
 {
     return driver.get_thru_enable();
 }
 
-void AdvancedSequencer::SetMIDIThruChannel(int chan)
+void AdvancedSequencer::set_midi_thru_channel(int chan)
 {
     thru_rechannelizer.set_all_rechan(chan);
     driver.all_notes_off();
 }
 
-int AdvancedSequencer::GetMIDIThruChannel() const
+int AdvancedSequencer::get_midi_thru_channel() const
 {
     return thru_rechannelizer.get_rechan_map(0);
 }
 
-void AdvancedSequencer::SetMIDIThruTranspose(int val)
+void AdvancedSequencer::set_midi_thru_transpose(int val)
 {
     thru_transposer.set_all_transpose(val);
     driver.all_notes_off();
 }
 
-int AdvancedSequencer::GetMIDIThruTranspose() const
+int AdvancedSequencer::get_midi_thru_transpose() const
 {
     return thru_transposer.get_transpose_channel(0);
 }
@@ -150,7 +150,7 @@ bool AdvancedSequencer::load(char const* fname)
         file_loaded = true;
         reset();
         go_to_measure(0);
-        ExtractWarpPositions();
+        extract_warp_positions();
     }
 
     else {
@@ -164,19 +164,19 @@ void AdvancedSequencer::reset()
 {
     stop();
     driver.all_notes_off();
-    UnmuteAllTracks();
-    UnSoloTrack();
-    SetTempoScale(1.00);
+    unmute_all_tracks();
+    unsolo_track();
+    set_tempo_scale(1.00);
     seq.reset_all_tracks();
     go_to_measure(0);
 }
 
 void AdvancedSequencer::go_to_time(MIDIClockTime t)
 {
-    if (mgr.IsSeqPlay()) {
+    if (mgr.is_seq_play()) {
         stop();
         seq.go_to_time(t + 1);
-        Play();
+        play();
     }
 
     else {
@@ -201,7 +201,7 @@ void AdvancedSequencer::go_to_measure(int measure, int beat)
     if (warp_to_item < 0)
         warp_to_item = 0;
 
-    if (mgr.IsSeqPlay()) {
+    if (mgr.is_seq_play()) {
         stop();
 
         if (warp_positions[warp_to_item]) {
@@ -209,7 +209,7 @@ void AdvancedSequencer::go_to_measure(int measure, int beat)
         }
 
         seq.go_to_measure(measure, beat);
-        Play();
+        play();
     }
 
     else {
@@ -225,7 +225,7 @@ void AdvancedSequencer::go_to_measure(int measure, int beat)
     }
 }
 
-void AdvancedSequencer::Play(int clock_offset)
+void AdvancedSequencer::play(int clock_offset)
 {
     if (!file_loaded) {
         return;
@@ -247,12 +247,12 @@ void AdvancedSequencer::Play(int clock_offset)
         cur_time += clock_offset;
 
     seq.go_to_time(cur_time);
-    mgr.SetSeqOffset((unsigned long)seq.get_current_time_in_ms());
-    mgr.SetTimeOffset(0);
-    mgr.SeqPlay();
+    mgr.set_seq_offset((unsigned long)seq.get_current_time_in_ms());
+    mgr.set_time_offset(0);
+    mgr.seq_play();
 }
 
-void AdvancedSequencer::RepeatPlay(bool enable, int start_measure, int end_measure)
+void AdvancedSequencer::repeat_play(bool enable, int start_measure, int end_measure)
 {
     if (!file_loaded) {
         return;
@@ -268,10 +268,10 @@ void AdvancedSequencer::RepeatPlay(bool enable, int start_measure, int end_measu
         repeat_play_mode = false;
     }
 
-    mgr.SetRepeatPlay(repeat_play_mode, repeat_start_measure, repeat_end_measure);
+    mgr.set_repeat_play(repeat_play_mode, repeat_start_measure, repeat_end_measure);
 }
 
-void AdvancedSequencer::Pause()
+void AdvancedSequencer::pause()
 {
     if (!file_loaded) {
         return;
@@ -286,8 +286,8 @@ void AdvancedSequencer::stop()
         return;
     }
 
-    if (!mgr.IsSeqStop()) {
-        mgr.SeqStop();
+    if (!mgr.is_seq_stop()) {
+        mgr.seq_stop();
         driver.all_notes_off();
 
         for (int i = 0; i < seq.get_num_tracks(); ++i) {
@@ -296,7 +296,7 @@ void AdvancedSequencer::stop()
     }
 }
 
-void AdvancedSequencer::UnmuteAllTracks()
+void AdvancedSequencer::unmute_all_tracks()
 {
     if (!file_loaded) {
         return;
@@ -312,7 +312,7 @@ void AdvancedSequencer::UnmuteAllTracks()
     driver.all_notes_off();
 }
 
-void AdvancedSequencer::SoloTrack(int trk)
+void AdvancedSequencer::solo_track(int trk)
 {
     if (!file_loaded) {
         return;
@@ -337,7 +337,7 @@ void AdvancedSequencer::SoloTrack(int trk)
     }
 }
 
-void AdvancedSequencer::UnSoloTrack()
+void AdvancedSequencer::unsolo_track()
 {
     if (!file_loaded) {
         return;
@@ -351,7 +351,7 @@ void AdvancedSequencer::UnSoloTrack()
     }
 }
 
-void AdvancedSequencer::SetTrackMute(int trk, bool f)
+void AdvancedSequencer::set_track_mute(int trk, bool f)
 {
     if (!file_loaded) {
         return;
@@ -361,7 +361,7 @@ void AdvancedSequencer::SetTrackMute(int trk, bool f)
     driver.all_notes_off();
 }
 
-void AdvancedSequencer::SetTempoScale(double scale)
+void AdvancedSequencer::set_tempo_scale(double scale)
 {
     if (!file_loaded) {
         return;
@@ -370,17 +370,17 @@ void AdvancedSequencer::SetTempoScale(double scale)
     seq.set_current_tempo_scale(static_cast<float>(scale));
 }
 
-double AdvancedSequencer::GetTempoWithoutScale() const
+double AdvancedSequencer::get_tempo_without_scale() const
 {
     return seq.get_current_tempo();
 }
 
-double AdvancedSequencer::GetTempoWithScale() const
+double AdvancedSequencer::get_tempo_with_scale() const
 {
     return seq.get_current_tempo() * seq.get_current_tempo_scale();
 }
 
-int AdvancedSequencer::GetMeasure() const
+int AdvancedSequencer::get_measure() const
 {
     if (!file_loaded) {
         return 0;
@@ -389,7 +389,7 @@ int AdvancedSequencer::GetMeasure() const
     return seq.get_current_measure();
 }
 
-int AdvancedSequencer::GetBeat() const
+int AdvancedSequencer::get_beat() const
 {
     if (!file_loaded) {
         return 0;
@@ -416,13 +416,13 @@ int AdvancedSequencer::get_time_sig_denominator() const
     return seq.get_track_state(0)->timesig_denominator;
 }
 
-int AdvancedSequencer::GetTrackNoteCount(int trk) const
+int AdvancedSequencer::get_track_note_count(int trk) const
 {
     if (!file_loaded) {
         return 0;
     }
 
-    if (mgr.IsSeqStop()) {
+    if (mgr.is_seq_stop()) {
         return 0;
     }
 
@@ -431,7 +431,7 @@ int AdvancedSequencer::GetTrackNoteCount(int trk) const
     }
 }
 
-char const* AdvancedSequencer::GetTrackName(int trk) const
+char const* AdvancedSequencer::get_track_name(int trk) const
 {
     if (!file_loaded) {
         return "";
@@ -440,7 +440,7 @@ char const* AdvancedSequencer::GetTrackName(int trk) const
     return seq.get_track_state(trk)->track_name;
 }
 
-int AdvancedSequencer::GetTrackVolume(int trk) const
+int AdvancedSequencer::get_track_volume(int trk) const
 {
     if (!file_loaded) {
         return 100;
@@ -449,7 +449,7 @@ int AdvancedSequencer::GetTrackVolume(int trk) const
     return seq.get_track_state(trk)->volume;
 }
 
-void AdvancedSequencer::SetTrackVelocityScale(int trk, int scale)
+void AdvancedSequencer::set_track_velocity_scale(int trk, int scale)
 {
     if (!file_loaded) {
         return;
@@ -458,7 +458,7 @@ void AdvancedSequencer::SetTrackVelocityScale(int trk, int scale)
     seq.get_track_processor(trk)->velocity_scale = scale;
 }
 
-int AdvancedSequencer::GetTrackVelocityScale(int trk) const
+int AdvancedSequencer::get_track_velocity_scale(int trk) const
 {
     if (!file_loaded) {
         return 100;
@@ -467,7 +467,7 @@ int AdvancedSequencer::GetTrackVelocityScale(int trk) const
     return seq.get_track_processor(trk)->velocity_scale;
 }
 
-void AdvancedSequencer::SetTrackRechannelize(int trk, int chan)
+void AdvancedSequencer::set_track_rechannelize(int trk, int chan)
 {
     if (!file_loaded) {
         return;
@@ -478,7 +478,7 @@ void AdvancedSequencer::SetTrackRechannelize(int trk, int chan)
     seq.get_track_state(trk)->note_matrix.clear();
 }
 
-int AdvancedSequencer::GetTrackRechannelize(int trk) const
+int AdvancedSequencer::get_track_rechannelize(int trk) const
 {
     if (!file_loaded) {
         return -1;
@@ -487,17 +487,17 @@ int AdvancedSequencer::GetTrackRechannelize(int trk) const
     return seq.get_track_processor(trk)->rechannel;
 }
 
-void AdvancedSequencer::SetTrackTranspose(int trk, int trans)
+void AdvancedSequencer::set_track_transpose(int trk, int trans)
 {
     if (!file_loaded) {
         return;
     }
 
-    bool was_playing = mgr.IsSeqPlay();
+    bool was_playing = mgr.is_seq_play();
 
-    if (mgr.IsSeqPlay()) {
+    if (mgr.is_seq_play()) {
         was_playing = true;
-        mgr.SeqStop();
+        mgr.seq_stop();
     }
 
     if (trk == -1) {
@@ -512,15 +512,15 @@ void AdvancedSequencer::SetTrackTranspose(int trk, int trans)
 
     if (was_playing) {
 #if 0
-        driver.ResetMIDIOut();
+        driver.reset_midi_out();
         driver.all_notes_off();
 #endif
         seq.get_track_state(trk)->note_matrix.clear();
-        mgr.SeqPlay();
+        mgr.seq_play();
     }
 }
 
-int AdvancedSequencer::GetTrackTranspose(int trk) const
+int AdvancedSequencer::get_track_transpose(int trk) const
 {
     if (!file_loaded) {
         return 0;
@@ -529,7 +529,7 @@ int AdvancedSequencer::GetTrackTranspose(int trk) const
     return seq.get_track_processor(trk)->transpose;
 }
 
-void AdvancedSequencer::ExtractMarkers(std::vector<std::string>* list)
+void AdvancedSequencer::extract_markers(std::vector<std::string>* list)
 {
     if (!file_loaded) {
         list->clear();
@@ -588,7 +588,7 @@ void AdvancedSequencer::ExtractMarkers(std::vector<std::string>* list)
     num_markers = cnt;
 }
 
-int AdvancedSequencer::GetCurrentMarker() const
+int AdvancedSequencer::get_current_marker() const
 {
     if (!file_loaded) {
         return -1;
@@ -613,7 +613,7 @@ int AdvancedSequencer::GetCurrentMarker() const
     return last;
 }
 
-int AdvancedSequencer::FindFirstChannelOnTrack(int trk)
+int AdvancedSequencer::find_first_channel_on_track(int trk)
 {
     if (!file_loaded) {
         return -1;
@@ -641,7 +641,7 @@ int AdvancedSequencer::FindFirstChannelOnTrack(int trk)
     return first_channel;
 }
 
-void AdvancedSequencer::ExtractWarpPositions()
+void AdvancedSequencer::extract_warp_positions()
 {
     if (!file_loaded) {
         for (int i = 0; i < num_warp_positions; ++i) {

@@ -89,7 +89,7 @@ class MIDIFileReadMultiTrack : public MIDIFileEvents
     virtual void chan_message(MIDITimedMessage const& msg);
 
   protected:
-    void AddEventToMultiTrack(
+    void add_event_to_multi_track(
         MIDITimedMessage const& msg, MIDISystemExclusive* sysex, int dest_track);
 
     MIDIMultiTrack* multitrack;

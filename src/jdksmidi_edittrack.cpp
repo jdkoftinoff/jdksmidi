@@ -79,9 +79,9 @@ void MIDIEditTrack::process(
 // Truncate erases all events after a certain time. then
 // adds appropriate note off's
 //
-void MIDIEditTrack::Truncate(MIDIClockTime start_time)
+void MIDIEditTrack::truncate(MIDIClockTime start_time)
 {
-    ENTER("TO DO: MIDIEditTrack::Truncate()");
+    ENTER("TO DO: MIDIEditTrack::truncate()");
     // TO DO:
 }
 
@@ -89,13 +89,13 @@ void MIDIEditTrack::Truncate(MIDIClockTime start_time)
 // this merge function merges two other tracks into this track.
 // this is the faster form of merge
 //
-void MIDIEditTrack::Merge(
+void MIDIEditTrack::merge(
     MIDITrack* trk1,
     MIDITrack* trk2,
     MIDIEditTrackEventMatcher* match1,
     MIDIEditTrackEventMatcher* match2)
 {
-    ENTER("TO DO: MIDIEditTrack::Merge()");
+    ENTER("TO DO: MIDIEditTrack::merge()");
     // TO DO:
 }
 
@@ -103,10 +103,10 @@ void MIDIEditTrack::Merge(
 // this erase function will erase all events from start to end time
 // and can be jagged or not.
 //
-void MIDIEditTrack::Erase(
+void MIDIEditTrack::erase(
     MIDIClockTime start, MIDIClockTime end, bool jagged, MIDIEditTrackEventMatcher* match)
 {
-    ENTER("TO DO: MIDIEditTrack::Erase()");
+    ENTER("TO DO: MIDIEditTrack::erase()");
     // TO DO:
 }
 
@@ -114,10 +114,10 @@ void MIDIEditTrack::Erase(
 // this delete function will delete all events like erase and then
 // shift the events over
 //
-void MIDIEditTrack::Delete(
+void MIDIEditTrack::delete_events(
     MIDIClockTime start, MIDIClockTime end, bool jagged, MIDIEditTrackEventMatcher* match)
 {
-    ENTER("TO DO: MIDIEditTrack::Delete()");
+    ENTER("TO DO: MIDIEditTrack::delete_events()");
     // TO DO:
 }
 
@@ -125,18 +125,18 @@ void MIDIEditTrack::Delete(
 // this insert function will insert 'length' clicks starting at
 // the events at start time.
 //
-void MIDIEditTrack::Insert(MIDIClockTime start, MIDIClockTime length)
+void MIDIEditTrack::insert(MIDIClockTime start, MIDIClockTime length)
 {
-    ENTER("TO DO: MIDIEditTrack::Insert()");
+    ENTER("TO DO: MIDIEditTrack::insert()");
     // TO DO:
 }
 
 //
 // this shift function will shift all event times by an offset.
 //
-void MIDIEditTrack::Shift(signed long offset, MIDIEditTrackEventMatcher* match)
+void MIDIEditTrack::shift(signed long offset, MIDIEditTrackEventMatcher* match)
 {
-    ENTER("TO DO: MIDIEditTrack::Shift()");
+    ENTER("TO DO: MIDIEditTrack::shift()");
     // TO DO:
 }
 
@@ -282,7 +282,7 @@ void EMIDITrack::CopyEvent ( MIDITrack *t, unsigned int ev )
         //
     }
 
-    Put ( m );
+    put ( m );
 }
 
 
@@ -359,7 +359,7 @@ void EMIDITrack::Compress()
 }
 
 
-void EMIDITrack::Truncate ( std::uint32_t start_time )
+void EMIDITrack::truncate ( std::uint32_t start_time )
 {
     // find the first event at start_time or greater
     // or the data end event
@@ -423,7 +423,7 @@ void EMIDITrack::FixNotes()
                 for ( std::uint8_t c = 0; c < num; c++ )
                 {
                     m.NoteOff ( channel, note, 64 );
-                    Put ( m );
+                    put ( m );
                 }
             }
         }
@@ -436,7 +436,7 @@ void EMIDITrack::FixNotes()
 
 
 
-void EMIDITrack::Merge ( MIDITrack *trk1, MIDITrack *trk2 )
+void EMIDITrack::merge ( MIDITrack *trk1, MIDITrack *trk2 )
 {
     clear();
     unsigned int trk1_ev = 0;
@@ -509,7 +509,7 @@ void EMIDITrack::Merge ( MIDITrack *trk1, MIDITrack *trk2 )
 }
 
 
-void EMIDITrack::Merge ( MIDITrack *trk )
+void EMIDITrack::merge ( MIDITrack *trk )
 {
     for ( unsigned int ev = 0; ev < trk->get_num_events(); ev++ )
     {
@@ -521,7 +521,7 @@ void EMIDITrack::Merge ( MIDITrack *trk )
 }
 
 
-void EMIDITrack::Erase ( std::uint32_t start, std::uint32_t end, Boolean jagged )
+void EMIDITrack::erase ( std::uint32_t start, std::uint32_t end, Boolean jagged )
 {
     //
     // This Erase method should work fine, erasing all events
@@ -610,7 +610,7 @@ void EMIDITrack::Erase ( std::uint32_t start, std::uint32_t end, Boolean jagged 
                     // sys-ex message itself.
                     //
                     unsigned int s = m.get_sys_ex();
-                    exclusives.Delete ( s );
+                    exclusives.delete ( s );
                 }
 
                 //
@@ -624,7 +624,7 @@ void EMIDITrack::Erase ( std::uint32_t start, std::uint32_t end, Boolean jagged 
                     // event itself.
                     //
                     unsigned int t = m.GetText();
-                    text.Delete ( t );
+                    text.delete ( t );
                 }
 
                 //
@@ -755,7 +755,7 @@ void EMIDITrack::Erase ( std::uint32_t start, std::uint32_t end, Boolean jagged 
     delete during_matrix;
 }
 
-void    EMIDITrack::Delete ( std::uint32_t start, std::uint32_t end, Boolean jagged )
+void    EMIDITrack::delete ( std::uint32_t start, std::uint32_t end, Boolean jagged )
 {
     //
     // Delete is just like Erase, except afterwards
@@ -770,7 +770,7 @@ void    EMIDITrack::Delete ( std::uint32_t start, std::uint32_t end, Boolean jag
     //
     // Erase the events
     //
-    Erase ( start, end, jagged );
+    erase ( start, end, jagged );
     //
     // calculate the amount that we have to subtract from
     // each event time after 'end' time.
@@ -801,7 +801,7 @@ void    EMIDITrack::Delete ( std::uint32_t start, std::uint32_t end, Boolean jag
     }
 }
 
-void EMIDITrack::Insert ( std::uint32_t start, std::uint32_t end )
+void EMIDITrack::insert ( std::uint32_t start, std::uint32_t end )
 {
     //
     // make sure end is after start.
