@@ -8,33 +8,36 @@ JDKSMIDI is a C++ MIDI library originally written in 1986 and evolved over decad
 
 ## Build System
 
-The project uses a custom build system called MagicMake:
+The project uses CMake as its build system:
 
-### Building with MagicMake
+### Building with CMake
 ```bash
 # Create build directory
 mkdir build && cd build
 
-# Configure for your platform
-../configure --target-platform-macosx=1    # for macOS
-../configure --target-platform-linux=1     # for Linux  
-../configure --target-platform-mingw32=1   # for Windows
+# Configure
+cmake ..
 
 # Build
-make
+make -j4
 ```
 
-### Platform-Specific Builds
-- **macOS**: Use `--target-platform-macosx=1` or `--target-platform-macosx-universal=1`
-- **Linux**: Use `--target-platform-linux=1` or `--target-platform-posix=1`
-- **Windows**: Use `--target-platform-mingw32=1` with MinGW cross-compiler
+### CMake Options
+- **JDKSMIDI_BUILD_EXAMPLES**: Build example programs (default: ON)
+- **JDKSMIDI_BUILD_TESTS**: Build unit tests (default: ON)
+- **JDKSMIDI_ENABLE_SANITIZERS**: Enable AddressSanitizer and UBSan (default: OFF)
+- **JDKSMIDI_ENABLE_STATIC_ANALYSIS**: Enable clang static analyzer (default: OFF)
 
-### IDE Project Files
-The project includes pre-built IDE project files in the `build/` directory:
-- **Xcode**: `build/macosx/jdksmidi.xcodeproj/`
-- **Visual Studio 2005**: `build/vs2005/`
-- **Visual Studio 2010**: `build/vs2010/`
-- **Visual C++ 6.0**: `build/vc6/`
+### Development Builds
+```bash
+# Build with sanitizers for debugging
+cmake -DJDKSMIDI_ENABLE_SANITIZERS=ON ..
+make -j4
+
+# Build with static analysis
+cmake -DJDKSMIDI_ENABLE_STATIC_ANALYSIS=ON ..
+make -j4
+```
 
 ## Architecture
 
@@ -67,8 +70,9 @@ The library is organized into several key areas:
 ```
 include/jdksmidi/    # All header files
 src/                 # Implementation files (jdksmidi_*.cpp)
-examples/            # Example programs and tests
-build/               # IDE project files for different platforms
+examples/            # Example programs
+tests/               # Unit tests using doctest
+third-party/         # External dependencies (doctest)
 docs-dev/            # Doxygen documentation configuration
 ```
 
@@ -79,7 +83,25 @@ All classes and functions are in the `jdksmidi` namespace.
 ## Development Workflow
 
 ### Testing
-Example programs in the `examples/` directory serve as tests:
+The project uses doctest for unit testing:
+```bash
+# Run all tests
+ctest
+
+# Run tests with verbose output
+ctest --verbose
+
+# Build and run tests manually
+make jdksmidi_tests
+./jdksmidi_tests
+```
+
+Unit tests are located in the `tests/` directory:
+- `test_basic.cpp` - Basic MIDI message functionality
+- `test_parser.cpp` - Comprehensive MIDIParser tests
+- `test_matrix.cpp` - MIDIMatrix note tracking tests
+
+Example programs in the `examples/` directory provide additional functionality demonstrations:
 - `jdksmidi_test_*.cpp` - Various functionality tests
 - `jdksmidi_rewrite_midifile.cpp` - MIDI file processing example
 
