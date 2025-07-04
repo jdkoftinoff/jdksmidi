@@ -31,13 +31,13 @@
 namespace jdksmidi {
 
 MIDIDriver::MIDIDriver(int queue_size)
-    : in_queue(queue_size)
-    , out_queue(queue_size)
-    , in_proc(0)
-    , out_proc(0)
-    , thru_proc(0)
-    , thru_enable(false)
-    , tick_proc(0)
+    : _in_queue(queue_size)
+    , _out_queue(queue_size)
+    , _in_proc(0)
+    , _out_proc(0)
+    , _thru_proc(0)
+    , _thru_enable(false)
+    , _tick_proc(0)
 {}
 
 MIDIDriver::~MIDIDriver()
@@ -45,9 +45,9 @@ MIDIDriver::~MIDIDriver()
 
 void MIDIDriver::reset()
 {
-    in_queue.clear();
-    out_queue.clear();
-    out_matrix.clear();
+    _in_queue.clear();
+    _out_queue.clear();
+    _out_matrix.clear();
 }
 
 void MIDIDriver::all_notes_off(int chan)
@@ -55,9 +55,9 @@ void MIDIDriver::all_notes_off(int chan)
     MIDITimedBigMessage msg;
     // send a note off for every note on in the out_matrix
 
-    if (out_matrix.get_channel_count(chan) > 0) {
+    if (_out_matrix.get_channel_count(chan) > 0) {
         for (int note = 0; note < 128; ++note) {
-            while (out_matrix.get_note_count(chan, note) > 0) {
+            while (_out_matrix.get_note_count(chan, note) > 0) {
                 // make a note off with note on msg, velocity 0
                 msg.set_note_on(
                     static_cast<std::uint8_t>(chan), static_cast<std::uint8_t>(note), 0);
@@ -82,8 +82,8 @@ void MIDIDriver::all_notes_off()
 bool MIDIDriver::hardware_msg_in(MIDITimedBigMessage& msg)
 {
     // put input midi messages thru the in processor
-    if (in_proc) {
-        if (in_proc->process(&msg) == false) {
+    if (_in_proc) {
+        if (_in_proc->process(&msg) == false) {
             // message was deleted, so ignore it.
             return true;
         }
@@ -91,8 +91,8 @@ bool MIDIDriver::hardware_msg_in(MIDITimedBigMessage& msg)
 
     // stick input into in queue
 
-    if (in_queue.can_put()) {
-        in_queue.put(msg);
+    if (_in_queue.can_put()) {
+        _in_queue.put(msg);
     }
 
     else {
@@ -101,18 +101,18 @@ bool MIDIDriver::hardware_msg_in(MIDITimedBigMessage& msg)
 
     // now stick it through the THRU processor
 
-    if (thru_proc) {
-        if (thru_proc->process(&msg) == false) {
+    if (_thru_proc) {
+        if (_thru_proc->process(&msg) == false) {
             // message was deleted, so ignore it.
             return true;
         }
     }
 
-    if (thru_enable) {
+    if (_thru_enable) {
         // stick this message into the out queue so the tick procedure
         // will play it out asap
-        if (out_queue.can_put()) {
-            out_queue.put(msg);
+        if (_out_queue.can_put()) {
+            _out_queue.put(msg);
         }
 
         else {
@@ -126,19 +126,19 @@ bool MIDIDriver::hardware_msg_in(MIDITimedBigMessage& msg)
 void MIDIDriver::time_tick(unsigned long sys_time)
 {
     // run the additional tick procedure if we need to
-    if (tick_proc) {
-        tick_proc->time_tick(sys_time);
+    if (_tick_proc) {
+        _tick_proc->time_tick(sys_time);
     }
 
     // feed as many midi messages from out_queu to the hardware out port
     // as we can
 
-    while (out_queue.can_get()) {
+    while (_out_queue.can_get()) {
         // use the peek() function to avoid allocating memory for
         // a duplicate sysex
-        if (hardware_msg_out(*(out_queue.peek())) == true) {
+        if (hardware_msg_out(*(_out_queue.peek())) == true) {
             // ok, got and sent a message - update our out_queue now
-            out_queue.next();
+            _out_queue.next();
         }
 
         else {
