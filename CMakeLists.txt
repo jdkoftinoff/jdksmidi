@@ -375,6 +375,13 @@ if(JDKSMIDI_BUILD_TESTS)
             target_link_options(jdksmidi_tests PRIVATE ${JDKSMIDI_SANITIZER_FLAGS})
         endif()
         
+        # Copy test data files to build directory for integration tests
+        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/songs")
+            file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/songs" 
+                 DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+            message(STATUS "  Test MIDI files copied to build directory")
+        endif()
+        
         # Add test to CTest
         add_test(NAME jdksmidi_unit_tests COMMAND jdksmidi_tests)
     endif()
