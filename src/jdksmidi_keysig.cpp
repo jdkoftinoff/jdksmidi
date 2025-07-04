@@ -55,18 +55,18 @@ int MIDIKeySignature::flat_list[7] = {6, 2, 5, 1, 4, 0, 3};
 MIDIKeySignature::MIDIKeySignature()
 {
     ENTER("MIDIKeySignature::MIDIKeySignature()");
-    use_sharps = true;
-    sharp_flat = 0;
-    major = true;
+    _use_sharps = true;
+    _sharp_flat = 0;
+    _major = true;
     reset();
 }
 
 MIDIKeySignature::MIDIKeySignature(MIDIKeySignature const& k)
 {
     ENTER("MIDIKeySignature::MIDIKeySignature()");
-    use_sharps = k.use_sharps;
-    sharp_flat = k.sharp_flat;
-    major = k.major;
+    _use_sharps = k._use_sharps;
+    _sharp_flat = k._sharp_flat;
+    _major = k._major;
     reset();
 }
 
@@ -79,42 +79,42 @@ void MIDIKeySignature::reset()
 {
     ENTER("MIDIKeySignature::reset()");
 
-    if (sharp_flat < -7)
-        sharp_flat = -7;
+    if (_sharp_flat < -7)
+        _sharp_flat = -7;
 
-    if (sharp_flat > 7)
-        sharp_flat = 7;
+    if (_sharp_flat > 7)
+        _sharp_flat = 7;
 
     for (int note = 0; note < 7; ++note)
-        state[note] = ACCNatural;
+        _state[note] = ACCNatural;
 
-    if (sharp_flat == 0) {
+    if (_sharp_flat == 0) {
         // Key of C has no sharps or flats.
         // and any accidentals will be sharp
-        use_sharps = true;
+        _use_sharps = true;
     }
 
-    else if (sharp_flat > 0) {
+    else if (_sharp_flat > 0) {
         //
         // this key has a number of sharps in it.
         //
-        use_sharps = true;
+        _use_sharps = true;
 
-        for (short i = 0; i < sharp_flat; ++i) {
-            state[sharp_list[i]] = ACCSharp;
+        for (short i = 0; i < _sharp_flat; ++i) {
+            _state[sharp_list[i]] = ACCSharp;
         }
     }
 
-    else if (sharp_flat < 0) {
+    else if (_sharp_flat < 0) {
         //
         // this key has flats in it.
         // -sharp_flat is how many flats.
         //
-        int flats = -sharp_flat;
-        use_sharps = false;
+        int flats = -_sharp_flat;
+        _use_sharps = false;
 
         for (int i = 0; i < flats; ++i) {
-            state[flat_list[i]] = ACCFlat;
+            _state[flat_list[i]] = ACCFlat;
         }
     }
 }
@@ -127,7 +127,7 @@ bool MIDIKeySignature::process_white_note(int in_note, int* out_note)
     // state.
     //
 
-    if (state[in_note] == ACCNatural) {
+    if (_state[in_note] == ACCNatural) {
         //
         // yes it is allowed, return it.
         //
@@ -148,7 +148,7 @@ bool MIDIKeySignature::process_white_note(int in_note, int* out_note)
         //
         // change the desired note to a natural
         //
-        state[in_note] = ACCNatural;
+        _state[in_note] = ACCNatural;
         //
         // return true because it needed an accidental
         //
@@ -164,7 +164,7 @@ bool MIDIKeySignature::process_black_note(int in_note, int* out_note)
     // return the note unchanged and return false
     // because no accidental was required
 
-    if (state[in_note] == ACCSharp) {
+    if (_state[in_note] == ACCSharp) {
         *out_note = in_note;
         return false;
     }
@@ -174,7 +174,7 @@ bool MIDIKeySignature::process_black_note(int in_note, int* out_note)
     // instead.
     //
 
-    if (state[in_note + 1] == ACCFlat) {
+    if (_state[in_note + 1] == ACCFlat) {
         *out_note = in_note + 1;
         return false;
     }
@@ -183,11 +183,11 @@ bool MIDIKeySignature::process_black_note(int in_note, int* out_note)
     // Couldn't find a black note. we gotta make one.
     // make a sharp if use_sharps==1
 
-    if (use_sharps) {
+    if (_use_sharps) {
         //
         // make this white note a sharp.
         //
-        state[in_note] = ACCSharp;
+        _state[in_note] = ACCSharp;
         *out_note = in_note;
         //
         // Accidental required. return true.
@@ -199,7 +199,7 @@ bool MIDIKeySignature::process_black_note(int in_note, int* out_note)
         //
         // make the next white note a flat.
         //
-        state[in_note + 1] = ACCFlat;
+        _state[in_note + 1] = ACCFlat;
         *out_note = in_note + 1;
         //
         // Accidental required. Return true.

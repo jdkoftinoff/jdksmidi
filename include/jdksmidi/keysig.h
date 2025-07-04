@@ -56,18 +56,18 @@ class MIDIKeySignature
 
     void reset();
 
-    bool is_major() { return major; }
+    bool is_major() { return _major; }
 
     void set_sharp_flats(int sf, bool maj = true)
     {
-        sharp_flat = sf;
-        major = maj;
+        _sharp_flat = sf;
+        _major = maj;
         reset();
     }
 
-    int get_sharp_flats() { return sharp_flat; }
+    int get_sharp_flats() { return _sharp_flat; }
 
-    MIDIAccidentalType get_note_status(int white_note) { return state[white_note % 7]; }
+    MIDIAccidentalType get_note_status(int white_note) { return _state[white_note % 7]; }
 
     bool convert_midi_note(int in_note, int* out_note);
 
@@ -75,10 +75,10 @@ class MIDIKeySignature
     bool process_white_note(int in_note, int* out_note);
     bool process_black_note(int in_note, int* out_note);
 
-    MIDIAccidentalType state[7];
-    bool use_sharps;
-    int sharp_flat;
-    bool major;
+    MIDIAccidentalType _state[7];
+    bool _use_sharps;
+    int _sharp_flat;
+    bool _major;
 
     static int sharp_list[7];
     static int flat_list[7];
