@@ -56,46 +56,46 @@ namespace jdksmidi {
 class MIDITempo
 {
   public:
-    MIDITempo() { tempo = 120 << 8; }
-    MIDITempo(int a) { tempo = static_cast<unsigned long>(a) << 8; }
-    MIDITempo(unsigned int a) { tempo = static_cast<unsigned long>(a) << 8; }
-    MIDITempo(long a) { tempo = static_cast<unsigned long>(a) << 8; }
-    MIDITempo(unsigned long a) { tempo = a << 8; }
-    MIDITempo(float a) { tempo = static_cast<unsigned long>(a * 256.0); }
-    MIDITempo(MIDITempo const& a) { tempo = a.get_full_tempo(); }
+    MIDITempo() { _tempo = 120 << 8; }
+    MIDITempo(int a) { _tempo = static_cast<unsigned long>(a) << 8; }
+    MIDITempo(unsigned int a) { _tempo = static_cast<unsigned long>(a) << 8; }
+    MIDITempo(long a) { _tempo = static_cast<unsigned long>(a) << 8; }
+    MIDITempo(unsigned long a) { _tempo = a << 8; }
+    MIDITempo(float a) { _tempo = static_cast<unsigned long>(a * 256.0); }
+    MIDITempo(MIDITempo const& a) { _tempo = a.get_full_tempo(); }
 
-    operator short() { return static_cast<short>((tempo + 0x80) >> 8); }
-    operator unsigned short() { return static_cast<unsigned short>((tempo + 0x80) >> 8); }
+    operator short() { return static_cast<short>((_tempo + 0x80) >> 8); }
+    operator unsigned short() { return static_cast<unsigned short>((_tempo + 0x80) >> 8); }
 
-    operator int() { return static_cast<int>((tempo + 0x80) >> 8); }
-    operator unsigned int() { return static_cast<unsigned int>((tempo + 0x80) >> 8); }
-    operator long() { return static_cast<long>((tempo + 0x80) >> 8); }
-    operator unsigned long() { return static_cast<unsigned long>((tempo + 0x80) >> 8); }
-    operator float() { return static_cast<float>(tempo) / 256.0f; }
-    void operator=(unsigned short a) { tempo = static_cast<unsigned long>(a) << 8; }
-    void operator=(short a) { tempo = static_cast<unsigned long>(a) << 8; }
+    operator int() { return static_cast<int>((_tempo + 0x80) >> 8); }
+    operator unsigned int() { return static_cast<unsigned int>((_tempo + 0x80) >> 8); }
+    operator long() { return static_cast<long>((_tempo + 0x80) >> 8); }
+    operator unsigned long() { return static_cast<unsigned long>((_tempo + 0x80) >> 8); }
+    operator float() { return static_cast<float>(_tempo) / 256.0f; }
+    void operator=(unsigned short a) { _tempo = static_cast<unsigned long>(a) << 8; }
+    void operator=(short a) { _tempo = static_cast<unsigned long>(a) << 8; }
 
-    void operator=(unsigned int a) { tempo = static_cast<unsigned long>(a) << 8; }
-    void operator=(int a) { tempo = static_cast<unsigned long>(a) << 8; }
-    void operator=(unsigned long a) { tempo = static_cast<unsigned long>(a) << 8; }
-    void operator=(long a) { tempo = static_cast<unsigned long>(a) << 8; }
+    void operator=(unsigned int a) { _tempo = static_cast<unsigned long>(a) << 8; }
+    void operator=(int a) { _tempo = static_cast<unsigned long>(a) << 8; }
+    void operator=(unsigned long a) { _tempo = static_cast<unsigned long>(a) << 8; }
+    void operator=(long a) { _tempo = static_cast<unsigned long>(a) << 8; }
 
-    void operator=(float a) { tempo = static_cast<unsigned long>(a * 256.0); }
+    void operator=(float a) { _tempo = static_cast<unsigned long>(a * 256.0); }
 
-    unsigned long get_full_tempo() const { return tempo; }
-    void set_full_tempo(unsigned long v) { tempo = v; }
+    unsigned long get_full_tempo() const { return _tempo; }
+    void set_full_tempo(unsigned long v) { _tempo = v; }
 
     unsigned long get_midi_file_tempo()
     {
-        if (tempo)
-            return (60000000L / 256) / tempo;
+        if (_tempo)
+            return (60000000L / 256) / _tempo;
 
         else
             return (60000000L / 256) / (120 * 256);
     }
 
   protected:
-    unsigned long tempo;
+    unsigned long _tempo;
 };
 
 }  // namespace jdksmidi

@@ -53,11 +53,11 @@ class MIDISystemExclusive
     MIDISystemExclusive(MIDISystemExclusive const& e);
 
     MIDISystemExclusive(std::uint8_t* buf_, int max_len_, int cur_len_, bool deletable_)
-        : max_len(max_len_)
-        , chk_sum(0)
+        : _max_len(max_len_)
+        , _chk_sum(0)
     {
         if (buf_ && cur_len_ > 0) {
-            buffer.assign(buf_, buf_ + cur_len_);
+            _buffer.assign(buf_, buf_ + cur_len_);
         }
     }
 
@@ -65,20 +65,20 @@ class MIDISystemExclusive
 
     void clear()
     {
-        buffer.clear();
-        chk_sum = 0;
+        _buffer.clear();
+        _chk_sum = 0;
     }
-    void clear_checksum() { chk_sum = 0; }
+    void clear_checksum() { _chk_sum = 0; }
 
     void put_sys_byte(std::uint8_t b)  // does not add to chksum
     {
-        buffer.push_back(b);
+        _buffer.push_back(b);
     }
 
     void put_byte(std::uint8_t b)
     {
         put_sys_byte(b);
-        chk_sum += b;
+        _chk_sum += b;
     }
 
     void put_exc() { put_sys_byte(SYSEX_START); }
@@ -98,27 +98,27 @@ class MIDISystemExclusive
         put_byte((std::uint8_t)(b & 0xf));
     }
 
-    void put_checksum() { put_byte((std::uint8_t)(chk_sum & 0x7f)); }
+    void put_checksum() { put_byte((std::uint8_t)(_chk_sum & 0x7f)); }
 
-    std::uint8_t get_checksum() const { return (std::uint8_t)(chk_sum & 0x7f); }
+    std::uint8_t get_checksum() const { return (std::uint8_t)(_chk_sum & 0x7f); }
 
-    int get_length() const { return static_cast<int>(buffer.size()); }
+    int get_length() const { return static_cast<int>(_buffer.size()); }
 
     std::uint8_t get_data(int i) const
     {
-        return (i >= 0 && i < static_cast<int>(buffer.size())) ? buffer[i] : 0;
+        return (i >= 0 && i < static_cast<int>(_buffer.size())) ? _buffer[i] : 0;
     }
 
     bool is_full() const { return false; }
 
-    std::uint8_t* get_buf() { return buffer.empty() ? nullptr : buffer.data(); }
+    std::uint8_t* get_buf() { return _buffer.empty() ? nullptr : _buffer.data(); }
 
-    std::uint8_t const* get_buf() const { return buffer.empty() ? nullptr : buffer.data(); }
+    std::uint8_t const* get_buf() const { return _buffer.empty() ? nullptr : _buffer.data(); }
 
   private:
-    std::vector<std::uint8_t> buffer;
-    int max_len;
-    std::uint8_t chk_sum;
+    std::vector<std::uint8_t> _buffer;
+    int _max_len;
+    std::uint8_t _chk_sum;
 };
 }  // namespace jdksmidi
 

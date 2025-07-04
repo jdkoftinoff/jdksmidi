@@ -50,16 +50,16 @@
 namespace jdksmidi {
 
 MIDISystemExclusive::MIDISystemExclusive(int size_)
-    : max_len(size_)
-    , chk_sum(0)
+    : _max_len(size_)
+    , _chk_sum(0)
 {
     ENTER("MIDISystemExclusive::MIDISystemExclusive");
-    buffer.reserve(size_);
+    _buffer.reserve(size_);
 }
 
 MIDISystemExclusive::MIDISystemExclusive(MIDISystemExclusive const& e)
-    : max_len(e.max_len)
-    , chk_sum(e.chk_sum)
+    : _max_len(e._max_len)
+    , _chk_sum(e._chk_sum)
 {}
 
 MIDISystemExclusive::~MIDISystemExclusive()
