@@ -573,7 +573,7 @@ void AdvancedSequencer::extract_markers(std::vector<std::string>* list)
                 if ((m->get_meta_type() == META_GENERIC_TEXT) ||
                     m->get_meta_type() == META_MARKER_TEXT || m->get_meta_type() == META_CUE_TEXT) {
                     char buf[256];
-                    char line[256];
+                    char line[384];
                     memcpy(buf, m->get_sys_ex()->get_buf(), m->get_sys_ex()->get_length());
                     buf[m->get_sys_ex()->get_length()] = '\0';
                     FixQuotes(buf);
