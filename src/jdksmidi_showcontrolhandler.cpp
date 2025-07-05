@@ -322,94 +322,68 @@ bool MIDISCHandle::dispatch(MIDIShowControlPacket const& p)
 
 bool MIDISCHandle::go()
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::go(MIDICue const& q_number)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::go(MIDICue const& q_number, MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::go(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::stop()
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::stop(MIDICue const& q_number)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::stop(MIDICue const& q_number, MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::stop(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::resume()
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::resume(MIDICue const& q_number)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::resume(MIDICue const& q_number, MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::resume(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::timed_go(
     std::uint8_t hr, std::uint8_t mn, std::uint8_t sc, std::uint8_t fr, std::uint8_t ff)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::timed_go(
@@ -420,9 +394,7 @@ bool MIDISCHandle::timed_go(
     std::uint8_t ff,
     MIDICue const& q_number)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::timed_go(
@@ -434,9 +406,7 @@ bool MIDISCHandle::timed_go(
     MIDICue const& q_number,
     MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::timed_go(
@@ -449,37 +419,27 @@ bool MIDISCHandle::timed_go(
     MIDICue const& q_list,
     MIDICue const& q_path)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::load(MIDICue const& q_number)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::load(MIDICue const& q_number, MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::load(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::set(std::uint32_t ctrl_num, std::uint32_t ctrl_val)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::set(
@@ -491,199 +451,143 @@ bool MIDISCHandle::set(
     std::uint8_t fr,
     std::uint8_t ff)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::fire(std::uint8_t macro_num)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::all_off()
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::restore()
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::reset()
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::go_off()
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::go_off(MIDICue const& q_number)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::go_off(MIDICue const& q_number, MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::go_off(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::go_jam()
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::go_jam(MIDICue const& q_number)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::go_jam(MIDICue const& q_number, MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::go_jam(MIDICue const& q_number, MIDICue const& q_list, MIDICue const& q_path)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::standby_plus()
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::standby_plus(MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::standby_minus()
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::standby_minus(MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::sequence_plus()
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::sequence_plus(MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::sequence_minus()
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::sequence_minus(MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::start_clock()
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::start_clock(MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::stop_clock()
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::stop_clock(MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::zero_clock()
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::zero_clock(MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::set_clock(
     std::uint8_t hr, std::uint8_t mn, std::uint8_t sc, std::uint8_t fr, std::uint8_t ff)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::set_clock(
@@ -694,65 +598,47 @@ bool MIDISCHandle::set_clock(
     std::uint8_t ff,
     MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::mtc_chase_on()
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::mtc_chase_on(MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::mtc_chase_off()
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::mtc_chase_off(MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::open_q_list(MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::close_q_list(MIDICue const& q_list)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::open_q_path(MIDICue const& q_path)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 bool MIDISCHandle::close_q_path(MIDICue const& q_path)
 {
-    bool e;
-    e = false;
-    return e;
+    return false;
 }
 
 }  // namespace jdksmidi
