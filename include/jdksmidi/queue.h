@@ -31,6 +31,8 @@
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
 
+#include <atomic>
+
 namespace jdksmidi {
 
 class MIDIQueue
@@ -49,21 +51,34 @@ class MIDIQueue
 
     void put(MIDITimedBigMessage const& msg)
     {
-        _buf[_next_in] = msg;
-        _next_in = (_next_in + 1) % _bufsize;
+        int current_in = _next_in.load(std::memory_order_relaxed);
+        _buf[current_in] = msg;
+        _next_in.store((current_in + 1) % _bufsize, std::memory_order_release);
     }
 
-    MIDITimedBigMessage get() const { return MIDITimedBigMessage(_buf[_next_out]); }
+    MIDITimedBigMessage get() const
+    {
+        int current_out = _next_out.load(std::memory_order_relaxed);
+        return MIDITimedBigMessage(_buf[current_out]);
+    }
 
-    void next() { _next_out = (_next_out + 1) % _bufsize; }
+    void next()
+    {
+        int current_out = _next_out.load(std::memory_order_relaxed);
+        _next_out.store((current_out + 1) % _bufsize, std::memory_order_release);
+    }
 
-    MIDITimedBigMessage const* peek() const { return &_buf[_next_out]; }
+    MIDITimedBigMessage const* peek() const
+    {
+        int current_out = _next_out.load(std::memory_order_relaxed);
+        return &_buf[current_out];
+    }
 
   protected:
     MIDITimedBigMessage* _buf;
     int _bufsize;
-    int volatile _next_in;
-    int volatile _next_out;
+    std::atomic<int> _next_in;
+    std::atomic<int> _next_out;
 };
 
 }  // namespace jdksmidi

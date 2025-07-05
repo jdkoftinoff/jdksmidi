@@ -44,18 +44,22 @@ MIDIQueue::~MIDIQueue()
 
 void MIDIQueue::clear()
 {
-    _next_in = 0;
-    _next_out = 0;
+    _next_in.store(0, std::memory_order_relaxed);
+    _next_out.store(0, std::memory_order_relaxed);
 }
 
 bool MIDIQueue::can_put() const
 {
-    return _next_out != ((_next_in + 1) % _bufsize);
+    int current_in = _next_in.load(std::memory_order_acquire);
+    int current_out = _next_out.load(std::memory_order_acquire);
+    return current_out != ((current_in + 1) % _bufsize);
 }
 
 bool MIDIQueue::can_get() const
 {
-    return _next_in != _next_out;
+    int current_in = _next_in.load(std::memory_order_acquire);
+    int current_out = _next_out.load(std::memory_order_acquire);
+    return current_in != current_out;
 }
 
 }  // namespace jdksmidi

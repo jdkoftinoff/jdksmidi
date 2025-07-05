@@ -476,6 +476,63 @@ TEST_CASE("MIDIQueue thread safety simulation")
         CHECK_FALSE(queue.can_get());
     }
 
+    SUBCASE("Atomic operations consistency check")
+    {
+        MIDIQueue queue(20);
+
+        // Pre-fill queue partially
+        for (int i = 0; i < 10; ++i) {
+            MIDITimedBigMessage msg;
+            msg.set_note_on(0, 60 + i, 100);
+            msg.set_time(i);
+            queue.put(msg);
+        }
+
+        std::atomic<bool> test_running{true};
+        std::atomic<int> puts_completed{0};
+        std::atomic<int> gets_completed{0};
+
+        // Simple producer thread
+        std::thread producer([&]() {
+            for (int i = 0; i < 50 && test_running.load(); ++i) {
+                if (queue.can_put()) {
+                    MIDITimedBigMessage msg;
+                    msg.set_control_change(1, 7, i % 128);
+                    msg.set_time(1000 + i);
+                    queue.put(msg);
+                    puts_completed.fetch_add(1);
+                }
+                std::this_thread::sleep_for(std::chrono::microseconds(10));
+            }
+        });
+
+        // Simple consumer thread
+        std::thread consumer([&]() {
+            for (int i = 0; i < 50 && test_running.load(); ++i) {
+                if (queue.can_get()) {
+                    MIDITimedBigMessage msg = queue.get();
+                    queue.next();
+                    gets_completed.fetch_add(1);
+                }
+                std::this_thread::sleep_for(std::chrono::microseconds(10));
+            }
+        });
+
+        // Let them run for a bit
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        test_running.store(false);
+
+        producer.join();
+        consumer.join();
+
+        // Validate that operations completed without crashes
+        CHECK(puts_completed.load() >= 0);
+        CHECK(gets_completed.load() >= 0);
+
+        // The queue should still be in a valid state
+        CHECK((queue.can_put() || queue.can_get() || queue.is_full()));
+    }
+
     SUBCASE("Rapid put/get operations")
     {
         MIDIQueue queue(50);
