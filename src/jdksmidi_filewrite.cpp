@@ -36,6 +36,9 @@
 */
 
 #include "jdksmidi/filewrite.h"
+#include "jdksmidi/midi.h"
+#include "jdksmidi/msg.h"
+#include "jdksmidi/sysex.h"
 
 #include <stdio.h>
 #include <string.h>

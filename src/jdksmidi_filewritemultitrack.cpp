@@ -25,7 +25,11 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
+#include "jdksmidi/filewrite.h"
 #include "jdksmidi/filewritemultitrack.h"
+#include "jdksmidi/msg.h"
+#include "jdksmidi/multitrack.h"
+#include "jdksmidi/track.h"
 
 namespace jdksmidi {
 

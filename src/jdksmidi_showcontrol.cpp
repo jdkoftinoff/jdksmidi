@@ -27,6 +27,7 @@
  */
 
 #include "jdksmidi/showcontrol.h"
+#include "jdksmidi/sysex.h"
 
 #include <cinttypes>
 #include <cstdint>

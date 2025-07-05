@@ -27,11 +27,15 @@
  */
 
 #include "doctest/doctest.h"
+#include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"
 #include "jdksmidi/multitrack.h"
 #include "jdksmidi/track.h"
 
+#include <stddef.h>
+
 #include <algorithm>
+#include <cstdint>
 #include <memory>
 #include <vector>
 

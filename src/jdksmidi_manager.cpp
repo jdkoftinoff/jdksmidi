@@ -25,7 +25,10 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
+#include "jdksmidi/driver.h"
 #include "jdksmidi/manager.h"
+#include "jdksmidi/msg.h"
+#include "jdksmidi/sequencer.h"
 
 #include <cstdint>
 

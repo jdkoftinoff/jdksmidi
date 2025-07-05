@@ -36,8 +36,16 @@
 */
 
 #include "jdksmidi/edittrack.h"
+#include "jdksmidi/midi.h"
 
-#include <cstdint>  // for int32_t
+#include <cstdint>
+
+namespace jdksmidi {
+class MIDIProcessor;
+}
+namespace jdksmidi {
+class MIDITrack;
+}
 
 #ifndef DEBUG_MDETRACK
 #    define DEBUG_MDETRACK 0

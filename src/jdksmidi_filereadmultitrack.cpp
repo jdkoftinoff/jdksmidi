@@ -36,6 +36,11 @@
 */
 
 #include "jdksmidi/filereadmultitrack.h"
+#include "jdksmidi/midi.h"
+#include "jdksmidi/msg.h"
+#include "jdksmidi/multitrack.h"
+#include "jdksmidi/sysex.h"
+#include "jdksmidi/track.h"
 
 #include <cstdint>
 

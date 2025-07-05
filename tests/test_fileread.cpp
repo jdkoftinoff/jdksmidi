@@ -1,10 +1,11 @@
 #include "doctest/doctest.h"
 #include "jdksmidi/fileread.h"
+#include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"
-#include "jdksmidi/sysex.h"
 
+#include <cstdint>
 #include <cstring>
-#include <sstream>
+#include <string>
 #include <vector>
 
 using namespace jdksmidi;

@@ -35,10 +35,15 @@
 **
 */
 
+#include "jdksmidi/midi.h"
+#include "jdksmidi/msg.h"
 #include "jdksmidi/track.h"
 
-#include <cstdint>
 #include <memory>
+
+namespace jdksmidi {
+class MIDISystemExclusive;
+}
 
 #ifndef DEBUG_MDTRACK
 #    define DEBUG_MDTRACK 0

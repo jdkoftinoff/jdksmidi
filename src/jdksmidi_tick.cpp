@@ -27,8 +27,6 @@
  */
 #include "jdksmidi/tick.h"
 
-#include <cstdint>
-
 namespace jdksmidi {
 
 MIDITick::~MIDITick()

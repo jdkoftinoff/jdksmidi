@@ -34,7 +34,3 @@
 ** without the written permission given by Jeffrey Koftinoff
 **
 */
-
-#include "jdksmidi/tempo.h"
-
-#include <cstdint>

@@ -37,7 +37,7 @@
 
 #include "jdksmidi/sysex.h"
 
-#include <cstdint>
+#include <vector>
 
 #ifndef DEBUG_MDSYSEX
 #    define DEBUG_MDSYSEX 0

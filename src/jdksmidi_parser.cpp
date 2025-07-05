@@ -35,7 +35,10 @@
 **
 */
 
+#include "jdksmidi/midi.h"
+#include "jdksmidi/msg.h"
 #include "jdksmidi/parser.h"
+#include "jdksmidi/sysex.h"
 
 #include <cstdint>
 #include <memory>

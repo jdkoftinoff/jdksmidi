@@ -35,7 +35,10 @@
 **
 */
 
+#include "jdksmidi/midi.h"
+#include "jdksmidi/msg.h"
 #include "jdksmidi/multitrack.h"
+#include "jdksmidi/track.h"
 
 #ifndef DEBUG_MDMLTTRK
 #    define DEBUG_MDMLTTRK 0

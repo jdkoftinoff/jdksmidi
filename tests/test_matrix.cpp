@@ -1,5 +1,6 @@
 #include "doctest/doctest.h"
 #include "jdksmidi/matrix.h"
+#include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"
 
 using namespace jdksmidi;

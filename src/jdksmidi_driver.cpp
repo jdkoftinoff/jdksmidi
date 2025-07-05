@@ -26,8 +26,14 @@
  *  SOFTWARE.
  */
 #include "jdksmidi/driver.h"
+#include "jdksmidi/matrix.h"
+#include "jdksmidi/midi.h"
+#include "jdksmidi/msg.h"
+#include "jdksmidi/process.h"
+#include "jdksmidi/queue.h"
+#include "jdksmidi/tick.h"
 
-#include <cstdint>  // for uint8_t, uint32_t
+#include <cstdint>
 
 namespace jdksmidi {
 

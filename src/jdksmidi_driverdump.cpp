@@ -25,11 +25,13 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
+#include "jdksmidi/driver.h"
 #include "jdksmidi/driverdump.h"
+#include "jdksmidi/msg.h"
 
-#include <stdio.h>  // for fprintf, FILE
+#include <stdio.h>
 
-#include <cstdint>  // for uint32_t
+#include <cstdint>
 
 namespace jdksmidi {
 

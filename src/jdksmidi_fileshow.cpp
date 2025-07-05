@@ -35,7 +35,11 @@
 **
 */
 
+#include "jdksmidi/fileread.h"
 #include "jdksmidi/fileshow.h"
+#include "jdksmidi/midi.h"
+#include "jdksmidi/msg.h"
+#include "jdksmidi/sysex.h"
 
 #include <stdio.h>
 

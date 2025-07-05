@@ -35,6 +35,7 @@
 **
 */
 
+#include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
 

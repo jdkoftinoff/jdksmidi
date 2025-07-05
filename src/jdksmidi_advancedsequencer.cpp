@@ -1,11 +1,23 @@
 #include "jdksmidi/advancedsequencer.h"
+#include "jdksmidi/driverdump.h"
+#include "jdksmidi/fileread.h"
+#include "jdksmidi/filereadmultitrack.h"
+#include "jdksmidi/manager.h"
+#include "jdksmidi/matrix.h"
+#include "jdksmidi/midi.h"
+#include "jdksmidi/msg.h"
+#include "jdksmidi/multitrack.h"
+#include "jdksmidi/process.h"
+#include "jdksmidi/sequencer.h"
+#include "jdksmidi/sysex.h"
+#include "jdksmidi/track.h"
 
-#include <stdio.h>   // for snprintf, stdout
-#include <string.h>  // for memcpy, strcpy, strlen
+#include <stdio.h>
+#include <string.h>
 
-#include <cstdint>  // for int32_t, uint8_t, uint32_t
-#include <string>   // for basic_string, string
-#include <vector>   // for vector
+#include <cstdint>
+#include <string>
+#include <vector>
 
 namespace jdksmidi {
 static void FixQuotes(char* s_)

@@ -29,6 +29,7 @@
 #include "doctest/doctest.h"
 #include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"
+#include "jdksmidi/sysex.h"
 
 using namespace jdksmidi;
 

@@ -35,10 +35,14 @@
 **
 */
 
+#include "jdksmidi/file.h"
 #include "jdksmidi/fileread.h"
+#include "jdksmidi/midi.h"
+#include "jdksmidi/msg.h"
+#include "jdksmidi/sysex.h"
 
-#include <cstdint>  // for uint8_t, uint32_t
-#include <vector>   // for vector
+#include <cstdint>
+#include <vector>
 
 // TO DO: decide which way is right for this flag and fix it - The standard midi file format specs
 // are (were?) unclear

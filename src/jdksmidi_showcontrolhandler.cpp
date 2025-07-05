@@ -26,6 +26,7 @@
  *  SOFTWARE.
  */
 
+#include "jdksmidi/showcontrol.h"
 #include "jdksmidi/showcontrolhandler.h"
 
 #include <cstdint>

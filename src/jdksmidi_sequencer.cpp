@@ -25,12 +25,19 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
+#include "jdksmidi/matrix.h"
+#include "jdksmidi/midi.h"
+#include "jdksmidi/msg.h"
+#include "jdksmidi/multitrack.h"
+#include "jdksmidi/process.h"
 #include "jdksmidi/sequencer.h"
+#include "jdksmidi/sysex.h"
+#include "jdksmidi/track.h"
 
-#include <cinttypes>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <memory>
 
 namespace jdksmidi {
 
