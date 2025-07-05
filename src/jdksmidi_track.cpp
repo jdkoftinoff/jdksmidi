@@ -71,8 +71,8 @@ MIDITrack::MIDITrack(int size)
     buf_size = 0;
     num_events = 0;
 
-    for (int i = 0; i < MIDIChunksPerTrack; ++i)
-        chunk[i] = nullptr;
+    for (auto& i : chunk)
+        i = nullptr;
 
     if (size) {
         expand(size);

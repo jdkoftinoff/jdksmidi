@@ -190,7 +190,7 @@ void SMPTE::sample_to_time()
     //
     // Calculate the time in sub frames, frames, seconds, minutes, hours
     //
-    std::uint32_t rounded_sub_frames =
+    auto rounded_sub_frames =
         (std::uint32_t)((tmp_sample * the_smpte_rate * 100) / the_sample_rate + .5);
     DBG(printf("rounded_sub_frames = %ld\n", rounded_sub_frames));
     _sub_frames = (std::uint8_t)((rounded_sub_frames) % 100);
@@ -214,7 +214,7 @@ void SMPTE::time_to_sample()
     //
     // calculate the sample number
     //
-    double tmp_sample = (double)((
+    auto tmp_sample = (double)((
         (_hours * the_sample_rate * (60 * 60)) + (_minutes * the_sample_rate * 60) +
         (_seconds * the_sample_rate) + (_frames * samples_per_frame) +
         (_sub_frames * samples_per_frame * (1.0 / 100.0)) + .5));

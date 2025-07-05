@@ -73,7 +73,7 @@ bool MIDIParser::parse(std::uint8_t b, MIDIMessage* msg)
         //
         // check for system messages (>=0xf0)
         //
-        std::uint8_t stat = (std::uint8_t)(b & 0xf0);
+        auto stat = (std::uint8_t)(b & 0xf0);
 
         if (stat == 0xf0) {
             //

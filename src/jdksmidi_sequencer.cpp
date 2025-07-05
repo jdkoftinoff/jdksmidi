@@ -43,7 +43,7 @@ namespace jdksmidi {
 
 static void FixQuotes(char* s_)
 {
-    std::uint8_t* s = (std::uint8_t*)s_;
+    auto* s = (std::uint8_t*)s_;
 
     while (*s) {
         if (*s == 0xd2 || *s == 0xd3) {
@@ -254,8 +254,7 @@ MIDISequencerTrackState::MIDISequencerTrackState(
     *track_name = '\0';
 }
 
-MIDISequencerTrackState::~MIDISequencerTrackState()
-{}
+MIDISequencerTrackState::~MIDISequencerTrackState() = default;
 
 void MIDISequencerTrackState::go_to_zero()
 {
@@ -412,8 +411,7 @@ MIDISequencerState::MIDISequencerState(MIDISequencerState const& s)
     }
 }
 
-MIDISequencerState::~MIDISequencerState()
-{}
+MIDISequencerState::~MIDISequencerState() = default;
 
 MIDISequencerState const& MIDISequencerState::operator=(MIDISequencerState const& s)
 {
@@ -453,8 +451,7 @@ MIDISequencer::MIDISequencer(MIDIMultiTrack* m, MIDISequencerGUIEventNotifier* n
     }
 }
 
-MIDISequencer::~MIDISequencer()
-{}
+MIDISequencer::~MIDISequencer() = default;
 
 void MIDISequencer::reset_track(int trk)
 {
@@ -735,7 +732,7 @@ bool MIDISequencer::get_next_event_time_ms(float* t)
 
     if (f) {
         // calculate delta time from last event time
-        double delta_clocks = static_cast<double>(ct - state.cur_clock);
+        auto delta_clocks = static_cast<double>(ct - state.cur_clock);
         // calculate tempo in milliseconds per clock
         double clocks_per_sec =
             ((state.track_state[0]->tempobpm * (static_cast<double>(tempo_scale) * 0.01) *
@@ -745,7 +742,7 @@ bool MIDISequencer::get_next_event_time_ms(float* t)
         if (clocks_per_sec > 0) {
             float ms_per_clock = 1000.0f / static_cast<float>(clocks_per_sec);
             // calculate delta time in milliseconds
-            float delta_ms = float(delta_clocks * ms_per_clock);
+            auto delta_ms = float(delta_clocks * ms_per_clock);
             // return it added with the current time in ms.
             *t = delta_ms + state.cur_time_ms;
         }
