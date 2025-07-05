@@ -31,6 +31,8 @@
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
 
+#include <vector>
+
 namespace jdksmidi {
 class MIDIProcessor;
 class MIDIMultiProcessor;
@@ -64,8 +66,7 @@ class MIDIMultiProcessor : public MIDIProcessor
     virtual bool process(MIDITimedBigMessage* msg);
 
   private:
-    MIDIProcessor** processors;
-    int num_processors;
+    std::vector<MIDIProcessor*> processors;
 };
 
 class MIDIProcessorTransposer : public MIDIProcessor

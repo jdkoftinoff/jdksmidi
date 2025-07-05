@@ -29,6 +29,7 @@
 #include "jdksmidi/process.h"
 
 #include <cstdint>
+#include <vector>
 
 namespace jdksmidi {
 
@@ -39,24 +40,19 @@ MIDIProcessor::~MIDIProcessor()
 {}
 
 MIDIMultiProcessor::MIDIMultiProcessor(int num)
-    : processors(new MIDIProcessor*[num])
-    , num_processors(num)
-{
-    for (int i = 0; i < num_processors; ++i) {
-        processors[i] = 0;
-    }
-}
+    : processors(num, nullptr)
+{}
 
 MIDIMultiProcessor::~MIDIMultiProcessor()
 {
-    delete[] processors;
+    // vector automatically cleans up
 }
 
 bool MIDIMultiProcessor::process(MIDITimedBigMessage* msg)
 {
-    for (int i = 0; i < num_processors; ++i) {
-        if (processors[i]) {
-            if (processors[i]->process(msg) == false) {
+    for (auto* processor : processors) {
+        if (processor) {
+            if (processor->process(msg) == false) {
                 return false;
             }
         }

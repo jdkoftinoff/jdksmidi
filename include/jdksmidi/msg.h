@@ -43,6 +43,7 @@
 #include "jdksmidi/tempo.h"
 
 #include <cstdint>
+#include <memory>
 
 namespace jdksmidi {
 
@@ -397,7 +398,7 @@ class MIDIBigMessage : public MIDIMessage
 
     MIDISystemExclusive const* get_sys_ex() const;
 
-    MIDISystemExclusive* sysex;
+    std::unique_ptr<MIDISystemExclusive> sysex;
 };
 
 class MIDITimedMessage : public MIDIMessage

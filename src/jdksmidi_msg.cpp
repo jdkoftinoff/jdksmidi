@@ -43,6 +43,7 @@
 #include <string.h>
 
 #include <cstdint>
+#include <memory>
 
 namespace jdksmidi {
 
@@ -618,43 +619,35 @@ void MIDIMessage::set_beat_marker()
 }
 
 MIDIBigMessage::MIDIBigMessage()
-    : sysex(0)
+    : sysex(nullptr)
 {}
 
 MIDIBigMessage::MIDIBigMessage(MIDIBigMessage const& m)
     : MIDIMessage(m)
-    , sysex(0)
+    , sysex(nullptr)
 {
     if (m.sysex) {
-        sysex = new MIDISystemExclusive(*m.sysex);
+        sysex = std::make_unique<MIDISystemExclusive>(*m.sysex);
     }
 }
 
 MIDIBigMessage::MIDIBigMessage(MIDIMessage const& m)
     : MIDIMessage(m)
-    , sysex(0)
+    , sysex(nullptr)
 {}
 
 void MIDIBigMessage::clear()
 {
-    if (sysex) {
-        delete sysex;
-    }
-
-    sysex = 0;
+    sysex.reset();
     MIDIMessage::clear();
 }
 
 void MIDIBigMessage::copy(MIDIBigMessage const& m)
 {
-    delete sysex;
-
     if (m.sysex) {
-        sysex = new MIDISystemExclusive(*m.sysex);
-    }
-
-    else {
-        sysex = 0;
+        sysex = std::make_unique<MIDISystemExclusive>(*m.sysex);
+    } else {
+        sysex.reset();
     }
 
     MIDIMessage::copy(m);
@@ -662,8 +655,7 @@ void MIDIBigMessage::copy(MIDIBigMessage const& m)
 
 void MIDIBigMessage::copy(MIDIMessage const& m)
 {
-    delete sysex;
-    sysex = 0;
+    sysex.reset();
     MIDIMessage::copy(m);
 }
 
@@ -673,10 +665,7 @@ void MIDIBigMessage::copy(MIDIMessage const& m)
 
 MIDIBigMessage::~MIDIBigMessage()
 {
-    if (sysex) {
-        delete sysex;
-        sysex = 0;
-    }
+    // unique_ptr automatically handles cleanup
 }
 
 //
@@ -685,24 +674,20 @@ MIDIBigMessage::~MIDIBigMessage()
 
 MIDIBigMessage const& MIDIBigMessage::operator=(MIDIBigMessage const& m)
 {
-    delete sysex;
-
-    if (m.sysex) {
-        sysex = new MIDISystemExclusive(*m.sysex);
+    if (this != &m) {
+        if (m.sysex) {
+            sysex = std::make_unique<MIDISystemExclusive>(*m.sysex);
+        } else {
+            sysex.reset();
+        }
+        MIDIMessage::operator=(m);
     }
-
-    else {
-        sysex = 0;
-    }
-
-    MIDIMessage::operator=(m);
     return *this;
 }
 
 MIDIBigMessage const& MIDIBigMessage::operator=(MIDIMessage const& m)
 {
-    delete sysex;
-    sysex = 0;
+    sysex.reset();
     MIDIMessage::operator=(m);
     return *this;
 }
@@ -713,12 +698,12 @@ MIDIBigMessage const& MIDIBigMessage::operator=(MIDIMessage const& m)
 
 MIDISystemExclusive* MIDIBigMessage::get_sys_ex()
 {
-    return sysex;
+    return sysex.get();
 }
 
 MIDISystemExclusive const* MIDIBigMessage::get_sys_ex() const
 {
-    return sysex;
+    return sysex.get();
 }
 
 //
@@ -727,11 +712,10 @@ MIDISystemExclusive const* MIDIBigMessage::get_sys_ex() const
 
 void MIDIBigMessage::copy_sys_ex(MIDISystemExclusive const* e)
 {
-    delete sysex;
-    sysex = 0;
-
     if (e) {
-        sysex = new MIDISystemExclusive(*e);
+        sysex = std::make_unique<MIDISystemExclusive>(*e);
+    } else {
+        sysex.reset();
     }
 }
 
@@ -745,8 +729,7 @@ void MIDIBigMessage::set_sys_ex ( MIDISystemExclusive *e )
 
 void MIDIBigMessage::clear_sys_ex()
 {
-    delete sysex;
-    sysex = 0;
+    sysex.reset();
 }
 
 //

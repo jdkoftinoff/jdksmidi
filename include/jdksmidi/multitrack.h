@@ -40,6 +40,9 @@
 
 #include "jdksmidi/track.h"
 
+#include <memory>
+#include <vector>
+
 namespace jdksmidi {
 
 class MIDIMultiTrack;
@@ -64,7 +67,7 @@ class MIDIMultiTrack
     void set_clks_per_beat(int c) { _clks_per_beat = c; }
 
   protected:
-    MIDITrack** _tracks;
+    std::vector<MIDITrack*> _tracks;
     int const _num_tracks;
     bool _deletable;
 
@@ -95,8 +98,8 @@ class MIDIMultiTrackIteratorState
     MIDIClockTime _cur_time;
     int _cur_event_track;
     int _num_tracks;
-    int* _next_event_number;
-    MIDIClockTime* _next_event_time;
+    std::vector<int> _next_event_number;
+    std::vector<MIDIClockTime> _next_event_time;
 };
 
 class MIDIMultiTrackIterator

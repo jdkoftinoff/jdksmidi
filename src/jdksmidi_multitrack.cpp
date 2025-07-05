@@ -40,6 +40,8 @@
 #include "jdksmidi/multitrack.h"
 #include "jdksmidi/track.h"
 
+#include <vector>
+
 #ifndef DEBUG_MDMLTTRK
 #    define DEBUG_MDMLTTRK 0
 #endif
@@ -52,34 +54,24 @@
 namespace jdksmidi {
 
 MIDIMultiTrack::MIDIMultiTrack(int num_tracks_, bool deletable_)
-    : _num_tracks(num_tracks_)
+    : _tracks(num_tracks_, nullptr)
+    , _num_tracks(num_tracks_)
     , _deletable(deletable_)
     , _clks_per_beat(480)
 {
-    _tracks = new MIDITrack*[_num_tracks];
-
-    if (_tracks) {
-        if (_deletable) {
-            for (int i = 0; i < _num_tracks; ++i)
-                _tracks[i] = new MIDITrack;
-        }
-
-        else {
-            for (int i = 0; i < _num_tracks; ++i)
-                _tracks[i] = 0;
-        }
+    if (_deletable) {
+        for (int i = 0; i < _num_tracks; ++i)
+            _tracks[i] = new MIDITrack;
     }
 }
 
 MIDIMultiTrack::~MIDIMultiTrack()
 {
-
     if (_deletable) {
         for (int i = 0; i < _num_tracks; ++i)
             delete _tracks[i];
     }
-
-    delete[] _tracks;
+    // vector automatically cleans up
 }
 
 void MIDIMultiTrack::clear()
@@ -105,53 +97,37 @@ MIDITrack const* MIDIMultiTrack::get_track(int trk) const
 }
 
 MIDIMultiTrackIteratorState::MIDIMultiTrackIteratorState(int num_tracks_)
+    : _cur_event_track(0)
+    , _num_tracks(num_tracks_)
+    , _next_event_number(num_tracks_)
+    , _next_event_time(num_tracks_)
 {
-    _num_tracks = num_tracks_;
-    _cur_event_track = 0;
-    _next_event_number = new int[_num_tracks];
-    _next_event_time = new MIDIClockTime[_num_tracks];
     reset();
 }
 
 MIDIMultiTrackIteratorState::MIDIMultiTrackIteratorState(MIDIMultiTrackIteratorState const& m)
-{
-    _num_tracks = m._num_tracks;
-    _cur_event_track = m._cur_event_track;
-    _next_event_number = new int[_num_tracks];
-    _next_event_time = new MIDIClockTime[_num_tracks];
-    _cur_time = m._cur_time;
-
-    for (int i = 0; i < _num_tracks; ++i) {
-        _next_event_number[i] = m._next_event_number[i];
-        _next_event_time[i] = m._next_event_time[i];
-    }
-}
+    : _cur_time(m._cur_time)
+    , _cur_event_track(m._cur_event_track)
+    , _num_tracks(m._num_tracks)
+    , _next_event_number(m._next_event_number)
+    , _next_event_time(m._next_event_time)
+{}
 
 MIDIMultiTrackIteratorState::~MIDIMultiTrackIteratorState()
 {
-    delete[] _next_event_number;
-    delete[] _next_event_time;
+    // vectors automatically clean up
 }
 
 MIDIMultiTrackIteratorState const& MIDIMultiTrackIteratorState::operator=(
     MIDIMultiTrackIteratorState const& m)
 {
-    if (_num_tracks != m._num_tracks) {
-        delete[] _next_event_number;
-        delete[] _next_event_time;
+    if (this != &m) {
         _num_tracks = m._num_tracks;
-        _next_event_number = new int[_num_tracks];
-        _next_event_time = new MIDIClockTime[_num_tracks];
+        _cur_time = m._cur_time;
+        _cur_event_track = m._cur_event_track;
+        _next_event_number = m._next_event_number;
+        _next_event_time = m._next_event_time;
     }
-
-    _cur_time = m._cur_time;
-    _cur_event_track = m._cur_event_track;
-
-    for (int i = 0; i < _num_tracks; ++i) {
-        _next_event_number[i] = m._next_event_number[i];
-        _next_event_time[i] = m._next_event_time[i];
-    }
-
     return *this;
 }
 
