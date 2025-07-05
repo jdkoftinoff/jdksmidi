@@ -1,0 +1,22 @@
+# include-what-you-use mapping file for jdksmidi
+# This file helps IWYU understand the project structure and provide better suggestions
+
+[
+  # Standard library mappings
+  { include: ["<bits/std_abs.h>", "private", "<cstdlib>", "public"] },
+  { include: ["<bits/types.h>", "private", "<cstddef>", "public"] },
+  { include: ["<bits/stdint-intn.h>", "private", "<cstdint>", "public"] },
+  { include: ["<bits/stdint-uintn.h>", "private", "<cstdint>", "public"] },
+  
+  # Project-specific mappings
+  { include: ["@\"jdksmidi/.*\"", "private", "\"jdksmidi/world.h\"", "public"] },
+  
+  # Common system headers
+  { include: ["<asm/types.h>", "private", "<sys/types.h>", "public"] },
+  { include: ["<sys/_types.h>", "private", "<sys/types.h>", "public"] },
+  
+  # Platform-specific mappings
+  { include: ["<mmsystem.h>", "private", "<windows.h>", "public"] },
+  { include: ["<windef.h>", "private", "<windows.h>", "public"] },
+  { include: ["<winbase.h>", "private", "<windows.h>", "public"] }
+]
