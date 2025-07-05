@@ -42,8 +42,18 @@ make
 
 The project includes a custom mapping file (`iwyu.imp`) that helps IWYU understand:
 - Standard library header mappings
-- Project-specific header relationships
 - Platform-specific header requirements
+
+### Project Modernization
+
+The jdksmidi project has been modernized to eliminate the monolithic `world.h` header that previously included many standard library headers. This modernization provides several benefits:
+
+- **Faster compilation**: Each source file includes only what it needs
+- **Better dependency tracking**: IWYU can provide more accurate suggestions
+- **Reduced coupling**: Changes to one header are less likely to trigger unnecessary recompilations
+- **Explicit dependencies**: It's clear what each file actually depends on
+
+As a result of this modernization, IWYU now provides more targeted and actionable feedback about specific headers rather than suggesting the old monolithic include pattern.
 
 ## Interpreting Results
 
@@ -55,15 +65,17 @@ IWYU will output suggestions during compilation, such as:
 ## Example Output
 
 ```
-src/jdksmidi_queue.cpp should add these lines:
-#include <atomic>  // for atomic
+src/jdksmidi_driver.cpp should add these lines:
+#include "jdksmidi/matrix.h"   // for MIDIMatrix
+#include "jdksmidi/midi.h"     // for C_DAMPER
+#include "jdksmidi/msg.h"      // for MIDITimedBigMessage
 
-src/jdksmidi_queue.cpp should remove these lines:
-- #include "jdksmidi/world.h"  // lines 29-29
-
-The full include-list for src/jdksmidi_queue.cpp:
-#include "jdksmidi/queue.h"  // for MIDIQueue, etc.
-#include <atomic>  // for atomic
+The full include-list for src/jdksmidi_driver.cpp:
+#include <cstdint>             // for uint8_t, uint32_t
+#include "jdksmidi/driver.h"   // for MIDIDriver
+#include "jdksmidi/matrix.h"   // for MIDIMatrix
+#include "jdksmidi/midi.h"     // for C_DAMPER
+#include "jdksmidi/msg.h"      // for MIDITimedBigMessage
 ---
 ```
 
@@ -75,13 +87,19 @@ The full include-list for src/jdksmidi_queue.cpp:
 
 ## Customization
 
-Modify `iwyu.imp` to add project-specific mappings:
+Modify `iwyu.imp` to add project-specific mappings. The current mapping file focuses on standard library mappings and platform-specific headers:
 
 ```json
 [
-  { include: ["\"myheader.h\"", "private", "\"publicheader.h\"", "public"] }
+  # Standard library mappings
+  { include: ["<bits/stdint-intn.h>", "private", "<cstdint>", "public"] },
+  
+  # Platform-specific mappings  
+  { include: ["<mmsystem.h>", "private", "<windows.h>", "public"] }
 ]
 ```
+
+**Note**: The previous monolithic `world.h` mapping has been removed as part of the project modernization to encourage explicit, minimal includes.
 
 ## Troubleshooting
 
