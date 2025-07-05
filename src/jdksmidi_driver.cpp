@@ -40,11 +40,11 @@ namespace jdksmidi {
 MIDIDriver::MIDIDriver(int queue_size)
     : _in_queue(queue_size)
     , _out_queue(queue_size)
-    , _in_proc(0)
-    , _out_proc(0)
-    , _thru_proc(0)
+    , _in_proc(nullptr)
+    , _out_proc(nullptr)
+    , _thru_proc(nullptr)
     , _thru_enable(false)
-    , _tick_proc(0)
+    , _tick_proc(nullptr)
 {}
 
 MIDIDriver::~MIDIDriver()

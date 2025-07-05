@@ -249,7 +249,7 @@ bool MIDIMultiTrackIterator::get_cur_event(int* track, MIDITimedBigMessage** msg
             }
 
             else {
-                *msg = 0;
+                *msg = nullptr;
             }
 
             // do we really have a message?

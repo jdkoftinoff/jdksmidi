@@ -92,11 +92,11 @@ void MIDIFileReadMultiTrack::chan_message(MIDITimedMessage const& msg)
     if (the_format == 0 || cur_track == 0) {
         // split format 0 files into separate tracks, one for each channel,
         // keep track 0 for tempo and meta-events
-        add_event_to_multi_track(msg, 0, msg.get_channel() + 1);
+        add_event_to_multi_track(msg, nullptr, msg.get_channel() + 1);
     }
 
     else {
-        add_event_to_multi_track(msg, 0, cur_track);
+        add_event_to_multi_track(msg, nullptr, cur_track);
     }
 }
 
@@ -160,7 +160,7 @@ void MIDIFileReadMultiTrack::mf_tempo(MIDIClockTime time, std::uint32_t tempo)
     MIDITimedMessage msg;
     msg.set_tempo32(static_cast<std::uint16_t>(tempo_bpm_times_32));
     msg.set_time(time);
-    add_event_to_multi_track(msg, 0, cur_track);
+    add_event_to_multi_track(msg, nullptr, cur_track);
 }
 
 void MIDIFileReadMultiTrack::mf_keysig(MIDIClockTime time, int c, int v)
@@ -168,7 +168,7 @@ void MIDIFileReadMultiTrack::mf_keysig(MIDIClockTime time, int c, int v)
     MIDITimedMessage msg;
     msg.set_key_sig((std::uint8_t)c, (std::uint8_t)v);
     msg.set_time(time);
-    add_event_to_multi_track(msg, 0, cur_track);
+    add_event_to_multi_track(msg, nullptr, cur_track);
 }
 
 void MIDIFileReadMultiTrack::mf_sqspecific(MIDIClockTime time, int, std::uint8_t*)
@@ -198,7 +198,7 @@ void MIDIFileReadMultiTrack::mf_eot(MIDIClockTime time)
     msg.set_status(META_EVENT);
     msg.set_meta_type(META_END_OF_TRACK);
     msg.set_time(time);
-    add_event_to_multi_track(msg, 0, cur_track);
+    add_event_to_multi_track(msg, nullptr, cur_track);
 }
 
 }  // namespace jdksmidi

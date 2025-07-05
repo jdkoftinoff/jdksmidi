@@ -451,7 +451,7 @@ bool MIDITrack::find_event_number(MIDIClockTime time, int* event_num) const
 MIDITimedBigMessage const* MIDITrack::get_event(int event_num) const
 {
     if (event_num >= num_events) {
-        return 0;
+        return nullptr;
     }
 
     else {
@@ -462,7 +462,7 @@ MIDITimedBigMessage const* MIDITrack::get_event(int event_num) const
 MIDITimedBigMessage* MIDITrack::get_event(int event_num)
 {
     if (event_num >= num_events) {
-        return 0;
+        return nullptr;
     }
 
     else {

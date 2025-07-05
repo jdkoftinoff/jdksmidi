@@ -163,7 +163,7 @@ MIDISequencerTrackProcessor::MIDISequencerTrackProcessor()
     , velocity_scale(100)
     , rechannel(-1)
     , transpose(0)
-    , extra_proc(0)
+    , extra_proc(nullptr)
 {}
 
 MIDISequencerTrackProcessor::~MIDISequencerTrackProcessor()
@@ -256,7 +256,7 @@ MIDISequencerTrackState::MIDISequencerTrackState(
     , notes_are_on(false)
     , note_matrix()
 {
-    *track_name = 0;
+    *track_name = '\0';
 }
 
 MIDISequencerTrackState::~MIDISequencerTrackState()
@@ -279,7 +279,7 @@ void MIDISequencerTrackState::reset()
     timesig_numerator = 4;
     timesig_denominator = 4;
     bender_value = 0;
-    *track_name = 0;
+    *track_name = '\0';
     note_matrix.clear();
     got_good_track_name = false;
 }
