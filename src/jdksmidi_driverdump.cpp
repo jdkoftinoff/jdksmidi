@@ -40,8 +40,7 @@ MIDIDriverDump::MIDIDriverDump(int queue_size, FILE* outfile)
     , f(outfile)
 {}
 
-MIDIDriverDump::~MIDIDriverDump()
-{}
+MIDIDriverDump::~MIDIDriverDump() = default;
 
 bool MIDIDriverDump::hardware_msg_out(MIDITimedBigMessage const& msg)
 {

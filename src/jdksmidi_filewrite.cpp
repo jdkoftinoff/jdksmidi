@@ -89,7 +89,7 @@ MIDIFileWrite::MIDIFileWrite(MIDIFileWriteStream* out_stream_)
     : out_stream(out_stream_)
 {
     file_length = 0;
-    error = 0;
+    error = false;
     track_length = 0;
     track_time = 0;
     running_status = 0;

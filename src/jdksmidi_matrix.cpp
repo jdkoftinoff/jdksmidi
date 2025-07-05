@@ -153,7 +153,7 @@ void MIDIMatrix::clear_channel(int channel)
     }
 
     _channel_count[channel] = 0;
-    _hold_pedal[channel] = 0;
+    _hold_pedal[channel] = false;
 }
 
 }  // namespace jdksmidi

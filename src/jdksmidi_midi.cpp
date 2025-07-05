@@ -81,17 +81,17 @@ bool const lut_is_white[12] = {
     //
     // C C#  D D#  E    F F# G G# A A# B
     //
-    1,
-    0,
-    1,
-    0,
-    1,
-    1,
-    0,
-    1,
-    0,
-    1,
-    0,
-    1};
+    true,
+    false,
+    true,
+    false,
+    true,
+    true,
+    false,
+    true,
+    false,
+    true,
+    false,
+    true};
 
 }  // namespace jdksmidi

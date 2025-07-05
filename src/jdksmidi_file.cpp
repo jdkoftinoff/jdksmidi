@@ -47,11 +47,9 @@
 
 namespace jdksmidi {
 
-MIDIFile::MIDIFile()
-{}
+MIDIFile::MIDIFile() = default;
 
-MIDIFile::~MIDIFile()
-{}
+MIDIFile::~MIDIFile() = default;
 
 std::uint32_t MIDIFile::convert_tempo_to_freq(std::int16_t division, MIDITempo& tempo)
 {

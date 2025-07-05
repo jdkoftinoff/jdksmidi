@@ -58,18 +58,15 @@ class MIDITrack;
 
 namespace jdksmidi {
 
-MIDIEditTrackEventMatcher::MIDIEditTrackEventMatcher()
-{}
+MIDIEditTrackEventMatcher::MIDIEditTrackEventMatcher() = default;
 
-MIDIEditTrackEventMatcher::~MIDIEditTrackEventMatcher()
-{}
+MIDIEditTrackEventMatcher::~MIDIEditTrackEventMatcher() = default;
 
 MIDIEditTrack::MIDIEditTrack(MIDITrack* track_)
     : track(track_)
 {}
 
-MIDIEditTrack::~MIDIEditTrack()
-{}
+MIDIEditTrack::~MIDIEditTrack() = default;
 
 void MIDIEditTrack::process(
     MIDIClockTime start_time,

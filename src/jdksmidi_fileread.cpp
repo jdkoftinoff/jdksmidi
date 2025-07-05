@@ -237,8 +237,7 @@ MIDIFileRead::MIDIFileRead(
     message_buffer.resize(max_msg_len_);
 }
 
-MIDIFileRead::~MIDIFileRead()
-{}
+MIDIFileRead::~MIDIFileRead() = default;
 
 void MIDIFileRead::mf_error(char const* e)
 {

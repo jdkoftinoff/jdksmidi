@@ -51,8 +51,7 @@ MIDIFileReadMultiTrack::MIDIFileReadMultiTrack(MIDIMultiTrack* mlttrk)
     , cur_track(-1)
 {}
 
-MIDIFileReadMultiTrack::~MIDIFileReadMultiTrack()
-{}
+MIDIFileReadMultiTrack::~MIDIFileReadMultiTrack() = default;
 
 void MIDIFileReadMultiTrack::mf_error(char const*)
 {}
