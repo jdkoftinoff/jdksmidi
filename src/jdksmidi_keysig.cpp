@@ -83,8 +83,8 @@ void MIDIKeySignature::reset()
     if (_sharp_flat > 7)
         _sharp_flat = 7;
 
-    for (int note = 0; note < 7; ++note)
-        _state[note] = ACCNatural;
+    for (auto& note : _state)
+        note = ACCNatural;
 
     if (_sharp_flat == 0) {
         // Key of C has no sharps or flats.

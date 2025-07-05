@@ -60,8 +60,7 @@ MIDIParser::MIDIParser(std::uint16_t max_sysex_size)
     state = FIND_STATUS;
 }
 
-MIDIParser::~MIDIParser()
-{}
+MIDIParser::~MIDIParser() = default;
 
 bool MIDIParser::parse(std::uint8_t b, MIDIMessage* msg)
 {

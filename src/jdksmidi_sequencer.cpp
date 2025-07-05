@@ -64,11 +64,9 @@ static void FixQuotes(char* s_)
 
 ////////////////////////////////////////////////////////////////////////////
 
-MIDISequencerGUIEventNotifier::MIDISequencerGUIEventNotifier()
-{}
+MIDISequencerGUIEventNotifier::MIDISequencerGUIEventNotifier() = default;
 
-MIDISequencerGUIEventNotifier::~MIDISequencerGUIEventNotifier()
-{}
+MIDISequencerGUIEventNotifier::~MIDISequencerGUIEventNotifier() = default;
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -77,8 +75,7 @@ MIDISequencerGUIEventNotifierText::MIDISequencerGUIEventNotifierText(FILE* f_)
     , en(true)
 {}
 
-MIDISequencerGUIEventNotifierText::~MIDISequencerGUIEventNotifierText()
-{}
+MIDISequencerGUIEventNotifierText::~MIDISequencerGUIEventNotifierText() = default;
 
 void MIDISequencerGUIEventNotifierText::notify(MIDISequencer const* seq, MIDISequencerGUIEvent e)
 {
@@ -135,8 +132,7 @@ MIDISequencerTrackNotifier::MIDISequencerTrackNotifier(
     , notifier(n)
 {}
 
-MIDISequencerTrackNotifier::~MIDISequencerTrackNotifier()
-{}
+MIDISequencerTrackNotifier::~MIDISequencerTrackNotifier() = default;
 
 void MIDISequencerTrackNotifier::notify(int item)
 {
@@ -166,8 +162,7 @@ MIDISequencerTrackProcessor::MIDISequencerTrackProcessor()
     , extra_proc(nullptr)
 {}
 
-MIDISequencerTrackProcessor::~MIDISequencerTrackProcessor()
-{}
+MIDISequencerTrackProcessor::~MIDISequencerTrackProcessor() = default;
 
 void MIDISequencerTrackProcessor::reset()
 {

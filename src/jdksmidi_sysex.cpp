@@ -62,7 +62,6 @@ MIDISystemExclusive::MIDISystemExclusive(MIDISystemExclusive const& e)
     , _chk_sum(e._chk_sum)
 {}
 
-MIDISystemExclusive::~MIDISystemExclusive()
-{}
+MIDISystemExclusive::~MIDISystemExclusive() = default;
 
 }  // namespace jdksmidi

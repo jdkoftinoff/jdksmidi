@@ -12,17 +12,16 @@
 #include "jdksmidi/sysex.h"
 #include "jdksmidi/track.h"
 
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
-
-#include <cstdint>
 #include <string>
 #include <vector>
 
 namespace jdksmidi {
 static void FixQuotes(char* s_)
 {
-    std::uint8_t* s = (std::uint8_t*)s_;
+    auto* s = (std::uint8_t*)s_;
 
     while (*s) {
         if (*s == 0xd2 || *s == 0xd3) {

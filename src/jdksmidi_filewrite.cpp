@@ -40,10 +40,9 @@
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
 
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
-
-#include <cstdint>
 
 #ifndef DEBUG_MDFWR
 #    define DEBUG_MDFWR 0
@@ -56,18 +55,15 @@
 
 namespace jdksmidi {
 
-MIDIFileWriteStream::MIDIFileWriteStream()
-{}
+MIDIFileWriteStream::MIDIFileWriteStream() = default;
 
-MIDIFileWriteStream::~MIDIFileWriteStream()
-{}
+MIDIFileWriteStream::~MIDIFileWriteStream() = default;
 
 MIDIFileWriteStreamFile::MIDIFileWriteStreamFile(FILE* f_)
     : f(f_)
 {}
 
-MIDIFileWriteStreamFile::~MIDIFileWriteStreamFile()
-{}
+MIDIFileWriteStreamFile::~MIDIFileWriteStreamFile() = default;
 
 std::int32_t MIDIFileWriteStreamFile::seek(std::int32_t pos, int whence)
 {
@@ -96,8 +92,7 @@ MIDIFileWrite::MIDIFileWrite(MIDIFileWriteStream* out_stream_)
     track_position = 0;
 }
 
-MIDIFileWrite::~MIDIFileWrite()
-{}
+MIDIFileWrite::~MIDIFileWrite() = default;
 
 void MIDIFileWrite::error_handler(char* s)
 {

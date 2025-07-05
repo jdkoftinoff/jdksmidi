@@ -66,8 +66,7 @@ MIDIMatrix::MIDIMatrix()
     _total_count = 0;
 }
 
-MIDIMatrix::~MIDIMatrix()
-{}
+MIDIMatrix::~MIDIMatrix() = default;
 
 void MIDIMatrix::dec_note_count(MIDIMessage const&, int channel, int note)
 {

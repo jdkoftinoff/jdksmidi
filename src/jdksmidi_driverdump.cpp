@@ -29,9 +29,8 @@
 #include "jdksmidi/driverdump.h"
 #include "jdksmidi/msg.h"
 
-#include <cstdio>
-
 #include <cstdint>
+#include <cstdio>
 
 namespace jdksmidi {
 

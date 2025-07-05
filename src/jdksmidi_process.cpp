@@ -41,10 +41,7 @@ MIDIMultiProcessor::MIDIMultiProcessor(int num)
     : processors(num, nullptr)
 {}
 
-MIDIMultiProcessor::~MIDIMultiProcessor()
-{
-    // vector automatically cleans up
-}
+MIDIMultiProcessor::~MIDIMultiProcessor() = default;
 
 bool MIDIMultiProcessor::process(MIDITimedBigMessage* msg)
 {
@@ -61,8 +58,8 @@ bool MIDIMultiProcessor::process(MIDITimedBigMessage* msg)
 
 MIDIProcessorTransposer::MIDIProcessorTransposer()
 {
-    for (int i = 0; i < 16; ++i) {
-        trans_amount[i] = 0;
+    for (auto& i : trans_amount) {
+        i = 0;
     }
 }
 
@@ -70,8 +67,8 @@ MIDIProcessorTransposer::~MIDIProcessorTransposer() = default;
 
 void MIDIProcessorTransposer::set_all_transpose(int val)
 {
-    for (int chan = 0; chan < 16; ++chan) {
-        trans_amount[chan] = val;
+    for (auto& chan : trans_amount) {
+        chan = val;
     }
 }
 
@@ -108,8 +105,8 @@ MIDIProcessorRechannelizer::~MIDIProcessorRechannelizer() = default;
 
 void MIDIProcessorRechannelizer::set_all_rechan(int dest_chan)
 {
-    for (int i = 0; i < 16; ++i) {
-        rechan_map[i] = dest_chan;
+    for (auto& i : rechan_map) {
+        i = dest_chan;
     }
 }
 

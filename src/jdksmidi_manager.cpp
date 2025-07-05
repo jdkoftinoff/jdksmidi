@@ -49,8 +49,7 @@ MIDIManager::MIDIManager(MIDIDriver* drv, MIDISequencerGUIEventNotifier* n, MIDI
     _driver->set_tick_proc(this);
 }
 
-MIDIManager::~MIDIManager()
-{}
+MIDIManager::~MIDIManager() = default;
 
 void MIDIManager::reset()
 {

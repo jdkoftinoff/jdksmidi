@@ -41,9 +41,8 @@
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
 
-#include <cstdio>
-
 #include <cstdint>
+#include <cstdio>
 
 #ifndef DEBUG_MDFSH
 #    define DEBUG_MDFSH 0
@@ -60,8 +59,7 @@ MIDIFileShow::MIDIFileShow(FILE* out_)
     : out(out_)
 {}
 
-MIDIFileShow::~MIDIFileShow()
-{}
+MIDIFileShow::~MIDIFileShow() = default;
 
 void MIDIFileShow::mf_error(char const* e)
 {
@@ -86,7 +84,7 @@ void MIDIFileShow::mf_header(int format, int ntrks, int d)
 
     if (division > 0x8000) {
         std::uint8_t smpte_rate = ((std::uint8_t)((-division) >> 8));
-        std::uint8_t smpte_division = (std::uint8_t)(division & 0xff);
+        auto smpte_division = (std::uint8_t)(division & 0xff);
         fprintf(out, " SMPTE=%d Division=%d\n", smpte_rate, smpte_division);
     }
 

@@ -29,7 +29,6 @@
 
 namespace jdksmidi {
 
-MIDITick::~MIDITick()
-{}
+MIDITick::~MIDITick() = default;
 
 }  // namespace jdksmidi

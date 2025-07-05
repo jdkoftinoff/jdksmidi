@@ -39,8 +39,7 @@ MIDIFileWriteMultiTrack::MIDIFileWriteMultiTrack(
     , writer(strm_)
 {}
 
-MIDIFileWriteMultiTrack::~MIDIFileWriteMultiTrack()
-{}
+MIDIFileWriteMultiTrack::~MIDIFileWriteMultiTrack() = default;
 
 bool MIDIFileWriteMultiTrack::write(int num_tracks, int division)
 {

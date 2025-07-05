@@ -39,10 +39,9 @@
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
 
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
-
-#include <cstdint>
 #include <memory>
 
 namespace jdksmidi {
@@ -426,7 +425,7 @@ std::uint16_t MIDIMessage::get_loop_number() const
 
 void MIDIMessage::set_bender_value(std::int16_t v)
 {
-    std::int16_t x = static_cast<std::int16_t>(v + 8192);
+    auto x = static_cast<std::int16_t>(v + 8192);
     _byte1 = static_cast<std::uint8_t>(x & 0x7f);
     _byte2 = static_cast<std::uint8_t>((x >> 7) & 0x7f);
 }

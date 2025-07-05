@@ -152,7 +152,7 @@ void MIDIFileReadMultiTrack::mf_tempo(MIDIClockTime time, std::uint32_t tempo)
 
     // tempo is in microseconds per beat
     // calculate beats per second by
-    float beats_per_second =
+    auto beats_per_second =
         static_cast<float>(1e6 / (double)tempo);  // 1 million microseconds per second
     float beats_per_minute = beats_per_second * 60;
     tempo_bpm_times_32 = static_cast<std::uint32_t>(beats_per_minute * 32.0);
