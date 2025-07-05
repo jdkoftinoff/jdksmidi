@@ -31,6 +31,7 @@
 #include "jdksmidi/multitrack.h"
 #include "jdksmidi/track.h"
 
+#include <algorithm>
 #include <memory>
 #include <vector>
 

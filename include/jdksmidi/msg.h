@@ -96,7 +96,7 @@ class MIDIMessage
     ///@name The Query methods.
     //@{
 
-    char get_length() const;  ///< Get the length in bytes of the entire message.
+    int get_length() const;  ///< Get the length in bytes of the entire message.
 
     /// Get the _status byte of the message.
     std::uint8_t get_status() const { return (std::uint8_t)_status; }
@@ -160,7 +160,7 @@ class MIDIMessage
     /// If the message is a key signature meta-message, get_key_sig_sharp_flats() returns to standard
     /// midi file form of the key. Negative values means that many flats, positive numbers means
     /// that many sharps.
-    signed char get_key_sig_sharp_flats() const;
+    int get_key_sig_sharp_flats() const;
 
     /// If the message is a key signature meta-message, get_key_sig_major_minor() returns to standard
     /// midi file form of the key major/minor flag. 0 means a major key, 1 means a minor key.
@@ -333,7 +333,7 @@ class MIDIMessage
 
     void set_time_sig(std::uint8_t numerator, std::uint8_t denominator);
 
-    void set_key_sig(signed char sharp_flats, std::uint8_t major_minor);
+    void set_key_sig(int sharp_flats, std::uint8_t major_minor);
 
     void set_beat_marker();
 

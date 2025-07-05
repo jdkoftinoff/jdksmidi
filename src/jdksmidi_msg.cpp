@@ -247,7 +247,7 @@ MIDIMessage const& MIDIMessage::operator=(MIDIMessage const& m)
     return *this;
 }
 
-char MIDIMessage::get_length() const
+int MIDIMessage::get_length() const
 {
     if ((_status & 0xf0) == 0xf0) {
         return get_system_message_length(_status);
@@ -278,9 +278,9 @@ std::uint8_t MIDIMessage::get_time_sig_denominator() const
     return _byte3;
 }
 
-signed char MIDIMessage::get_key_sig_sharp_flats() const
+int MIDIMessage::get_key_sig_sharp_flats() const
 {
-    return (signed char)_byte2;
+    return (int)(std::int8_t)_byte2;
 }
 
 std::uint8_t MIDIMessage::get_key_sig_major_minor() const
@@ -602,7 +602,7 @@ void MIDIMessage::set_time_sig(std::uint8_t num, std::uint8_t den)
     set_meta_event(META_TIMESIG, num, den);
 }
 
-void MIDIMessage::set_key_sig(signed char sharp_flats, std::uint8_t major_minor)
+void MIDIMessage::set_key_sig(int sharp_flats, std::uint8_t major_minor)
 {
     set_meta_event(META_KEYSIG, sharp_flats, major_minor);
 }
