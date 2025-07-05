@@ -62,14 +62,14 @@ class MIDITempo
     MIDITempo(float a) { _tempo = static_cast<std::uint32_t>(a * 256.0); }
     MIDITempo(MIDITempo const& a) { _tempo = a.get_full_tempo(); }
 
-    operator short() { return static_cast<short>((_tempo + 0x80) >> 8); }
-    operator unsigned short() { return static_cast<unsigned short>((_tempo + 0x80) >> 8); }
+    operator std::int16_t() { return static_cast<std::int16_t>((_tempo + 0x80) >> 8); }
+    operator std::uint16_t() { return static_cast<std::uint16_t>((_tempo + 0x80) >> 8); }
 
     operator std::int32_t() { return static_cast<std::int32_t>((_tempo + 0x80) >> 8); }
     operator std::uint32_t() { return static_cast<std::uint32_t>((_tempo + 0x80) >> 8); }
     operator float() { return static_cast<float>(_tempo) / 256.0f; }
-    void operator=(unsigned short a) { _tempo = static_cast<std::uint32_t>(a) << 8; }
-    void operator=(short a) { _tempo = static_cast<std::uint32_t>(a) << 8; }
+    void operator=(std::uint16_t a) { _tempo = static_cast<std::uint32_t>(a) << 8; }
+    void operator=(std::int16_t a) { _tempo = static_cast<std::uint32_t>(a) << 8; }
 
     void operator=(std::uint32_t a) { _tempo = static_cast<std::uint32_t>(a) << 8; }
     void operator=(std::int32_t a) { _tempo = static_cast<std::uint32_t>(a) << 8; }

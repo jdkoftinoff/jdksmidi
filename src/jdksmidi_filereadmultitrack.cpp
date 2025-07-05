@@ -152,7 +152,7 @@ void MIDIFileReadMultiTrack::mf_tempo(MIDIClockTime time, std::uint32_t tempo)
     float beats_per_minute = beats_per_second * 60;
     tempo_bpm_times_32 = static_cast<std::uint32_t>(beats_per_minute * 32.0);
     MIDITimedMessage msg;
-    msg.set_tempo32(static_cast<unsigned short>(tempo_bpm_times_32));
+    msg.set_tempo32(static_cast<std::uint16_t>(tempo_bpm_times_32));
     msg.set_time(time);
     add_event_to_multi_track(msg, 0, cur_track);
 }

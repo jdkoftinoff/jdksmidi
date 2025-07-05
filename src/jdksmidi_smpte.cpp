@@ -164,7 +164,7 @@ void SMPTE::sample_to_time()
         //
         // Calculate number of minutes that have gone by
         //
-        // short num_minutes = (short)((double)tmp_sample/(smpte_sample_rates[sample_rate]))/60;
+        // std::int16_t num_minutes = (std::int16_t)((double)tmp_sample/(smpte_sample_rates[sample_rate]))/60;
         int num_minutes = tmp_sample / (48000 * 60);
         DBG(printf("num_minutes=%d\n", (int)num_minutes));
         //

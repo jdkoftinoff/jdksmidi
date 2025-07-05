@@ -258,14 +258,14 @@ int MIDIMessage::get_length() const
     }
 }
 
-short MIDIMessage::get_bender_value() const
+std::int16_t MIDIMessage::get_bender_value() const
 {
-    return (short)(((_byte2 << 7) | _byte1) - 8192);
+    return (std::int16_t)(((_byte2 << 7) | _byte1) - 8192);
 }
 
-unsigned short MIDIMessage::get_meta_value() const
+std::uint16_t MIDIMessage::get_meta_value() const
 {
-    return (unsigned short)((_byte3 << 8) | _byte2);
+    return (std::uint16_t)((_byte3 << 8) | _byte2);
 }
 
 std::uint8_t MIDIMessage::get_time_sig_numerator() const
@@ -338,9 +338,9 @@ bool MIDIMessage::is_sys_ex() const
     return (_status == SYSEX_START);
 }
 
-short MIDIMessage::get_sys_ex_num() const
+std::int16_t MIDIMessage::get_sys_ex_num() const
 {
-    return (short)((_byte3 << 8) | _byte2);
+    return (std::int16_t)((_byte3 << 8) | _byte2);
 }
 
 bool MIDIMessage::is_mtc() const
@@ -408,19 +408,19 @@ bool MIDIMessage::is_beat_marker() const
     return (_status == META_EVENT) && (_byte1 == META_BEAT_MARKER);
 }
 
-unsigned short MIDIMessage::get_tempo32() const
+std::uint16_t MIDIMessage::get_tempo32() const
 {
     return get_meta_value();
 }
 
-unsigned short MIDIMessage::get_loop_number() const
+std::uint16_t MIDIMessage::get_loop_number() const
 {
     return get_meta_value();
 }
 
-void MIDIMessage::set_bender_value(short v)
+void MIDIMessage::set_bender_value(std::int16_t v)
 {
-    short x = static_cast<short>(v + 8192);
+    std::int16_t x = static_cast<std::int16_t>(v + 8192);
     _byte1 = static_cast<std::uint8_t>(x & 0x7f);
     _byte2 = static_cast<std::uint8_t>((x >> 7) & 0x7f);
 }
@@ -430,7 +430,7 @@ void MIDIMessage::set_meta_type(std::uint8_t t)
     _byte1 = t;
 }
 
-void MIDIMessage::set_meta_value(unsigned short v)
+void MIDIMessage::set_meta_value(std::uint16_t v)
 {
     _byte2 = static_cast<std::uint8_t>(v & 0xff);
     _byte3 = static_cast<std::uint8_t>((v >> 8) & 0xff);
@@ -484,10 +484,10 @@ void MIDIMessage::set_channel_pressure(std::uint8_t chan, std::uint8_t val)
     _byte3 = 0;
 }
 
-void MIDIMessage::set_pitch_bend(std::uint8_t chan, short val)
+void MIDIMessage::set_pitch_bend(std::uint8_t chan, std::int16_t val)
 {
     _status = static_cast<std::uint8_t>(chan | PITCH_BEND);
-    val += static_cast<short>(0x2000);               // center value
+    val += static_cast<std::int16_t>(0x2000);        // center value
     _byte1 = static_cast<std::uint8_t>(val & 0x7f);  // 7 bit bytes
     _byte2 = static_cast<std::uint8_t>((val >> 7) & 0x7f);
     _byte3 = 0;
@@ -518,7 +518,7 @@ void MIDIMessage::set_mtc(std::uint8_t field, std::uint8_t v)
     _byte3 = 0;
 }
 
-void MIDIMessage::set_song_position(short pos)
+void MIDIMessage::set_song_position(std::int16_t pos)
 {
     _status = SONG_POSITION;
     _byte1 = static_cast<std::uint8_t>(pos & 0x7f);
@@ -550,7 +550,7 @@ void MIDIMessage::set_meta_event(std::uint8_t type, std::uint8_t v1, std::uint8_
     _byte3 = v2;
 }
 
-void MIDIMessage::set_meta_event(std::uint8_t type, unsigned short v)
+void MIDIMessage::set_meta_event(std::uint8_t type, std::uint16_t v)
 {
     _status = META_EVENT;
     _byte1 = type;
@@ -582,12 +582,12 @@ void MIDIMessage::set_no_op()
     _byte3 = 0;
 }
 
-void MIDIMessage::set_tempo32(unsigned short tempo_times_32)
+void MIDIMessage::set_tempo32(std::uint16_t tempo_times_32)
 {
     set_meta_event(META_TEMPO, tempo_times_32);
 }
 
-void MIDIMessage::set_text(unsigned short text_num, std::uint8_t type)
+void MIDIMessage::set_text(std::uint16_t text_num, std::uint8_t type)
 {
     set_meta_event(type, text_num);
 }

@@ -102,7 +102,7 @@ void MIDIFileWrite::error_handler(char* s)
     error = true;
 }
 
-void MIDIFileWrite::write_short(unsigned short c)
+void MIDIFileWrite::write_short(std::uint16_t c)
 {
     ENTER("void    MIDIFileWrite::write_short()");
     write_character((std::uint8_t)((c >> 8) & 0xff));
@@ -134,9 +134,9 @@ void MIDIFileWrite::write_file_header(int format, int ntrks, int division)
     write_character((std::uint8_t)'h');
     write_character((std::uint8_t)'d');
     write_long(6);
-    write_short((short)format);
-    write_short((short)ntrks);
-    write_short((short)division);
+    write_short((std::int16_t)format);
+    write_short((std::int16_t)ntrks);
+    write_short((std::int16_t)division);
     file_length = 4 + 4 + 6;
 }
 
@@ -158,9 +158,9 @@ void MIDIFileWrite::write_track_header(std::uint32_t length)
 
 int MIDIFileWrite::write_variable_num(std::uint32_t n)
 {
-    ENTER("short MIDIFileWrite::write_variable_num()");
+    ENTER("std::int16_t MIDIFileWrite::write_variable_num()");
     std::uint32_t buffer;
-    short cnt = 0;
+    std::int16_t cnt = 0;
     buffer = n & 0x7f;
 
     while ((n >>= 7) > 0) {
@@ -228,7 +228,7 @@ void MIDIFileWrite::write_event(MIDITimedMessage const& m)
     }
 
     else {
-        short len = m.get_length();
+        std::int16_t len = m.get_length();
         write_delta_time(m.get_time());
 
         if (m.get_status() != running_status) {
@@ -291,7 +291,7 @@ void MIDIFileWrite::write_event(MIDITimedBigMessage const& m)
     }
 
     else {
-        short len = m.get_length();
+        std::int16_t len = m.get_length();
 
         if (m.is_sys_ex() && m.get_sys_ex()) {
             write_event(m.get_time(), m.get_sys_ex());
@@ -336,7 +336,7 @@ void MIDIFileWrite::write_event(std::uint32_t time, MIDISystemExclusive const* e
     running_status = 0;
 }
 
-void MIDIFileWrite::write_event(std::uint32_t time, unsigned short text_type, char const* text)
+void MIDIFileWrite::write_event(std::uint32_t time, std::uint16_t text_type, char const* text)
 {
     ENTER("void MIDIFileWrite::write_event()");
     write_delta_time(time);

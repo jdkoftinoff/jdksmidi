@@ -144,10 +144,10 @@ class MIDIMessage
     std::uint8_t get_controller_value() const { return _byte2; }
 
     /// If the message is a bender message, get_bender_value() returns the signed 14 bit bender value.
-    short get_bender_value() const;
+    std::int16_t get_bender_value() const;
 
     /// If the message is a meta-message, get_meta_value() returns the unsigned 14 bit value attached.
-    unsigned short get_meta_value() const;
+    std::uint16_t get_meta_value() const;
 
     /// If the message is a _time signature meta-message, get_time_sig_numerator() returns the numerator
     /// of the _time signature.
@@ -209,7 +209,7 @@ class MIDIMessage
     /// \note Sysex messages are not stored in the MIDIMessage object. \see MIDIBigMessage
     bool is_sys_ex() const;
 
-    short get_sys_ex_num() const;
+    std::int16_t get_sys_ex_num() const;
 
     bool is_mtc() const;
 
@@ -240,9 +240,9 @@ class MIDIMessage
     ///
     /// GetTempo() returns the tempo value in 1/32 bpm
     ///
-    unsigned short get_tempo32() const;
+    std::uint16_t get_tempo32() const;
 
-    unsigned short get_loop_number() const;
+    std::uint16_t get_loop_number() const;
 
     //@}
 
@@ -283,11 +283,11 @@ class MIDIMessage
     void set_controller_value(std::uint8_t v) { _byte2 = v; }
 
     /// Set the signed 14 bit bender value of a pitch bend message
-    void set_bender_value(short v);
+    void set_bender_value(std::int16_t v);
 
     void set_meta_type(std::uint8_t t);
 
-    void set_meta_value(unsigned short v);
+    void set_meta_value(std::uint16_t v);
 
     void set_note_on(std::uint8_t chan, std::uint8_t note, std::uint8_t vel);
 
@@ -301,7 +301,7 @@ class MIDIMessage
 
     void set_channel_pressure(std::uint8_t chan, std::uint8_t val);
 
-    void set_pitch_bend(std::uint8_t chan, short val);
+    void set_pitch_bend(std::uint8_t chan, std::int16_t val);
 
     void set_pitch_bend(std::uint8_t chan, std::uint8_t low, std::uint8_t high);
 
@@ -309,7 +309,7 @@ class MIDIMessage
 
     void set_mtc(std::uint8_t field, std::uint8_t v);
 
-    void set_song_position(short pos);
+    void set_song_position(std::int16_t pos);
 
     void set_song_select(std::uint8_t sng);
 
@@ -317,7 +317,7 @@ class MIDIMessage
 
     void set_meta_event(std::uint8_t type, std::uint8_t v1, std::uint8_t v2);
 
-    void set_meta_event(std::uint8_t type, unsigned short v);
+    void set_meta_event(std::uint8_t type, std::uint16_t v);
 
     void set_all_notes_off(std::uint8_t chan, std::uint8_t type = C_ALL_NOTES_OFF);
 
@@ -325,9 +325,9 @@ class MIDIMessage
 
     void set_no_op();
 
-    void set_tempo32(unsigned short tempo_times_32);
+    void set_tempo32(std::uint16_t tempo_times_32);
 
-    void set_text(unsigned short text_num, std::uint8_t type = META_GENERIC_TEXT);
+    void set_text(std::uint16_t text_num, std::uint8_t type = META_GENERIC_TEXT);
 
     void set_data_end();
 

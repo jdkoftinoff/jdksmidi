@@ -100,7 +100,7 @@ void MIDIKeySignature::reset()
         //
         _use_sharps = true;
 
-        for (short i = 0; i < _sharp_flat; ++i) {
+        for (std::int16_t i = 0; i < _sharp_flat; ++i) {
             _state[sharp_list[i]] = ACCSharp;
         }
     }

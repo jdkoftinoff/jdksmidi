@@ -109,7 +109,7 @@ class MIDIFileWrite : protected MIDIFile
 
     void write_event(MIDITimedMessage const& m);
     void write_event(std::uint32_t time, MIDISystemExclusive const* e);
-    void write_event(std::uint32_t time, unsigned short text_type, char const* text);
+    void write_event(std::uint32_t time, std::uint16_t text_type, char const* text);
     void write_event(MIDITimedBigMessage const& m);
 
     void write_meta_event(
@@ -148,7 +148,7 @@ class MIDIFileWrite : protected MIDIFile
         file_length += c;
     }
 
-    void write_short(unsigned short c);
+    void write_short(std::uint16_t c);
     void write_3_char(std::int32_t c);
     void write_long(std::uint32_t c);
 

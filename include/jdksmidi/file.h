@@ -69,9 +69,9 @@ class MIDIFile
 
     struct MIDIFileHeader
     {
-        short format;
-        short ntrks;
-        short division;
+        std::int16_t format;
+        std::int16_t ntrks;
+        std::int16_t division;
     };
 
     //
@@ -112,7 +112,7 @@ class MIDIFile
     // tempo clock
     //
 
-    static std::uint32_t convert_tempo_to_freq(short division, MIDITempo& tempo);
+    static std::uint32_t convert_tempo_to_freq(std::int16_t division, MIDITempo& tempo);
 
     //
     // Convert a four byte number to a std::uint32_t.
@@ -125,12 +125,12 @@ class MIDIFile
     }
 
     //
-    // Convert a two byte number to an unsigned short
+    // Convert a two byte number to a std::uint16_t
     //
 
-    static unsigned short to_16_bit(std::uint8_t a, std::uint8_t b)
+    static std::uint16_t to_16_bit(std::uint8_t a, std::uint8_t b)
     {
-        return (unsigned short)(((unsigned short)a << 8) + ((unsigned short)b << 0));
+        return (std::uint16_t)(((std::uint16_t)a << 8) + ((std::uint16_t)b << 0));
     }
 
     static std::uint32_t read_variable_length_number(std::uint8_t** in);

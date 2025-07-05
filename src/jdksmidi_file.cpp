@@ -51,7 +51,7 @@ MIDIFile::MIDIFile()
 MIDIFile::~MIDIFile()
 {}
 
-std::uint32_t MIDIFile::convert_tempo_to_freq(short division, MIDITempo& tempo)
+std::uint32_t MIDIFile::convert_tempo_to_freq(std::int16_t division, MIDITempo& tempo)
 {
     if (division > 0) {
         std::int32_t clocks_per_beat = static_cast<std::int32_t>(division) * 1000;
