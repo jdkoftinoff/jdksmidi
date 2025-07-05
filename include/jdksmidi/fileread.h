@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #ifndef JDKSMIDI_FILEREAD_H
 #define JDKSMIDI_FILEREAD_H
 

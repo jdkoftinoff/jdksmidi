@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #include "jdksmidi/file.h"
 #include "jdksmidi/tempo.h"
 

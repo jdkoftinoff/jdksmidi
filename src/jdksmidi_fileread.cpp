@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #include "jdksmidi/file.h"
 #include "jdksmidi/fileread.h"
 #include "jdksmidi/midi.h"
@@ -408,9 +407,9 @@ void MIDIFileRead::read_track()
                 c1 = e_get_c();
 
             form_chan_message(
-                (std::uint8_t)status,
-                (std::uint8_t)c1,
-                (std::uint8_t)((needed > 1) ? e_get_c() : 0));
+                static_cast<std::uint8_t>(status),
+                static_cast<std::uint8_t>(c1),
+                static_cast<std::uint8_t>((needed > 1) ? e_get_c() : 0));
             continue;
         }
 
@@ -513,7 +512,11 @@ std::uint32_t MIDIFileRead::read_32_bit()
     c2 = e_get_c();
     c3 = e_get_c();
     c4 = e_get_c();
-    return to_32_bit((std::uint8_t)c1, (std::uint8_t)c2, (std::uint8_t)c3, (std::uint8_t)c4);
+    return to_32_bit(
+        static_cast<std::uint8_t>(c1),
+        static_cast<std::uint8_t>(c2),
+        static_cast<std::uint8_t>(c3),
+        static_cast<std::uint8_t>(c4));
 }
 
 int MIDIFileRead::read_16_bit()
@@ -521,7 +524,7 @@ int MIDIFileRead::read_16_bit()
     int c1, c2;
     c1 = e_get_c();
     c2 = e_get_c();
-    return to_16_bit((std::uint8_t)c1, (std::uint8_t)c2);
+    return to_16_bit(static_cast<std::uint8_t>(c1), static_cast<std::uint8_t>(c2));
 }
 
 int MIDIFileRead::e_get_c()
@@ -536,13 +539,13 @@ int MIDIFileRead::e_get_c()
     }
 
     --to_be_read;
-    return (int)c;
+    return static_cast<int>(c);
 }
 
 void MIDIFileRead::msg_add(int a)
 {
     if (msg_index < static_cast<int>(message_buffer.size()))
-        message_buffer[msg_index++] = (std::uint8_t)a;
+        message_buffer[msg_index++] = static_cast<std::uint8_t>(a);
 }
 
 void MIDIFileRead::msg_init()

@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #include "jdksmidi/sysex.h"
 
 #include <vector>

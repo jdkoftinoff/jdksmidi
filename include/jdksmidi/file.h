@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #ifndef JDKSMIDI_FILE_H
 #define JDKSMIDI_FILE_H
 
@@ -113,8 +112,8 @@ class MIDIFile
 
     static std::uint32_t to_32_bit(std::uint8_t a, std::uint8_t b, std::uint8_t c, std::uint8_t d)
     {
-        return ((std::uint32_t)a << 24) + ((std::uint32_t)b << 16) + ((std::uint32_t)c << 8) +
-            ((std::uint32_t)d << 0);
+        return (static_cast<std::uint32_t>(a) << 24) + (static_cast<std::uint32_t>(b) << 16) +
+            (static_cast<std::uint32_t>(c) << 8) + (static_cast<std::uint32_t>(d) << 0);
     }
 
     //
@@ -123,7 +122,8 @@ class MIDIFile
 
     static std::uint16_t to_16_bit(std::uint8_t a, std::uint8_t b)
     {
-        return (std::uint16_t)(((std::uint16_t)a << 8) + ((std::uint16_t)b << 0));
+        return static_cast<std::uint16_t>(
+            (static_cast<std::uint16_t>(a) << 8) + (static_cast<std::uint16_t>(b) << 0));
     }
 
     static std::uint32_t read_variable_length_number(std::uint8_t** in);

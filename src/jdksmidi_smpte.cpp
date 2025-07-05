@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #include "jdksmidi/smpte.h"
 
 #include <cstdint>
@@ -159,23 +158,23 @@ void SMPTE::sample_to_time()
         //
         // std::int16_t num_minutes = (std::int16_t)((double)tmp_sample/(smpte_sample_rates[sample_rate]))/60;
         int num_minutes = tmp_sample / (48000 * 60);
-        DBG(printf("num_minutes=%d\n", (int)num_minutes));
+        DBG(printf("num_minutes=%d\n", static_cast<int>(num_minutes)));
         //
         // Calculate the number of tens of minutes that have gone by, including minute 00
         //
         int ten_minutes = num_minutes / 10;
-        DBG(printf("ten_minutes=%d\n", (int)ten_minutes));
+        DBG(printf("ten_minutes=%d\n", static_cast<int>(ten_minutes)));
         //
         // Calculate the number of frames that are dropped by this
         // time.
         //
         int drops = (num_minutes - ten_minutes) * 2;
-        DBG(printf("drops=%d\n", (int)drops));
+        DBG(printf("drops=%d\n", static_cast<int>(drops)));
         //
         // Offset the tmp_sample number by this amount of frames.
         //
         DBG(printf("tmp_sample before drops=%ld\n", (long)tmp_sample));
-        tmp_sample += (std::uint32_t)(drops * samples_per_frame);
+        tmp_sample += static_cast<std::uint32_t>(drops * samples_per_frame);
         DBG(printf("tmp_sample after drops=%ld\n", (long)tmp_sample));
     }
 
@@ -183,13 +182,13 @@ void SMPTE::sample_to_time()
     // Calculate the time in sub frames, frames, seconds, minutes, hours
     //
     auto rounded_sub_frames =
-        (std::uint32_t)((tmp_sample * the_smpte_rate * 100) / the_sample_rate + .5);
+        static_cast<std::uint32_t>((tmp_sample * the_smpte_rate * 100) / the_sample_rate + .5);
     DBG(printf("rounded_sub_frames = %ld\n", rounded_sub_frames));
-    _sub_frames = (std::uint8_t)((rounded_sub_frames) % 100);
-    _frames = (std::uint8_t)((rounded_sub_frames / 100) % max_frame);
-    _seconds = (std::uint8_t)((rounded_sub_frames / (100L * max_frame)) % 60);
-    _minutes = (std::uint8_t)((rounded_sub_frames / (100L * 60L * max_frame)) % 60);
-    _hours = (std::uint8_t)((rounded_sub_frames / (100L * 60L * 24L * max_frame)) % 24);
+    _sub_frames = static_cast<std::uint8_t>((rounded_sub_frames) % 100);
+    _frames = static_cast<std::uint8_t>((rounded_sub_frames / 100) % max_frame);
+    _seconds = static_cast<std::uint8_t>((rounded_sub_frames / (100L * max_frame)) % 60);
+    _minutes = static_cast<std::uint8_t>((rounded_sub_frames / (100L * 60L * max_frame)) % 60);
+    _hours = static_cast<std::uint8_t>((rounded_sub_frames / (100L * 60L * 24L * max_frame)) % 24);
 }
 
 void SMPTE::time_to_sample()
@@ -218,20 +217,20 @@ void SMPTE::time_to_sample()
         //
         // Calculate number of minutes that have gone by
         //
-        int num_minutes =
-            (int)((double)tmp_sample / (smpte_sample_rates[static_cast<int>(_sample_rate)] * 60));
-        DBG(printf("num_minutes=%d\n", (int)num_minutes));
+        int num_minutes = static_cast<int>(
+            (double)tmp_sample / (smpte_sample_rates[static_cast<int>(_sample_rate)] * 60));
+        DBG(printf("num_minutes=%d\n", static_cast<int>(num_minutes)));
         //
         // Calculate the number of tens of minutes that have gone by, including minute 00
         //
         int ten_minutes = num_minutes / 10;
-        DBG(printf("ten_minutes=%d\n", (int)ten_minutes));
+        DBG(printf("ten_minutes=%d\n", static_cast<int>(ten_minutes)));
         //
         // Calculate the number of frames that are dropped by this
         // time.
         //
         int drops = (num_minutes - ten_minutes) * 2;
-        DBG(printf("drops=%d\n", (int)drops));
+        DBG(printf("drops=%d\n", static_cast<int>(drops)));
         //
         // Offset the tmp_sample number by this amount of frames.
         //
@@ -243,7 +242,7 @@ void SMPTE::time_to_sample()
     //
     // save the calculated sample number in self.
     //
-    _sample_number = (std::uint32_t)tmp_sample;
+    _sample_number = static_cast<std::uint32_t>(tmp_sample);
 }
 
 void SMPTE::copy(const SMPTE& s)

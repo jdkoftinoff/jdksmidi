@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #ifndef JDKSMIDI_MATRIX_H
 #define JDKSMIDI_MATRIX_H
 

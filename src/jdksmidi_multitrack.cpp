@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"
 #include "jdksmidi/multitrack.h"

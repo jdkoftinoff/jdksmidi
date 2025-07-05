@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #ifndef JDKSMIDI_FILESHOW_H
 #define JDKSMIDI_FILESHOW_H
 

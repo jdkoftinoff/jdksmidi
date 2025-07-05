@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #ifndef JDKSMIDI_MULTITRACK_H
 #define JDKSMIDI_MULTITRACK_H
 

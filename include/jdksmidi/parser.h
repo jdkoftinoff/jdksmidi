@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #ifndef JDKSMIDI_PARSER_H
 #define JDKSMIDI_PARSER_H
 

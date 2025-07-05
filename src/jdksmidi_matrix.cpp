@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #include "jdksmidi/matrix.h"
 #include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"

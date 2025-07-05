@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #include "jdksmidi/filewrite.h"
 #include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"
@@ -94,35 +93,35 @@ void MIDIFileWrite::error_handler(char* s)
 
 void MIDIFileWrite::write_short(std::uint16_t c)
 {
-    write_character((std::uint8_t)((c >> 8) & 0xff));
-    write_character((std::uint8_t)((c & 0xff)));
+    write_character(static_cast<std::uint8_t>((c >> 8) & 0xff));
+    write_character(static_cast<std::uint8_t>((c & 0xff)));
 }
 
 void MIDIFileWrite::write_3_char(std::int32_t c)
 {
-    write_character((std::uint8_t)((c >> 16) & 0xff));
-    write_character((std::uint8_t)((c >> 8) & 0xff));
-    write_character((std::uint8_t)((c & 0xff)));
+    write_character(static_cast<std::uint8_t>((c >> 16) & 0xff));
+    write_character(static_cast<std::uint8_t>((c >> 8) & 0xff));
+    write_character(static_cast<std::uint8_t>((c & 0xff)));
 }
 
 void MIDIFileWrite::write_long(std::uint32_t c)
 {
-    write_character((std::uint8_t)((c >> 24) & 0xff));
-    write_character((std::uint8_t)((c >> 16) & 0xff));
-    write_character((std::uint8_t)((c >> 8) & 0xff));
-    write_character((std::uint8_t)((c & 0xff)));
+    write_character(static_cast<std::uint8_t>((c >> 24) & 0xff));
+    write_character(static_cast<std::uint8_t>((c >> 16) & 0xff));
+    write_character(static_cast<std::uint8_t>((c >> 8) & 0xff));
+    write_character(static_cast<std::uint8_t>((c & 0xff)));
 }
 
 void MIDIFileWrite::write_file_header(int format, int ntrks, int division)
 {
-    write_character((std::uint8_t)'M');
-    write_character((std::uint8_t)'T');
-    write_character((std::uint8_t)'h');
-    write_character((std::uint8_t)'d');
+    write_character(static_cast<std::uint8_t>('M'));
+    write_character(static_cast<std::uint8_t>('T'));
+    write_character(static_cast<std::uint8_t>('h'));
+    write_character(static_cast<std::uint8_t>('d'));
     write_long(6);
-    write_short((std::int16_t)format);
-    write_short((std::int16_t)ntrks);
-    write_short((std::int16_t)division);
+    write_short(static_cast<std::int16_t>(format));
+    write_short(static_cast<std::int16_t>(ntrks));
+    write_short(static_cast<std::int16_t>(division));
     file_length = 4 + 4 + 6;
 }
 
@@ -132,10 +131,10 @@ void MIDIFileWrite::write_track_header(std::uint32_t length)
     track_length = 0;
     track_time = 0;
     running_status = 0;
-    write_character((std::uint8_t)'M');
-    write_character((std::uint8_t)'T');
-    write_character((std::uint8_t)'r');
-    write_character((std::uint8_t)'k');
+    write_character(static_cast<std::uint8_t>('M'));
+    write_character(static_cast<std::uint8_t>('T'));
+    write_character(static_cast<std::uint8_t>('r'));
+    write_character(static_cast<std::uint8_t>('k'));
     write_long(length);
     file_length += 8;
     within_track = true;
@@ -154,7 +153,7 @@ int MIDIFileWrite::write_variable_num(std::uint32_t n)
     }
 
     while (true) {
-        write_character((std::uint8_t)(buffer & 0xff));
+        write_character(static_cast<std::uint8_t>(buffer & 0xff));
         cnt++;
 
         if (buffer & 0x80)
@@ -215,17 +214,17 @@ void MIDIFileWrite::write_event(MIDITimedMessage const& m)
 
         if (m.get_status() != running_status) {
             running_status = m.get_status();
-            write_character((std::uint8_t)running_status);
+            write_character(static_cast<std::uint8_t>(running_status));
             increment_counters(1);
         }
 
         if (len > 1) {
-            write_character((std::uint8_t)m.get_byte1());
+            write_character(static_cast<std::uint8_t>(m.get_byte1()));
             increment_counters(1);
         }
 
         if (len > 2) {
-            write_character((std::uint8_t)m.get_byte2());
+            write_character(static_cast<std::uint8_t>(m.get_byte2()));
             increment_counters(1);
         }
     }
@@ -284,17 +283,17 @@ void MIDIFileWrite::write_event(MIDITimedBigMessage const& m)
 
             if (m.get_status() != running_status) {
                 running_status = m.get_status();
-                write_character((std::uint8_t)running_status);
+                write_character(static_cast<std::uint8_t>(running_status));
                 increment_counters(1);
             }
 
             if (len > 1) {
-                write_character((std::uint8_t)m.get_byte1());
+                write_character(static_cast<std::uint8_t>(m.get_byte1()));
                 increment_counters(1);
             }
 
             if (len > 2) {
-                write_character((std::uint8_t)m.get_byte2());
+                write_character(static_cast<std::uint8_t>(m.get_byte2()));
                 increment_counters(1);
             }
         }
@@ -305,12 +304,12 @@ void MIDIFileWrite::write_event(std::uint32_t time, MIDISystemExclusive const* e
 {
     int len = e->get_length();
     write_delta_time(time);
-    write_character((std::uint8_t)SYSEX_START);
+    write_character(static_cast<std::uint8_t>(SYSEX_START));
     increment_counters(write_variable_num(len - 1));
 
     for (int i = 1; i < len; i++)  // skip the initial 0xF0
     {
-        write_character((std::uint8_t)(e->get_data(i)));
+        write_character(static_cast<std::uint8_t>(e->get_data(i)));
     }
 
     increment_counters(len);
@@ -320,14 +319,14 @@ void MIDIFileWrite::write_event(std::uint32_t time, MIDISystemExclusive const* e
 void MIDIFileWrite::write_event(std::uint32_t time, std::uint16_t text_type, char const* text)
 {
     write_delta_time(time);
-    write_character((std::uint8_t)0xff);       // META-Event
-    write_character((std::uint8_t)text_type);  // Text event type
+    write_character(static_cast<std::uint8_t>(0xff));       // META-Event
+    write_character(static_cast<std::uint8_t>(text_type));  // Text event type
     increment_counters(2);
     std::int32_t len = strlen(text);
     increment_counters(write_variable_num(len));
 
     while (*text) {
-        write_character((std::uint8_t)*text++);
+        write_character(static_cast<std::uint8_t>(*text++));
     }
 
     increment_counters(len);
@@ -338,13 +337,13 @@ void MIDIFileWrite::write_meta_event(
     std::uint32_t time, std::uint8_t type, std::uint8_t const* data, std::int32_t length)
 {
     write_delta_time(time);
-    write_character((std::uint8_t)0xff);  // META-Event
-    write_character((std::uint8_t)type);  // Meta-event type
+    write_character(static_cast<std::uint8_t>(0xff));  // META-Event
+    write_character(static_cast<std::uint8_t>(type));  // Meta-event type
     increment_counters(2);
     increment_counters(write_variable_num(length));
 
     for (int i = 0; i < length; i++) {
-        write_character((std::uint8_t)data[i]);
+        write_character(static_cast<std::uint8_t>(data[i]));
     }
 
     increment_counters(length);
@@ -354,9 +353,9 @@ void MIDIFileWrite::write_meta_event(
 void MIDIFileWrite::write_tempo(std::uint32_t time, std::int32_t tempo)
 {
     write_delta_time(time);
-    write_character((std::uint8_t)0xff);  // Meta-Event
-    write_character((std::uint8_t)0x51);  // Tempo event
-    write_character((std::uint8_t)0x03);  // length of event
+    write_character(static_cast<std::uint8_t>(0xff));  // Meta-Event
+    write_character(static_cast<std::uint8_t>(0x51));  // Tempo event
+    write_character(static_cast<std::uint8_t>(0x03));  // length of event
     write_3_char(tempo);
     increment_counters(6);
     running_status = 0;
@@ -365,11 +364,11 @@ void MIDIFileWrite::write_tempo(std::uint32_t time, std::int32_t tempo)
 void MIDIFileWrite::write_key_signature(std::uint32_t time, char sharp_flat, char minor)
 {
     write_delta_time(time);
-    write_character((std::uint8_t)0xff);        // Meta-Event
-    write_character((std::uint8_t)0x59);        // Key Sig
-    write_character((std::uint8_t)0x02);        // length of event
-    write_character((std::uint8_t)sharp_flat);  // - for flats, + for sharps
-    write_character((std::uint8_t)minor);       // 1 if minor key
+    write_character(static_cast<std::uint8_t>(0xff));        // Meta-Event
+    write_character(static_cast<std::uint8_t>(0x59));        // Key Sig
+    write_character(static_cast<std::uint8_t>(0x02));        // length of event
+    write_character(static_cast<std::uint8_t>(sharp_flat));  // - for flats, + for sharps
+    write_character(static_cast<std::uint8_t>(minor));       // 1 if minor key
     increment_counters(5);
     running_status = 0;
 }
@@ -382,13 +381,13 @@ void MIDIFileWrite::write_time_signature(
     char num_32nd_per_midi_quarter_note)
 {
     write_delta_time(time);
-    write_character((std::uint8_t)0xff);  // Meta-Event
-    write_character((std::uint8_t)0x58);  // time signature
-    write_character((std::uint8_t)0x04);  // length of event
-    write_character((std::uint8_t)numerator);
-    write_character((std::uint8_t)denominator_power);
-    write_character((std::uint8_t)midi_clocks_per_metronome);
-    write_character((std::uint8_t)num_32nd_per_midi_quarter_note);
+    write_character(static_cast<std::uint8_t>(0xff));  // Meta-Event
+    write_character(static_cast<std::uint8_t>(0x58));  // time signature
+    write_character(static_cast<std::uint8_t>(0x04));  // length of event
+    write_character(static_cast<std::uint8_t>(numerator));
+    write_character(static_cast<std::uint8_t>(denominator_power));
+    write_character(static_cast<std::uint8_t>(midi_clocks_per_metronome));
+    write_character(static_cast<std::uint8_t>(num_32nd_per_midi_quarter_note));
     increment_counters(7);
     running_status = 0;
 }
@@ -401,9 +400,9 @@ void MIDIFileWrite::write_end_of_track(std::uint32_t time)
             time = track_time;
 
         write_delta_time(time);
-        write_character((std::uint8_t)0xff);  // Meta-Event
-        write_character((std::uint8_t)0x2f);  // End of track
-        write_character((std::uint8_t)0x00);  // length of event
+        write_character(static_cast<std::uint8_t>(0xff));  // Meta-Event
+        write_character(static_cast<std::uint8_t>(0x2f));  // End of track
+        write_character(static_cast<std::uint8_t>(0x00));  // length of event
         increment_counters(3);
         within_track = false;
         running_status = 0;

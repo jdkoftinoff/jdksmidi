@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"
 #include "jdksmidi/track.h"
@@ -308,8 +307,8 @@ void MIDITrack::Sort()
 
 void MIDITrack::shrink()
 {
-    int num_chunks_used = (int)((num_events / MIDITrackChunkSize) + 1);
-    int num_chunks_alloced = (int)(buf_size / MIDITrackChunkSize);
+    int num_chunks_used = static_cast<int>((num_events / MIDITrackChunkSize) + 1);
+    int num_chunks_alloced = static_cast<int>(buf_size / MIDITrackChunkSize);
 
     if (num_chunks_used < num_chunks_alloced) {
         for (int i = num_chunks_used; i < num_chunks_alloced; ++i) {
@@ -322,9 +321,9 @@ void MIDITrack::shrink()
 
 bool MIDITrack::expand(int increase_amount)
 {
-    int num_chunks_to_expand = (int)((increase_amount / MIDITrackChunkSize) + 1);
-    int num_chunks_alloced = (int)(buf_size / MIDITrackChunkSize);
-    int new_last_chunk_num = (int)(num_chunks_to_expand + num_chunks_alloced);
+    int num_chunks_to_expand = static_cast<int>((increase_amount / MIDITrackChunkSize) + 1);
+    int num_chunks_alloced = static_cast<int>(buf_size / MIDITrackChunkSize);
+    int new_last_chunk_num = static_cast<int>(num_chunks_to_expand + num_chunks_alloced);
 
     if (new_last_chunk_num >= MIDIChunksPerTrack) {
         return false;

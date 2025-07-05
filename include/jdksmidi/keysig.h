@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #ifndef JDKSMIDI_KEYSIG_H
 #define JDKSMIDI_KEYSIG_H
 

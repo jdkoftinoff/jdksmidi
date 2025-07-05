@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #ifndef JDKSMIDI_SYSEX_H
 #define JDKSMIDI_SYSEX_H
 

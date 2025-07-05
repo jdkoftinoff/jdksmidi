@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #ifndef JDKSMIDI_MSG_H
 #define JDKSMIDI_MSG_H
 
@@ -92,15 +91,15 @@ class MIDIMessage
     int get_length() const;  ///< Get the length in bytes of the entire message.
 
     /// Get the _status byte of the message.
-    std::uint8_t get_status() const { return (std::uint8_t)_status; }
+    std::uint8_t get_status() const { return static_cast<std::uint8_t>(_status); }
 
     /// If the message is a channel message, this method returns the MIDI channel that the message
     /// is on.
-    std::uint8_t get_channel() const { return (std::uint8_t)(_status & 0x0f); }
+    std::uint8_t get_channel() const { return static_cast<std::uint8_t>(_status & 0x0f); }
 
     /// If the message is a channel message, this method returns the relevant top 4 bits which
     /// describe what type of channel message it is.
-    std::uint8_t get_type() const { return (std::uint8_t)(_status & 0xf0); }
+    std::uint8_t get_type() const { return static_cast<std::uint8_t>(_status & 0xf0); }
 
     /// If the message is some sort of meta-message, then GetMetaType returns the type byte.
     std::uint8_t get_meta_type() const { return _byte1; }
@@ -246,10 +245,10 @@ class MIDIMessage
     void set_status(std::uint8_t s) { _status = s; }
 
     /// set just the lower 4 bits of the _status byte without changing the upper 4 bits
-    void set_channel(std::uint8_t s) { _status = (std::uint8_t)((_status & 0xf0) | s); }
+    void set_channel(std::uint8_t s) { _status = static_cast<std::uint8_t>((_status & 0xf0) | s); }
 
     /// set just the upper 4 bits of the _status byte without changing the lower 4 bits
-    void set_type(std::uint8_t s) { _status = (std::uint8_t)((_status & 0x0f) | s); }
+    void set_type(std::uint8_t s) { _status = static_cast<std::uint8_t>((_status & 0x0f) | s); }
 
     /// Set the value of the data byte 1
     void set_byte1(std::uint8_t b) { _byte1 = b; }

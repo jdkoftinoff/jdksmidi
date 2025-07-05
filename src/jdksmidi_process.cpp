@@ -77,7 +77,7 @@ bool MIDIProcessorTransposer::process(MIDITimedBigMessage* msg)
     if (msg->is_channel_msg()) {
         if (msg->is_note_on() || msg->is_note_off() || msg->is_poly_pressure()) {
             int trans = trans_amount[msg->get_channel()];
-            int new_note = ((int)msg->get_note()) + trans;
+            int new_note = (static_cast<int>(msg->get_note())) + trans;
 
             if (trans > 127 || trans < 0) {
                 // delete event if out of range
@@ -86,7 +86,7 @@ bool MIDIProcessorTransposer::process(MIDITimedBigMessage* msg)
 
             else {
                 // set new note number
-                msg->set_note((std::uint8_t)new_note);
+                msg->set_note(static_cast<std::uint8_t>(new_note));
             }
         }
     }
@@ -120,7 +120,7 @@ bool MIDIProcessorRechannelizer::process(MIDITimedBigMessage* msg)
             return false;
         }
 
-        msg->set_channel((std::uint8_t)new_chan);
+        msg->set_channel(static_cast<std::uint8_t>(new_chan));
     }
 
     return true;

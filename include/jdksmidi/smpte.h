@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #ifndef JDKSMIDI_SMPTE_H
 #define JDKSMIDI_SMPTE_H
 

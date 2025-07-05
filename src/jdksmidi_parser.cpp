@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"
 #include "jdksmidi/parser.h"
@@ -65,7 +64,7 @@ bool MIDIParser::parse(std::uint8_t b, MIDIMessage* msg)
         //
         // check for system messages (>=0xf0)
         //
-        auto stat = (std::uint8_t)(b & 0xf0);
+        auto stat = static_cast<std::uint8_t>(b & 0xf0);
 
         if (stat == 0xf0) {
             //

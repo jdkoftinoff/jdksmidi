@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #include "jdksmidi/filereadmultitrack.h"
 #include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"
@@ -125,13 +124,13 @@ void MIDIFileReadMultiTrack::mf_timesig(
 {
     MIDITimedMessage msg;
     int denom = 1 << denom_power;
-    msg.set_time_sig((std::uint8_t)num, (std::uint8_t)denom);
+    msg.set_time_sig(static_cast<std::uint8_t>(num), static_cast<std::uint8_t>(denom));
     msg.set_time(time);
     auto sysex = new MIDISystemExclusive(4);
-    sysex->put_byte((std::uint8_t)num);
-    sysex->put_byte((std::uint8_t)denom_power);
-    sysex->put_byte((std::uint8_t)clks_per_metro);
-    sysex->put_byte((std::uint8_t)notated_32nd_per_quarter);
+    sysex->put_byte(static_cast<std::uint8_t>(num));
+    sysex->put_byte(static_cast<std::uint8_t>(denom_power));
+    sysex->put_byte(static_cast<std::uint8_t>(clks_per_metro));
+    sysex->put_byte(static_cast<std::uint8_t>(notated_32nd_per_quarter));
     add_event_to_multi_track(msg, sysex, cur_track);
 }
 
@@ -157,7 +156,7 @@ void MIDIFileReadMultiTrack::mf_tempo(MIDIClockTime time, std::uint32_t tempo)
 void MIDIFileReadMultiTrack::mf_keysig(MIDIClockTime time, int c, int v)
 {
     MIDITimedMessage msg;
-    msg.set_key_sig((std::uint8_t)c, (std::uint8_t)v);
+    msg.set_key_sig(static_cast<std::uint8_t>(c), static_cast<std::uint8_t>(v));
     msg.set_time(time);
     add_event_to_multi_track(msg, nullptr, cur_track);
 }
@@ -172,7 +171,7 @@ void MIDIFileReadMultiTrack::mf_text(MIDIClockTime time, int type, int len, std:
     MIDITimedMessage msg;
     msg.set_status(META_EVENT);
     msg.set_meta_type(
-        (std::uint8_t)type);  // remember - MF_*_TEXT* id codes match META_*_TEXT codes
+        static_cast<std::uint8_t>(type));  // remember - MF_*_TEXT* id codes match META_*_TEXT codes
     msg.set_time(time);
     auto sysex = new MIDISystemExclusive(len);
 

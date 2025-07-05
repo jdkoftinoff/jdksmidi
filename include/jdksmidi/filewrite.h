@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #ifndef JDKSMIDI_FILEWRITE_H
 #define JDKSMIDI_FILEWRITE_H
 

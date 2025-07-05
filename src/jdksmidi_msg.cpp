@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #include "jdksmidi/midi.h"
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
@@ -257,12 +256,12 @@ int MIDIMessage::get_length() const
 
 std::int16_t MIDIMessage::get_bender_value() const
 {
-    return (std::int16_t)(((_byte2 << 7) | _byte1) - 8192);
+    return static_cast<std::int16_t>(((_byte2 << 7) | _byte1) - 8192);
 }
 
 std::uint16_t MIDIMessage::get_meta_value() const
 {
-    return (std::uint16_t)((_byte3 << 8) | _byte2);
+    return static_cast<std::uint16_t>((_byte3 << 8) | _byte2);
 }
 
 std::uint8_t MIDIMessage::get_time_sig_numerator() const
@@ -277,7 +276,7 @@ std::uint8_t MIDIMessage::get_time_sig_denominator() const
 
 int MIDIMessage::get_key_sig_sharp_flats() const
 {
-    return (int)(std::int8_t)_byte2;
+    return static_cast<int>(static_cast<std::int8_t>(_byte2));
 }
 
 std::uint8_t MIDIMessage::get_key_sig_major_minor() const
@@ -337,7 +336,7 @@ bool MIDIMessage::is_sys_ex() const
 
 std::int16_t MIDIMessage::get_sys_ex_num() const
 {
-    return (std::int16_t)((_byte3 << 8) | _byte2);
+    return static_cast<std::int16_t>((_byte3 << 8) | _byte2);
 }
 
 bool MIDIMessage::is_mtc() const

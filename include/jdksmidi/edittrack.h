@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #ifndef JDKSMIDI_EDITTRACK_H
 #define JDKSMIDI_EDITTRACK_H
 

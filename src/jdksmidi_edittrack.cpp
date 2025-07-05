@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #include "jdksmidi/edittrack.h"
 #include "jdksmidi/midi.h"
 

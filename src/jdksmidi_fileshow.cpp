@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #include "jdksmidi/fileread.h"
 #include "jdksmidi/fileshow.h"
 #include "jdksmidi/midi.h"
@@ -75,8 +74,8 @@ void MIDIFileShow::mf_header(int format, int ntrks, int d)
     division = d;
 
     if (division > 0x8000) {
-        std::uint8_t smpte_rate = ((std::uint8_t)((-division) >> 8));
-        auto smpte_division = (std::uint8_t)(division & 0xff);
+        std::uint8_t smpte_rate = (static_cast<std::uint8_t>((-division) >> 8));
+        auto smpte_division = static_cast<std::uint8_t>(division & 0xff);
         fprintf(out, " SMPTE=%d Division=%d\n", smpte_rate, smpte_division);
     }
 
@@ -167,7 +166,7 @@ void MIDIFileShow::mf_sysex(MIDIClockTime time, MIDISystemExclusive const& ex)
         if ((i & 0x1f) == 0)
             fprintf(out, "\n");
 
-        fprintf(out, "%02x ", (int)ex.get_data(i));
+        fprintf(out, "%02x ", static_cast<int>(ex.get_data(i)));
     }
 
     fprintf(out, "\n");
@@ -182,7 +181,7 @@ void MIDIFileShow::mf_arbitrary(MIDIClockTime time, int len, std::uint8_t* data)
         if ((i & 0x1f) == 0)
             fprintf(out, "\n");
 
-        fprintf(out, "%02x ", (int)data[i]);
+        fprintf(out, "%02x ", static_cast<int>(data[i]));
     }
 
     fprintf(out, "\n");
@@ -197,7 +196,7 @@ void MIDIFileShow::mf_metamisc(MIDIClockTime time, int type, int len, std::uint8
         if ((i & 0x1f) == 0)
             fprintf(out, "\n");
 
-        fprintf(out, "%02x ", (int)data[i]);
+        fprintf(out, "%02x ", static_cast<int>(data[i]));
     }
 
     fprintf(out, "\n");
@@ -266,7 +265,7 @@ void MIDIFileShow::mf_sqspecific(MIDIClockTime time, int len, std::uint8_t* data
         if ((i & 0x1f) == 0)
             fprintf(out, "\n");
 
-        fprintf(out, "%02x ", (int)data[i]);
+        fprintf(out, "%02x ", static_cast<int>(data[i]));
     }
 
     fprintf(out, "\n");

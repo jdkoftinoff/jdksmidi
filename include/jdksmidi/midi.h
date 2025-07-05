@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #ifndef JDKSMIDI_MIDI_H
 #define JDKSMIDI_MIDI_H
 

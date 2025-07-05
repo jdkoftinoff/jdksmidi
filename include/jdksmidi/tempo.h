@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 
-
 #ifndef JDKSMIDI_TEMPO_H
 #define JDKSMIDI_TEMPO_H
 

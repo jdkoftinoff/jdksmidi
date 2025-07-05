@@ -47,7 +47,7 @@ MIDISequencerGUIEventNotifierWin32::~MIDISequencerGUIEventNotifierWin32()
 void MIDISequencerGUIEventNotifierWin32::Notify(MIDISequencer const* seq, MIDISequencerGUIEvent e)
 {
     if (en) {
-        PostMessage(dest_window, window_msg, wparam_value, (unsigned long)e);
+        PostMessage(dest_window, window_msg, wparam_value, static_cast<unsigned long> e);
     }
 }
 
@@ -95,14 +95,15 @@ bool MIDIDriverWin32::StartTimer(int res)
 
         timer_res = res;
 
-        if (timer_res < (int)tc.wPeriodMin)
-            timer_res = (int)tc.wPeriodMin;
+        if (timer_res < static_cast<int>(tc.wPeriodMin))
+            timer_res = static_cast<int>(tc.wPeriodMin);
 
-        if (timer_res > (int)tc.wPeriodMax)
-            timer_res = (int)tc.wPeriodMax;
+        if (timer_res > static_cast<int>(tc.wPeriodMax))
+            timer_res = static_cast<int>(tc.wPeriodMax);
 
         timeBeginPeriod(timer_res);
-        timer_id = timeSetEvent(res, res, win32_timer, (DWORD)this, TIME_PERIODIC);
+        timer_id =
+            timeSetEvent(res, res, win32_timer, reinterpret_cast<DWORD>(this), TIME_PERIODIC);
 
         if (timer_id) {
             timer_open = true;
@@ -124,7 +125,12 @@ void MIDIDriverWin32::StopTimer()
 bool MIDIDriverWin32::OpenMIDIInPort(int id)
 {
     if (!in_open) {
-        if (midiInOpen(&in_handle, id, (DWORD)win32_midi_in, (DWORD)this, CALLBACK_FUNCTION) != 0) {
+        if (midiInOpen(
+                &in_handle,
+                id,
+                reinterpret_cast<DWORD> win32_midi_in,
+                reinterpret_cast<DWORD>(this),
+                CALLBACK_FUNCTION) != 0) {
             return false;
         }
 
@@ -174,8 +180,9 @@ bool MIDIDriverWin32::HardwareMsgOut(MIDITimedBigMessage const& msg)
         // dont send sysex or meta-events
         if (msg.GetStatus() < 0xff && msg.GetStatus() != 0xf0) {
             DWORD winmsg;
-            winmsg = (((DWORD)msg.GetStatus() & 0xff) << 0) |
-                (((DWORD)msg.GetByte1() & 0xff) << 8) | (((DWORD)msg.GetByte2() & 0xff) << 16);
+            winmsg = ((reinterpret_cast<DWORD> msg.GetStatus() & 0xff) << 0) |
+                ((reinterpret_cast<DWORD> msg.GetByte1() & 0xff) << 8) |
+                ((reinterpret_cast<DWORD> msg.GetByte2() & 0xff) << 16);
 
             if (midiOutShortMsg(out_handle, winmsg) != 0) {
                 return false;
@@ -191,20 +198,20 @@ bool MIDIDriverWin32::HardwareMsgOut(MIDITimedBigMessage const& msg)
 void CALLBACK
 MIDIDriverWin32::win32_timer(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dw1, DWORD dw2)
 {
-    MIDIDriverWin32* self = (MIDIDriverWin32*)dwUser;
+    MIDIDriverWin32* self = reinterpret_cast<MIDIDriverWin32*>(dwUser);
     self->TimeTick(timeGetTime());
 }
 
 void CALLBACK MIDIDriverWin32::win32_midi_in(
     HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2)
 {
-    MIDIDriverWin32* self = (MIDIDriverWin32*)dwInstance;
+    MIDIDriverWin32* self = reinterpret_cast<MIDIDriverWin32*>(dwInstance);
 
     if (wMsg == MIM_DATA) {
         MIDITimedBigMessage msg;
-        msg.SetStatus((std::uint8_t)(dwParam1 & 0xff));
-        msg.SetByte1((std::uint8_t)((dwParam1 >> 8) & 0xff));
-        msg.SetByte2((std::uint8_t)((dwParam1 >> 16) & 0xff));
+        msg.SetStatus(static_cast<std::uint8_t>(dwParam1 & 0xff));
+        msg.SetByte1(static_cast<std::uint8_t>((dwParam1 >> 8) & 0xff));
+        msg.SetByte2(static_cast<std::uint8_t>((dwParam1 >> 16) & 0xff));
         msg.SetTime(timeGetTime());
         self->HardwareMsgIn(msg);
     }
