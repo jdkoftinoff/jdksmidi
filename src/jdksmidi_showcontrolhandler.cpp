@@ -299,7 +299,7 @@ bool MIDISCHandle::dispatch(MIDIShowControlPacket const& p)
                     p.get_seconds(),
                     p.get_frames(),
                     p.get_fract_frames());
-
+            break;
         case MIDI_SC_OPEN_Q_LIST:
             e = open_q_list(p.get_q_list());
             break;
