@@ -84,10 +84,8 @@ bool MIDIProcessorTransposer::process(MIDITimedBigMessage* msg)
                 return false;
             }
 
-            else {
-                // set new note number
-                msg->set_note(static_cast<std::uint8_t>(new_note));
-            }
+            // set new note number
+            msg->set_note(static_cast<std::uint8_t>(new_note));
         }
     }
 

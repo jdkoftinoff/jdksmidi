@@ -243,7 +243,7 @@ void MIDIFileShow::mf_keysig(MIDIClockTime time, int sf, int mi)
     show_time(time);
     fprintf(out, "Key Signature      ");
 
-    if (mi)
+    if (mi != 0)
         fprintf(out, "MINOR KEY  ");
 
     else

@@ -50,10 +50,8 @@ std::uint32_t MIDIFile::convert_tempo_to_freq(std::int16_t division, MIDITempo& 
         return (std::uint32_t)clocks_per_beat / micro_sec_per_beat;
     }
 
-    else {
-        // TO DO: handle smpte frame rate references
-        return 120;
-    }
+    // TO DO: handle smpte frame rate references
+    return 120;
 }
 
 std::uint32_t MIDIFile::read_variable_length_number(std::uint8_t** in)

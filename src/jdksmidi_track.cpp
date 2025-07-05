@@ -385,10 +385,8 @@ bool MIDITrack::get_event(int event_num, MIDITimedBigMessage* msg) const
         return false;
     }
 
-    else {
-        msg->copy(*get_event_address(event_num));
-        return true;
-    }
+    msg->copy(*get_event_address(event_num));
+    return true;
 }
 
 bool MIDITrack::set_event(int event_num, MIDITimedBigMessage const& msg)
@@ -397,10 +395,8 @@ bool MIDITrack::set_event(int event_num, MIDITimedBigMessage const& msg)
         return false;
     }
 
-    else {
-        get_event_address(event_num)->copy(msg);
-        return true;
-    }
+    get_event_address(event_num)->copy(msg);
+    return true;
 }
 
 bool MIDITrack::make_event_no_op(int event_num)
@@ -409,16 +405,14 @@ bool MIDITrack::make_event_no_op(int event_num)
         return false;
     }
 
-    else {
-        MIDITimedBigMessage* ev = get_event_address(event_num);
+    MIDITimedBigMessage* ev = get_event_address(event_num);
 
-        if (ev != nullptr) {
-            ev->clear_sys_ex();
-            ev->set_no_op();
-        }
-
-        return true;
+    if (ev != nullptr) {
+        ev->clear_sys_ex();
+        ev->set_no_op();
     }
+
+    return true;
 }
 
 bool MIDITrack::find_event_number(MIDIClockTime time, int* event_num) const
@@ -444,9 +438,7 @@ MIDITimedBigMessage const* MIDITrack::get_event(int event_num) const
         return nullptr;
     }
 
-    else {
-        return get_event_address(event_num);
-    }
+    return get_event_address(event_num);
 }
 
 MIDITimedBigMessage* MIDITrack::get_event(int event_num)
@@ -455,9 +447,7 @@ MIDITimedBigMessage* MIDITrack::get_event(int event_num)
         return nullptr;
     }
 
-    else {
-        return get_event_address(event_num);
-    }
+    return get_event_address(event_num);
 }
 
 int MIDITrack::get_buffer_size() const

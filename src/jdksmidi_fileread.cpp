@@ -271,20 +271,18 @@ int MIDIFileRead::read_mt(std::uint32_t type, int skip)
                 read |= c;
 
                 if (read == type)
-                    return true;
+                    return 1;
 
                 if (abort_parse != 0)
-                    return false;
+                    return 0;
             } while (c != -1);
         }
 
         mf_error("Error looking for chunk type");
-        return false;
+        return 0;
     }
 
-    else {
-        return true;
-    }
+    return 1;
 }
 
 int MIDIFileRead::read_header()

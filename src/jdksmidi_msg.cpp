@@ -249,9 +249,7 @@ int MIDIMessage::get_length() const
         return get_system_message_length(_status);
     }
 
-    else {
-        return get_message_length(_status);
-    }
+    return get_message_length(_status);
 }
 
 std::int16_t MIDIMessage::get_bender_value() const
@@ -291,7 +289,7 @@ bool MIDIMessage::is_channel_msg() const
 
 bool MIDIMessage::is_note_on() const
 {
-    return ((_status & 0xf0) == NOTE_ON) && _byte2;
+    return ((_status & 0xf0) == NOTE_ON) && (_byte2 != 0);
 }
 
 bool MIDIMessage::is_note_off() const
@@ -699,7 +697,7 @@ MIDISystemExclusive const* MIDIBigMessage::get_sys_ex() const
 
 void MIDIBigMessage::copy_sys_ex(MIDISystemExclusive const* e)
 {
-    if (e) {
+    if (e != nullptr) {
         sysex = std::make_unique<MIDISystemExclusive>(*e);
     } else {
         sysex.reset();

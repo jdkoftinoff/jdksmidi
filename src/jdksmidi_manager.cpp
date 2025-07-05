@@ -59,7 +59,7 @@ void MIDIManager::reset()
     _play_mode = false;
     _stop_mode = true;
 
-    if (_notifier) {
+    if (_notifier != nullptr) {
         _notifier->notify(_sequencer, MIDISequencerGUIEvent(MIDISequencerGUIEvent::GROUP_ALL));
     }
 }
@@ -67,7 +67,7 @@ void MIDIManager::reset()
 // to set and get the current sequencer
 void MIDIManager::set_seq(MIDISequencer* seq)
 {
-    if (_notifier) {
+    if (_notifier != nullptr) {
         _notifier->notify(_sequencer, MIDISequencerGUIEvent(MIDISequencerGUIEvent::GROUP_ALL));
     }
 
@@ -112,7 +112,7 @@ void MIDIManager::seq_play()
     _stop_mode = false;
     _play_mode = true;
 
-    if (_notifier) {
+    if (_notifier != nullptr) {
         _notifier->notify(
             _sequencer,
             MIDISequencerGUIEvent(
@@ -138,7 +138,7 @@ void MIDIManager::seq_stop()
     _play_mode = false;
     _stop_mode = true;
 
-    if (_notifier) {
+    if (_notifier != nullptr) {
         _notifier->notify(
             _sequencer,
             MIDISequencerGUIEvent(
@@ -219,7 +219,7 @@ void MIDIManager::time_tick_play_mode(std::uint32_t sys_time_)
         _stop_mode = true;
         _play_mode = false;
 
-        if (_notifier) {
+        if (_notifier != nullptr) {
             _notifier->notify(
                 _sequencer,
                 MIDISequencerGUIEvent(

@@ -50,7 +50,7 @@ bool MIDIFileWriteMultiTrack::write(int num_tracks, int division)
     }
 
     // first, write the header.
-    writer.write_file_header((num_tracks > 0), num_tracks, division);
+    writer.write_file_header((num_tracks > 0) ? 1 : 0, num_tracks, division);
     // now write each track
 
     for (int i = 0; i < num_tracks; ++i) {
@@ -63,11 +63,11 @@ bool MIDIFileWriteMultiTrack::write(int num_tracks, int division)
 
         writer.write_track_header(0);  // will be rewritten later
 
-        if (t) {
+        if (t != nullptr) {
             for (int event_num = 0; event_num < t->get_num_events(); ++event_num) {
                 auto ev = t->get_event_address(event_num);
 
-                if (ev && !ev->is_no_op()) {
+                if (ev != nullptr && !ev->is_no_op()) {
                     if (!ev->is_data_end()) {
                         writer.write_event(*ev);
 

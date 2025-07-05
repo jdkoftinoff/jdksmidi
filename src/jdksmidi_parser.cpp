@@ -74,13 +74,11 @@ bool MIDIParser::parse(std::uint8_t b, MIDIMessage* msg)
             return parse_system_byte(b, msg);
         }
 
-        else {
-            //
-            // Otherwise, this is a new status byte.
-            //
-            parse_status_byte(b);
-            return false;
-        }
+        //
+        // Otherwise, this is a new status byte.
+        //
+        parse_status_byte(b);
+        return false;
     }
 
     else {

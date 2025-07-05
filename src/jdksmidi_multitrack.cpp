@@ -171,11 +171,11 @@ void MIDIMultiTrackIterator::go_to_time(MIDIClockTime time)
         state._next_event_number[i] = -1;
 
         // are there any events in this track?
-        if (track && track->get_num_events() > 0) {
+        if (track != nullptr && track->get_num_events() > 0) {
             // yes, extract the time of the first event
             auto msg = track->get_event_address(0);
 
-            if (msg) {
+            if (msg != nullptr) {
                 // found the first message of the track. Keep track
                 // of the event number and the event time.
                 state._next_event_number[i] = 0;
@@ -209,9 +209,7 @@ bool MIDIMultiTrackIterator::get_cur_event_time(MIDIClockTime* t) const
         return true;
     }
 
-    else {
-        return false;
-    }
+    return false;
 }
 
 bool MIDIMultiTrackIterator::get_cur_event(int* track, MIDITimedBigMessage** msg) const
@@ -219,11 +217,11 @@ bool MIDIMultiTrackIterator::get_cur_event(int* track, MIDITimedBigMessage** msg
     int t = state.get_cur_event_track();
 
     if (t != -1) {
-        if (track) {
+        if (track != nullptr) {
             *track = t;
         }
 
-        if (msg) {
+        if (msg != nullptr) {
             int num = state._next_event_number[t];
 
             if (num >= 0) {
@@ -235,7 +233,7 @@ bool MIDIMultiTrackIterator::get_cur_event(int* track, MIDITimedBigMessage** msg
             }
 
             // do we really have a message?
-            if (!*msg) {
+            if (*msg == nullptr) {
                 // no, return false then
                 return false;
             }
@@ -244,9 +242,7 @@ bool MIDIMultiTrackIterator::get_cur_event(int* track, MIDITimedBigMessage** msg
         return true;
     }
 
-    else {
-        return false;
-    }
+    return false;
 }
 
 bool MIDIMultiTrackIterator::go_to_next_event()
@@ -295,11 +291,9 @@ bool MIDIMultiTrackIterator::go_to_next_event_on_track(int track_num)
         return false;  // at end of track
     }
 
-    else {
-        // not at end of track yet - get the time of the event
-        auto msg = track->get_event_address(*event_num);
-        state._next_event_time[track_num] = msg->get_time();
-    }
+    // not at end of track yet - get the time of the event
+    auto msg = track->get_event_address(*event_num);
+    state._next_event_time[track_num] = msg->get_time();
 
     return true;
 }

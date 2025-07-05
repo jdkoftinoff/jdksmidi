@@ -434,7 +434,7 @@ bool MIDIShowControlPacket::parse_q_list(MIDISystemExclusive const* e, int* pos)
 
 bool MIDIShowControlPacket::store_ascii(MIDISystemExclusive* e, char const* str) const
 {
-    while (*str) {
+    while (*str != 0) {
         e->put_byte(*str++);
     }
 
