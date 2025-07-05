@@ -25,15 +25,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-/*
-** Copyright 1986 to 1998 By Jeffrey Koftinoff
-**
-** All rights reserved.
-**
-** No one may duplicate this source code in any form for any reason
-** without the written permission given by Jeffrey Koftinoff
-**
-*/
+
 
 #ifndef JDKSMIDI_ADVANCEDSEQUENCER_H
 
@@ -135,8 +127,8 @@ class AdvancedSequencer
 
     MIDISequencer seq;
 
-    MIDIClockTime marker_times[1024];
-    int num_markers;
+    MIDIClockTime marker_times[1024]{};
+    int num_markers{};
 
     MIDIManager mgr;
 
@@ -145,7 +137,7 @@ class AdvancedSequencer
     bool repeat_play_mode;
 
     int num_warp_positions;
-    MIDISequencerState* warp_positions[MAX_WARP_POSITIONS];
+    MIDISequencerState* warp_positions[MAX_WARP_POSITIONS]{};
 
     bool file_loaded;
     bool chain_mode;

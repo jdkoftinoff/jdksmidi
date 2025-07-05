@@ -25,15 +25,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-/*
-** Copyright 1986 to 1998 By Jeffrey Koftinoff
-**
-** All rights reserved.
-**
-** No one may duplicate this source code in any form for any reason
-** without the written permission given by Jeffrey Koftinoff
-**
-*/
+
 
 #ifndef JDKSMIDI_FILEREAD_H
 #define JDKSMIDI_FILEREAD_H
@@ -192,9 +184,9 @@ class MIDIFileRead : protected MIDIFile
 
     void form_chan_message(std::uint8_t st, std::uint8_t b1, std::uint8_t b2);
 
-    int header_format;
-    int header_ntrks;
-    int header_division;
+    int header_format{};
+    int header_ntrks{};
+    int header_division{};
 
     MIDIFileReadStream* input_stream;
     MIDIFileEvents* event_handler;

@@ -25,15 +25,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-/*
-** Copyright 1986 to 1998 By Jeffrey Koftinoff
-**
-** All rights reserved.
-**
-** No one may duplicate this source code in any form for any reason
-** without the written permission given by Jeffrey Koftinoff
-**
-*/
+
 
 #include "jdksmidi/keysig.h"
 
