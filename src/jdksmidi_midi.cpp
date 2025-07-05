@@ -36,7 +36,6 @@
 */
 
 #include "jdksmidi/midi.h"
-#include "jdksmidi/world.h"
 
 namespace jdksmidi {
 

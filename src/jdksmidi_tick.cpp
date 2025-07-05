@@ -26,7 +26,8 @@
  *  SOFTWARE.
  */
 #include "jdksmidi/tick.h"
-#include "jdksmidi/world.h"
+
+#include <cstdint>
 
 namespace jdksmidi {
 

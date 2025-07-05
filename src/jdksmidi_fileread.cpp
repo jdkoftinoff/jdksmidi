@@ -36,7 +36,9 @@
 */
 
 #include "jdksmidi/fileread.h"
-#include "jdksmidi/world.h"
+
+#include <cstdint>  // for uint8_t, uint32_t
+#include <vector>   // for vector
 
 // TO DO: decide which way is right for this flag and fix it - The standard midi file format specs
 // are (were?) unclear
@@ -265,7 +267,7 @@ int MIDIFileRead::read_mt(std::uint32_t type, int skip)
 {
     std::uint32_t read = 0;
     int c;
-    read = OSTYPE(e_get_c(), e_get_c(), e_get_c(), e_get_c());
+    read = JDKSMIDI_OSTYPE(e_get_c(), e_get_c(), e_get_c(), e_get_c());
 
     if (type != read) {
         if (skip) {
@@ -297,7 +299,7 @@ int MIDIFileRead::read_header()
     int ntrks;
     int division;
 
-    if (read_mt(_MThd, skip_init) == 0xffff)
+    if (read_mt(header_MThd, skip_init) == 0xffff)
         return 0;
 
     if (abort_parse)
@@ -359,7 +361,7 @@ void MIDIFileRead::read_track()
     int status = 0;         // (possible running) status byte
     int needed;
 
-    if (read_mt(_MTrk, 0) == 0xffff)
+    if (read_mt(header_MTrk, 0) == 0xffff)
         return;
 
     to_be_read = read_32_bit();

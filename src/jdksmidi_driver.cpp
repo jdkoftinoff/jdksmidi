@@ -26,7 +26,8 @@
  *  SOFTWARE.
  */
 #include "jdksmidi/driver.h"
-#include "jdksmidi/world.h"
+
+#include <cstdint>  // for uint8_t, uint32_t
 
 namespace jdksmidi {
 

@@ -36,7 +36,8 @@
 */
 
 #include "jdksmidi/smpte.h"
-#include "jdksmidi/world.h"
+
+#include <cstdint>
 
 #ifndef DEBUG_MDSMPTE
 #    define DEBUG_MDSMPTE 0

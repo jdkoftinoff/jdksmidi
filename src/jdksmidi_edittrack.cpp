@@ -36,7 +36,8 @@
 */
 
 #include "jdksmidi/edittrack.h"
-#include "jdksmidi/world.h"
+
+#include <cstdint>  // for int32_t
 
 #ifndef DEBUG_MDETRACK
 #    define DEBUG_MDETRACK 0
@@ -57,14 +58,10 @@ MIDIEditTrackEventMatcher::~MIDIEditTrackEventMatcher()
 
 MIDIEditTrack::MIDIEditTrack(MIDITrack* track_)
     : track(track_)
-{
-    ENTER("MIDIEditTrack::MIDIEditTrack()");
-}
+{}
 
 MIDIEditTrack::~MIDIEditTrack()
-{
-    ENTER("MIDIEditTrack::~MIDIEditTrack()");
-}
+{}
 
 void MIDIEditTrack::process(
     MIDIClockTime start_time,
@@ -81,7 +78,6 @@ void MIDIEditTrack::process(
 //
 void MIDIEditTrack::truncate(MIDIClockTime start_time)
 {
-    ENTER("TO DO: MIDIEditTrack::truncate()");
     // TO DO:
 }
 
@@ -95,7 +91,6 @@ void MIDIEditTrack::merge(
     MIDIEditTrackEventMatcher* match1,
     MIDIEditTrackEventMatcher* match2)
 {
-    ENTER("TO DO: MIDIEditTrack::merge()");
     // TO DO:
 }
 
@@ -106,7 +101,6 @@ void MIDIEditTrack::merge(
 void MIDIEditTrack::erase(
     MIDIClockTime start, MIDIClockTime end, bool jagged, MIDIEditTrackEventMatcher* match)
 {
-    ENTER("TO DO: MIDIEditTrack::erase()");
     // TO DO:
 }
 
@@ -117,7 +111,6 @@ void MIDIEditTrack::erase(
 void MIDIEditTrack::delete_events(
     MIDIClockTime start, MIDIClockTime end, bool jagged, MIDIEditTrackEventMatcher* match)
 {
-    ENTER("TO DO: MIDIEditTrack::delete_events()");
     // TO DO:
 }
 
@@ -127,7 +120,6 @@ void MIDIEditTrack::delete_events(
 //
 void MIDIEditTrack::insert(MIDIClockTime start, MIDIClockTime length)
 {
-    ENTER("TO DO: MIDIEditTrack::insert()");
     // TO DO:
 }
 
@@ -136,7 +128,6 @@ void MIDIEditTrack::insert(MIDIClockTime start, MIDIClockTime length)
 //
 void MIDIEditTrack::shift(std::int32_t offset, MIDIEditTrackEventMatcher* match)
 {
-    ENTER("TO DO: MIDIEditTrack::shift()");
     // TO DO:
 }
 

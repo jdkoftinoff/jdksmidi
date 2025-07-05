@@ -36,7 +36,6 @@
 */
 
 #include "jdksmidi/multitrack.h"
-#include "jdksmidi/world.h"
 
 #ifndef DEBUG_MDMLTTRK
 #    define DEBUG_MDMLTTRK 0
@@ -54,7 +53,6 @@ MIDIMultiTrack::MIDIMultiTrack(int num_tracks_, bool deletable_)
     , _deletable(deletable_)
     , _clks_per_beat(480)
 {
-    ENTER("MIDIMultiTrack::MIDIMultiTrack()");
     _tracks = new MIDITrack*[_num_tracks];
 
     if (_tracks) {
@@ -72,7 +70,6 @@ MIDIMultiTrack::MIDIMultiTrack(int num_tracks_, bool deletable_)
 
 MIDIMultiTrack::~MIDIMultiTrack()
 {
-    ENTER("MIDIMultiTrack::~MIDIMultiTrack()");
 
     if (_deletable) {
         for (int i = 0; i < _num_tracks; ++i)

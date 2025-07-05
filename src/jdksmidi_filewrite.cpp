@@ -36,7 +36,11 @@
 */
 
 #include "jdksmidi/filewrite.h"
-#include "jdksmidi/world.h"
+
+#include <stdio.h>
+#include <string.h>
+
+#include <cstdint>
 
 #ifndef DEBUG_MDFWR
 #    define DEBUG_MDFWR 0
@@ -81,7 +85,6 @@ int MIDIFileWriteStreamFile::write_char(int c)
 MIDIFileWrite::MIDIFileWrite(MIDIFileWriteStream* out_stream_)
     : out_stream(out_stream_)
 {
-    ENTER("MIDIFileWrite::MIDIFileWrite()");
     file_length = 0;
     error = 0;
     track_length = 0;
@@ -91,27 +94,22 @@ MIDIFileWrite::MIDIFileWrite(MIDIFileWriteStream* out_stream_)
 }
 
 MIDIFileWrite::~MIDIFileWrite()
-{
-    ENTER("MIDIFileWrite::~MIDIFileWrite()");
-}
+{}
 
 void MIDIFileWrite::error_handler(char* s)
 {
-    ENTER("void MIDIFileWrite::error_handler()");
     // NULL method; can override.
     error = true;
 }
 
 void MIDIFileWrite::write_short(std::uint16_t c)
 {
-    ENTER("void    MIDIFileWrite::write_short()");
     write_character((std::uint8_t)((c >> 8) & 0xff));
     write_character((std::uint8_t)((c & 0xff)));
 }
 
 void MIDIFileWrite::write_3_char(std::int32_t c)
 {
-    ENTER("void MIDIFileWrite::write_3_char()");
     write_character((std::uint8_t)((c >> 16) & 0xff));
     write_character((std::uint8_t)((c >> 8) & 0xff));
     write_character((std::uint8_t)((c & 0xff)));
@@ -119,7 +117,6 @@ void MIDIFileWrite::write_3_char(std::int32_t c)
 
 void MIDIFileWrite::write_long(std::uint32_t c)
 {
-    ENTER("void MIDIFileWrite::write_long()");
     write_character((std::uint8_t)((c >> 24) & 0xff));
     write_character((std::uint8_t)((c >> 16) & 0xff));
     write_character((std::uint8_t)((c >> 8) & 0xff));
@@ -128,7 +125,6 @@ void MIDIFileWrite::write_long(std::uint32_t c)
 
 void MIDIFileWrite::write_file_header(int format, int ntrks, int division)
 {
-    ENTER("void MIDIFileWrite::write_file_header()");
     write_character((std::uint8_t)'M');
     write_character((std::uint8_t)'T');
     write_character((std::uint8_t)'h');
@@ -142,7 +138,6 @@ void MIDIFileWrite::write_file_header(int format, int ntrks, int division)
 
 void MIDIFileWrite::write_track_header(std::uint32_t length)
 {
-    ENTER("void MIDIFileWrite::write_track_header()");
     track_position = file_length;
     track_length = 0;
     track_time = 0;
@@ -158,7 +153,6 @@ void MIDIFileWrite::write_track_header(std::uint32_t length)
 
 int MIDIFileWrite::write_variable_num(std::uint32_t n)
 {
-    ENTER("std::int16_t MIDIFileWrite::write_variable_num()");
     std::uint32_t buffer;
     std::int16_t cnt = 0;
     buffer = n & 0x7f;
@@ -185,7 +179,6 @@ int MIDIFileWrite::write_variable_num(std::uint32_t n)
 
 void MIDIFileWrite::write_delta_time(std::uint32_t abs_time)
 {
-    ENTER("void MIDIFileWrite::write_delta_time()");
     std::int32_t dtime = abs_time - track_time;
 
     if (dtime < 0) {
@@ -199,7 +192,6 @@ void MIDIFileWrite::write_delta_time(std::uint32_t abs_time)
 
 void MIDIFileWrite::write_event(MIDITimedMessage const& m)
 {
-    ENTER("void    MIDIFileWrite::write_event()");
 
     if (m.is_no_op()) {
         return;
@@ -321,7 +313,6 @@ void MIDIFileWrite::write_event(MIDITimedBigMessage const& m)
 
 void MIDIFileWrite::write_event(std::uint32_t time, MIDISystemExclusive const* e)
 {
-    ENTER("void MIDIFileWrite::write_event()");
     int len = e->get_length();
     write_delta_time(time);
     write_character((std::uint8_t)SYSEX_START);
@@ -338,7 +329,6 @@ void MIDIFileWrite::write_event(std::uint32_t time, MIDISystemExclusive const* e
 
 void MIDIFileWrite::write_event(std::uint32_t time, std::uint16_t text_type, char const* text)
 {
-    ENTER("void MIDIFileWrite::write_event()");
     write_delta_time(time);
     write_character((std::uint8_t)0xff);       // META-Event
     write_character((std::uint8_t)text_type);  // Text event type
@@ -357,7 +347,6 @@ void MIDIFileWrite::write_event(std::uint32_t time, std::uint16_t text_type, cha
 void MIDIFileWrite::write_meta_event(
     std::uint32_t time, std::uint8_t type, std::uint8_t const* data, std::int32_t length)
 {
-    ENTER("void MIDIFileWrite::write_meta_event()");
     write_delta_time(time);
     write_character((std::uint8_t)0xff);  // META-Event
     write_character((std::uint8_t)type);  // Meta-event type
@@ -374,7 +363,6 @@ void MIDIFileWrite::write_meta_event(
 
 void MIDIFileWrite::write_tempo(std::uint32_t time, std::int32_t tempo)
 {
-    ENTER("void MIDIFileWrite::write_tempo()");
     write_delta_time(time);
     write_character((std::uint8_t)0xff);  // Meta-Event
     write_character((std::uint8_t)0x51);  // Tempo event
@@ -386,7 +374,6 @@ void MIDIFileWrite::write_tempo(std::uint32_t time, std::int32_t tempo)
 
 void MIDIFileWrite::write_key_signature(std::uint32_t time, char sharp_flat, char minor)
 {
-    ENTER("void MIDIFileWrite::write_key_signature()");
     write_delta_time(time);
     write_character((std::uint8_t)0xff);        // Meta-Event
     write_character((std::uint8_t)0x59);        // Key Sig
@@ -404,7 +391,6 @@ void MIDIFileWrite::write_time_signature(
     char midi_clocks_per_metronome,
     char num_32nd_per_midi_quarter_note)
 {
-    ENTER("void MIDIFileWrite::write_time_signature()");
     write_delta_time(time);
     write_character((std::uint8_t)0xff);  // Meta-Event
     write_character((std::uint8_t)0x58);  // time signature
@@ -419,7 +405,6 @@ void MIDIFileWrite::write_time_signature(
 
 void MIDIFileWrite::write_end_of_track(std::uint32_t time)
 {
-    ENTER("void MIDIFileWrite::write_end_of_track()");
 
     if (within_track == true) {
         if (time == 0)
@@ -437,7 +422,6 @@ void MIDIFileWrite::write_end_of_track(std::uint32_t time)
 
 void MIDIFileWrite::rewrite_track_length()
 {
-    ENTER("void MIDIFileWrite::rewrite_track_length()");
     // go back and patch in the tracks length into the track chunk
     // header, now that we know the proper value.
     // then make sure we go back to the end of the file

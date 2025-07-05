@@ -38,8 +38,6 @@
 #ifndef JDKSMIDI_MIDI_H
 #define JDKSMIDI_MIDI_H
 
-#include "jdksmidi/world.h"
-
 #include <cstdint>
 
 namespace jdksmidi {

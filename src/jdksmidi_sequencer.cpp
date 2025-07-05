@@ -26,9 +26,11 @@
  *  SOFTWARE.
  */
 #include "jdksmidi/sequencer.h"
-#include "jdksmidi/world.h"
 
 #include <cinttypes>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
 
 namespace jdksmidi {
 

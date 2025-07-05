@@ -26,7 +26,7 @@
  *  SOFTWARE.
  */
 
-#include "jdksmidi/world.h"
+#include <cstdint>
 
 #ifdef WIN32
 #    include "jdksmidi/driverwin32.h"

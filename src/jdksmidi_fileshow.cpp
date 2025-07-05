@@ -36,7 +36,10 @@
 */
 
 #include "jdksmidi/fileshow.h"
-#include "jdksmidi/world.h"
+
+#include <stdio.h>
+
+#include <cstdint>
 
 #ifndef DEBUG_MDFSH
 #    define DEBUG_MDFSH 0
@@ -51,14 +54,10 @@ namespace jdksmidi {
 
 MIDIFileShow::MIDIFileShow(FILE* out_)
     : out(out_)
-{
-    ENTER("MIDIFileShow::MIDIFileShow()");
-}
+{}
 
 MIDIFileShow::~MIDIFileShow()
-{
-    ENTER("MIDIFileShow::~MIDIFileShow()");
-}
+{}
 
 void MIDIFileShow::mf_error(char const* e)
 {

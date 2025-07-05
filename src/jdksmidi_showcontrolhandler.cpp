@@ -27,7 +27,8 @@
  */
 
 #include "jdksmidi/showcontrolhandler.h"
-#include "jdksmidi/world.h"
+
+#include <cstdint>
 
 namespace jdksmidi {
 

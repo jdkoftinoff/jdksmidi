@@ -30,9 +30,9 @@
 #include "jdksmidi/fileshow.h"
 #include "jdksmidi/multitrack.h"
 #include "jdksmidi/track.h"
-#include "jdksmidi/world.h"
 
 #include <cinttypes>
+#include <cstdint>
 
 using namespace jdksmidi;
 

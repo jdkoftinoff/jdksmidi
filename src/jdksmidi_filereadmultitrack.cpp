@@ -36,7 +36,8 @@
 */
 
 #include "jdksmidi/filereadmultitrack.h"
-#include "jdksmidi/world.h"
+
+#include <cstdint>
 
 namespace jdksmidi {
 

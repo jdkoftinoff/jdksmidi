@@ -36,8 +36,8 @@
 */
 
 #include "jdksmidi/track.h"
-#include "jdksmidi/world.h"
 
+#include <cstdint>
 #include <memory>
 
 #ifndef DEBUG_MDTRACK
@@ -428,7 +428,6 @@ bool MIDITrack::make_event_no_op(int event_num)
 
 bool MIDITrack::find_event_number(MIDIClockTime time, int* event_num) const
 {
-    ENTER("MIDITrack::find_event_number( int , int * )");
     // TO DO: try make this a binary search
 
     for (int i = 0; i < num_events; ++i) {

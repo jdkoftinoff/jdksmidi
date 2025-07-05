@@ -36,4 +36,5 @@
 */
 
 #include "jdksmidi/tempo.h"
-#include "jdksmidi/world.h"
+
+#include <cstdint>

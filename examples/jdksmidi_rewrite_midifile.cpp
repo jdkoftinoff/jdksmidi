@@ -36,7 +36,8 @@
 #include "jdksmidi/filewritemultitrack.h"
 #include "jdksmidi/multitrack.h"
 #include "jdksmidi/track.h"
-#include "jdksmidi/world.h"
+
+#include <cstdint>
 
 int main(int argc, char** argv)
 {

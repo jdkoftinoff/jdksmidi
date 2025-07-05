@@ -1,5 +1,11 @@
 #include "jdksmidi/advancedsequencer.h"
-#include "jdksmidi/world.h"
+
+#include <stdio.h>   // for snprintf, stdout
+#include <string.h>  // for memcpy, strcpy, strlen
+
+#include <cstdint>  // for int32_t, uint8_t, uint32_t
+#include <string>   // for basic_string, string
+#include <vector>   // for vector
 
 namespace jdksmidi {
 static void FixQuotes(char* s_)

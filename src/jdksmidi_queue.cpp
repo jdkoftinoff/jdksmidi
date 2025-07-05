@@ -26,7 +26,8 @@
  *  SOFTWARE.
  */
 #include "jdksmidi/queue.h"
-#include "jdksmidi/world.h"
+
+#include <atomic>
 
 namespace jdksmidi {
 

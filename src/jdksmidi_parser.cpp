@@ -36,8 +36,8 @@
 */
 
 #include "jdksmidi/parser.h"
-#include "jdksmidi/world.h"
 
+#include <cstdint>
 #include <memory>
 
 #ifndef DEBUG_MDPARSER
@@ -53,19 +53,15 @@ namespace jdksmidi {
 
 MIDIParser::MIDIParser(std::uint16_t max_sysex_size)
 {
-    ENTER("MIDIParser::MIDIParser");
     sysex = std::make_unique<MIDISystemExclusive>(max_sysex_size);
     state = FIND_STATUS;
 }
 
 MIDIParser::~MIDIParser()
-{
-    ENTER("MIDIParser::~MIDIParser");
-}
+{}
 
 bool MIDIParser::parse(std::uint8_t b, MIDIMessage* msg)
 {
-    ENTER("MIDIParser::parse()");
     //
     // No matter what state we are currently in we must deal
     // with bytes with the high bit set first.
@@ -104,7 +100,6 @@ bool MIDIParser::parse(std::uint8_t b, MIDIMessage* msg)
 
 bool MIDIParser::parse_system_byte(std::uint8_t b, MIDIMessage* msg)
 {
-    ENTER("MIDIParser::ParseSystemByte");
 
     switch (b) {
         case RESET: {
@@ -215,7 +210,6 @@ bool MIDIParser::parse_system_byte(std::uint8_t b, MIDIMessage* msg)
 
 void MIDIParser::parse_status_byte(std::uint8_t b)
 {
-    ENTER("MIDIParser::ParseStatusByte");
     char len = get_message_length(b);
 
     if (len == 2) {
@@ -236,7 +230,6 @@ void MIDIParser::parse_status_byte(std::uint8_t b)
 
 bool MIDIParser::parse_data_byte(std::uint8_t b, MIDIMessage* msg)
 {
-    ENTER("MIDIParser::ParseDataByte");
 
     switch (state) {
         case FIND_STATUS: {

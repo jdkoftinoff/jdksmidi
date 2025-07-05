@@ -36,7 +36,8 @@
 */
 
 #include "jdksmidi/keysig.h"
-#include "jdksmidi/world.h"
+
+#include <cstdint>
 
 #ifndef DEBUG_MDKEYSIG
 #    define DEBUG_MDKEYSIG 0
@@ -54,7 +55,6 @@ int MIDIKeySignature::flat_list[7] = {6, 2, 5, 1, 4, 0, 3};
 
 MIDIKeySignature::MIDIKeySignature()
 {
-    ENTER("MIDIKeySignature::MIDIKeySignature()");
     _use_sharps = true;
     _sharp_flat = 0;
     _major = true;
@@ -63,7 +63,6 @@ MIDIKeySignature::MIDIKeySignature()
 
 MIDIKeySignature::MIDIKeySignature(MIDIKeySignature const& k)
 {
-    ENTER("MIDIKeySignature::MIDIKeySignature()");
     _use_sharps = k._use_sharps;
     _sharp_flat = k._sharp_flat;
     _major = k._major;
@@ -77,7 +76,6 @@ MIDIKeySignature::MIDIKeySignature(MIDIKeySignature const& k)
 
 void MIDIKeySignature::reset()
 {
-    ENTER("MIDIKeySignature::reset()");
 
     if (_sharp_flat < -7)
         _sharp_flat = -7;
@@ -121,7 +119,6 @@ void MIDIKeySignature::reset()
 
 bool MIDIKeySignature::process_white_note(int in_note, int* out_note)
 {
-    ENTER("MIDIKeySignature::process_white_note()");
     //
     // check to see if this white note is allowed in the current
     // state.
@@ -158,7 +155,6 @@ bool MIDIKeySignature::process_white_note(int in_note, int* out_note)
 
 bool MIDIKeySignature::process_black_note(int in_note, int* out_note)
 {
-    ENTER("MIDIKeySignature::process_black_note()");
     //
     // if this note is already sharped,
     // return the note unchanged and return false
@@ -215,7 +211,6 @@ bool MIDIKeySignature::process_black_note(int in_note, int* out_note)
 
 bool MIDIKeySignature::convert_midi_note(int in_note, int* out_note)
 {
-    ENTER("MIDIKeySignature::convert_midi_note()");
     int octave = in_note / 12;
     int midi_note = in_note % 12;
     int actual_note = 0;

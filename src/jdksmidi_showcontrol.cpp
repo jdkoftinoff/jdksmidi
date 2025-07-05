@@ -27,9 +27,10 @@
  */
 
 #include "jdksmidi/showcontrol.h"
-#include "jdksmidi/world.h"
 
 #include <cinttypes>
+#include <cstdint>
+#include <cstdio>
 
 namespace jdksmidi {
 

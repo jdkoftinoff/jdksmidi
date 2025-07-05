@@ -51,9 +51,10 @@ namespace jdksmidi {
 // The MIDIFile class contains definitions and utilities to deal with
 // reading and writing midi files.
 //
+#define JDKSMIDI_OSTYPE(a, b, c, d) ((a) * 0x1000000 + (b) * 0x10000 + (c) * 0x100 + (d))
 
-std::uint32_t const _MThd = OSTYPE('M', 'T', 'h', 'd');
-std::uint32_t const _MTrk = OSTYPE('M', 'T', 'r', 'k');
+std::uint32_t const header_MThd = JDKSMIDI_OSTYPE('M', 'T', 'h', 'd');
+std::uint32_t const header_MTrk = JDKSMIDI_OSTYPE('M', 'T', 'r', 'k');
 
 class MIDIFile
 {

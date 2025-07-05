@@ -26,7 +26,6 @@
  *  SOFTWARE.
  */
 #include "jdksmidi/filewritemultitrack.h"
-#include "jdksmidi/world.h"
 
 namespace jdksmidi {
 

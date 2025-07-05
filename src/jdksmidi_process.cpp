@@ -26,7 +26,8 @@
  *  SOFTWARE.
  */
 #include "jdksmidi/process.h"
-#include "jdksmidi/world.h"
+
+#include <cstdint>
 
 namespace jdksmidi {
 

@@ -36,7 +36,8 @@
 */
 
 #include "jdksmidi/file.h"
-#include "jdksmidi/world.h"
+
+#include <cstdint>  // for uint32_t, uint8_t, int32_t, int16_t
 
 #if DEBUG_MDFILE
 #    undef DBG

@@ -30,6 +30,8 @@
 
 #include "jdksmidi/driver.h"
 
+#include <cstdio>
+
 namespace jdksmidi {
 
 class MIDIDriverDump : public MIDIDriver

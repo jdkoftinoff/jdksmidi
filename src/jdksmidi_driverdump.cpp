@@ -26,7 +26,10 @@
  *  SOFTWARE.
  */
 #include "jdksmidi/driverdump.h"
-#include "jdksmidi/world.h"
+
+#include <stdio.h>  // for fprintf, FILE
+
+#include <cstdint>  // for uint32_t
 
 namespace jdksmidi {
 

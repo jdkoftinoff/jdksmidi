@@ -36,7 +36,8 @@
 */
 
 #include "jdksmidi/matrix.h"
-#include "jdksmidi/world.h"
+
+#include <cstdint>
 
 #ifndef DEBUG_MDMATRIX
 #    define DEBUG_MDMATRIX 0
@@ -51,7 +52,6 @@ namespace jdksmidi {
 
 MIDIMatrix::MIDIMatrix()
 {
-    ENTER("MIDIMatrix::MIDIMatrix()");
 
     for (int channel = 0; channel < 16; channel++) {
         _channel_count[channel] = 0;
@@ -65,13 +65,10 @@ MIDIMatrix::MIDIMatrix()
 }
 
 MIDIMatrix::~MIDIMatrix()
-{
-    ENTER("MIDIMatrix::~MIDIMatrix()");
-}
+{}
 
 void MIDIMatrix::dec_note_count(MIDIMessage const&, int channel, int note)
 {
-    ENTER("MIDIMatrix::dec_note_count()");
 
     if (_note_on_count[channel][note] > 0) {
         --_note_on_count[channel][note];
@@ -82,20 +79,16 @@ void MIDIMatrix::dec_note_count(MIDIMessage const&, int channel, int note)
 
 void MIDIMatrix::inc_note_count(MIDIMessage const&, int channel, int note)
 {
-    ENTER("MIDIMatrix::inc_note_count()");
     ++_note_on_count[channel][note];
     ++_channel_count[channel];
     ++_total_count;
 }
 
 void MIDIMatrix::other_message(MIDIMessage const&)
-{
-    ENTER("MIDIMatrix::other_message()");
-}
+{}
 
 bool MIDIMatrix::process(MIDIMessage const& m)
 {
-    ENTER("MIDIMatrix::process()");
     bool status = false;
 
     if (m.is_channel_msg()) {
@@ -141,7 +134,6 @@ bool MIDIMatrix::process(MIDIMessage const& m)
 
 void MIDIMatrix::clear()
 {
-    ENTER("MIDIMatrix::clear()");
 
     for (int channel = 0; channel < 16; ++channel) {
         clear_channel(channel);
@@ -152,7 +144,6 @@ void MIDIMatrix::clear()
 
 void MIDIMatrix::clear_channel(int channel)
 {
-    ENTER("MIDIMatrix::clear_channel()");
 
     for (int note = 0; note < 128; ++note) {
         _total_count -= _note_on_count[channel][note];

@@ -44,6 +44,7 @@
 #include "jdksmidi/sysex.h"
 
 #include <cstdint>
+#include <cstdio>
 #include <vector>
 
 namespace jdksmidi {

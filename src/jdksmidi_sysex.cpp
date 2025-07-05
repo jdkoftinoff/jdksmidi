@@ -36,7 +36,8 @@
 */
 
 #include "jdksmidi/sysex.h"
-#include "jdksmidi/world.h"
+
+#include <cstdint>
 
 #ifndef DEBUG_MDSYSEX
 #    define DEBUG_MDSYSEX 0
@@ -53,7 +54,6 @@ MIDISystemExclusive::MIDISystemExclusive(int size_)
     : _max_len(size_)
     , _chk_sum(0)
 {
-    ENTER("MIDISystemExclusive::MIDISystemExclusive");
     _buffer.reserve(size_);
 }
 
@@ -63,8 +63,6 @@ MIDISystemExclusive::MIDISystemExclusive(MIDISystemExclusive const& e)
 {}
 
 MIDISystemExclusive::~MIDISystemExclusive()
-{
-    ENTER("MIDISystemExclusive::~MIDISystemExclusive");
-}
+{}
 
 }  // namespace jdksmidi

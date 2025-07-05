@@ -35,7 +35,8 @@
 #include "jdksmidi/multitrack.h"
 #include "jdksmidi/sequencer.h"
 #include "jdksmidi/track.h"
-#include "jdksmidi/world.h"
+
+#include <cstdint>
 
 using namespace jdksmidi;
 

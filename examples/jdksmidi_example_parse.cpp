@@ -30,9 +30,10 @@
 #include "jdksmidi/msg.h"
 #include "jdksmidi/parser.h"
 #include "jdksmidi/sysex.h"
-#include "jdksmidi/world.h"
 
 #include <cinttypes>
+#include <cstdint>
+#include <cstdio>
 
 using namespace jdksmidi;
 

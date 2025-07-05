@@ -37,7 +37,11 @@
 
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
-#include "jdksmidi/world.h"
+
+#include <stdio.h>
+#include <string.h>
+
+#include <cstdint>
 
 namespace jdksmidi {
 

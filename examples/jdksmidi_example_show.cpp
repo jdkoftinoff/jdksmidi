@@ -28,7 +28,8 @@
 
 #include "jdksmidi/fileread.h"
 #include "jdksmidi/fileshow.h"
-#include "jdksmidi/world.h"
+
+#include <cstdint>
 
 int main(int argc, char** argv)
 {
