@@ -47,8 +47,7 @@ MIDIDriver::MIDIDriver(int queue_size)
     , _tick_proc(nullptr)
 {}
 
-MIDIDriver::~MIDIDriver()
-{}
+MIDIDriver::~MIDIDriver() = default;
 
 void MIDIDriver::reset()
 {

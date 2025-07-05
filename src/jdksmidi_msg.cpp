@@ -39,8 +39,8 @@
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 #include <cstdint>
 #include <memory>
@@ -663,10 +663,7 @@ void MIDIBigMessage::copy(MIDIMessage const& m)
 // destructors
 //
 
-MIDIBigMessage::~MIDIBigMessage()
-{
-    // unique_ptr automatically handles cleanup
-}
+MIDIBigMessage::~MIDIBigMessage() = default;
 
 //
 // operator =

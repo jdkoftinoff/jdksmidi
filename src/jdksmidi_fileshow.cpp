@@ -41,7 +41,7 @@
 #include "jdksmidi/msg.h"
 #include "jdksmidi/sysex.h"
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <cstdint>
 

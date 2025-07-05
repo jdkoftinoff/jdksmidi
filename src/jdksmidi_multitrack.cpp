@@ -113,10 +113,7 @@ MIDIMultiTrackIteratorState::MIDIMultiTrackIteratorState(MIDIMultiTrackIteratorS
     , _next_event_time(m._next_event_time)
 {}
 
-MIDIMultiTrackIteratorState::~MIDIMultiTrackIteratorState()
-{
-    // vectors automatically clean up
-}
+MIDIMultiTrackIteratorState::~MIDIMultiTrackIteratorState() = default;
 
 MIDIMultiTrackIteratorState const& MIDIMultiTrackIteratorState::operator=(
     MIDIMultiTrackIteratorState const& m)
@@ -172,8 +169,7 @@ MIDIMultiTrackIterator::MIDIMultiTrackIterator(MIDIMultiTrack* mlt)
 
 {}
 
-MIDIMultiTrackIterator::~MIDIMultiTrackIterator()
-{}
+MIDIMultiTrackIterator::~MIDIMultiTrackIterator() = default;
 
 void MIDIMultiTrackIterator::go_to_time(MIDIClockTime time)
 {

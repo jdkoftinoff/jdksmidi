@@ -33,11 +33,9 @@
 
 namespace jdksmidi {
 
-MIDIProcessor::MIDIProcessor()
-{}
+MIDIProcessor::MIDIProcessor() = default;
 
-MIDIProcessor::~MIDIProcessor()
-{}
+MIDIProcessor::~MIDIProcessor() = default;
 
 MIDIMultiProcessor::MIDIMultiProcessor(int num)
     : processors(num, nullptr)
@@ -68,8 +66,7 @@ MIDIProcessorTransposer::MIDIProcessorTransposer()
     }
 }
 
-MIDIProcessorTransposer::~MIDIProcessorTransposer()
-{}
+MIDIProcessorTransposer::~MIDIProcessorTransposer() = default;
 
 void MIDIProcessorTransposer::set_all_transpose(int val)
 {
@@ -107,8 +104,7 @@ MIDIProcessorRechannelizer::MIDIProcessorRechannelizer()
     }
 }
 
-MIDIProcessorRechannelizer::~MIDIProcessorRechannelizer()
-{}
+MIDIProcessorRechannelizer::~MIDIProcessorRechannelizer() = default;
 
 void MIDIProcessorRechannelizer::set_all_rechan(int dest_chan)
 {

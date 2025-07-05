@@ -29,7 +29,7 @@
 #include "jdksmidi/driverdump.h"
 #include "jdksmidi/msg.h"
 
-#include <stdio.h>
+#include <cstdio>
 
 #include <cstdint>
 

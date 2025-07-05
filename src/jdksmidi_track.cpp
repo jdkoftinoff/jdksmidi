@@ -91,8 +91,7 @@ MIDITrack::MIDITrack(MIDITrack const& t)
     }
 }
 
-MIDITrack::~MIDITrack()
-{}
+MIDITrack::~MIDITrack() = default;
 
 void MIDITrack::clear()
 {

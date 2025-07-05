@@ -12,8 +12,8 @@
 #include "jdksmidi/sysex.h"
 #include "jdksmidi/track.h"
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 #include <cstdint>
 #include <string>
@@ -596,7 +596,7 @@ void AdvancedSequencer::extract_markers(std::vector<std::string>* list)
                     buf[m->get_sys_ex()->get_length()] = '\0';
                     FixQuotes(buf);
                     snprintf(line, sizeof(line), "%03d:%d        %s", measure + 1, beat + 1, buf);
-                    list->push_back(std::string(line));
+                    list->emplace_back(line);
                     marker_times[cnt++] = m->get_time();
                 }
             }
