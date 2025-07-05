@@ -33,11 +33,9 @@
 
 namespace jdksmidi {
 
-MIDISCHandle::MIDISCHandle()
-{}
+MIDISCHandle::MIDISCHandle() = default;
 
-MIDISCHandle::~MIDISCHandle()
-{}
+MIDISCHandle::~MIDISCHandle() = default;
 
 bool MIDISCHandle::dispatch(MIDIShowControlPacket const& p)
 {
