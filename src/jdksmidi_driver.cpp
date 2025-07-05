@@ -40,11 +40,6 @@ namespace jdksmidi {
 MIDIDriver::MIDIDriver(int queue_size)
     : _in_queue(queue_size)
     , _out_queue(queue_size)
-    , _in_proc(nullptr)
-    , _out_proc(nullptr)
-    , _thru_proc(nullptr)
-    , _thru_enable(false)
-    , _tick_proc(nullptr)
 {}
 
 MIDIDriver::~MIDIDriver() = default;
@@ -88,7 +83,7 @@ void MIDIDriver::all_notes_off()
 bool MIDIDriver::hardware_msg_in(MIDITimedBigMessage& msg)
 {
     // put input midi messages thru the in processor
-    if (_in_proc) {
+    if (_in_proc != nullptr) {
         if (_in_proc->process(&msg) == false) {
             // message was deleted, so ignore it.
             return true;
@@ -107,7 +102,7 @@ bool MIDIDriver::hardware_msg_in(MIDITimedBigMessage& msg)
 
     // now stick it through the THRU processor
 
-    if (_thru_proc) {
+    if (_thru_proc != nullptr) {
         if (_thru_proc->process(&msg) == false) {
             // message was deleted, so ignore it.
             return true;
@@ -132,7 +127,7 @@ bool MIDIDriver::hardware_msg_in(MIDITimedBigMessage& msg)
 void MIDIDriver::time_tick(std::uint32_t sys_time)
 {
     // run the additional tick procedure if we need to
-    if (_tick_proc) {
+    if (_tick_proc != nullptr) {
         _tick_proc->time_tick(sys_time);
     }
 

@@ -63,8 +63,8 @@ void MIDIFileReadMultiTrack::add_event_to_multi_track(
     if (dest_track != -1 && dest_track < multitrack->get_num_tracks()) {
         auto t = multitrack->get_track(dest_track);
 
-        if (t) {
-            t->put_event(msg, sysex);
+        if (t != nullptr) {
+            static_cast<void>(t->put_event(msg, sysex));
         }
     }
 }

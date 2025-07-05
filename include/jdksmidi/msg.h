@@ -88,153 +88,159 @@ class MIDIMessage
     ///@name The Query methods.
     //@{
 
-    int get_length() const;  ///< Get the length in bytes of the entire message.
+    [[nodiscard]] int get_length() const;  ///< Get the length in bytes of the entire message.
 
     /// Get the _status byte of the message.
-    std::uint8_t get_status() const { return static_cast<std::uint8_t>(_status); }
+    [[nodiscard]] std::uint8_t get_status() const { return static_cast<std::uint8_t>(_status); }
 
     /// If the message is a channel message, this method returns the MIDI channel that the message
     /// is on.
-    std::uint8_t get_channel() const { return static_cast<std::uint8_t>(_status & 0x0f); }
+    [[nodiscard]] std::uint8_t get_channel() const
+    {
+        return static_cast<std::uint8_t>(_status & 0x0f);
+    }
 
     /// If the message is a channel message, this method returns the relevant top 4 bits which
     /// describe what type of channel message it is.
-    std::uint8_t get_type() const { return static_cast<std::uint8_t>(_status & 0xf0); }
+    [[nodiscard]] std::uint8_t get_type() const
+    {
+        return static_cast<std::uint8_t>(_status & 0xf0);
+    }
 
     /// If the message is some sort of meta-message, then GetMetaType returns the type byte.
-    std::uint8_t get_meta_type() const { return _byte1; }
+    [[nodiscard]] std::uint8_t get_meta_type() const { return _byte1; }
 
     /// Access to the raw _byte1 of the message
-    std::uint8_t get_byte1() const { return _byte1; }
+    [[nodiscard]] std::uint8_t get_byte1() const { return _byte1; }
 
     /// Access to the raw _byte2 of the message
-    std::uint8_t get_byte2() const { return _byte2; }
+    [[nodiscard]] std::uint8_t get_byte2() const { return _byte2; }
 
     /// Access to the raw _byte3 of the message
-    std::uint8_t get_byte3() const { return _byte3; }
+    [[nodiscard]] std::uint8_t get_byte3() const { return _byte3; }
 
     /// If the message is a note on, note off, or poly aftertouch message, get_note() returns the
     /// note number
-    std::uint8_t get_note() const { return _byte1; }
+    [[nodiscard]] std::uint8_t get_note() const { return _byte1; }
 
     /// If the message is a note on, note off, or poly aftertouch message, get_velocity() returns the
     /// velocity or pressure
-    std::uint8_t get_velocity() const { return _byte2; }
+    [[nodiscard]] std::uint8_t get_velocity() const { return _byte2; }
 
     /// If the message is a channel pressure message, get_channel_pressure() returns the pressure
     /// value.
-    std::uint8_t get_channel_pressure() const { return _byte1; }
+    [[nodiscard]] std::uint8_t get_channel_pressure() const { return _byte1; }
 
     /// If the message is a 7 bit program change value, get_pg_value() returns the program number.
-    std::uint8_t get_pg_value() const { return _byte1; }
+    [[nodiscard]] std::uint8_t get_pg_value() const { return _byte1; }
 
     /// If the message is a control change message, get_controller() returns the controller number.
-    std::uint8_t get_controller() const { return _byte1; }
+    [[nodiscard]] std::uint8_t get_controller() const { return _byte1; }
 
     /// If the message is a control change message, get_controller_value() returns the 7 bit
     /// controller value.
-    std::uint8_t get_controller_value() const { return _byte2; }
+    [[nodiscard]] std::uint8_t get_controller_value() const { return _byte2; }
 
     /// If the message is a bender message, get_bender_value() returns the signed 14 bit bender value.
-    std::int16_t get_bender_value() const;
+    [[nodiscard]] std::int16_t get_bender_value() const;
 
     /// If the message is a meta-message, get_meta_value() returns the unsigned 14 bit value attached.
-    std::uint16_t get_meta_value() const;
+    [[nodiscard]] std::uint16_t get_meta_value() const;
 
     /// If the message is a _time signature meta-message, get_time_sig_numerator() returns the numerator
     /// of the _time signature.
-    std::uint8_t get_time_sig_numerator() const;
+    [[nodiscard]] std::uint8_t get_time_sig_numerator() const;
 
     /// If the message is a _time signature meta-message, get_time_sig_denominator() returns the
     /// denominator of the _time signature.
-    std::uint8_t get_time_sig_denominator() const;
+    [[nodiscard]] std::uint8_t get_time_sig_denominator() const;
 
     /// If the message is a key signature meta-message, get_key_sig_sharp_flats() returns to standard
     /// midi file form of the key. Negative values means that many flats, positive numbers means
     /// that many sharps.
-    int get_key_sig_sharp_flats() const;
+    [[nodiscard]] int get_key_sig_sharp_flats() const;
 
     /// If the message is a key signature meta-message, get_key_sig_major_minor() returns to standard
     /// midi file form of the key major/minor flag. 0 means a major key, 1 means a minor key.
-    std::uint8_t get_key_sig_major_minor() const;
+    [[nodiscard]] std::uint8_t get_key_sig_major_minor() const;
 
     /// If the message is some sort of real _time channel message, is_channel_msg() will return true.
     /// You can then call get_channel() for more information.
-    bool is_channel_msg() const;
+    [[nodiscard]] bool is_channel_msg() const;
 
     /// If the message is a note on message (but not a note on message with velocity>0), is_note_on()
     /// will return true. You can then call get_channel(), get_note() and get_velocity() for further
     /// information.
-    bool is_note_on() const;
+    [[nodiscard]] bool is_note_on() const;
 
     /// If the message is a note off message or a note on message with velocity == 0, is_note_off()
     /// will return true. You can then call get_channel(), get_note() and get_velocity() for further
     /// information.
-    bool is_note_off() const;
+    [[nodiscard]] bool is_note_off() const;
 
     /// If the message is a polyphonic pressure chanel message, is_poly_pressure() will return true.
     /// You can then call get_channel(), get_note() and get_velocity() for further informtion.
-    bool is_poly_pressure() const;
+    [[nodiscard]] bool is_poly_pressure() const;
 
     /// If the message is a control change message, is_control_change() will return true. You can then
     /// call get_channel(), get_controller() and get_controller_value() for further information.
-    bool is_control_change() const;
+    [[nodiscard]] bool is_control_change() const;
 
     /// If the message is a program change message, is_program_change() will return true.  You can
     /// then call get_channel() and get_pg_value() for further information.
-    bool is_program_change() const;
+    [[nodiscard]] bool is_program_change() const;
 
     /// If the message is a channel pressure change message, is_channel_pressure() will return true.
     /// You can then call get_channel() and get_channel_pressure() for further information.
-    bool is_channel_pressure() const;
+    [[nodiscard]] bool is_channel_pressure() const;
 
     /// If the message is a bender message, is_pitch_bend() will return true. You can then call
     /// get_channel() and get_bender_value() for further information
-    bool is_pitch_bend() const;
+    [[nodiscard]] bool is_pitch_bend() const;
 
     /// If the message is a system message (the _status byte is 0xf0 or higher), is_system_message()
     /// will return true.
-    bool is_system_message() const;
+    [[nodiscard]] bool is_system_message() const;
 
     /// If the message is a system exclusive marker, is_sys_ex() will return true. You can then call
     /// get_sys_ex_num() to extract a sysex id code which must be managed separately.
     /// \note Sysex messages are not stored in the MIDIMessage object. \see MIDIBigMessage
-    bool is_sys_ex() const;
+    [[nodiscard]] bool is_sys_ex() const;
 
-    std::int16_t get_sys_ex_num() const;
+    [[nodiscard]] std::int16_t get_sys_ex_num() const;
 
-    bool is_mtc() const;
+    [[nodiscard]] bool is_mtc() const;
 
-    bool is_song_position() const;
+    [[nodiscard]] bool is_song_position() const;
 
-    bool is_song_select() const;
+    [[nodiscard]] bool is_song_select() const;
 
-    bool is_tune_request() const;
+    [[nodiscard]] bool is_tune_request() const;
 
-    bool is_meta_event() const;
+    [[nodiscard]] bool is_meta_event() const;
 
-    bool is_text_event() const;
+    [[nodiscard]] bool is_text_event() const;
 
-    bool is_all_notes_off() const;
+    [[nodiscard]] bool is_all_notes_off() const;
 
-    bool is_no_op() const;
+    [[nodiscard]] bool is_no_op() const;
 
-    bool is_tempo() const;
+    [[nodiscard]] bool is_tempo() const;
 
-    bool is_data_end() const;
+    [[nodiscard]] bool is_data_end() const;
 
-    bool is_time_sig() const;
+    [[nodiscard]] bool is_time_sig() const;
 
-    bool is_key_sig() const;
+    [[nodiscard]] bool is_key_sig() const;
 
-    bool is_beat_marker() const;
+    [[nodiscard]] bool is_beat_marker() const;
 
     ///
     /// GetTempo() returns the tempo value in 1/32 bpm
     ///
-    std::uint16_t get_tempo32() const;
+    [[nodiscard]] std::uint16_t get_tempo32() const;
 
-    std::uint16_t get_loop_number() const;
+    [[nodiscard]] std::uint16_t get_loop_number() const;
 
     //@}
 
@@ -385,9 +391,9 @@ class MIDIBigMessage : public MIDIMessage
 
     ~MIDIBigMessage();
 
-    MIDISystemExclusive* get_sys_ex();
+    [[nodiscard]] MIDISystemExclusive* get_sys_ex();
 
-    MIDISystemExclusive const* get_sys_ex() const;
+    [[nodiscard]] MIDISystemExclusive const* get_sys_ex() const;
 
     std::unique_ptr<MIDISystemExclusive> sysex;
 };
@@ -421,7 +427,7 @@ class MIDITimedMessage : public MIDIMessage
     // 'Get' methods
     //
 
-    MIDIClockTime get_time() const;
+    [[nodiscard]] MIDIClockTime get_time() const;
 
     //
     // 'Set' methods
@@ -468,7 +474,7 @@ class MIDIDeltaTimedMessage : public MIDIMessage
     // 'Get' methods
     //
 
-    MIDIClockTime get_delta_time() const;
+    [[nodiscard]] MIDIClockTime get_delta_time() const;
 
     //
     // 'Set' methods
@@ -517,7 +523,7 @@ class MIDITimedBigMessage : public MIDIBigMessage
     // 'Get' methods
     //
 
-    MIDIClockTime get_time() const;
+    [[nodiscard]] MIDIClockTime get_time() const;
 
     //
     // 'Set' methods
@@ -572,7 +578,7 @@ class MIDIDeltaTimedBigMessage : public MIDIBigMessage
     // 'Get' methods
     //
 
-    MIDIClockTime get_delta_time() const;
+    [[nodiscard]] MIDIClockTime get_delta_time() const;
 
     //
     // 'Set' methods

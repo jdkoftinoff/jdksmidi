@@ -156,7 +156,7 @@ int MIDIFileWrite::write_variable_num(std::uint32_t n)
         write_character(static_cast<std::uint8_t>(buffer & 0xff));
         cnt++;
 
-        if (buffer & 0x80)
+        if ((buffer & 0x80) != 0u)
             buffer >>= 8;
 
         else
@@ -239,7 +239,7 @@ void MIDIFileWrite::write_event(MIDITimedBigMessage const& m)
     if (m.is_meta_event()) {
         // if this meta-event has a sysex buffer attached, this
         // buffer contains the raw midi file meta data
-        if (m.get_sys_ex()) {
+        if (m.get_sys_ex() != nullptr) {
             write_meta_event(
                 m.get_time(),
                 m.get_meta_type(),
@@ -274,7 +274,7 @@ void MIDIFileWrite::write_event(MIDITimedBigMessage const& m)
     else {
         std::int16_t len = m.get_length();
 
-        if (m.is_sys_ex() && m.get_sys_ex()) {
+        if (m.is_sys_ex() && m.get_sys_ex() != nullptr) {
             write_event(m.get_time(), m.get_sys_ex());
         }
 
@@ -325,7 +325,7 @@ void MIDIFileWrite::write_event(std::uint32_t time, std::uint16_t text_type, cha
     std::int32_t len = strlen(text);
     increment_counters(write_variable_num(len));
 
-    while (*text) {
+    while (*text != 0) {
         write_character(static_cast<std::uint8_t>(*text++));
     }
 

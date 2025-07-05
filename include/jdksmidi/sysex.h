@@ -91,20 +91,23 @@ class MIDISystemExclusive
 
     void put_checksum() { put_byte((std::uint8_t)(_chk_sum & 0x7f)); }
 
-    std::uint8_t get_checksum() const { return (std::uint8_t)(_chk_sum & 0x7f); }
+    [[nodiscard]] std::uint8_t get_checksum() const { return (std::uint8_t)(_chk_sum & 0x7f); }
 
-    int get_length() const { return static_cast<int>(_buffer.size()); }
+    [[nodiscard]] int get_length() const { return static_cast<int>(_buffer.size()); }
 
-    std::uint8_t get_data(int i) const
+    [[nodiscard]] std::uint8_t get_data(int i) const
     {
         return (i >= 0 && i < static_cast<int>(_buffer.size())) ? _buffer[i] : 0;
     }
 
-    bool is_full() const { return false; }
+    [[nodiscard]] bool is_full() const { return false; }
 
-    std::uint8_t* get_buf() { return _buffer.empty() ? nullptr : _buffer.data(); }
+    [[nodiscard]] std::uint8_t* get_buf() { return _buffer.empty() ? nullptr : _buffer.data(); }
 
-    std::uint8_t const* get_buf() const { return _buffer.empty() ? nullptr : _buffer.data(); }
+    [[nodiscard]] std::uint8_t const* get_buf() const
+    {
+        return _buffer.empty() ? nullptr : _buffer.data();
+    }
 
   private:
     std::vector<std::uint8_t> _buffer;

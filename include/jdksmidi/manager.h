@@ -46,19 +46,19 @@ class MIDIManager : public MIDITick
 
     // to set and get the current sequencer
     void set_seq(MIDISequencer* seq);
-    MIDISequencer* get_seq();
-    MIDISequencer const* get_seq() const;
+    [[nodiscard]] MIDISequencer* get_seq();
+    [[nodiscard]] MIDISequencer const* get_seq() const;
 
     // to get the driver that we use
-    MIDIDriver* get_driver() { return _driver; }
+    [[nodiscard]] MIDIDriver* get_driver() { return _driver; }
 
     // to set and get the system time offset
     void set_time_offset(std::uint32_t off);
-    std::uint32_t get_time_offset();
+    [[nodiscard]] std::uint32_t get_time_offset();
 
     // to set and get the sequencer time offset
     void set_seq_offset(std::uint32_t seqoff);
-    std::uint32_t get_seq_offset();
+    [[nodiscard]] std::uint32_t get_seq_offset();
 
     // to manage the playback of the sequencer
     void seq_play();
@@ -66,9 +66,9 @@ class MIDIManager : public MIDITick
     void set_repeat_play(bool flag, std::uint32_t start_measure, std::uint32_t end_measure);
 
     // status request functions
-    bool is_seq_play() const;
-    bool is_seq_stop() const;
-    bool is_seq_repeat() const;
+    [[nodiscard]] bool is_seq_play() const;
+    [[nodiscard]] bool is_seq_stop() const;
+    [[nodiscard]] bool is_seq_repeat() const;
 
     // inherited from MIDITick
     virtual void time_tick(std::uint32_t sys_time);

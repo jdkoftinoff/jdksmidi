@@ -108,7 +108,7 @@ bool MIDIMatrix::process(MIDIMessage const& m)
         }
 
         else if (m.is_control_change() && m.get_controller() == C_DAMPER) {
-            if (m.get_controller_value() & 0x40) {
+            if ((m.get_controller_value() & 0x40) != 0) {
                 _hold_pedal[channel] = true;
             }
 

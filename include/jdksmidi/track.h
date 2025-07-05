@@ -59,7 +59,7 @@ class MIDITrackChunk
     /// @param event_num an integer specifying an event number in the range 0 to MIDITrackChunkSize
     /// @returns The const pointer to the requested event.
     ///
-    MIDITimedBigMessage const* get_event_address(int event_num) const;
+    [[nodiscard]] MIDITimedBigMessage const* get_event_address(int event_num) const;
 
     ///
     /// get_event_address()  returns the address of the MIDITimedBigMessage referred to by event_num
@@ -67,7 +67,7 @@ class MIDITrackChunk
     /// @returns The non-const pointer to the requested event.
     ///
 
-    MIDITimedBigMessage* get_event_address(int event_num);
+    [[nodiscard]] MIDITimedBigMessage* get_event_address(int event_num);
 
   protected:
   private:
@@ -133,26 +133,26 @@ class MIDITrack
     //    bool  delete( int start_event, int num_events);
     //    void  Sort();
 
-    bool expand(int increase_amount = (MIDITrackChunkSize));
+    [[nodiscard]] bool expand(int increase_amount = (MIDITrackChunkSize));
 
-    MIDITimedBigMessage* get_event_address(int event_num);
+    [[nodiscard]] MIDITimedBigMessage* get_event_address(int event_num);
 
-    MIDITimedBigMessage const* get_event_address(int event_num) const;
+    [[nodiscard]] MIDITimedBigMessage const* get_event_address(int event_num) const;
 
-    MIDITimedBigMessage const* get_event(int event_num) const;
-    MIDITimedBigMessage* get_event(int event_num);
-    bool get_event(int event_num, MIDITimedBigMessage* msg) const;
+    [[nodiscard]] MIDITimedBigMessage const* get_event(int event_num) const;
+    [[nodiscard]] MIDITimedBigMessage* get_event(int event_num);
+    [[nodiscard]] bool get_event(int event_num, MIDITimedBigMessage* msg) const;
 
-    bool put_event(MIDITimedBigMessage const& msg);
-    bool put_event(MIDITimedMessage const& msg, MIDISystemExclusive* sysex);
-    bool set_event(int event_num, MIDITimedBigMessage const& msg);
+    [[nodiscard]] bool put_event(MIDITimedBigMessage const& msg);
+    [[nodiscard]] bool put_event(MIDITimedMessage const& msg, MIDISystemExclusive* sysex);
+    [[nodiscard]] bool set_event(int event_num, MIDITimedBigMessage const& msg);
 
-    bool make_event_no_op(int event_num);
+    [[nodiscard]] bool make_event_no_op(int event_num);
 
-    bool find_event_number(MIDIClockTime time, int* event_num) const;
+    [[nodiscard]] bool find_event_number(MIDIClockTime time, int* event_num) const;
 
-    int get_buffer_size() const;
-    int get_num_events() const;
+    [[nodiscard]] int get_buffer_size() const;
+    [[nodiscard]] int get_num_events() const;
 
   private:
     // void  QSort( int left, int right );

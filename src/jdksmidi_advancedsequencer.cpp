@@ -23,7 +23,7 @@ static void FixQuotes(char* s_)
 {
     auto* s = (std::uint8_t*)s_;
 
-    while (*s) {
+    while (*s != 0) {
         if (*s == 0xd2 || *s == 0xd3) {
             *s = '"';
         }
@@ -49,12 +49,6 @@ AdvancedSequencer::AdvancedSequencer()
     , notifier(stdout)
     , seq(&tracks, &notifier)
     , mgr(&driver, &notifier, &seq)
-    , repeat_start_measure(0)
-    , repeat_end_measure(0)
-    , repeat_play_mode(false)
-    , num_warp_positions(0)
-    , file_loaded(false)
-    , chain_mode(false)
 {}
 
 AdvancedSequencer::~AdvancedSequencer()
@@ -221,7 +215,7 @@ void AdvancedSequencer::go_to_measure(int measure, int beat)
     if (mgr.is_seq_play()) {
         stop();
 
-        if (warp_positions[warp_to_item]) {
+        if (warp_positions[warp_to_item] != nullptr) {
             seq.set_state(warp_positions[warp_to_item]);
         }
 
@@ -230,7 +224,7 @@ void AdvancedSequencer::go_to_measure(int measure, int beat)
     }
 
     else {
-        if (warp_positions[warp_to_item]) {
+        if (warp_positions[warp_to_item] != nullptr) {
             seq.set_state(warp_positions[warp_to_item]);
         }
 
@@ -567,7 +561,7 @@ void AdvancedSequencer::extract_markers(std::vector<std::string>* list)
     for (int i = 0; i < t->get_num_events(); ++i) {
         auto m = t->get_event_address(i);
 
-        if (m) {
+        if (m != nullptr) {
             // how many beats have gone by since the last event?
             std::int32_t beats_gone_by = (m->get_time() - last_beat_time) / clks_per_beat;
 
@@ -586,7 +580,7 @@ void AdvancedSequencer::extract_markers(std::vector<std::string>* list)
                 clks_per_beat = tracks.get_clks_per_beat() * 4 / timesig_denominator;
             }
 
-            if (m->is_text_event() && m->get_sys_ex()) {
+            if (m->is_text_event() && m->get_sys_ex() != nullptr) {
                 if ((m->get_meta_type() == META_GENERIC_TEXT) ||
                     m->get_meta_type() == META_MARKER_TEXT || m->get_meta_type() == META_CUE_TEXT) {
                     char buf[256];
@@ -639,14 +633,14 @@ int AdvancedSequencer::find_first_channel_on_track(int trk)
     int first_channel = -1;
     MIDITrack* t = tracks.get_track(trk);
 
-    if (t) {
+    if (t != nullptr) {
         // go through all events
         // until we find a channel message
         // and then return the channel number plus 1
         for (int i = 0; i < t->get_num_events(); ++i) {
             auto m = t->get_event_address(i);
 
-            if (m) {
+            if (m != nullptr) {
                 if (m->is_channel_msg()) {
                     first_channel = m->get_channel() + 1;
                     break;

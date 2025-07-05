@@ -46,7 +46,7 @@ MIDIMultiProcessor::~MIDIMultiProcessor() = default;
 bool MIDIMultiProcessor::process(MIDITimedBigMessage* msg)
 {
     for (auto* processor : processors) {
-        if (processor) {
+        if (processor != nullptr) {
             if (processor->process(msg) == false) {
                 return false;
             }

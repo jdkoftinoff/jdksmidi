@@ -60,7 +60,7 @@ bool MIDIParser::parse(std::uint8_t b, MIDIMessage* msg)
     // with bytes with the high bit set first.
     //
 
-    if (b & 0x80) {
+    if ((b & 0x80) != 0) {
         //
         // check for system messages (>=0xf0)
         //

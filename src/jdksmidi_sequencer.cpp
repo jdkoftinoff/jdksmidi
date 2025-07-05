@@ -45,7 +45,7 @@ static void FixQuotes(char* s_)
 {
     auto* s = (std::uint8_t*)s_;
 
-    while (*s) {
+    while (*s != 0) {
         if (*s == 0xd2 || *s == 0xd3) {
             *s = '"';
         }
@@ -136,7 +136,7 @@ MIDISequencerTrackNotifier::~MIDISequencerTrackNotifier() = default;
 
 void MIDISequencerTrackNotifier::notify(int item)
 {
-    if (notifier) {
+    if (notifier != nullptr) {
         notifier->notify(
             seq, MIDISequencerGUIEvent(MIDISequencerGUIEvent::GROUP_TRACK, track_num, item));
     }
@@ -145,7 +145,7 @@ void MIDISequencerTrackNotifier::notify(int item)
 void MIDISequencerTrackNotifier::notify_conductor(int item)
 {
     // only notify conductor if we are track #0
-    if (notifier && track_num == 0) {
+    if (notifier != nullptr && track_num == 0) {
         notifier->notify(
             seq, MIDISequencerGUIEvent(MIDISequencerGUIEvent::GROUP_CONDUCTOR, 0, item));
     }
@@ -190,7 +190,7 @@ bool MIDISequencerTrackProcessor::process(MIDITimedBigMessage* msg)
 
     // pass the event to our extra_proc if we have one
 
-    if (extra_proc && extra_proc->process(msg) == false) {
+    if (extra_proc != nullptr && extra_proc->process(msg) == false) {
         // extra_proc wanted to ignore this event
         return false;
     }
@@ -343,7 +343,7 @@ bool MIDISequencerTrackState::process(MIDITimedBigMessage* msg)
                          msg->get_meta_type() == META_INSTRUMENT_NAME ||
                          (!got_good_track_name && msg->get_meta_type() == META_GENERIC_TEXT &&
                           msg->get_time() == 0)) &&
-                        msg->get_sys_ex()) {
+                        msg->get_sys_ex() != nullptr) {
                         got_good_track_name = true;
                         // yes, copy the track name
                         int len = msg->get_sys_ex()->get_length();
@@ -581,7 +581,7 @@ bool MIDISequencer::go_to_time(MIDIClockTime time_clk)
     // temporarily disable the gui notifier
     bool notifier_mode = false;
 
-    if (state.notifier) {
+    if (state.notifier != nullptr) {
         notifier_mode = state.notifier->get_enable();
         state.notifier->set_enable(false);
     }
@@ -616,7 +616,7 @@ bool MIDISequencer::go_to_time(MIDIClockTime time_clk)
     scan_events_at_this_time();
 
     // re-enable the gui notifier if it was enabled previously
-    if (state.notifier) {
+    if (state.notifier != nullptr) {
         state.notifier->set_enable(notifier_mode);
         // cause a full gui refresh now
         state.notifier->notify(this, MIDISequencerGUIEvent::GROUP_ALL);
@@ -630,7 +630,7 @@ bool MIDISequencer::go_to_time_ms(float time_ms)
     // temporarily disable the gui notifier
     bool notifier_mode = false;
 
-    if (state.notifier) {
+    if (state.notifier != nullptr) {
         notifier_mode = state.notifier->get_enable();
         state.notifier->set_enable(false);
     }
@@ -664,7 +664,7 @@ bool MIDISequencer::go_to_time_ms(float time_ms)
     // scan_events_at_this_time();
 
     // re-enable the gui notifier if it was enabled previously
-    if (state.notifier) {
+    if (state.notifier != nullptr) {
         state.notifier->set_enable(notifier_mode);
         // cause a full gui refresh now
         state.notifier->notify(this, MIDISequencerGUIEvent::GROUP_ALL);
@@ -678,7 +678,7 @@ bool MIDISequencer::go_to_measure(int measure, int beat)
     // temporarily disable the gui notifier
     bool notifier_mode = false;
 
-    if (state.notifier) {
+    if (state.notifier != nullptr) {
         notifier_mode = state.notifier->get_enable();
         state.notifier->set_enable(false);
     }
@@ -715,7 +715,7 @@ bool MIDISequencer::go_to_measure(int measure, int beat)
     scan_events_at_this_time();
 
     // re-enable the gui notifier if it was enabled previously
-    if (state.notifier) {
+    if (state.notifier != nullptr) {
         state.notifier->set_enable(notifier_mode);
         // cause a full gui refresh now
         state.notifier->notify(this, MIDISequencerGUIEvent::GROUP_ALL);
@@ -781,8 +781,8 @@ bool MIDISequencer::get_next_event(int* tracknum, MIDITimedBigMessage* msg)
         // move current time forward one event
         MIDIClockTime new_clock;
         float new_time_ms = 0.0f;
-        get_next_event_time(&new_clock);
-        get_next_event_time_ms(&new_time_ms);
+        static_cast<void>(get_next_event_time(&new_clock));
+        static_cast<void>(get_next_event_time_ms(&new_time_ms));
         // must set cur_clock AFTER GetnextEventTimeMs() is called
         // since get_next_event_time_ms() uses cur_clock to calculate
         state.cur_clock = new_clock;
@@ -820,7 +820,7 @@ bool MIDISequencer::get_next_event(int* tracknum, MIDITimedBigMessage* msg)
             state.cur_measure = new_measure;
 
             // now notify the GUI that the beat number changed
-            if (state.notifier) {
+            if (state.notifier != nullptr) {
                 state.notifier->notify(
                     this,
                     MIDISequencerGUIEvent(
@@ -830,7 +830,7 @@ bool MIDISequencer::get_next_event(int* tracknum, MIDITimedBigMessage* msg)
             }
 
             // if the new beat number is 0 then the measure changed too
-            if (state.cur_beat == 0 && state.notifier) {
+            if (state.cur_beat == 0 && state.notifier != nullptr) {
                 state.notifier->notify(
                     this,
                     MIDISequencerGUIEvent(
@@ -876,7 +876,7 @@ bool MIDISequencer::get_next_event(int* tracknum, MIDITimedBigMessage* msg)
                 }
 
                 // go to the next event on the multitrack
-                state.iterator.go_to_next_event();
+                static_cast<void>(state.iterator.go_to_next_event());
                 return true;
             }
         }
@@ -901,12 +901,12 @@ void MIDISequencer::scan_events_at_this_time()
     // Note: Events in tracks are stored in insertion order, not necessarily sorted by time.
     for (int track_num = 0; track_num < state.num_tracks; ++track_num) {
         auto track = state.multitrack->get_track(track_num);
-        if (track) {
+        if (track != nullptr) {
             // Scan through ALL events in this track to find ones at the current time
             // We can't assume they're sorted, so we must check every event
             for (int event_idx = 0; event_idx < track->get_num_events(); ++event_idx) {
                 auto event = track->get_event(event_idx);
-                if (event && event->get_time() == orig_clock) {
+                if (event != nullptr && event->get_time() == orig_clock) {
                     // Found an event at the current time - process it
                     MIDITimedBigMessage ev = *event;
                     state.track_state[track_num]->process(&ev);

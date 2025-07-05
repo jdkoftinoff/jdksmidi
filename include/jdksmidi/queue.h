@@ -43,11 +43,11 @@ class MIDIQueue
 
     void clear();
 
-    bool can_put() const;
+    [[nodiscard]] bool can_put() const;
 
-    bool can_get() const;
+    [[nodiscard]] bool can_get() const;
 
-    bool is_full() const { return !can_put(); }
+    [[nodiscard]] bool is_full() const { return !can_put(); }
 
     void put(MIDITimedBigMessage const& msg)
     {
@@ -56,7 +56,7 @@ class MIDIQueue
         _next_in.store((current_in + 1) % _bufsize, std::memory_order_release);
     }
 
-    MIDITimedBigMessage get() const
+    [[nodiscard]] MIDITimedBigMessage get() const
     {
         int current_out = _next_out.load(std::memory_order_relaxed);
         return MIDITimedBigMessage(_buf[current_out]);
@@ -68,7 +68,7 @@ class MIDIQueue
         _next_out.store((current_out + 1) % _bufsize, std::memory_order_release);
     }
 
-    MIDITimedBigMessage const* peek() const
+    [[nodiscard]] MIDITimedBigMessage const* peek() const
     {
         int current_out = _next_out.load(std::memory_order_relaxed);
         return &_buf[current_out];

@@ -64,7 +64,7 @@ std::uint32_t MIDIFile::read_variable_length_number(std::uint8_t** in)
     do {
         num <<= 7;
         num |= (*t);
-    } while ((*t++) & 0x80);
+    } while (((*t++) & 0x80) != 0);
 
     *in = t;
     return num;
@@ -84,7 +84,7 @@ std::uint8_t* MIDIFile::write_variable_length_number(std::uint32_t num, std::uin
     do {
         *out++ = (std::uint8_t)buffer;
 
-        if (buffer & 0x80)
+        if ((buffer & 0x80) != 0)
             buffer >>= 8;
 
         else

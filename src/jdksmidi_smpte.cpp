@@ -70,7 +70,7 @@ SMPTE::SMPTE(SMPTEFormat _smpte_rate_, SAMPLE_RATE sample_rate_)
     , _seconds(0)
     , _frames(0)
     , _sub_frames(0)
-    , _sample_number_dirty(false)
+    , _sample_number_dirty(0u)
 {}
 
 SMPTE::SMPTE(const SMPTE& s)

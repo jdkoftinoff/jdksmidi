@@ -47,13 +47,13 @@ class MIDIMultiTrack
     virtual ~MIDIMultiTrack();
 
     void set_track(int trk, MIDITrack* t);
-    MIDITrack* get_track(int trk);
-    MIDITrack const* get_track(int trk) const;
-    int get_num_tracks() const { return _num_tracks; }
+    [[nodiscard]] MIDITrack* get_track(int trk);
+    [[nodiscard]] MIDITrack const* get_track(int trk) const;
+    [[nodiscard]] int get_num_tracks() const { return _num_tracks; }
 
     void clear();
 
-    int get_clks_per_beat() const { return _clks_per_beat; }
+    [[nodiscard]] int get_clks_per_beat() const { return _clks_per_beat; }
 
     void set_clks_per_beat(int c) { _clks_per_beat = c; }
 
@@ -76,12 +76,12 @@ class MIDIMultiTrackIteratorState
 
     MIDIMultiTrackIteratorState const& operator=(MIDIMultiTrackIteratorState const& m);
 
-    int get_num_tracks() const { return _num_tracks; }
-    int get_cur_event_track() const { return _cur_event_track; }
-    MIDIClockTime get_current_time() const { return _cur_time; }
+    [[nodiscard]] int get_num_tracks() const { return _num_tracks; }
+    [[nodiscard]] int get_cur_event_track() const { return _cur_event_track; }
+    [[nodiscard]] MIDIClockTime get_current_time() const { return _cur_time; }
 
     void reset();
-    int find_track_of_first_event();
+    [[nodiscard]] int find_track_of_first_event();
 
   protected:
     friend class MIDIMultiTrackIterator;
@@ -101,20 +101,20 @@ class MIDIMultiTrackIterator
 
     void go_to_time(MIDIClockTime time);
 
-    bool get_cur_event_time(MIDIClockTime* t) const;
-    bool get_cur_event(int* track, MIDITimedBigMessage** msg) const;
-    bool go_to_next_event();
+    [[nodiscard]] bool get_cur_event_time(MIDIClockTime* t) const;
+    [[nodiscard]] bool get_cur_event(int* track, MIDITimedBigMessage** msg) const;
+    [[nodiscard]] bool go_to_next_event();
 
-    bool go_to_next_event_on_track(int track);
+    [[nodiscard]] bool go_to_next_event_on_track(int track);
 
-    MIDIMultiTrackIteratorState const& get_state() const { return state; }
+    [[nodiscard]] MIDIMultiTrackIteratorState const& get_state() const { return state; }
 
-    MIDIMultiTrackIteratorState& get_state() { return state; }
+    [[nodiscard]] MIDIMultiTrackIteratorState& get_state() { return state; }
 
     void set_state(MIDIMultiTrackIteratorState const& s) { state = s; }
 
-    MIDIMultiTrack* get_multi_track() { return multitrack; }
-    MIDIMultiTrack const* get_multi_track() const { return multitrack; }
+    [[nodiscard]] MIDIMultiTrack* get_multi_track() { return multitrack; }
+    [[nodiscard]] MIDIMultiTrack const* get_multi_track() const { return multitrack; }
 
   protected:
     MIDIMultiTrack* multitrack;

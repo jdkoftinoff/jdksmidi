@@ -65,8 +65,8 @@ MIDITrack::MIDITrack(int size)
     for (auto& i : chunk)
         i = nullptr;
 
-    if (size) {
-        expand(size);
+    if (size != 0) {
+        static_cast<void>(expand(size));
     }
 }
 
@@ -78,7 +78,7 @@ MIDITrack::MIDITrack(MIDITrack const& t)
     for (int i = 0; i < t.get_num_events(); ++i) {
         MIDITimedBigMessage const* src;
         src = t.get_event_address(i);
-        put_event(*src);
+        static_cast<void>(put_event(*src));
     }
 }
 
@@ -102,8 +102,8 @@ void MIDITrack::clear_and_merge(MIDITrack const* src1, MIDITrack const* src2)
         // skip any NOPs on track 1
         auto ev1 = src1->get_event_address(cur_trk1ev);
         auto ev2 = src2->get_event_address(cur_trk2ev);
-        bool has_ev1 = (cur_trk1ev < num_trk1ev) && ev1;
-        bool has_ev2 = (cur_trk2ev < num_trk2ev) && ev2;
+        bool has_ev1 = (cur_trk1ev < num_trk1ev) && (ev1 != nullptr);
+        bool has_ev2 = (cur_trk2ev < num_trk2ev) && (ev2 != nullptr);
 
         if (has_ev1 && ev1->is_no_op()) {
             cur_trk1ev++;
@@ -144,7 +144,7 @@ void MIDITrack::clear_and_merge(MIDITrack const* src1, MIDITrack const* src2)
                     last_data_end_time = ev1->get_time();
                 }
 
-                put_event(*ev1);
+                static_cast<void>(put_event(*ev1));
                 ++cur_trk1ev;
             }
         }
@@ -152,7 +152,7 @@ void MIDITrack::clear_and_merge(MIDITrack const* src1, MIDITrack const* src2)
         else if ((!has_ev1 && has_ev2)) {
             // nothing left on trk 1
             if (!ev2->is_no_op()) {
-                put_event(*ev2);
+                static_cast<void>(put_event(*ev2));
                 ++cur_trk2ev;
             }
         }
@@ -173,7 +173,7 @@ void MIDITrack::clear_and_merge(MIDITrack const* src1, MIDITrack const* src2)
                     last_data_end_time = ev1->get_time();
                 }
 
-                put_event(*ev1);
+                static_cast<void>(put_event(*ev1));
                 ++cur_trk1ev;
             }
 
@@ -182,7 +182,7 @@ void MIDITrack::clear_and_merge(MIDITrack const* src1, MIDITrack const* src2)
                     last_data_end_time = ev2->get_time();
                 }
 
-                put_event(*ev2);
+                static_cast<void>(put_event(*ev2));
                 ++cur_trk2ev;
             }
         }
@@ -192,7 +192,7 @@ void MIDITrack::clear_and_merge(MIDITrack const* src1, MIDITrack const* src2)
     MIDITimedBigMessage dataend;
     dataend.set_time(last_data_end_time);
     dataend.set_data_end();
-    put_event(dataend);
+    static_cast<void>(put_event(dataend));
 }
 
 #if 0
@@ -412,7 +412,7 @@ bool MIDITrack::make_event_no_op(int event_num)
     else {
         MIDITimedBigMessage* ev = get_event_address(event_num);
 
-        if (ev) {
+        if (ev != nullptr) {
             ev->clear_sys_ex();
             ev->set_no_op();
         }

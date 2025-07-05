@@ -96,13 +96,8 @@ MIDIMultiTrackIteratorState::MIDIMultiTrackIteratorState(int num_tracks_)
     reset();
 }
 
-MIDIMultiTrackIteratorState::MIDIMultiTrackIteratorState(MIDIMultiTrackIteratorState const& m)
-    : _cur_time(m._cur_time)
-    , _cur_event_track(m._cur_event_track)
-    , _num_tracks(m._num_tracks)
-    , _next_event_number(m._next_event_number)
-    , _next_event_time(m._next_event_time)
-{}
+MIDIMultiTrackIteratorState::MIDIMultiTrackIteratorState(MIDIMultiTrackIteratorState const& m) =
+    default;
 
 MIDIMultiTrackIteratorState::~MIDIMultiTrackIteratorState() = default;
 
@@ -266,7 +261,7 @@ bool MIDIMultiTrackIterator::go_to_next_event()
 
     // update the current event for the current track to the
     // next event on the same track.
-    go_to_next_event_on_track(state._cur_event_track);
+    static_cast<void>(go_to_next_event_on_track(state._cur_event_track));
     // now find out which track now has the earliest event
 
     if (state.find_track_of_first_event() == -1) {

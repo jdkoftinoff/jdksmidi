@@ -43,10 +43,13 @@
 #include <string>
 #include <vector>
 
-#define MAX_WARP_POSITIONS (128)
-#define MEASURES_PER_WARP (4)
-
 namespace jdksmidi {
+
+enum
+{
+    MAX_WARP_POSITIONS = 128,
+    MEASURES_PER_WARP = 4
+};
 class AdvancedSequencer
 {
   public:
@@ -57,13 +60,13 @@ class AdvancedSequencer
     void close_midi();
 
     void set_midi_thru_enable(bool f);
-    bool get_midi_thru_enable() const;
+    [[nodiscard]] bool get_midi_thru_enable() const;
 
     void set_midi_thru_channel(int chan);
-    int get_midi_thru_channel() const;
+    [[nodiscard]] int get_midi_thru_channel() const;
 
     void set_midi_thru_transpose(int val);
-    int get_midi_thru_transpose() const;
+    [[nodiscard]] int get_midi_thru_transpose() const;
 
     bool load(char const* fname);
     void reset();
@@ -75,7 +78,7 @@ class AdvancedSequencer
     void pause();
     void stop();
 
-    bool is_play() { return mgr.is_seq_play(); }
+    [[nodiscard]] bool is_play() { return mgr.is_seq_play(); }
 
     void unmute_all_tracks();
     void solo_track(int trk);
@@ -83,36 +86,36 @@ class AdvancedSequencer
     void set_track_mute(int trk, bool f);
 
     void set_tempo_scale(double scale);
-    double get_tempo_without_scale() const;
-    double get_tempo_with_scale() const;
+    [[nodiscard]] double get_tempo_without_scale() const;
+    [[nodiscard]] double get_tempo_with_scale() const;
 
-    int get_measure() const;
-    int get_beat() const;
+    [[nodiscard]] int get_measure() const;
+    [[nodiscard]] int get_beat() const;
 
-    int get_time_sig_numerator() const;
-    int get_time_sig_denominator() const;
+    [[nodiscard]] int get_time_sig_numerator() const;
+    [[nodiscard]] int get_time_sig_denominator() const;
 
-    int get_track_note_count(int trk) const;
-    char const* get_track_name(int trk) const;
-    int get_track_volume(int trk) const;
+    [[nodiscard]] int get_track_note_count(int trk) const;
+    [[nodiscard]] char const* get_track_name(int trk) const;
+    [[nodiscard]] int get_track_volume(int trk) const;
 
     void set_track_velocity_scale(int trk, int scale);
-    int get_track_velocity_scale(int trk) const;
+    [[nodiscard]] int get_track_velocity_scale(int trk) const;
 
     void set_track_rechannelize(int trk, int chan);
-    int get_track_rechannelize(int trk) const;
+    [[nodiscard]] int get_track_rechannelize(int trk) const;
 
     void set_track_transpose(int trk, int trans);
-    int get_track_transpose(int trk) const;
+    [[nodiscard]] int get_track_transpose(int trk) const;
 
     void extract_markers(std::vector<std::string>* list);
-    int get_current_marker() const;
+    [[nodiscard]] int get_current_marker() const;
 
-    int find_first_channel_on_track(int trk);
+    [[nodiscard]] int find_first_channel_on_track(int trk);
 
     void extract_warp_positions();
 
-    bool is_chain_mode() const { return chain_mode; }
+    [[nodiscard]] bool is_chain_mode() const { return chain_mode; }
 
     MIDIMultiProcessor thru_processor;
     MIDIProcessorTransposer thru_transposer;
@@ -131,15 +134,15 @@ class AdvancedSequencer
 
     MIDIManager mgr;
 
-    std::int32_t repeat_start_measure;
-    std::int32_t repeat_end_measure;
-    bool repeat_play_mode;
+    std::int32_t repeat_start_measure{0};
+    std::int32_t repeat_end_measure{0};
+    bool repeat_play_mode{false};
 
-    int num_warp_positions;
+    int num_warp_positions{0};
     MIDISequencerState* warp_positions[MAX_WARP_POSITIONS]{};
 
-    bool file_loaded;
-    bool chain_mode;
+    bool file_loaded{false};
+    bool chain_mode{false};
 };
 
 }  // namespace jdksmidi

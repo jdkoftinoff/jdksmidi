@@ -46,9 +46,9 @@ class MIDIParser
 
     void clear() { state = FIND_STATUS; }
 
-    virtual bool parse(std::uint8_t b, MIDIMessage* msg);
+    [[nodiscard]] virtual bool parse(std::uint8_t b, MIDIMessage* msg);
 
-    MIDISystemExclusive* get_system_exclusive() const { return sysex.get(); }
+    [[nodiscard]] MIDISystemExclusive* get_system_exclusive() const { return sysex.get(); }
 
   protected:
     //
@@ -70,8 +70,8 @@ class MIDIParser
     std::unique_ptr<MIDISystemExclusive> sysex;
     State state;
 
-    bool parse_system_byte(std::uint8_t b, MIDIMessage* msg);
-    bool parse_data_byte(std::uint8_t b, MIDIMessage* msg);
+    [[nodiscard]] bool parse_system_byte(std::uint8_t b, MIDIMessage* msg);
+    [[nodiscard]] bool parse_data_byte(std::uint8_t b, MIDIMessage* msg);
     void parse_status_byte(std::uint8_t b);
 };
 

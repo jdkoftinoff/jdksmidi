@@ -86,7 +86,7 @@ class MIDIEditTrack
         MIDIClockTime start,
         MIDIClockTime end,
         bool jagged = true,
-        MIDIEditTrackEventMatcher* match = 0);
+        MIDIEditTrackEventMatcher* match = nullptr);
 
     //
     // this delete function will delete all events like erase and then
@@ -96,7 +96,7 @@ class MIDIEditTrack
         MIDIClockTime start,
         MIDIClockTime end,
         bool jagged = true,
-        MIDIEditTrackEventMatcher* match = 0);
+        MIDIEditTrackEventMatcher* match = nullptr);
 
     //
     // this insert function will insert 'length' clicks starting at
@@ -107,7 +107,7 @@ class MIDIEditTrack
     //
     // this shift function will shift all event times by an offset.
     //
-    void shift(std::int32_t offset, MIDIEditTrackEventMatcher* match = 0);
+    void shift(std::int32_t offset, MIDIEditTrackEventMatcher* match = nullptr);
 
   protected:
     MIDIMatrix matrix;
