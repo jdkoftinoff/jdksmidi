@@ -31,6 +31,8 @@
 #include "jdksmidi/multitrack.h"
 #include "jdksmidi/track.h"
 
+#include <memory>
+#include <utility>
 #include <vector>
 
 #ifndef DEBUG_MDMLTTRK
@@ -44,47 +46,40 @@
 
 namespace jdksmidi {
 
-MIDIMultiTrack::MIDIMultiTrack(int num_tracks_, bool deletable_)
-    : _tracks(num_tracks_, nullptr)
+MIDIMultiTrack::MIDIMultiTrack(int num_tracks_)
+    : _tracks(num_tracks_)
     , _num_tracks(num_tracks_)
-    , _deletable(deletable_)
     , _clks_per_beat(480)
 {
-    if (_deletable) {
-        for (int i = 0; i < _num_tracks; ++i)
-            _tracks[i] = new MIDITrack;
+    for (int i = 0; i < _num_tracks; ++i) {
+        _tracks[i] = std::make_unique<MIDITrack>();
     }
 }
 
-MIDIMultiTrack::~MIDIMultiTrack()
-{
-    if (_deletable) {
-        for (int i = 0; i < _num_tracks; ++i)
-            delete _tracks[i];
-    }
-    // vector automatically cleans up
-}
+// Destructor is now defaulted in header since std::vector handles cleanup
 
 void MIDIMultiTrack::clear()
 {
     for (int i = 0; i < _num_tracks; ++i) {
-        _tracks[i]->clear();
+        if (_tracks[i]) {
+            _tracks[i]->clear();
+        }
     }
 }
 
-void MIDIMultiTrack::set_track(int trk, MIDITrack* t)
+void MIDIMultiTrack::set_track(int trk, std::unique_ptr<MIDITrack> t)
 {
-    _tracks[trk] = t;
+    _tracks[trk] = std::move(t);
 }
 
 MIDITrack* MIDIMultiTrack::get_track(int trk)
 {
-    return _tracks[trk];
+    return _tracks[trk].get();
 }
 
 MIDITrack const* MIDIMultiTrack::get_track(int trk) const
 {
-    return _tracks[trk];
+    return _tracks[trk].get();
 }
 
 MIDIMultiTrackIteratorState::MIDIMultiTrackIteratorState(int num_tracks_)

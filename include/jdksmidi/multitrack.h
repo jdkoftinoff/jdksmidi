@@ -43,10 +43,10 @@ class MIDIMultiTrackIterator;
 class MIDIMultiTrack
 {
   public:
-    MIDIMultiTrack(int max_num_tracks_ = 64, bool deletable_ = true);
-    virtual ~MIDIMultiTrack();
+    explicit MIDIMultiTrack(int max_num_tracks_ = 64);
+    virtual ~MIDIMultiTrack() = default;
 
-    void set_track(int trk, MIDITrack* t);
+    void set_track(int trk, std::unique_ptr<MIDITrack> t);
     [[nodiscard]] MIDITrack* get_track(int trk);
     [[nodiscard]] MIDITrack const* get_track(int trk) const;
     [[nodiscard]] int get_num_tracks() const { return _num_tracks; }
@@ -58,9 +58,8 @@ class MIDIMultiTrack
     void set_clks_per_beat(int c) { _clks_per_beat = c; }
 
   protected:
-    std::vector<MIDITrack*> _tracks;
+    std::vector<std::unique_ptr<MIDITrack>> _tracks;
     int const _num_tracks;
-    bool _deletable;
 
     int _clks_per_beat;
 

@@ -37,6 +37,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <memory>
+#include <utility>
 #include <vector>
 
 using namespace jdksmidi;
@@ -45,7 +46,7 @@ class TestMultiTrackFixture
 {
   public:
     TestMultiTrackFixture()
-        : multitrack(8, true)
+        : multitrack(8)
     {}
 
     void add_note_event(
@@ -100,11 +101,11 @@ TEST_CASE("MIDIMultiTrack basic construction and properties")
     CHECK(mt1.get_num_tracks() == 64);  // Default track count
 
     // Test construction with specific track count
-    MIDIMultiTrack mt2(16, true);
+    MIDIMultiTrack mt2(16);
     CHECK(mt2.get_num_tracks() == 16);
 
     // Test construction with non-deletable tracks
-    MIDIMultiTrack mt3(8, false);
+    MIDIMultiTrack mt3(8);
     CHECK(mt3.get_num_tracks() == 8);
 
     // Test initial clocks per beat (typically 480 for standard MIDI files)
@@ -130,11 +131,11 @@ TEST_CASE("MIDIMultiTrack track management")
     }
 
     // Test setting external tracks
-    MIDIMultiTrack mt_external(4, false);
+    MIDIMultiTrack mt_external(4);
     auto external_track = std::make_unique<MIDITrack>();
     MIDITrack* track_ptr = external_track.get();
 
-    mt_external.set_track(0, track_ptr);
+    mt_external.set_track(0, std::move(external_track));
     CHECK(mt_external.get_track(0) == track_ptr);
 
     // Add an event to verify it's the same track
@@ -589,7 +590,7 @@ TEST_CASE("MIDIMultiTrackIterator simultaneous events on multiple tracks")
 TEST_CASE("MIDIMultiTrackIterator edge cases")
 {
     // Test with single track
-    MIDIMultiTrack single_track(1, true);
+    MIDIMultiTrack single_track(1);
     MIDITimedBigMessage msg;
     msg.set_time(100);
     msg.set_note_on(0, 60, 100);
@@ -606,7 +607,7 @@ TEST_CASE("MIDIMultiTrackIterator edge cases")
     CHECK(iterator.go_to_next_event() == false);  // Only one event
 
     // Test with empty multitrack
-    MIDIMultiTrack empty_track(4, true);
+    MIDIMultiTrack empty_track(4);
     MIDIMultiTrackIterator empty_iterator(&empty_track);
     empty_iterator.go_to_time(0);
 
