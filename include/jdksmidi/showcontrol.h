@@ -548,11 +548,11 @@ class MIDIShowControlPacket
     bool parse_q_path(MIDISystemExclusive const* e, int* pos);
     bool store_q_list(MIDISystemExclusive* e) const;
     bool parse_q_list(MIDISystemExclusive const* e, int* pos);
-    bool store_ascii(MIDISystemExclusive* e, char const* str) const;
+    static bool store_ascii(MIDISystemExclusive* e, char const* str);
 
-    bool store_ascii_num(MIDISystemExclusive* e, MIDICue const& num) const;
-    bool parse_ascii_num(MIDISystemExclusive const* e, int* pos, MIDICue* num);
-    bool parse_ascii_num(MIDISystemExclusive const* e, int* pos, std::uint32_t* num);
+    static bool store_ascii_num(MIDISystemExclusive* e, MIDICue const& num);
+    static bool parse_ascii_num(MIDISystemExclusive const* e, int* pos, MIDICue* num);
+    static bool parse_ascii_num(MIDISystemExclusive const* e, int* pos, std::uint32_t* num);
 
     void clear_variable_stuff();
 

@@ -249,7 +249,6 @@ MIDISequencerTrackState::MIDISequencerTrackState(
     , bender_value(0)
     , got_good_track_name(false)
     , notes_are_on(false)
-    , note_matrix()
 {
     *track_name = '\0';
 }
@@ -755,7 +754,7 @@ bool MIDISequencer::get_next_event_time_ms(float* t)
     return f;
 }
 
-bool MIDISequencer::get_next_event_time(MIDIClockTime* t)
+bool MIDISequencer::get_next_event_time(MIDIClockTime* t) const
 {
     // ask the iterator for the current event time
     bool f = state.iterator.get_cur_event_time(t);
@@ -844,41 +843,39 @@ bool MIDISequencer::get_next_event(int* tracknum, MIDITimedBigMessage* msg)
             return true;
         }
 
-        else  // this event comes before the next beat
-        {
-            MIDITimedBigMessage* msg_ptr;
+        // this event comes before the next beat
+        MIDITimedBigMessage* msg_ptr;
 
-            if (state.iterator.get_cur_event(tracknum, &msg_ptr)) {
-                int trk = *tracknum;
-                // copy the event so Process can modify it
-                *msg = *msg_ptr;
-                bool allow_msg = true;
-                // are we in solo mode?
+        if (state.iterator.get_cur_event(tracknum, &msg_ptr)) {
+            int trk = *tracknum;
+            // copy the event so Process can modify it
+            *msg = *msg_ptr;
+            bool allow_msg = true;
+            // are we in solo mode?
 
-                if (solo_mode) {
-                    // yes, only allow this message thru if
-                    // the track is either track 0
-                    // or it is explicitly solod.
-                    if (trk == 0 || track_processors[trk]->solo) {
-                        allow_msg = true;
-                    }
-
-                    else {
-                        allow_msg = false;
-                    }
+            if (solo_mode) {
+                // yes, only allow this message thru if
+                // the track is either track 0
+                // or it is explicitly solod.
+                if (trk == 0 || track_processors[trk]->solo) {
+                    allow_msg = true;
                 }
 
-                if (!(allow_msg && track_processors[trk]->process(msg) &&
-                      state.track_state[trk]->process(msg))) {
-                    // the message is not allowed to come out!
-                    // erase it
-                    msg->set_no_op();
+                else {
+                    allow_msg = false;
                 }
-
-                // go to the next event on the multitrack
-                static_cast<void>(state.iterator.go_to_next_event());
-                return true;
             }
+
+            if (!(allow_msg && track_processors[trk]->process(msg) &&
+                  state.track_state[trk]->process(msg))) {
+                // the message is not allowed to come out!
+                // erase it
+                msg->set_no_op();
+            }
+
+            // go to the next event on the multitrack
+            static_cast<void>(state.iterator.go_to_next_event());
+            return true;
         }
     }
 

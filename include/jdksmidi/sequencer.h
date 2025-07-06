@@ -273,7 +273,7 @@ class MIDISequencer
     bool go_to_measure(int measure, int beat = 0);
 
     [[nodiscard]] bool get_next_event_time_ms(float* t);
-    [[nodiscard]] bool get_next_event_time(MIDIClockTime* t);
+    [[nodiscard]] bool get_next_event_time(MIDIClockTime* t) const;
     [[nodiscard]] bool get_next_event(int* tracknum, MIDITimedBigMessage* msg);
 
     void scan_events_at_this_time();

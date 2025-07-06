@@ -54,11 +54,11 @@ class MIDIManager : public MIDITick
 
     // to set and get the system time offset
     void set_time_offset(std::uint32_t off);
-    [[nodiscard]] std::uint32_t get_time_offset();
+    [[nodiscard]] std::uint32_t get_time_offset() const;
 
     // to set and get the sequencer time offset
     void set_seq_offset(std::uint32_t seqoff);
-    [[nodiscard]] std::uint32_t get_seq_offset();
+    [[nodiscard]] std::uint32_t get_seq_offset() const;
 
     // to manage the playback of the sequencer
     void seq_play();

@@ -42,8 +42,6 @@ static void FixQuotes(char* s_)
 
 AdvancedSequencer::AdvancedSequencer()
     : thru_processor(2)
-    , thru_transposer()
-    , thru_rechannelizer()
     , driver(256, stdout)
     , tracks(17)
     , notifier(stdout)

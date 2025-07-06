@@ -81,12 +81,10 @@ bool MIDIParser::parse(std::uint8_t b, MIDIMessage* msg)
         return false;
     }
 
-    else {
-        //
-        // Try to parse the data byte
-        //
-        return parse_data_byte(b, msg);
-    }
+    //
+    // Try to parse the data byte
+    //
+    return parse_data_byte(b, msg);
 }
 
 bool MIDIParser::parse_system_byte(std::uint8_t b, MIDIMessage* msg)

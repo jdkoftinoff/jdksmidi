@@ -90,7 +90,7 @@ void MIDIManager::set_time_offset(std::uint32_t off)
     _sys_time_offset = off;
 }
 
-std::uint32_t MIDIManager::get_time_offset()
+std::uint32_t MIDIManager::get_time_offset() const
 {
     return _sys_time_offset;
 }
@@ -101,7 +101,7 @@ void MIDIManager::set_seq_offset(std::uint32_t seqoff)
     _seq_time_offset = seqoff;
 }
 
-std::uint32_t MIDIManager::get_seq_offset()
+std::uint32_t MIDIManager::get_seq_offset() const
 {
     return _seq_time_offset;
 }

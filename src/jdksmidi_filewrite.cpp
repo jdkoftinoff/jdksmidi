@@ -67,9 +67,7 @@ int MIDIFileWriteStreamFile::write_char(int c)
         return -1;
     }
 
-    else {
-        return 0;
-    }
+    return 0;
 }
 
 MIDIFileWrite::MIDIFileWrite(MIDIFileWriteStream* out_stream_)
@@ -208,25 +206,23 @@ void MIDIFileWrite::write_event(MIDITimedMessage const& m)
         return;  // all other marks are ignored.
     }
 
-    else {
-        std::int16_t len = m.get_length();
-        write_delta_time(m.get_time());
+    std::int16_t len = m.get_length();
+    write_delta_time(m.get_time());
 
-        if (m.get_status() != running_status) {
-            running_status = m.get_status();
-            write_character(static_cast<std::uint8_t>(running_status));
-            increment_counters(1);
-        }
+    if (m.get_status() != running_status) {
+        running_status = m.get_status();
+        write_character(static_cast<std::uint8_t>(running_status));
+        increment_counters(1);
+    }
 
-        if (len > 1) {
-            write_character(static_cast<std::uint8_t>(m.get_byte1()));
-            increment_counters(1);
-        }
+    if (len > 1) {
+        write_character(static_cast<std::uint8_t>(m.get_byte1()));
+        increment_counters(1);
+    }
 
-        if (len > 2) {
-            write_character(static_cast<std::uint8_t>(m.get_byte2()));
-            increment_counters(1);
-        }
+    if (len > 2) {
+        write_character(static_cast<std::uint8_t>(m.get_byte2()));
+        increment_counters(1);
     }
 }
 
@@ -338,7 +334,7 @@ void MIDIFileWrite::write_meta_event(
 {
     write_delta_time(time);
     write_character(static_cast<std::uint8_t>(0xff));  // META-Event
-    write_character(static_cast<std::uint8_t>(type));  // Meta-event type
+    write_character(type);                             // Meta-event type
     increment_counters(2);
     increment_counters(write_variable_num(length));
 

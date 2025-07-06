@@ -205,10 +205,10 @@ void SMPTE::time_to_sample()
     //
     // calculate the sample number
     //
-    auto tmp_sample = (double)((
-        (_hours * the_sample_rate * (60 * 60)) + (_minutes * the_sample_rate * 60) +
-        (_seconds * the_sample_rate) + (_frames * samples_per_frame) +
-        (_sub_frames * samples_per_frame * (1.0 / 100.0)) + .5));
+    auto tmp_sample =
+        (((_hours * the_sample_rate * (60 * 60)) + (_minutes * the_sample_rate * 60) +
+          (_seconds * the_sample_rate) + (_frames * samples_per_frame) +
+          (_sub_frames * samples_per_frame * (1.0 / 100.0)) + .5));
     //
     // Now compensate for Drop Frame mode if we are in drop frame mode.
     //
@@ -218,7 +218,7 @@ void SMPTE::time_to_sample()
         // Calculate number of minutes that have gone by
         //
         int num_minutes = static_cast<int>(
-            (double)tmp_sample / (smpte_sample_rates[static_cast<int>(_sample_rate)] * 60));
+            tmp_sample / (smpte_sample_rates[static_cast<int>(_sample_rate)] * 60));
         DBG(printf("num_minutes=%d\n", static_cast<int>(num_minutes)));
         //
         // Calculate the number of tens of minutes that have gone by, including minute 00

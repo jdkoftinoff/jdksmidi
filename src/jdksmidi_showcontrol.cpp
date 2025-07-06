@@ -242,9 +242,7 @@ bool MIDIShowControlPacket::store_time(MIDISystemExclusive* e) const
         return true;
     }
 
-    else {
-        return false;
-    }
+    return false;
 }
 
 bool MIDIShowControlPacket::parse_time(MIDISystemExclusive const* e, int* pos)
@@ -351,9 +349,7 @@ bool MIDIShowControlPacket::parse_set(MIDISystemExclusive const* e, int* pos)
         return parse_time(e, pos);
     }
 
-    else {
-        return true;
-    }
+    return true;
 }
 
 bool MIDIShowControlPacket::store_fire(MIDISystemExclusive* e) const
@@ -376,9 +372,7 @@ bool MIDIShowControlPacket::store_q_path(MIDISystemExclusive* e) const
         return store_ascii_num(e, get_q_path());
     }
 
-    else {
-        return false;
-    }
+    return false;
 }
 
 bool MIDIShowControlPacket::parse_q_path(MIDISystemExclusive const* e, int* pos)
@@ -396,9 +390,7 @@ bool MIDIShowControlPacket::parse_q_path(MIDISystemExclusive const* e, int* pos)
         return f;
     }
 
-    else {
-        return false;
-    }
+    return false;
 }
 
 bool MIDIShowControlPacket::store_q_list(MIDISystemExclusive* e) const
@@ -407,9 +399,7 @@ bool MIDIShowControlPacket::store_q_list(MIDISystemExclusive* e) const
         return store_ascii_num(e, get_q_list());
     }
 
-    else {
-        return false;
-    }
+    return false;
 }
 
 bool MIDIShowControlPacket::parse_q_list(MIDISystemExclusive const* e, int* pos)
@@ -427,12 +417,10 @@ bool MIDIShowControlPacket::parse_q_list(MIDISystemExclusive const* e, int* pos)
         return f;
     }
 
-    else {
-        return false;
-    }
+    return false;
 }
 
-bool MIDIShowControlPacket::store_ascii(MIDISystemExclusive* e, char const* str) const
+bool MIDIShowControlPacket::store_ascii(MIDISystemExclusive* e, char const* str)
 {
     while (*str != 0) {
         e->put_byte(*str++);
@@ -441,7 +429,7 @@ bool MIDIShowControlPacket::store_ascii(MIDISystemExclusive* e, char const* str)
     return true;
 }
 
-bool MIDIShowControlPacket::store_ascii_num(MIDISystemExclusive* e, MIDICue const& num) const
+bool MIDIShowControlPacket::store_ascii_num(MIDISystemExclusive* e, MIDICue const& num)
 {
     char buf[32];
     bool f = false;

@@ -490,8 +490,8 @@ void MIDIMessage::set_pitch_bend(std::uint8_t chan, std::int16_t val)
 void MIDIMessage::set_pitch_bend(std::uint8_t chan, std::uint8_t low, std::uint8_t high)
 {
     _status = chan | PITCH_BEND;
-    _byte1 = static_cast<std::uint8_t>(low);
-    _byte2 = static_cast<std::uint8_t>(high);
+    _byte1 = low;
+    _byte2 = high;
     _byte3 = 0;
 }
 
