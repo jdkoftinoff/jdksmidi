@@ -252,7 +252,6 @@ set(JDKSMIDI_HEADERS
     include/jdksmidi/tempo.h
     include/jdksmidi/tick.h
     include/jdksmidi/track.h
-    include/jdksmidi/world.h
 )
 
 # Create the main library
@@ -373,20 +372,26 @@ include(GNUInstallDirs)
 install(TARGETS jdksmidi
     EXPORT jdksmidicTargets
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        COMPONENT runtime
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        COMPONENT development
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        COMPONENT runtime
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/jdksmidi
+        COMPONENT development
 )
 
 # Install examples if built
 if(JDKSMIDI_BUILD_EXAMPLES)
     install(TARGETS ${JDKSMIDI_EXAMPLES}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            COMPONENT examples
     )
     
     if(WIN32)
         install(TARGETS jdksmidi_test_drvwin32
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+                COMPONENT examples
         )
     endif()
 endif()
@@ -394,9 +399,10 @@ endif()
 # Install additional files
 install(FILES
     COPYING
-    README
+    CLAUDE.md
     CHANGELOG.txt
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
+    COMPONENT development
 )
 
 # Create and install CMake package config files
@@ -421,6 +427,7 @@ install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/jdksmidicConfig.cmake"
     "${CMAKE_CURRENT_BINARY_DIR}/jdksmidicConfigVersion.cmake"
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/jdksmidc
+    COMPONENT development
 )
 
 # Install the export targets
@@ -428,6 +435,7 @@ install(EXPORT jdksmidicTargets
     FILE jdksmidicTargets.cmake
     NAMESPACE jdksmidc::
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/jdksmidc
+    COMPONENT development
 )
 
 # Add doctest for unit testing
@@ -571,3 +579,128 @@ else()
     message(STATUS "  Platform: ${CMAKE_SYSTEM_NAME}")
 endif()
 message(STATUS "")
+
+# Set basic package information before including CPack
+set(CPACK_PACKAGE_NAME "jdksmidi")
+set(CPACK_PACKAGE_VENDOR "Jeffrey Koftinoff")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "C++ MIDI Library")
+set(CPACK_PACKAGE_DESCRIPTION "JDKSMIDI is a comprehensive C++ MIDI library providing functionality for parsing, file I/O, sequencing, and show control.")
+set(CPACK_PACKAGE_VERSION_MAJOR ${JDKSMIDI_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${JDKSMIDI_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${JDKSMIDI_VERSION_PATCH})
+set(CPACK_PACKAGE_VERSION ${JDKSMIDI_VERSION})
+set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/jdkoftinoff/jdksmidi")
+set(CPACK_PACKAGE_CONTACT "jeffk@jdkoftinoff.com")
+
+# Set package file names
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-src")
+
+# License and readme files
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/CLAUDE.md")
+
+# Source package configuration
+set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
+set(CPACK_SOURCE_IGNORE_FILES
+    "/.git/"
+    "/.github/"
+    "/build/"
+    "/.vscode/"
+    "/.idea/"
+    ".DS_Store"
+    ".gitignore"
+    ".clang-format"
+    ".clang-tidy"
+    "/CMakeLists.txt.user"
+    "/.cache/"
+    "__pycache__/"
+    ".pyc$"
+    ".pyo$"
+)
+
+# Binary package generators based on platform
+if(WIN32)
+    # Windows packages
+    set(CPACK_GENERATOR "ZIP;NSIS")
+    
+    # NSIS-specific settings
+    set(CPACK_NSIS_DISPLAY_NAME "JDKSMIDI ${JDKSMIDI_VERSION}")
+    set(CPACK_NSIS_PACKAGE_NAME "JDKSMIDI")
+    set(CPACK_NSIS_HELP_LINK "https://github.com/jdkoftinoff/jdksmidi")
+    set(CPACK_NSIS_URL_INFO_ABOUT "https://github.com/jdkoftinoff/jdksmidi")
+    set(CPACK_NSIS_CONTACT "jeffk@jdkoftinoff.com")
+    set(CPACK_NSIS_MODIFY_PATH ON)
+    
+elseif(APPLE)
+    # macOS packages
+    set(CPACK_GENERATOR "TGZ;productbuild")
+    
+    # productbuild-specific settings
+    set(CPACK_PRODUCTBUILD_IDENTITY_NAME "Developer ID Installer")
+    
+elseif(UNIX)
+    # Linux packages
+    set(CPACK_GENERATOR "TGZ;DEB;RPM")
+    
+    # Ensure contact is set for DEB packages
+    if(NOT CPACK_PACKAGE_CONTACT)
+        set(CPACK_PACKAGE_CONTACT "jeffk@jdkoftinoff.com")
+    endif()
+    
+    # DEB package settings
+    set(CPACK_DEBIAN_PACKAGE_SECTION "libs")
+    set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6")
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Jeffrey Koftinoff <jeffk@jdkoftinoff.com>")
+    set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "C++ MIDI Library
+ JDKSMIDI is a comprehensive C++ MIDI library providing functionality
+ for parsing, file I/O, sequencing, and show control. Originally written
+ in 1986 and evolved over decades, it provides robust MIDI handling
+ capabilities for modern C++ applications.")
+    
+    # RPM package settings
+    set(CPACK_RPM_PACKAGE_GROUP "Development/Libraries")
+    set(CPACK_RPM_PACKAGE_LICENSE "MIT")
+    set(CPACK_RPM_PACKAGE_REQUIRES "glibc")
+    set(CPACK_RPM_PACKAGE_DESCRIPTION "C++ MIDI Library
+JDKSMIDI is a comprehensive C++ MIDI library providing functionality
+for parsing, file I/O, sequencing, and show control. Originally written
+in 1986 and evolved over decades, it provides robust MIDI handling
+capabilities for modern C++ applications.")
+    
+    # Find system architecture for packages
+    execute_process(COMMAND uname -m OUTPUT_VARIABLE CPACK_SYSTEM_ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
+    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE ${CPACK_SYSTEM_ARCH})
+    set(CPACK_RPM_PACKAGE_ARCHITECTURE ${CPACK_SYSTEM_ARCH})
+endif()
+
+# Component configuration for advanced packaging
+set(CPACK_COMPONENTS_ALL runtime development examples)
+
+# Runtime component (libraries)
+set(CPACK_COMPONENT_RUNTIME_DISPLAY_NAME "Runtime Libraries")
+set(CPACK_COMPONENT_RUNTIME_DESCRIPTION "JDKSMIDI runtime libraries")
+set(CPACK_COMPONENT_RUNTIME_REQUIRED TRUE)
+
+# Development component (headers and static libraries)
+set(CPACK_COMPONENT_DEVELOPMENT_DISPLAY_NAME "Development Files")
+set(CPACK_COMPONENT_DEVELOPMENT_DESCRIPTION "Headers and development files for JDKSMIDI")
+set(CPACK_COMPONENT_DEVELOPMENT_DEPENDS runtime)
+
+# Examples component
+set(CPACK_COMPONENT_EXAMPLES_DISPLAY_NAME "Example Programs")
+set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "Example programs demonstrating JDKSMIDI usage")
+set(CPACK_COMPONENT_EXAMPLES_DEPENDS runtime)
+
+# Set component installation
+if(JDKSMIDI_BUILD_EXAMPLES)
+    set(CPACK_COMPONENTS_ALL "${CPACK_COMPONENTS_ALL} examples")
+endif()
+
+# Include CPack after all variables are set
+include(CPack)
+
+message(STATUS "CPack configured for package generation")
+message(STATUS "  Package generators: ${CPACK_GENERATOR}")
+message(STATUS "  Source generators: ${CPACK_SOURCE_GENERATOR}")
