@@ -119,9 +119,9 @@ void MIDIFileWrite::write_file_header(int format, int ntrks, int division)
     write_character(static_cast<std::uint8_t>('h'));
     write_character(static_cast<std::uint8_t>('d'));
     write_long(6);
-    write_short(static_cast<std::int16_t>(format));
-    write_short(static_cast<std::int16_t>(ntrks));
-    write_short(static_cast<std::int16_t>(division));
+    write_short(format);
+    write_short(ntrks);
+    write_short(division);
     file_length = 4 + 4 + 6;
 }
 

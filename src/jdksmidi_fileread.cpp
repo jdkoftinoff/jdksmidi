@@ -537,7 +537,7 @@ int MIDIFileRead::e_get_c()
     }
 
     --to_be_read;
-    return static_cast<int>(c);
+    return c;
 }
 
 void MIDIFileRead::msg_add(int a)

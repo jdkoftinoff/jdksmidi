@@ -432,7 +432,7 @@ void MIDIMessage::set_meta_value(std::uint16_t v)
 
 void MIDIMessage::set_note_on(std::uint8_t chan, std::uint8_t note, std::uint8_t vel)
 {
-    _status = static_cast<std::uint8_t>(chan | NOTE_ON);
+    _status = chan | NOTE_ON;
     _byte1 = note;
     _byte2 = vel;
     _byte3 = 0;
@@ -440,7 +440,7 @@ void MIDIMessage::set_note_on(std::uint8_t chan, std::uint8_t note, std::uint8_t
 
 void MIDIMessage::set_note_off(std::uint8_t chan, std::uint8_t note, std::uint8_t vel)
 {
-    _status = static_cast<std::uint8_t>(chan | NOTE_OFF);
+    _status = chan | NOTE_OFF;
     _byte1 = note;
     _byte2 = vel;
     _byte3 = 0;
@@ -448,7 +448,7 @@ void MIDIMessage::set_note_off(std::uint8_t chan, std::uint8_t note, std::uint8_
 
 void MIDIMessage::set_poly_pressure(std::uint8_t chan, std::uint8_t note, std::uint8_t pres)
 {
-    _status = static_cast<std::uint8_t>(chan | POLY_PRESSURE);
+    _status = chan | POLY_PRESSURE;
     _byte1 = note;
     _byte2 = pres;
     _byte3 = 0;
@@ -456,7 +456,7 @@ void MIDIMessage::set_poly_pressure(std::uint8_t chan, std::uint8_t note, std::u
 
 void MIDIMessage::set_control_change(std::uint8_t chan, std::uint8_t ctrl, std::uint8_t val)
 {
-    _status = static_cast<std::uint8_t>(chan | CONTROL_CHANGE);
+    _status = chan | CONTROL_CHANGE;
     _byte1 = ctrl;
     _byte2 = val;
     _byte3 = 0;
@@ -464,7 +464,7 @@ void MIDIMessage::set_control_change(std::uint8_t chan, std::uint8_t ctrl, std::
 
 void MIDIMessage::set_program_change(std::uint8_t chan, std::uint8_t val)
 {
-    _status = static_cast<std::uint8_t>(chan | PROGRAM_CHANGE);
+    _status = chan | PROGRAM_CHANGE;
     _byte1 = val;
     _byte2 = 0;
     _byte3 = 0;
@@ -472,7 +472,7 @@ void MIDIMessage::set_program_change(std::uint8_t chan, std::uint8_t val)
 
 void MIDIMessage::set_channel_pressure(std::uint8_t chan, std::uint8_t val)
 {
-    _status = static_cast<std::uint8_t>(chan | CHANNEL_PRESSURE);
+    _status = chan | CHANNEL_PRESSURE;
     _byte1 = val;
     _byte2 = 0;
     _byte3 = 0;
@@ -480,7 +480,7 @@ void MIDIMessage::set_channel_pressure(std::uint8_t chan, std::uint8_t val)
 
 void MIDIMessage::set_pitch_bend(std::uint8_t chan, std::int16_t val)
 {
-    _status = static_cast<std::uint8_t>(chan | PITCH_BEND);
+    _status = chan | PITCH_BEND;
     val += static_cast<std::int16_t>(0x2000);        // center value
     _byte1 = static_cast<std::uint8_t>(val & 0x7f);  // 7 bit bytes
     _byte2 = static_cast<std::uint8_t>((val >> 7) & 0x7f);
@@ -489,7 +489,7 @@ void MIDIMessage::set_pitch_bend(std::uint8_t chan, std::int16_t val)
 
 void MIDIMessage::set_pitch_bend(std::uint8_t chan, std::uint8_t low, std::uint8_t high)
 {
-    _status = static_cast<std::uint8_t>(chan | PITCH_BEND);
+    _status = chan | PITCH_BEND;
     _byte1 = static_cast<std::uint8_t>(low);
     _byte2 = static_cast<std::uint8_t>(high);
     _byte3 = 0;
@@ -554,7 +554,7 @@ void MIDIMessage::set_meta_event(std::uint8_t type, std::uint16_t v)
 
 void MIDIMessage::set_all_notes_off(std::uint8_t chan, std::uint8_t type)
 {
-    _status = static_cast<std::uint8_t>(chan | CONTROL_CHANGE);
+    _status = chan | CONTROL_CHANGE;
     _byte1 = type;
     _byte2 = 0x7f;
     _byte3 = 0;
@@ -562,7 +562,7 @@ void MIDIMessage::set_all_notes_off(std::uint8_t chan, std::uint8_t type)
 
 void MIDIMessage::set_local(std::uint8_t chan, std::uint8_t v)
 {
-    _status = static_cast<std::uint8_t>(chan | CONTROL_CHANGE);
+    _status = chan | CONTROL_CHANGE;
     _byte1 = C_LOCAL;
     _byte2 = v;
     _byte3 = 0;
