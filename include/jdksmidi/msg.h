@@ -71,7 +71,7 @@ class MIDIMessage
 
     MIDIMessage(MIDIMessage const& m);  ///< Copy Constructor.
 
-    MIDIMessage const& operator=(
+    MIDIMessage& operator=(
         MIDIMessage const& m);  ///< The assignment operator. Copies the MIDIMessage value.
 
     void clear();  ///< Set the MIDIMessage object to 0,0,0,0.
@@ -367,11 +367,11 @@ class MIDIBigMessage : public MIDIMessage
 
     MIDIBigMessage(MIDIBigMessage const& m);
 
-    MIDIBigMessage(MIDIMessage const& m);
+    explicit MIDIBigMessage(MIDIMessage const& m);
 
-    MIDIBigMessage const& operator=(MIDIBigMessage const& m);
+    MIDIBigMessage& operator=(MIDIBigMessage const& m);
 
-    MIDIBigMessage const& operator=(MIDIMessage const& m);
+    MIDIBigMessage& operator=(MIDIMessage const& m);
 
     void copy(MIDIBigMessage const& m);
 
@@ -409,7 +409,7 @@ class MIDITimedMessage : public MIDIMessage
 
     MIDITimedMessage(MIDITimedMessage const& m);
 
-    MIDITimedMessage(MIDIMessage const& m);
+    explicit MIDITimedMessage(MIDIMessage const& m);
 
     void clear();
 
@@ -419,9 +419,9 @@ class MIDITimedMessage : public MIDIMessage
     // operator =
     //
 
-    MIDITimedMessage const& operator=(MIDITimedMessage const& m);
+    MIDITimedMessage& operator=(MIDITimedMessage const& m);
 
-    MIDITimedMessage const& operator=(MIDIMessage const& m);
+    MIDITimedMessage& operator=(MIDIMessage const& m);
 
     //
     // 'Get' methods
@@ -456,7 +456,7 @@ class MIDIDeltaTimedMessage : public MIDIMessage
 
     MIDIDeltaTimedMessage(MIDIDeltaTimedMessage const& m);
 
-    MIDIDeltaTimedMessage(MIDIMessage const& m);
+    explicit MIDIDeltaTimedMessage(MIDIMessage const& m);
 
     void clear();
 
@@ -466,9 +466,9 @@ class MIDIDeltaTimedMessage : public MIDIMessage
     // operator =
     //
 
-    MIDIDeltaTimedMessage const& operator=(MIDIDeltaTimedMessage const& m);
+    MIDIDeltaTimedMessage& operator=(MIDIDeltaTimedMessage const& m);
 
-    MIDIDeltaTimedMessage const& operator=(MIDIMessage const& m);
+    MIDIDeltaTimedMessage& operator=(MIDIMessage const& m);
 
     //
     // 'Get' methods
@@ -497,11 +497,11 @@ class MIDITimedBigMessage : public MIDIBigMessage
 
     MIDITimedBigMessage(MIDITimedBigMessage const& m);
 
-    MIDITimedBigMessage(MIDIBigMessage const& m);
+    explicit MIDITimedBigMessage(MIDIBigMessage const& m);
 
-    MIDITimedBigMessage(MIDITimedMessage const& m);
+    explicit MIDITimedBigMessage(MIDITimedMessage const& m);
 
-    MIDITimedBigMessage(MIDIMessage const& m);
+    explicit MIDITimedBigMessage(MIDIMessage const& m);
 
     void clear();
 
@@ -513,11 +513,11 @@ class MIDITimedBigMessage : public MIDIBigMessage
     // operator =
     //
 
-    MIDITimedBigMessage const& operator=(MIDITimedBigMessage const& m);
+    MIDITimedBigMessage& operator=(MIDITimedBigMessage const& m);
 
-    MIDITimedBigMessage const& operator=(MIDITimedMessage const& m);
+    MIDITimedBigMessage& operator=(MIDITimedMessage const& m);
 
-    MIDITimedBigMessage const& operator=(MIDIMessage const& m);
+    MIDITimedBigMessage& operator=(MIDIMessage const& m);
 
     //
     // 'Get' methods
@@ -552,11 +552,11 @@ class MIDIDeltaTimedBigMessage : public MIDIBigMessage
 
     MIDIDeltaTimedBigMessage(MIDIDeltaTimedBigMessage const& m);
 
-    MIDIDeltaTimedBigMessage(MIDIBigMessage const& m);
+    explicit MIDIDeltaTimedBigMessage(MIDIBigMessage const& m);
 
-    MIDIDeltaTimedBigMessage(MIDIMessage const& m);
+    explicit MIDIDeltaTimedBigMessage(MIDIMessage const& m);
 
-    MIDIDeltaTimedBigMessage(MIDIDeltaTimedMessage const& m);
+    explicit MIDIDeltaTimedBigMessage(MIDIDeltaTimedMessage const& m);
 
     void clear();
 
@@ -568,11 +568,11 @@ class MIDIDeltaTimedBigMessage : public MIDIBigMessage
     // operator =
     //
 
-    MIDIDeltaTimedBigMessage const& operator=(MIDIDeltaTimedBigMessage const& m);
+    MIDIDeltaTimedBigMessage& operator=(MIDIDeltaTimedBigMessage const& m);
 
-    MIDIDeltaTimedBigMessage const& operator=(MIDIDeltaTimedMessage const& m);
+    MIDIDeltaTimedBigMessage& operator=(MIDIDeltaTimedMessage const& m);
 
-    MIDIDeltaTimedBigMessage const& operator=(MIDIMessage const& m);
+    MIDIDeltaTimedBigMessage& operator=(MIDIMessage const& m);
 
     //
     // 'Get' methods

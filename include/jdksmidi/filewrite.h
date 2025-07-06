@@ -150,7 +150,7 @@ class MIDIFileWrite : protected MIDIFile
 
   private:
     bool error;
-    bool within_track;
+    bool within_track{};
     std::uint32_t file_length;
     std::uint32_t track_length;
     std::uint32_t track_time;

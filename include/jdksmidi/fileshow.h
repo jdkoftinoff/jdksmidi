@@ -76,7 +76,7 @@ class MIDIFileShow : public MIDIFileEvents
     virtual void mf_eot(MIDIClockTime time);
 
     FILE* out;
-    int division;
+    int division{};
 
   private:
 };

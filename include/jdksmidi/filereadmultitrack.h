@@ -86,9 +86,9 @@ class MIDIFileReadMultiTrack : public MIDIFileEvents
     MIDIMultiTrack* multitrack;
     int cur_track;
 
-    int the_format;
-    int num_tracks;
-    int division;
+    int the_format{};
+    int num_tracks{};
+    int division{};
 };
 
 }  // namespace jdksmidi

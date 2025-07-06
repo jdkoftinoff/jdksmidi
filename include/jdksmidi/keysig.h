@@ -66,7 +66,7 @@ class MIDIKeySignature
     bool process_white_note(int in_note, int* out_note);
     bool process_black_note(int in_note, int* out_note);
 
-    MIDIAccidentalType _state[7];
+    MIDIAccidentalType _state[7]{};
     bool _use_sharps;
     int _sharp_flat;
     bool _major;

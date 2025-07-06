@@ -66,9 +66,9 @@ class MIDIMatrix
     void set_channel_count(std::uint8_t chan, int val) { _channel_count[chan] = val; }
 
   private:
-    std::uint8_t _note_on_count[16][128];
-    int _channel_count[16];
-    bool _hold_pedal[16];
+    std::uint8_t _note_on_count[16][128]{};
+    int _channel_count[16]{};
+    bool _hold_pedal[16]{};
     int _total_count;
 };
 

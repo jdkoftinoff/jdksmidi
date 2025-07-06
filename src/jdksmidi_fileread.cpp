@@ -291,7 +291,7 @@ int MIDIFileRead::read_header()
     int ntrks;
     int division;
 
-    if (read_mt(header_MThd, skip_init) == 0xffff)
+    if (read_mt(header_MThd, skip_init) == 0)
         return 0;
 
     if (abort_parse != 0)
@@ -353,7 +353,7 @@ void MIDIFileRead::read_track()
     int status = 0;         // (possible running) status byte
     int needed;
 
-    if (read_mt(header_MTrk, 0) == 0xffff)
+    if (read_mt(header_MTrk, 0) == 0)
         return;
 
     to_be_read = read_32_bit();

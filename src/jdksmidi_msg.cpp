@@ -234,7 +234,7 @@ void MIDIMessage::copy(MIDIMessage const& m)
 // The equal operator
 //
 
-MIDIMessage const& MIDIMessage::operator=(MIDIMessage const& m)
+MIDIMessage& MIDIMessage::operator=(MIDIMessage const& m)
 {
     _status = m._status;
     _byte1 = m._byte1;
@@ -657,7 +657,7 @@ MIDIBigMessage::~MIDIBigMessage() = default;
 // operator =
 //
 
-MIDIBigMessage const& MIDIBigMessage::operator=(MIDIBigMessage const& m)
+MIDIBigMessage& MIDIBigMessage::operator=(MIDIBigMessage const& m)
 {
     if (this != &m) {
         if (m.sysex) {
@@ -670,7 +670,7 @@ MIDIBigMessage const& MIDIBigMessage::operator=(MIDIBigMessage const& m)
     return *this;
 }
 
-MIDIBigMessage const& MIDIBigMessage::operator=(MIDIMessage const& m)
+MIDIBigMessage& MIDIBigMessage::operator=(MIDIMessage const& m)
 {
     sysex.reset();
     MIDIMessage::operator=(m);
@@ -751,14 +751,14 @@ void MIDITimedMessage::copy(MIDITimedMessage const& m)
 // operator =
 //
 
-MIDITimedMessage const& MIDITimedMessage::operator=(MIDITimedMessage const& m)
+MIDITimedMessage& MIDITimedMessage::operator=(MIDITimedMessage const& m)
 {
     _time = m.get_time();
     MIDIMessage::operator=(m);
     return *this;
 }
 
-MIDITimedMessage const& MIDITimedMessage::operator=(MIDIMessage const& m)
+MIDITimedMessage& MIDITimedMessage::operator=(MIDIMessage const& m)
 {
     _time = 0;
     MIDIMessage::operator=(m);
@@ -847,14 +847,14 @@ void MIDIDeltaTimedMessage::copy(MIDIDeltaTimedMessage const& m)
 // operator =
 //
 
-MIDIDeltaTimedMessage const& MIDIDeltaTimedMessage::operator=(MIDIDeltaTimedMessage const& m)
+MIDIDeltaTimedMessage& MIDIDeltaTimedMessage::operator=(MIDIDeltaTimedMessage const& m)
 {
     _d_time = m.get_delta_time();
     MIDIMessage::operator=(m);
     return *this;
 }
 
-MIDIDeltaTimedMessage const& MIDIDeltaTimedMessage::operator=(MIDIMessage const& m)
+MIDIDeltaTimedMessage& MIDIDeltaTimedMessage::operator=(MIDIMessage const& m)
 {
     _d_time = 0;
     MIDIMessage::operator=(m);
@@ -929,21 +929,21 @@ void MIDITimedBigMessage::copy(MIDITimedMessage const& m)
 // operator =
 //
 
-MIDITimedBigMessage const& MIDITimedBigMessage::operator=(MIDITimedBigMessage const& m)
+MIDITimedBigMessage& MIDITimedBigMessage::operator=(MIDITimedBigMessage const& m)
 {
     _time = m.get_time();
     MIDIBigMessage::operator=(m);
     return *this;
 }
 
-MIDITimedBigMessage const& MIDITimedBigMessage::operator=(MIDITimedMessage const& m)
+MIDITimedBigMessage& MIDITimedBigMessage::operator=(MIDITimedMessage const& m)
 {
     _time = m.get_time();
     MIDIBigMessage::operator=(m);
     return *this;
 }
 
-MIDITimedBigMessage const& MIDITimedBigMessage::operator=(MIDIMessage const& m)
+MIDITimedBigMessage& MIDITimedBigMessage::operator=(MIDIMessage const& m)
 {
     _time = 0;
     MIDIBigMessage::operator=(m);
@@ -1053,22 +1053,21 @@ void MIDIDeltaTimedBigMessage::copy(MIDIDeltaTimedMessage const& m)
 // operator =
 //
 
-MIDIDeltaTimedBigMessage const& MIDIDeltaTimedBigMessage::operator=(
-    MIDIDeltaTimedBigMessage const& m)
+MIDIDeltaTimedBigMessage& MIDIDeltaTimedBigMessage::operator=(MIDIDeltaTimedBigMessage const& m)
 {
     _d_time = m.get_delta_time();
     MIDIBigMessage::operator=(m);
     return *this;
 }
 
-MIDIDeltaTimedBigMessage const& MIDIDeltaTimedBigMessage::operator=(MIDIDeltaTimedMessage const& m)
+MIDIDeltaTimedBigMessage& MIDIDeltaTimedBigMessage::operator=(MIDIDeltaTimedMessage const& m)
 {
     _d_time = m.get_delta_time();
     MIDIBigMessage::operator=(m);
     return *this;
 }
 
-MIDIDeltaTimedBigMessage const& MIDIDeltaTimedBigMessage::operator=(MIDIMessage const& m)
+MIDIDeltaTimedBigMessage& MIDIDeltaTimedBigMessage::operator=(MIDIMessage const& m)
 {
     _d_time = 0;
     MIDIBigMessage::operator=(m);
