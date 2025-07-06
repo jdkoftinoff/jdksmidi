@@ -177,7 +177,7 @@ void MIDIManager::time_tick(std::uint32_t sys_time_)
 
 void MIDIManager::time_tick_play_mode(std::uint32_t sys_time_)
 {
-    double sys_time = (double)sys_time_ - (double)_sys_time_offset;
+    double sys_time = static_cast<double>(sys_time_) - static_cast<double>(_sys_time_offset);
     float next_event_time = 0.0;
     int ev_track;
     MIDITimedBigMessage ev;
@@ -194,7 +194,7 @@ void MIDIManager::time_tick_play_mode(std::uint32_t sys_time_)
         sys_time = 0;
         // the sequencer time offset now must be reset to the
         // time in milliseconds of the sequence start point
-        _seq_time_offset = (std::uint32_t)_sequencer->get_current_time_in_ms();
+        _seq_time_offset = static_cast<std::uint32_t>(_sequencer->get_current_time_in_ms());
     }
 
     // find all events that exist before or at this time,
