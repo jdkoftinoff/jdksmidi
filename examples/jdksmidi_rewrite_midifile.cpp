@@ -30,14 +30,13 @@
 #    include <windows.h>
 #endif
 
-#include "jdksmidi/fileread.h"
-#include "jdksmidi/filereadmultitrack.h"
-#include "jdksmidi/fileshow.h"
-#include "jdksmidi/filewritemultitrack.h"
-#include "jdksmidi/multitrack.h"
-#include "jdksmidi/track.h"
+#include "jdksmidi/fileread.h"             // for MIDIFileRead, MIDIFileReadStreamFile
+#include "jdksmidi/filereadmultitrack.h"   // for MIDIFileReadMultiTrack
+#include "jdksmidi/filewrite.h"            // for MIDIFileWriteStreamFileName
+#include "jdksmidi/filewritemultitrack.h"  // for MIDIFileWriteMultiTrack
+#include "jdksmidi/multitrack.h"           // for MIDIMultiTrack
 
-#include <cstdint>
+#include <stdio.h>  // for fprintf, stderr
 
 int main(int argc, char** argv)
 {

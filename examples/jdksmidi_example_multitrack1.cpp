@@ -25,14 +25,16 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-#include "jdksmidi/fileread.h"
-#include "jdksmidi/filereadmultitrack.h"
-#include "jdksmidi/fileshow.h"
-#include "jdksmidi/multitrack.h"
-#include "jdksmidi/track.h"
+#include "jdksmidi/fileread.h"            // for MIDIFileRead, MIDIFileReadStreamFile
+#include "jdksmidi/filereadmultitrack.h"  // for MIDIFileReadMultiTrack
+#include "jdksmidi/msg.h"                 // for MIDITimedBigMessage
+#include "jdksmidi/multitrack.h"          // for MIDIMultiTrack, MIDIMultiTrackIterator
+#include "jdksmidi/sysex.h"               // for MIDISystemExclusive
+#include "jdksmidi/track.h"               // for MIDITrack
 
-#include <cinttypes>
-#include <cstdint>
+#include <stdio.h>  // for fprintf, stdout
+
+#include <cinttypes>  // for PRIu32
 
 using namespace jdksmidi;
 

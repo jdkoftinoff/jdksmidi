@@ -26,16 +26,18 @@
  *  SOFTWARE.
  */
 
-#include "doctest/doctest.h"
-#include "jdksmidi/midi.h"
-#include "jdksmidi/msg.h"
-#include "jdksmidi/queue.h"
+#include "doctest/doctest.h"  // for ResultBuilder, CHECK, TEST_CASE, etc.
+#include "jdksmidi/midi.h"    // for MIDIClockTime
+#include "jdksmidi/msg.h"     // for MIDITimedBigMessage
+#include "jdksmidi/queue.h"   // for MIDIQueue
 
-#include <atomic>
-#include <chrono>
-#include <string>
-#include <thread>
-#include <vector>
+#include <stddef.h>  // for size_t
+
+#include <atomic>  // for atomic
+#include <chrono>  // for microseconds, milliseconds
+#include <string>  // for basic_string, string
+#include <thread>  // for thread, sleep_for
+#include <vector>  // for vector
 
 using namespace jdksmidi;
 

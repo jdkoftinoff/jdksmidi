@@ -26,16 +26,15 @@
  *  SOFTWARE.
  */
 
-#include "jdksmidi/driverdump.h"
-#include "jdksmidi/fileread.h"
-#include "jdksmidi/filereadmultitrack.h"
-#include "jdksmidi/fileshow.h"
-#include "jdksmidi/manager.h"
-#include "jdksmidi/multitrack.h"
-#include "jdksmidi/sequencer.h"
-#include "jdksmidi/track.h"
+#include "jdksmidi/driver.h"              // for MIDIDriver
+#include "jdksmidi/driverdump.h"          // for MIDIDriverDump
+#include "jdksmidi/fileread.h"            // for MIDIFileRead, MIDIFileReadStreamFile
+#include "jdksmidi/filereadmultitrack.h"  // for MIDIFileReadMultiTrack
+#include "jdksmidi/manager.h"             // for MIDIManager
+#include "jdksmidi/multitrack.h"          // for MIDIMultiTrack
+#include "jdksmidi/sequencer.h"  // for MIDISequencer, MIDISequencerGUIEventNotifierText, MIDISequencerTrackState
 
-#include <cstdint>
+#include <stdio.h>  // for fprintf, stdout
 
 using namespace jdksmidi;
 

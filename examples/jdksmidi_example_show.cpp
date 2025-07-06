@@ -26,10 +26,10 @@
  *  SOFTWARE.
  */
 
-#include "jdksmidi/fileread.h"
-#include "jdksmidi/fileshow.h"
+#include "jdksmidi/fileread.h"  // for MIDIFileRead, MIDIFileReadStreamFile
+#include "jdksmidi/fileshow.h"  // for MIDIFileShow
 
-#include <cstdint>
+#include <stdio.h>  // for stdout
 
 int main(int argc, char** argv)
 {
