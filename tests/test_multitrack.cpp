@@ -58,7 +58,8 @@ class TestMultiTrackFixture
         } else {
             msg.set_note_off(channel, note, velocity);
         }
-        multitrack.get_track(track)->put_event(msg);
+        bool success = multitrack.get_track(track)->put_event(msg);
+        (void)success;  // Suppress unused variable warning in tests
     }
 
     void add_tempo_event(int track, MIDIClockTime time, float bpm)
@@ -66,7 +67,8 @@ class TestMultiTrackFixture
         MIDITimedBigMessage msg;
         msg.set_time(time);
         msg.set_tempo32(static_cast<std::uint32_t>(bpm * 32.0f));
-        multitrack.get_track(track)->put_event(msg);
+        bool success = multitrack.get_track(track)->put_event(msg);
+        (void)success;  // Suppress unused variable warning in tests
     }
 
     void add_program_change_event(int track, MIDIClockTime time, int channel, int program)
@@ -74,7 +76,8 @@ class TestMultiTrackFixture
         MIDITimedBigMessage msg;
         msg.set_time(time);
         msg.set_program_change(channel, program);
-        multitrack.get_track(track)->put_event(msg);
+        bool success = multitrack.get_track(track)->put_event(msg);
+        (void)success;  // Suppress unused variable warning in tests
     }
 
     void add_control_change_event(
@@ -83,7 +86,8 @@ class TestMultiTrackFixture
         MIDITimedBigMessage msg;
         msg.set_time(time);
         msg.set_control_change(channel, controller, value);
-        multitrack.get_track(track)->put_event(msg);
+        bool success = multitrack.get_track(track)->put_event(msg);
+        (void)success;  // Suppress unused variable warning in tests
     }
 
     MIDIMultiTrack multitrack;
@@ -137,7 +141,8 @@ TEST_CASE("MIDIMultiTrack track management")
     MIDITimedBigMessage msg;
     msg.set_time(100);
     msg.set_note_on(0, 60, 100);
-    track_ptr->put_event(msg);
+    bool success = track_ptr->put_event(msg);
+    (void)success;  // Suppress unused variable warning in tests
 
     CHECK(mt_external.get_track(0)->get_num_events() == 1);
 }
@@ -454,13 +459,15 @@ TEST_CASE("MIDIMultiTrackIterator state management")
     iterator.go_to_time(0);
 
     // Advance to second event
-    iterator.go_to_next_event();
+    bool success = iterator.go_to_next_event();
+    (void)success;  // Suppress unused variable warning in tests
 
     // Save state
     MIDIMultiTrackIteratorState saved_state = iterator.get_state();
 
     // Advance further
-    iterator.go_to_next_event();
+    success = iterator.go_to_next_event();
+    (void)success;  // Suppress unused variable warning in tests
     MIDIClockTime time;
     CHECK(iterator.get_cur_event_time(&time) == true);
     CHECK(time == 300);
@@ -586,7 +593,8 @@ TEST_CASE("MIDIMultiTrackIterator edge cases")
     MIDITimedBigMessage msg;
     msg.set_time(100);
     msg.set_note_on(0, 60, 100);
-    single_track.get_track(0)->put_event(msg);
+    bool success = single_track.get_track(0)->put_event(msg);
+    (void)success;  // Suppress unused variable warning in tests
 
     MIDIMultiTrackIterator iterator(&single_track);
     iterator.go_to_time(0);
