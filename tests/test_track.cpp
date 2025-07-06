@@ -19,7 +19,7 @@ TEST_CASE("MIDITrack basic functionality")
         MIDITimedBigMessage msg;
         msg.set_note_on(0, 60, 127);
         msg.set_time(100);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         CHECK(track.get_num_events() == 1);
         track.clear();
@@ -46,15 +46,15 @@ TEST_CASE("MIDITrack event management")
     {
         msg.set_note_on(1, 60, 127);
         msg.set_time(100);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         msg.set_note_off(1, 60, 64);
         msg.set_time(200);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         msg.set_note_on(1, 64, 100);
         msg.set_time(300);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         CHECK(track.get_num_events() == 3);
     }
@@ -63,15 +63,15 @@ TEST_CASE("MIDITrack event management")
     {
         msg.set_note_on(1, 60, 127);
         msg.set_time(300);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         msg.set_note_off(1, 64, 64);
         msg.set_time(100);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         msg.set_note_on(1, 64, 100);
         msg.set_time(200);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         CHECK(track.get_num_events() == 3);
     }
@@ -80,15 +80,15 @@ TEST_CASE("MIDITrack event management")
     {
         msg.set_note_on(1, 60, 127);
         msg.set_time(100);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         msg.set_note_on(2, 64, 100);
         msg.set_time(100);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         msg.set_note_on(3, 67, 80);
         msg.set_time(100);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         CHECK(track.get_num_events() == 3);
     }
@@ -103,15 +103,15 @@ TEST_CASE("MIDITrack event access")
     {
         msg.set_note_on(1, 60, 127);
         msg.set_time(100);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         msg.set_note_off(1, 60, 64);
         msg.set_time(200);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         msg.set_control_change(1, 7, 100);
         msg.set_time(300);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         // Access first event
         MIDITimedBigMessage const* event = track.get_event(0);
@@ -143,15 +143,15 @@ TEST_CASE("MIDITrack event access")
     {
         msg.set_note_on(1, 60, 127);
         msg.set_time(100);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         msg.set_note_off(1, 60, 64);
         msg.set_time(200);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         msg.set_control_change(1, 7, 100);
         msg.set_time(300);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         int event_num;
         bool found;
@@ -187,11 +187,11 @@ TEST_CASE("MIDITrack event types")
     {
         msg.set_note_on(5, 72, 120);
         msg.set_time(100);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         msg.set_note_off(5, 72, 64);
         msg.set_time(200);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         CHECK(track.get_num_events() == 2);
 
@@ -212,11 +212,11 @@ TEST_CASE("MIDITrack event types")
     {
         msg.set_control_change(3, C_MODULATION, 64);
         msg.set_time(150);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         msg.set_control_change(3, C_MAIN_VOLUME, 100);
         msg.set_time(250);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         CHECK(track.get_num_events() == 2);
 
@@ -236,7 +236,7 @@ TEST_CASE("MIDITrack event types")
     {
         msg.set_program_change(7, 42);
         msg.set_time(300);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         CHECK(track.get_num_events() == 1);
 
@@ -250,7 +250,7 @@ TEST_CASE("MIDITrack event types")
     {
         msg.set_pitch_bend(2, 1000);
         msg.set_time(400);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         CHECK(track.get_num_events() == 1);
 
@@ -264,7 +264,7 @@ TEST_CASE("MIDITrack event types")
     {
         msg.set_song_select(5);
         msg.set_time(500);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         CHECK(track.get_num_events() == 1);
 
@@ -283,11 +283,11 @@ TEST_CASE("MIDITrack event modification")
     {
         msg.set_note_on(1, 60, 127);
         msg.set_time(100);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         msg.set_note_off(1, 60, 64);
         msg.set_time(200);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         CHECK(track.get_num_events() == 2);
 
@@ -312,11 +312,11 @@ TEST_CASE("MIDITrack event modification")
     {
         msg.set_note_on(1, 60, 127);
         msg.set_time(100);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         msg.set_note_off(1, 60, 64);
         msg.set_time(200);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         CHECK(track.get_num_events() == 2);
 
@@ -346,11 +346,11 @@ TEST_CASE("MIDITrack edge cases")
     {
         msg.set_note_on(0, 60, 127);
         msg.set_time(0);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         msg.set_note_off(0, 60, 64);
         msg.set_time(0);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         CHECK(track.get_num_events() == 2);
 
@@ -363,7 +363,7 @@ TEST_CASE("MIDITrack edge cases")
     {
         msg.set_note_on(0, 60, 127);
         msg.set_time(1000000);
-        track.put_event(msg);
+        CHECK(track.put_event(msg));
 
         CHECK(track.get_num_events() == 1);
 
@@ -376,7 +376,7 @@ TEST_CASE("MIDITrack edge cases")
         for (int channel = 0; channel < 16; ++channel) {
             msg.set_note_on(channel, 60, 127);
             msg.set_time(channel * 100);
-            track.put_event(msg);
+            CHECK(track.put_event(msg));
         }
 
         CHECK(track.get_num_events() == 16);
@@ -393,7 +393,7 @@ TEST_CASE("MIDITrack edge cases")
         for (int note = 0; note < 128; note += 8) {
             msg.set_note_on(0, note, 127);
             msg.set_time(note * 10);
-            track.put_event(msg);
+            CHECK(track.put_event(msg));
         }
 
         CHECK(track.get_num_events() == 16);

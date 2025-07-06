@@ -26,7 +26,8 @@ TEST_CASE("MIDIParser construction and initialization")
         MIDIMessage msg;
 
         // Parse some data to change state
-        parser.parse(0x90, &msg);  // Note On status
+        bool status = parser.parse(0x90, &msg);  // Note On status
+        CHECK_FALSE(status);
         parser.clear();
 
         // After clear, should be back to initial state

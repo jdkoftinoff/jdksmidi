@@ -92,7 +92,8 @@ class TestSequencerFixture
         MIDITimedBigMessage msg;
         msg.set_time(time);
         msg.set_note_on(channel, note, velocity);
-        multitrack.get_track(track)->put_event(msg);
+        bool success = multitrack.get_track(track)->put_event(msg);
+        (void)success;
     }
 
     void add_note_off_event(int track, MIDIClockTime time, int channel, int note, int velocity)
@@ -100,7 +101,8 @@ class TestSequencerFixture
         MIDITimedBigMessage msg;
         msg.set_time(time);
         msg.set_note_off(channel, note, velocity);
-        multitrack.get_track(track)->put_event(msg);
+        bool success = multitrack.get_track(track)->put_event(msg);
+        (void)success;
     }
 
     void add_tempo_event(int track, MIDIClockTime time, float bpm)
@@ -108,7 +110,8 @@ class TestSequencerFixture
         MIDITimedBigMessage msg;
         msg.set_time(time);
         msg.set_tempo32(static_cast<std::uint32_t>(bpm * 32.0f));
-        multitrack.get_track(track)->put_event(msg);
+        bool success = multitrack.get_track(track)->put_event(msg);
+        (void)success;
     }
 
     void add_time_signature_event(int track, MIDIClockTime time, int numerator, int denominator)
@@ -116,7 +119,8 @@ class TestSequencerFixture
         MIDITimedBigMessage msg;
         msg.set_time(time);
         msg.set_time_sig(numerator, denominator);
-        multitrack.get_track(track)->put_event(msg);
+        bool success = multitrack.get_track(track)->put_event(msg);
+        (void)success;
     }
 
     void add_program_change_event(int track, MIDIClockTime time, int channel, int program)
@@ -124,7 +128,8 @@ class TestSequencerFixture
         MIDITimedBigMessage msg;
         msg.set_time(time);
         msg.set_program_change(channel, program);
-        multitrack.get_track(track)->put_event(msg);
+        bool success = multitrack.get_track(track)->put_event(msg);
+        (void)success;
     }
 
     void add_control_change_event(
@@ -133,7 +138,8 @@ class TestSequencerFixture
         MIDITimedBigMessage msg;
         msg.set_time(time);
         msg.set_control_change(channel, controller, value);
-        multitrack.get_track(track)->put_event(msg);
+        bool success = multitrack.get_track(track)->put_event(msg);
+        (void)success;
     }
 
     MIDIMultiTrack multitrack;

@@ -41,7 +41,7 @@ namespace jdksmidi {
 /// MIDITrackChunkSize is a constant which specifies how many events are in one MIDITrackChunk.
 ///
 
-int const MIDITrackChunkSize = 512;
+constexpr int MIDITrackChunkSize = 512;
 
 ///
 /// A MIDITrack's events are allocated in these chunks in order to avoid memory fragmentation
@@ -81,7 +81,7 @@ class MIDITrackChunk
 /// MMU
 ///
 
-int const MIDIChunksPerTrack = 512;
+constexpr int MIDIChunksPerTrack = 512;
 
 ///
 /// The MIDITrack class is a container that manages an array of MIDIChunk objects and provides an
@@ -97,7 +97,7 @@ class MIDITrack
     /// Construct a MIDITrack object with the specified number of events
     /// @param size The number of events, defaults to 0
     ///
-    MIDITrack(int size = 0);
+    explicit MIDITrack(int size = 0);
 
     ///
     /// Copy Constructor for a MIDITrack object
