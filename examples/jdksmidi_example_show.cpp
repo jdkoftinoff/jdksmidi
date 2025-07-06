@@ -29,7 +29,7 @@
 #include "jdksmidi/fileread.h"  // for MIDIFileRead, MIDIFileReadStreamFile
 #include "jdksmidi/fileshow.h"  // for MIDIFileShow
 
-#include <stdio.h>  // for stdout
+#include <cstdio>  // for stdout
 
 int main(int argc, char** argv)
 {

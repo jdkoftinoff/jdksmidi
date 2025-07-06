@@ -36,7 +36,7 @@
 #include "jdksmidi/filewritemultitrack.h"  // for MIDIFileWriteMultiTrack
 #include "jdksmidi/multitrack.h"           // for MIDIMultiTrack
 
-#include <stdio.h>  // for fprintf, stderr
+#include <cstdio>  // for fprintf, stderr
 
 int main(int argc, char** argv)
 {

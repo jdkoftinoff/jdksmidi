@@ -34,7 +34,7 @@
 #include "jdksmidi/multitrack.h"          // for MIDIMultiTrack
 #include "jdksmidi/sequencer.h"  // for MIDISequencer, MIDISequencerGUIEventNotifierText, MIDISequencerTrackState
 
-#include <stdio.h>  // for fprintf, stdout
+#include <cstdio>  // for fprintf, stdout
 
 using namespace jdksmidi;
 

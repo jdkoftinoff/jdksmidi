@@ -37,9 +37,8 @@
 #include "jdksmidi/sysex.h"               // for MIDISystemExclusive
 #include "jdksmidi/track.h"               // for MIDITrack
 
-#include <stdio.h>  // for fprintf, stdout
-
 #include <cinttypes>  // for PRIu32
+#include <cstdio>     // for fprintf, stdout
 
 using namespace jdksmidi;
 
