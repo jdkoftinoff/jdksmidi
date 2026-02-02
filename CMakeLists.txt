@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.6) 
+cmake_minimum_required (VERSION 3.6) 
 project (JDKSMIDI)
 
 include_directories( ${JDKSMIDI_SOURCE_DIR}/include )
